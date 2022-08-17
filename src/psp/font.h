@@ -1,8 +1,8 @@
 #ifndef __FONT_H__
 #define __FONT_H__
 
-void FntInit(char *toload);
+void FntInit(char* path);
 void FntFree();
-void PrintMSG(const char *text, int x, int y, int font);
+void PrintMSG(float x, float y, const char *text, ...)
 
 #endif

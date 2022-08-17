@@ -1,6 +1,9 @@
+#include <string.h>  
+#include "glib2d.h"
+
 static struct
 {   // X pos  Y pos  width  height 
-	int charX, charY, charW, charH;
+	float charX, charY, charW, charH;
 } fontmap[0x60] = {
 	{128, 30, 4, 9,},  //space
 	{80, 20, 3, 9}, //!
@@ -106,9 +109,9 @@ typedef struct
 
 Tex tex;
 
-void FntInit(char *toload)
+void FntInit(char* path)
 {	
-	tex.fnttex = g2dTexLoad(toload, G2D_SWIZZLE);
+	tex.fnttex = g2dTexLoad(path, G2D_SWIZZLE);
 }
 
 void FntFree()
@@ -116,15 +119,7 @@ void FntFree()
 	g2dTexFree(&tex.fnttex);
 }
 
-static void changerect(int array, int x, int y, int w, int h)
-{
-	fontmap[array].charX = x;
-	fontmap[array].charY = y;
-	fontmap[array].charW = w;
-	fontmap[array].charH = h;
-}
-
-void PrintMSG(const char *text, int x, int y)
+void PrintMSG(float x, float y, const char *text, ...)
 {	
 	//Draw string character by character
 	int c;

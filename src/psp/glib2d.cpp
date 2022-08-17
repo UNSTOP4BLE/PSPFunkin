@@ -1310,7 +1310,7 @@ g2dTexture* _g2dTexLoadJPEG(FILE *fp)
 #endif
 
 
-g2dTexture* g2dTexLoad(char path[], g2dTex_Mode mode)
+g2dTexture* g2dTexLoad(char *path, g2dTex_Mode mode)
 {
     g2dTexture *tex = NULL;
     FILE *fp = NULL;

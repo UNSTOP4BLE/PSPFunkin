@@ -1,20 +1,14 @@
 TARGET = PSPFunkin
 OBJS = src/main.o \
-	   src/menu.o \
-	   src/game.o \
-	   src/save.o \
-	   src/sparkle.o \
 	   src/psp/animation.o \
 	   src/psp/pad.o \
-	   src/psp/audio.o \
-	   src/psp/wav.o \
 	   src/psp/font.o \
 	   src/psp/glib2d.o 
 
-LIBS = -ljpeg -lpng -lz -lpspgum -lpspgu -lpsprtc -lm -lpspvram -lpspaudio
+LIBS = -ljsoncpp -lstdc++ -ljpeg -lpng -lz -lpspgum -lpspgu -lpsprtc -lm -lpspvram -lpspaudio
 
 CFLAGS = -O2 -G0 -Wall -g -fno-builtin-printf
-CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
+CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti -std=gnu++17
 ASFLAGS = $(CFLAGS)
 
 # PSP JUNK

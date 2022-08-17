@@ -49,10 +49,6 @@
 #ifndef GLIB2D_H
 #define GLIB2D_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include <stdbool.h>
 
 /**
@@ -816,9 +812,5 @@ void g2dResetScissor();
 void g2dSetScissor(int x, int y, int w, int h);
 
 void DrawG2DTex(g2dTexture* tex, Rect *Img, Rect *Disp, bool linear, float angle, int alpha);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif
