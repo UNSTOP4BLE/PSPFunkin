@@ -23,7 +23,7 @@ int main()
     g2dInit();
     FntInit("assets/font/font.png");
 
-    loadChart("assets/chart/thorns-hard.json");
+    loadChart("assets/chart/bopeebo.json");
     readInitialData();
     Section new_section = readChartData(0, 0);
 
@@ -34,8 +34,8 @@ int main()
         g2dClear(GREEN);
         Pad_Update();
         
-        parser.songPos += 1;
-        parser.curStep = (parser.songPos/ parser.step_crochet) * 30;
+        parser.songPos += 1000;
+        parser.curStep = (parser.songPos/ parser.step_crochet) / 12;
 
  //          readChart(&new_section);
         PrintMSG(0, 0, "%d", parser.curStep);
