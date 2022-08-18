@@ -273,7 +273,7 @@ Wav *Wav_Load(const char *filename)
 	char *wavfile;
 	Wav *theWav;
 	
-	if ((theWav=RefcountRetain( filename ))!=0)
+	if ((theWav=(Wav*)RefcountRetain( filename ))!=0)
 		return theWav;
 	
 	FILE *pFile = fopen(filename , "rb");
@@ -289,7 +289,7 @@ Wav *Wav_Load(const char *filename)
 	lSize = ftell(pFile);
 	rewind(pFile);
 	
-	theWav = malloc(lSize + sizeof(Wav));
+	theWav = (Wav*)malloc(lSize + sizeof(Wav));
 	RefcountCreate( filename, theWav );
 	wavfile = (char*)(theWav) + sizeof(Wav);
 	
@@ -320,7 +320,7 @@ Wav *Wav_Load(const char *filename)
 
 	datalength = readU32(wavfile, 0x28+i); 
 	
-	if (datalength + 0x2c + i > filelen)
+	if (datalength + 0x2c + i > (long unsigned int)filelen)
 	{
 		datalength = filelen - i - 0x2c;
 	}
