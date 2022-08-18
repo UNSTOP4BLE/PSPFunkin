@@ -5,22 +5,34 @@
 #include "psp/pad.h"
 #include "psp/font.h"
 #include "psp/glib2d.h"
+#include "game.h"
+#include "error.h"
+
+#include "chartparser.h"
 
 PSP_MODULE_INFO("PSPFunkin", 0, 1, 0);
-
+ 
 int main() 
 {
     setupcallbacks();
 	Pad_Init();
   	g2dInit();
-  	FntInit("assets/font.png");
+  	FntInit("assets/font/font.png");
+
+  	loadChart("assets/bopeebo.json");
 
   	while(1)
   	{
-       	g2dClear(G2D_RGBA(84, 192, 201, 0));
+       	g2dClear(GREEN);
        	Pad_Update();
 
-       	PrintMSG(0, 0, "asd");
+       	switch (game.gamestate)
+       	{
+
+       		case 4: //error
+       			ErrMSG();
+       		break;
+       	}
 
 		g2dFlip(G2D_VSYNC);
   	}

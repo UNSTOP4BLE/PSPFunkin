@@ -1,4 +1,5 @@
 #include <cstdarg>
+#include <cstring>  
 #include <cstdio>
 #include "glib2d.h"
 
@@ -127,28 +128,32 @@ void PrintMSG(int x, int y, const char *format, ...)
 	int xhold = x;
 
     va_list list;
-    char string[256] = "";
     
+	char string[256] = "";
+
     va_start(list, format);
     std::vsprintf(string, format, list);
     va_end(list);
             
-	while ((c = *format++) != '\0')
-	{
-		if (c == '\n')
+    for (int i = 0; i < (int)strlen(string); i++)
+	{        
+		if ((c = string[i]) != '\0')
 		{
-			x = xhold;
-			y += 11;
-		}
-		//Shift and validate character
-		if ((c -= 0x20) >= 0x60)
-			continue;
-		
-		//Draw character
-		Rect font_Img = {fontmap[c].charX, fontmap[c].charY, fontmap[c].charW, fontmap[c].charH};
-		Rect font_Disp = {x, y, fontmap[c].charW, fontmap[c].charH};
-		DrawG2DTex(tex.fnttex, &font_Img, &font_Disp, false, 0, 255);
+			if (c == '\n')
+			{
+				x = xhold;
+				y += 11;
+			}
+			//Shift and validate character
+			if ((c -= 0x20) >= 0x60)
+				continue;
+			
+			//Draw character
+			Rect font_Img = {fontmap[c].charX, fontmap[c].charY, fontmap[c].charW, fontmap[c].charH};
+			Rect font_Disp = {x, y, fontmap[c].charW, fontmap[c].charH};
+			DrawG2DTex(tex.fnttex, &font_Img, &font_Disp, false, 0, 255);
 
-		x += fontmap[c].charW - 1;
+			x += fontmap[c].charW - 1;
+		}
 	}
 }

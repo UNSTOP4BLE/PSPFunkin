@@ -1,5 +1,8 @@
 TARGET = PSPFunkin
 OBJS = src/main.o \
+	   src/game.o \
+	   src/error.o \
+	   src/chartparser.o \
 	   src/psp/animation.o \
 	   src/psp/pad.o \
 	   src/psp/font.o \
