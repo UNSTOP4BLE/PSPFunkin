@@ -14,8 +14,9 @@ typedef struct
 	bool altAnim;
 } Section;
 
-void loadChart(std::string filename);
-void readInitial(int thesection);
-void readChartData(Section *section, int thesection, int notes);
+void loadChart(const char *filename);
+void readInitialData();
+Section readChartData(int thesection, int notes);
+void readChart(Section *section);
 
 #endif

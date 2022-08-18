@@ -5,5 +5,5 @@ Error error;
 
 void ErrMSG()
 {
-	PrintMSG(0, 0, "%s", error.message);
+	PrintMSG(0, 0, error.message);
 }

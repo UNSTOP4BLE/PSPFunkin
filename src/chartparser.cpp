@@ -18,17 +18,17 @@ static void LoadJson(std::string filename, Json::Value *data)
     configFile.close();
 }
 
-void loadChart(std::string filename) 
+void loadChart(const char *filename) 
 {
 	LoadJson(filename, &chart);
 	if (!chart)
 	{
-		error.message = "FAILED TO FIND CHART";
+		sprintf(error.message, "FAILED TO FIND CHART: %s", filename);
 		game.gamestate = 4;
 	}
 }
 
-void readInitial(int thesection)
+void readInitialData()
 {
 	initspeed = chart["song"]["speed"].asDouble();	
 	initbpm = chart["song"]["bpm"].asDouble();	
@@ -36,12 +36,22 @@ void readInitial(int thesection)
 	step_crochet = crochet / 4;
 }
 
-void readChartData(Section *section, int thesection, int notes)
+Section readChartData(int thesection, int notes)
 {
-	section->sectionNotes[0] = chart["song"]["notes"][thesection]["sectionNotes"][notes][0].asDouble(); //note position in ms
-	section->sectionNotes[1] = chart["song"]["notes"][thesection]["sectionNotes"][notes][1].asDouble(); //type
-	section->sectionNotes[2] = chart["song"]["notes"][thesection]["sectionNotes"][notes][2].asDouble(); //sustain length in ms
-	section->lengthInSteps = chart["song"]["notes"][thesection]["sectionNotes"]["lengthInSteps"].asInt();
-	section->mustHitSection = chart["song"]["notes"][thesection]["sectionNotes"]["mustHitSection"].asBool(); //is it a opponent section
-	section->altAnim = chart["song"]["notes"][thesection]["altAnim"].asBool(); //play a alt animation
+	Section section;
+	section.sectionNotes[0] = chart["song"]["notes"][thesection]["sectionNotes"][notes][0].asDouble(); //note position in ms
+	section.sectionNotes[1] = chart["song"]["notes"][thesection]["sectionNotes"][notes][1].asDouble(); //type
+	section.sectionNotes[2] = chart["song"]["notes"][thesection]["sectionNotes"][notes][2].asDouble(); //sustain length in ms
+	section.lengthInSteps = chart["song"]["notes"][thesection]["lengthInSteps"].asInt();
+	section.mustHitSection = chart["song"]["notes"][thesection]["mustHitSection"].asBool(); //is it a opponent section
+	section.altAnim = chart["song"]["notes"][thesection]["altAnim"].asBool(); //play a alt animation
+
+	return section;
+}
+
+
+#include "psp/font.h"
+void readChart(Section *section)
+{
+	PrintMSG(0, 0, "%f", section->sectionNotes[0]);
 }

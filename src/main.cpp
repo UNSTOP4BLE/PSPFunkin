@@ -19,12 +19,15 @@ int main()
   	g2dInit();
   	FntInit("assets/font/font.png");
 
-  	loadChart("assets/bopeebo.json");
-
+  	loadChart("assets/chart/bopeebo.json");
+  	readInitialData();
+  	Section new_section = readChartData(0, 0);
   	while(1)
   	{
        	g2dClear(GREEN);
        	Pad_Update();
+
+       	readChart(&new_section);
 
        	switch (game.gamestate)
        	{

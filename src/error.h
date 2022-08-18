@@ -5,7 +5,7 @@
 
 typedef struct 
 {
-	std::string message;
+	char message[256];
 } Error;
 
 extern Error error;
