@@ -1,11 +1,12 @@
-#include <string.h>  
+#include <cstdarg>
+#include <cstdio>
 #include "glib2d.h"
 
 static struct
 {   // X pos  Y pos  width  height 
-	float charX, charY, charW, charH;
+	int charX, charY, charW, charH;
 } fontmap[0x60] = {
-	{128, 30, 4, 9,},  //space
+	{128, 30, 4, 9},  //space
 	{80, 20, 3, 9}, //!
 	{104, 30, 5, 9}, //"
 	{88, 20, 7, 9}, //#
@@ -109,7 +110,7 @@ typedef struct
 
 Tex tex;
 
-void FntInit(char* path)
+void FntInit(const char* path)
 {	
 	tex.fnttex = g2dTexLoad(path, G2D_SWIZZLE);
 }
@@ -119,13 +120,20 @@ void FntFree()
 	g2dTexFree(&tex.fnttex);
 }
 
-void PrintMSG(float x, float y, const char *text, ...)
+void PrintMSG(int x, int y, const char *format, ...)
 {	
 	//Draw string character by character
 	int c;
 	int xhold = x;
 
-	while ((c = *text++) != '\0')
+    va_list list;
+    char string[256] = "";
+    
+    va_start(list, format);
+    std::vsprintf(string, format, list);
+    va_end(list);
+            
+	while ((c = *format++) != '\0')
 	{
 		if (c == '\n')
 		{

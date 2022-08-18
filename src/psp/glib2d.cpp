@@ -58,7 +58,7 @@
 #define OBJ                     rctx.obj[rctx.n-1]
 #define OBJ_I                   rctx.obj[i]
 #define TRANSFORM               tstack[tstack_size-1]
-extern void sincosf (float, float *, float *);
+
 /* Enumerations */
 
 typedef enum
@@ -235,7 +235,7 @@ void g2dInit()
         return;
 
     // Display list allocation
-    dlist = malloc(DLIST_SIZE);
+    dlist = (int*)malloc(DLIST_SIZE);
 
     // Setup GU
     sceGuInit();
@@ -247,8 +247,8 @@ void g2dInit()
     sceGuOffset(2048-G2D_SCR_W/2, 2048-G2D_SCR_H/2);
     sceGuViewport(2048, 2048, G2D_SCR_W, G2D_SCR_H);
     
-    g2d_draw_buffer.data = vabsptr(g2d_draw_buffer.data);
-    g2d_disp_buffer.data = vabsptr(g2d_disp_buffer.data);
+    g2d_draw_buffer.data = (unsigned int*)vabsptr(g2d_draw_buffer.data);
+    g2d_disp_buffer.data = (unsigned int*)vabsptr(g2d_disp_buffer.data);
 
     sceGuDepthRange(65535, 0);
     sceGuClearDepth(65535);
@@ -323,7 +323,7 @@ void _g2dBeginCommon(Obj_Type type, g2dTexture *tex)
         _g2dStart();
 
     // Reset render context
-    rctx.obj = realloc(rctx.obj, MALLOC_STEP * sizeof(Object));
+    rctx.obj = (Object*)realloc(rctx.obj, MALLOC_STEP * sizeof(Object));
     rctx.n = 0;
     rctx.type = type;
     rctx.tex = tex;
@@ -397,7 +397,7 @@ void _g2dEndRects()
     {
         v_nbr = 0;
 
-        for (i=0; i<rctx.n; i++)
+        for (i=0; i<(int)rctx.n; i++)
         {
             v_nbr += v_obj_nbr * ceilf(OBJ_I.crop_w/SLICE_WIDTH);
         }
@@ -408,7 +408,7 @@ void _g2dEndRects()
     void *vi = v;
 
     // Build the vertex list
-    for (i=0; i<rctx.n; i+=1)
+    for (i=0; i<(int)rctx.n; i+=1)
     {
         if (rctx.use_rot) // Two triangles per object
         {
@@ -466,14 +466,14 @@ void _g2dEndLines()
     {
         vi = _g2dSetVertex(vi, 0, 0.f, 0.f);
 
-        for (i=1; i<rctx.n; i+=1)
+        for (i=1; i<(int)rctx.n; i+=1)
         {
             vi = _g2dSetVertex(vi, i, 0.f, 0.f);
         }
     }
     else
     {
-        for (i=0; i+1<rctx.n; i+=2)
+        for (i=0; i+1<(int)rctx.n; i+=2)
         {
             vi = _g2dSetVertex(vi, i  , 0.f, 0.f);
             vi = _g2dSetVertex(vi, i+1, 0.f, 0.f);
@@ -508,7 +508,7 @@ void _g2dEndQuads()
     void *vi = v;
 
     // Build the vertex list
-    for (i=0; i+3<rctx.n; i+=4)
+    for (i=0; i+3<(int)rctx.n; i+=4)
     {
         vi = _g2dSetVertex(vi, i  , 0.f, 0.f);
         vi = _g2dSetVertex(vi, i+1, 1.f, 0.f);
@@ -543,7 +543,7 @@ void _g2dEndPoints()
     void *vi = v;
 
     // Build the vertex list
-    for (i=0; i<rctx.n; i+=1)
+    for (i=0; i<(int)rctx.n; i+=1)
     {
         vi = _g2dSetVertex(vi, i, 0.f, 0.f);
     }
@@ -643,7 +643,7 @@ void g2dFlip(g2dFlip_Mode mode)
         sceDisplayWaitVblankStart();
 
     g2d_disp_buffer.data = g2d_draw_buffer.data;
-    g2d_draw_buffer.data = vabsptr(sceGuSwapBuffers());
+    g2d_draw_buffer.data = (unsigned int*)vabsptr(sceGuSwapBuffers());
 
     start = false;
 }
@@ -656,7 +656,7 @@ void g2dAdd()
 
     if (rctx.n % MALLOC_STEP == 0)
     {
-        rctx.obj = realloc(rctx.obj,
+        rctx.obj = (Object*)realloc(rctx.obj,
                            (rctx.n+MALLOC_STEP) * sizeof(Object));
     }
     
@@ -1150,7 +1150,7 @@ void _swizzle(unsigned char *dest, unsigned char *source, int width, int height)
 
 g2dTexture*g2dTexCreate(int w, int h)
 {
-    g2dTexture *tex = malloc(sizeof(g2dTexture));
+    g2dTexture *tex = (g2dTexture*)malloc(sizeof(g2dTexture));
     if (tex == NULL)
         return NULL;
 
@@ -1161,7 +1161,7 @@ g2dTexture*g2dTexCreate(int w, int h)
     tex->ratio = (float)w / h;
     tex->swizzled = false;
 
-    tex->data = malloc(tex->tw * tex->th * sizeof(g2dColor));
+    tex->data = (unsigned int*)malloc(tex->tw * tex->th * sizeof(g2dColor));
     if (tex->data == NULL)
     {
         free(tex);
@@ -1219,7 +1219,7 @@ g2dTexture* _g2dTexLoadPNG(FILE *fp)
     png_set_filler(png_ptr, 0xff, PNG_FILLER_AFTER);
     
     tex = g2dTexCreate(width, height);
-    line = malloc(width * 4);
+    line = (g2dColor*)malloc(width * 4);
 
     for (y = 0; y < height; y++)
     {
@@ -1255,7 +1255,7 @@ g2dTexture* _g2dTexLoadJPEG(FILE *fp)
     width = dinfo.image_width;
     height = dinfo.image_height;
     tex = g2dTexCreate(width, height);
-    line = malloc(width * 3);
+    line = (unsigned char*)malloc(width * 3);
     
     jpeg_start_decompress(&dinfo);
     
@@ -1309,8 +1309,7 @@ g2dTexture* _g2dTexLoadJPEG(FILE *fp)
 }
 #endif
 
-
-g2dTexture* g2dTexLoad(char *path, g2dTex_Mode mode)
+g2dTexture* g2dTexLoad(const char* path, g2dTex_Mode mode)
 {
     g2dTexture *tex = NULL;
     FILE *fp = NULL;
@@ -1347,7 +1346,7 @@ g2dTexture* g2dTexLoad(char *path, g2dTex_Mode mode)
     // Swizzling is useless with small textures.
     if ((mode & G2D_SWIZZLE) && (tex->w >= 16 || tex->h >= 16))
     {
-        u8 *tmp = malloc(tex->tw*tex->th*PIXEL_SIZE);
+        u8 *tmp = (unsigned char*)malloc(tex->tw*tex->th*PIXEL_SIZE);
         _swizzle(tmp, (u8*)tex->data, tex->tw*PIXEL_SIZE, tex->th);
         free(tex->data);
         tex->data = (g2dColor*)tmp;

@@ -76,8 +76,8 @@
  * PSP_MAIN_THREAD_ATTR(THREAD_ATTR_USER | THREAD_ATTR_VFPU) to avoid crashes.
  */
 #define USE_PNG
-#define USE_JPEG
-//#define USE_VFPU
+//#define USE_JPEG
+#define USE_VFPU
 
 /**
  * \def G2D_SCR_W
@@ -141,8 +141,12 @@
 typedef struct 
 {
 	float x,y,w,h;
-} Rect;
+} FloatRect;
 
+typedef struct
+{
+    int x,y,w,h;
+} Rect;
 /**
  * \enum g2dColors
  * \brief Colors enumeration.
@@ -418,7 +422,7 @@ void g2dTexFree(g2dTexture **tex);
  * textures (useless on small textures), pass G2D_SWIZZLE to enable it.
  * Texture supported up to 512*512 in size only (hardware limitation).
  */
-g2dTexture* g2dTexLoad(char path[], g2dTex_Mode mode);
+g2dTexture* g2dTexLoad(const char* path, g2dTex_Mode mode);
 
 /**
  * \brief Resets the current coordinates.
