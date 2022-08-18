@@ -9,6 +9,8 @@
 #include "game.h"
 #include "error.h"
 
+
+#include <psprtc.h>
 #include "chartparser.h"
 
 PSP_MODULE_INFO("PSPFunkin", 0, 1, 0);
@@ -24,17 +26,23 @@ int main()
     loadChart("assets/chart/thorns-hard.json");
     readInitialData();
     Section new_section = readChartData(0, 0);
+
+    Wav *bopeebo = Wav_Load("assets/Vocals.wav");
+    Wav_Play(bopeebo);
     while(1)
     {
         g2dClear(GREEN);
         Pad_Update();
         
-        parser.songPos += 100;
-        parser.curStep = (parser.songPos/parser.step_crochet) / 12;
+        parser.songPos += 1;
+        parser.curStep = (parser.songPos/ parser.step_crochet) * 30;
 
  //          readChart(&new_section);
         PrintMSG(0, 0, "%d", parser.curStep);
 
+
+        if ((parser.curStep % 32) == 31) 
+        	PrintMSG(0, 10, "PEACE");
         switch (game.gamestate)
         {
             case 4: //error
