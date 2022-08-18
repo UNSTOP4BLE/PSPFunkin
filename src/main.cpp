@@ -6,28 +6,48 @@
 #include "psp/font.h"
 #include "psp/wav.h"
 #include "psp/glib2d.h"
+#include "game.h"
+#include "error.h"
+
+#include "chartparser.h"
 
 PSP_MODULE_INFO("PSPFunkin", 0, 1, 0);
-
-int main() 
+ 
+int main()
 {
     setupcallbacks();
-	Pad_Init();
-  	g2dInit();
-  	FntInit("assets/font.png");
+    Pad_Init();
+    Wav_Init();
+      g2dInit();
+      FntInit("assets/font/font.png");
 
-  	while(1)
-  	{
-       	g2dClear(G2D_RGBA(84, 192, 201, 0));
-       	Pad_Update();
+      loadChart("assets/chart/thorns-hard.json");
+      readInitialData();
+      Section new_section = readChartData(0, 0);
+      while(1)
+      {
+           g2dClear(GREEN);
+           Pad_Update();
+        
+        parser.songPos += 100;
+           parser.curStep = (parser.songPos/parser.step_crochet) / 12;
 
-  //     	PrintMSG(0, 0, "asd");
+ //          readChart(&new_section);
+        PrintMSG(0, 0, "%d", parser.curStep);
 
-		g2dFlip(G2D_VSYNC);
-  	}
+           switch (game.gamestate)
+           {
 
-  	Pad_Shutdown();
-  	//FntFree();
+               case 4: //error
+                   ErrMSG();
+               break;
+           }
 
-  	return 0;
+        g2dFlip(G2D_VSYNC);
+      }
+
+      Pad_Shutdown();
+      FntFree();
+
+      return 0;
 }
