@@ -18,36 +18,35 @@ int main()
     setupcallbacks();
     Pad_Init();
     Wav_Init();
-      g2dInit();
-      FntInit("assets/font/font.png");
+    g2dInit();
+    FntInit("assets/font/font.png");
 
-      loadChart("assets/chart/thorns-hard.json");
-      readInitialData();
-      Section new_section = readChartData(0, 0);
-      while(1)
-      {
-           g2dClear(GREEN);
-           Pad_Update();
+    loadChart("assets/chart/thorns-hard.json");
+    readInitialData();
+    Section new_section = readChartData(0, 0);
+    while(1)
+    {
+        g2dClear(GREEN);
+        Pad_Update();
         
         parser.songPos += 100;
-           parser.curStep = (parser.songPos/parser.step_crochet) / 12;
+        parser.curStep = (parser.songPos/parser.step_crochet) / 12;
 
  //          readChart(&new_section);
         PrintMSG(0, 0, "%d", parser.curStep);
 
-           switch (game.gamestate)
-           {
-
-               case 4: //error
-                   ErrMSG();
-               break;
-           }
+        switch (game.gamestate)
+        {
+            case 4: //error
+                ErrMSG();
+            break;
+        }
 
         g2dFlip(G2D_VSYNC);
-      }
+    }
 
-      Pad_Shutdown();
-      FntFree();
+    Pad_Shutdown();
+    FntFree();
 
-      return 0;
+    return 0;
 }
