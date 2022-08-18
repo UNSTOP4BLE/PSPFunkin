@@ -14,6 +14,17 @@ typedef struct
 	bool altAnim;
 } Section;
 
+typedef struct 
+{
+	int curStep;
+	int songPos;
+	double initbpm, initspeed;
+	double crochet;
+	double step_crochet;
+} Parser;
+
+extern Parser parser;
+
 void loadChart(const char *filename);
 void readInitialData();
 Section readChartData(int thesection, int notes);

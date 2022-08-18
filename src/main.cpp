@@ -19,15 +19,19 @@ int main()
   	g2dInit();
   	FntInit("assets/font/font.png");
 
-  	loadChart("assets/chart/bopeebo.json");
+  	loadChart("assets/chart/thorns-hard.json");
   	readInitialData();
   	Section new_section = readChartData(0, 0);
   	while(1)
   	{
        	g2dClear(GREEN);
        	Pad_Update();
+		
+		parser.songPos += 100;
+       	parser.curStep = (parser.songPos/parser.step_crochet) / 12;
 
-       	readChart(&new_section);
+ //      	readChart(&new_section);
+		PrintMSG(0, 0, "%d", parser.curStep);
 
        	switch (game.gamestate)
        	{

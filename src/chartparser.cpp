@@ -4,10 +4,9 @@
 #include "error.h"
 #include "game.h"
 
-double initbpm, initspeed;
-double crochet;
-double step_crochet;
 Json::Value chart;
+
+Parser parser;
 
 static void LoadJson(std::string filename, Json::Value *data) 
 {
@@ -30,10 +29,10 @@ void loadChart(const char *filename)
 
 void readInitialData()
 {
-	initspeed = chart["song"]["speed"].asDouble();	
-	initbpm = chart["song"]["bpm"].asDouble();	
-	crochet = (60.0 / initbpm) * 1000.0;
-	step_crochet = crochet / 4;
+	parser.initspeed = chart["song"]["speed"].asDouble();	
+	parser.initbpm = chart["song"]["bpm"].asDouble();	
+	parser.crochet = (60.0 / parser.initbpm) * 1000.0;
+	parser.step_crochet = parser.crochet / 4;
 }
 
 Section readChartData(int thesection, int notes)
