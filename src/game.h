@@ -4,6 +4,7 @@
 typedef struct 
 {
 	int gamestate;
+	double deltaTime;
 } Game;
 
 extern Game game;

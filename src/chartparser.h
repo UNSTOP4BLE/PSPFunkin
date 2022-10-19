@@ -17,10 +17,11 @@ typedef struct
 typedef struct 
 {
 	int curStep;
-	int songPos;
+	int songTime;
+	int noteScroll;
 	double initbpm, initspeed;
-	double crochet;
-	double step_crochet;
+	int crochet;
+	int step_crochet;
 } Parser;
 
 extern Parser parser;
