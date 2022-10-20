@@ -14,7 +14,33 @@
 
 PSP_MODULE_INFO("PSPFunkin", 0, 1, 0);
  
-double next_scroll;
+int notePos[2][8] = {
+	//x
+	{27,  67,  107, 147, //opponent	
+     294, 334, 374, 414}, //player
+	//y
+	{14,  14,  14,  14, //opponent	
+     14,  14,  14,  14}, //player
+};
+
+void DrawDummyNotes(g2dTexture *note)
+{
+	Rect img = {0, 1, 39, 39};
+	Rect disp = {0, 0, 39, 39};
+
+	for (int i = 0; i < 8; i++)
+	{
+		img.x += 1;
+		if (i != 0)
+			img.x += 39;
+		if (i == 4) //loop the image rect back for player notes
+			img.x = 1;
+		disp.x = notePos[0][i];
+		disp.y = notePos[1][i];
+		DrawG2DTex(note, &img, &disp, true, 0, 200);
+	}
+}
+
 int main()
 {
     setupcallbacks();
@@ -25,34 +51,29 @@ int main()
 
     loadChart("assets/chart/bopeebo.json");
     readInitialData();
-    Section new_section = readChartData(0, 0);
+    Section section;
+	section.lengthInSteps = 16;
 
-
-	parser.noteScroll = -30 * 12;
-	parser.songTime = parser.noteScroll / parser.step_crochet;
+	//parser.noteScroll = -5000;
 
     Wav *bopeebo = Wav_Load("assets/Vocals.wav");
     Wav_Play(bopeebo);
 
-
+	g2dTexture* notetex = g2dTexLoad("assets/hud.png", G2D_SWIZZLE);
     while(1)
     {
         auto last = std::chrono::high_resolution_clock::now();
         g2dClear(GREEN);
         Pad_Update();  
 
-		parser.songTime += 100;
-		next_scroll = (parser.songTime * parser.step_crochet) >> 10;
-					parser.noteScroll = next_scroll;
+        section = readChartData(parser.curStep / section.lengthInSteps, 0);
 
-		parser.curStep = (parser.noteScroll >> 10);	
-		if (parser.noteScroll < 0)
-						parser.curStep -= 11;
-					parser.curStep /= 12;
-		
+        parser.songPos += (0.017) * 1000;
+        parser.curStep = parser.songPos / parser.step_crochet;
  //          readChart(&new_section);
-        PrintMSG(0, 0, "%d", parser.curStep );
+        PrintMSG(0, 0, "%d %d %f %f", parser.curStep, parser.songPos, parser.step_crochet, game.deltaTime);
 
+        DrawDummyNotes(notetex);
 
         if ((parser.curStep % 32) == 31) 
         	PrintMSG(0, 10, "PEACE");
