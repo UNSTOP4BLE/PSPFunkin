@@ -35,22 +35,25 @@ void readInitialData()
 	parser.step_crochet = parser.crochet / 4;
 }
 
-Section readChartData(int thesection, int notes)
+static Section section;
+Section readChartData(int thesection)
 {
-	Section section;
-	section.sectionNotes[0] = chart["song"]["notes"][thesection]["sectionNotes"][notes][0].asDouble(); //note position in ms
-	section.sectionNotes[1] = chart["song"]["notes"][thesection]["sectionNotes"][notes][1].asDouble(); //type
-	section.sectionNotes[2] = chart["song"]["notes"][thesection]["sectionNotes"][notes][2].asDouble(); //sustain length in ms
-	section.lengthInSteps = chart["song"]["notes"][thesection]["lengthInSteps"].asInt();
+	for (int i = 0; i < (int)chart["song"]["notes"][thesection]["sectionNotes"].size(); i++)
+	{
+		section.sectionNotes[0] = chart["song"]["notes"][thesection]["sectionNotes"][i][0].asDouble(); //note position in ms
+		section.sectionNotes[1] = chart["song"]["notes"][thesection]["sectionNotes"][i][1].asInt(); //type
+		section.sectionNotes[2] = chart["song"]["notes"][thesection]["sectionNotes"][i][2].asDouble(); //sustain length in ms
+	}
+	section.lengthInSteps = chart["song"]["notes"][thesection]["lengthInSteps"].asInt(); //section length in steps
 	section.mustHitSection = chart["song"]["notes"][thesection]["mustHitSection"].asBool(); //is it a opponent section
 	section.altAnim = chart["song"]["notes"][thesection]["altAnim"].asBool(); //play a alt animation
 
 	return section;
 }
 
-
-#include "psp/font.h"
-void readChart(Section *section)
+void tickStep()
 {
-	PrintMSG(0, 0, "%f", section->sectionNotes[0]);
+    parser.songPos += (0.017) * 1000;
+    parser.curStep = parser.songPos / parser.step_crochet;
+
 }

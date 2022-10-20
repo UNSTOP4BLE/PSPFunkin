@@ -27,7 +27,7 @@ extern Parser parser;
 
 void loadChart(const char *filename);
 void readInitialData();
-Section readChartData(int thesection, int notes);
-void readChart(Section *section);
+Section readChartData(int thesection);
+void tickStep();
 
 #endif

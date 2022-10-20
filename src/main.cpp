@@ -41,6 +41,26 @@ void DrawDummyNotes(g2dTexture *note)
 	}
 }
 
+void DrawNote(g2dTexture *note, double pos, int type, double sus, bool musthit)
+{
+	Rect notes_img[4] = {  
+		{1, 1, 39, 39}, //left
+		{41, 1, 39, 39}, //down
+		{81, 1, 39, 39}, //up
+		{121, 1, 39, 39} //right
+	};
+
+	Rect disp = {0, 0, 39, 39};
+
+	if (musthit)
+		disp.x = notePos[0][4 + type];
+	else
+		disp.x = notePos[0][type];
+
+	disp.y = (parser.songPos - pos) / parser.initspeed;
+	DrawG2DTex(note, &notes_img[type], &disp, true, 0, 200);
+}
+
 int main()
 {
     setupcallbacks();
@@ -49,13 +69,24 @@ int main()
     g2dInit();
     FntInit("assets/font/font.png");
 
+
+
+
+
+
+
+
     loadChart("assets/chart/bopeebo.json");
     readInitialData();
     Section section;
 	section.lengthInSteps = 16;
 
-	//parser.noteScroll = -5000;
 
+
+
+
+
+	//parser.noteScroll = -5000;
     Wav *bopeebo = Wav_Load("assets/Vocals.wav");
     Wav_Play(bopeebo);
 
@@ -66,17 +97,45 @@ int main()
         g2dClear(GREEN);
         Pad_Update();  
 
-        section = readChartData(parser.curStep / section.lengthInSteps, 0);
 
-        parser.songPos += (0.017) * 1000;
-        parser.curStep = parser.songPos / parser.step_crochet;
- //          readChart(&new_section);
-        PrintMSG(0, 0, "%d %d %f %f", parser.curStep, parser.songPos, parser.step_crochet, game.deltaTime);
 
+
+        tickStep();
+
+
+
+
+
+
+
+
+
+
+
+
+        section = readChartData(parser.curStep / section.lengthInSteps);
+
+       //PrintMSG(0, 0, "%d %d %f %fsection%d musthit %d", parser.curStep, parser.songPos, parser.step_crochet, game.deltaTime, parser.curStep/16, section.mustHitSection);
+
+        DrawNote(notetex, section.sectionNotes[0], section.sectionNotes[1], section.sectionNotes[2], section.mustHitSection);
         DrawDummyNotes(notetex);
 
         if ((parser.curStep % 32) == 31) 
         	PrintMSG(0, 10, "PEACE");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         switch (game.gamestate)
         {
             case 4: //error
@@ -89,7 +148,6 @@ int main()
         auto current = std::chrono::high_resolution_clock::now();
 		game.deltaTime = std::chrono::duration_cast<std::chrono::duration<double, std::ratio<1>>>(current - last).count();
 		last = current;
-
     }
 
     Pad_Shutdown();
