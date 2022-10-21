@@ -57,7 +57,8 @@ void DrawNote(g2dTexture *note, double pos, int type, double sus, bool musthit)
 	else
 		disp.x = notePos[0][type];
 
-	disp.y = (parser.songPos - pos) / parser.initspeed;
+	//disp.y = ((pos - parser.songPos) * parser.initspeed * 0.25);
+	disp.y = ((pos - parser.songPos) * parser.initspeed * 0.25);
 	DrawG2DTex(note, &notes_img[type], &disp, true, 0, 200);
 }
 
@@ -82,10 +83,6 @@ int main()
 	section.lengthInSteps = 16;
 
 
-
-
-
-
 	//parser.noteScroll = -5000;
     Wav *bopeebo = Wav_Load("assets/Vocals.wav");
     Wav_Play(bopeebo);
@@ -102,20 +99,9 @@ int main()
 
         tickStep();
 
-
-
-
-
-
-
-
-
-
-
-
         section = readChartData(parser.curStep / section.lengthInSteps);
 
-       //PrintMSG(0, 0, "%d %d %f %fsection%d musthit %d", parser.curStep, parser.songPos, parser.step_crochet, game.deltaTime, parser.curStep/16, section.mustHitSection);
+        PrintMSG(0, 0, "%d %d %f %fsection%d musthit %d", parser.curStep, parser.songPos, parser.step_crochet, game.deltaTime, parser.curStep/16, section.mustHitSection);
 
         DrawNote(notetex, section.sectionNotes[0], section.sectionNotes[1], section.sectionNotes[2], section.mustHitSection);
         DrawDummyNotes(notetex);

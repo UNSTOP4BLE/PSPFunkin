@@ -1,6 +1,7 @@
 
 *.PBP
 *.SFO
+*.prx
 *.elf
 *.o
 *.sav

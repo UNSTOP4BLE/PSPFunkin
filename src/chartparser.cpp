@@ -29,6 +29,7 @@ void loadChart(const char *filename)
 
 void readInitialData()
 {
+	//read initial data from the json
 	parser.initspeed = chart["song"]["speed"].asDouble();	
 	parser.initbpm = chart["song"]["bpm"].asDouble();	
 	parser.crochet = (60.0 / parser.initbpm) * 1000.0;
@@ -36,13 +37,22 @@ void readInitialData()
 }
 
 static Section section;
+int notecount;
+
 Section readChartData(int thesection)
 {
-	for (int i = 0; i < (int)chart["song"]["notes"][thesection]["sectionNotes"].size(); i++)
+	if (notecount > (int)chart["song"]["notes"][thesection]["sectionNotes"].size())
+		notecount = 0;
+	else
 	{
-		section.sectionNotes[0] = chart["song"]["notes"][thesection]["sectionNotes"][i][0].asDouble(); //note position in ms
-		section.sectionNotes[1] = chart["song"]["notes"][thesection]["sectionNotes"][i][1].asInt(); //type
-		section.sectionNotes[2] = chart["song"]["notes"][thesection]["sectionNotes"][i][2].asDouble(); //sustain length in ms
+		if (parser.songPos + 2000 >= chart["song"]["notes"][thesection]["sectionNotes"][notecount][0].asDouble()
+			&& chart["song"]["notes"][thesection]["sectionNotes"][notecount][1].asDouble() != -1)
+		{
+			section.sectionNotes[0] = chart["song"]["notes"][thesection]["sectionNotes"][notecount][0].asDouble(); //note position in ms
+			section.sectionNotes[1] = chart["song"]["notes"][thesection]["sectionNotes"][notecount][1].asInt(); //type
+			section.sectionNotes[2] = chart["song"]["notes"][thesection]["sectionNotes"][notecount][2].asDouble(); //sustain length in ms
+		}
+		notecount ++;
 	}
 	section.lengthInSteps = chart["song"]["notes"][thesection]["lengthInSteps"].asInt(); //section length in steps
 	section.mustHitSection = chart["song"]["notes"][thesection]["mustHitSection"].asBool(); //is it a opponent section
