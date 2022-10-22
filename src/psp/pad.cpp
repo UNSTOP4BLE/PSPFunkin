@@ -7,7 +7,6 @@
 typedef struct Input
 {
 	SceCtrlData	  Input;
-	Vec2f		  Stick;
 	unsigned long Pressed;
 	unsigned long Held;
 } Input;
@@ -45,13 +44,7 @@ bool Pad_Init (void)
 void Pad_Update (void)
 {
 	sceCtrlPeekBufferPositive (&Pad.Input, 1);
-
-	if (Pad.Input.Lx > 103 && Pad.Input.Lx < 151)	Pad.Stick.x	= 0.0f;
-	else												Pad.Stick.x	= (Pad.Input.Lx - 128.0f) / 128.0f;
-
-	if (Pad.Input.Ly > 103 && Pad.Input.Ly < 151)	Pad.Stick.y	= 0.0f;
-	else												Pad.Stick.y	= (Pad.Input.Ly - 128.0f) / 128.0f;
-
+	
 	AddInput (PSP_CTRL_SELECT);
 	AddInput (PSP_CTRL_START);
 	AddInput (PSP_CTRL_UP);
@@ -80,9 +73,4 @@ bool Pad_Pressed (const unsigned long Button)
 bool Pad_Held (const unsigned long Button)
 {
 	return	((Pad.Held & Button) != 0);
-}
-
-Vec2f* PadGetStick (void)
-{
-	return &Pad.Stick;
 }

@@ -23,10 +23,14 @@ int notePos[2][8] = {
      14,  14,  14,  14}, //player
 };
 
+double elapsedTime[4];
 void DrawDummyNotes(g2dTexture *note)
 {
 	Rect img = {0, 1, 39, 39};
+	Rect imganim[4];
 	Rect disp = {0, 0, 39, 39};
+
+	bool checkInput[4] = {Pad_Held(PSP_CTRL_LEFT | PSP_CTRL_SQUARE), Pad_Held(PSP_CTRL_DOWN | PSP_CTRL_CROSS | PSP_CTRL_LTRIGGER), Pad_Held(PSP_CTRL_UP | PSP_CTRL_TRIANGLE | PSP_CTRL_RTRIGGER), Pad_Held(PSP_CTRL_RIGHT | PSP_CTRL_CIRCLE)};
 
 	for (int i = 0; i < 8; i++)
 	{
@@ -37,7 +41,37 @@ void DrawDummyNotes(g2dTexture *note)
 			img.x = 1;
 		disp.x = notePos[0][i];
 		disp.y = notePos[1][i];
-		DrawG2DTex(note, &img, &disp, true, 0, 200);
+
+		//calculate animation rects
+		if (i < 4 && imganim[i].w == 0)
+		{
+			imganim[i].w = 39;
+			imganim[i].h = 39;
+			imganim[i].x += 1;
+			if (i != 0)
+				imganim[i].x += imganim[i-1].x + 39;
+		}
+
+		//draw opponent notes
+		if (i < 4)
+			DrawG2DTex(note, &img, &disp, true, 0, 200);
+		else //draw player notes
+		{
+			if (checkInput[i-4]) //play animation of the hit note
+			{
+				elapsedTime[i-4] += game.deltaTime;
+				if (elapsedTime[i-4] < 5*game.deltaTime)
+					imganim[i-4].y = 41;
+				else
+					imganim[i-4].y = 81;
+				DrawG2DTex(note, &imganim[i-4], &disp, true, 0, 200); //draw ghost note
+			}
+			else
+			{
+				elapsedTime[i-4] = 0;
+				DrawG2DTex(note, &img, &disp, true, 0, 200); //draw normal note
+			}
+		}
 	}
 }
 
