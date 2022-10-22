@@ -23,9 +23,9 @@ int notePos[2][8] = {
      14,  14,  14,  14}, //player
 };
 
-double elapsedTime[4];
+double elapsedTime[2][4];
 Rect imganim[4];
-void DrawDummyNotes(g2dTexture *note)
+void DrawDummyNotes(g2dTexture *note, bool hitnote[4])
 {
 	Rect img = {0, 1, 39, 39};
 	Rect disp = {0, 0, 39, 39};
@@ -57,18 +57,30 @@ void DrawDummyNotes(g2dTexture *note)
 			DrawG2DTex(note, &img, &disp, true, 0, 200);
 		else //draw player notes
 		{
-			if (checkInput[i-4]) //play animation of the hit note
+			if (checkInput[i-4] && !hitnote[i-4]) //play animation of the ghost note
 			{
-				elapsedTime[i-4] += game.deltaTime;
-				if (elapsedTime[i-4] < 5*game.deltaTime)
+				elapsedTime[0][i-4] += game.deltaTime;
+				if (elapsedTime[0][i-4] < 5*game.deltaTime)
 					imganim[i-4].y = 41;
 				else
 					imganim[i-4].y = 81;
 				DrawG2DTex(note, &imganim[i-4], &disp, true, 0, 200); //draw ghost note
 			}
+			else if (checkInput[i-4] && hitnote[i-4]) //play animation of the hit note
+			{
+				elapsedTime[1][i-4] += game.deltaTime;
+				if (elapsedTime[1][i-4] < 5*game.deltaTime)
+					imganim[i-4].y = 161;
+				else if (elapsedTime[1][i-4] < 10*game.deltaTime)
+					imganim[i-4].y = 201;
+				else
+					imganim[i-4].y = 241;
+				DrawG2DTex(note, &imganim[i-4], &disp, true, 0, 200); //draw ghost note
+			}
 			else
 			{
-				elapsedTime[i-4] = 0;
+				elapsedTime[0][i-4] = 0;
+				elapsedTime[1][i-4] = 0;
 				DrawG2DTex(note, &img, &disp, true, 0, 200); //draw normal note
 			}
 		}
@@ -78,16 +90,16 @@ void DrawDummyNotes(g2dTexture *note)
 void DrawNote(g2dTexture *note, double pos, int type, double sus, bool musthit)
 {
 	Rect notes_img[4] = {  
-		{1, 1, 39, 39}, //left
-		{41, 1, 39, 39}, //down
-		{81, 1, 39, 39}, //up
-		{121, 1, 39, 39} //right
+		{1, 121, 39, 39}, //left
+		{41, 121, 39, 39}, //down
+		{81, 121, 39, 39}, //up
+		{121, 121, 39, 39} //right
 	};
 
 	Rect disp = {0, 0, 39, 39};
 
 	if (musthit)
-		disp.x = notePos[0][4 + type];
+		disp.x = notePos[0][4 + type]; //players note
 	else
 		disp.x = notePos[0][type];
 
@@ -137,8 +149,9 @@ int main()
 
         PrintMSG(0, 0, "%d %d %f %fsection%d musthit %d", parser.curStep, parser.songPos, parser.step_crochet, game.deltaTime, parser.curStep/16, section.mustHitSection);
 
+        bool test[4] = {0, 0, 1, 0};
         DrawNote(notetex, section.sectionNotes[0], section.sectionNotes[1], section.sectionNotes[2], section.mustHitSection);
-        DrawDummyNotes(notetex);
+        DrawDummyNotes(notetex, test);
 
         if ((parser.curStep % 32) == 31) 
         	PrintMSG(0, 10, "PEACE");
