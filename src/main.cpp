@@ -24,10 +24,10 @@ int notePos[2][8] = {
 };
 
 double elapsedTime[4];
+Rect imganim[4];
 void DrawDummyNotes(g2dTexture *note)
 {
 	Rect img = {0, 1, 39, 39};
-	Rect imganim[4];
 	Rect disp = {0, 0, 39, 39};
 
 	bool checkInput[4] = {Pad_Held(PSP_CTRL_LEFT | PSP_CTRL_SQUARE), Pad_Held(PSP_CTRL_DOWN | PSP_CTRL_CROSS | PSP_CTRL_LTRIGGER), Pad_Held(PSP_CTRL_UP | PSP_CTRL_TRIANGLE | PSP_CTRL_RTRIGGER), Pad_Held(PSP_CTRL_RIGHT | PSP_CTRL_CIRCLE)};
