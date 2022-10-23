@@ -141,7 +141,7 @@
 typedef struct 
 {
 	float x,y,w,h;
-} FloatRect;
+} FRect;
 
 typedef struct
 {
@@ -816,5 +816,6 @@ void g2dResetScissor();
 void g2dSetScissor(int x, int y, int w, int h);
 
 void DrawG2DTex(g2dTexture* tex, Rect *Img, Rect *Disp, bool linear, float angle, int alpha);
+void DrawFG2DTex(g2dTexture* tex, Rect *Img, FRect *Disp, bool linear, float angle, int alpha);
 
 #endif

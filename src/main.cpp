@@ -69,9 +69,9 @@ void DrawDummyNotes(g2dTexture *note, bool hitnote[4])
 			else if (checkInput[i-4] && hitnote[i-4]) //play animation of the hit note
 			{
 				elapsedTime[1][i-4] += game.deltaTime;
-				if (elapsedTime[1][i-4] < 5*game.deltaTime)
+				if (elapsedTime[1][i-4] < 3*game.deltaTime)
 					imganim[i-4].y = 161;
-				else if (elapsedTime[1][i-4] < 10*game.deltaTime)
+				else if (elapsedTime[1][i-4] < 4*game.deltaTime)
 					imganim[i-4].y = 201;
 				else
 					imganim[i-4].y = 241;
@@ -96,7 +96,7 @@ void DrawNote(g2dTexture *note, double pos, int type, double sus, bool musthit)
 		{121, 121, 39, 39} //right
 	};
 
-	Rect disp = {0, 0, 39, 39};
+	FRect disp = {0, 0, 39, 39};
 
 	if (musthit)
 		disp.x = notePos[0][4 + type]; //players note
@@ -104,8 +104,8 @@ void DrawNote(g2dTexture *note, double pos, int type, double sus, bool musthit)
 		disp.x = notePos[0][type];
 
 	//disp.y = ((pos - parser.songPos) * parser.initspeed * 0.25);
-	disp.y = ((pos - parser.songPos) * parser.initspeed * 0.25);
-	DrawG2DTex(note, &notes_img[type], &disp, true, 0, 200);
+	disp.y = ((pos - parser.songPos) * parser.initspeed * 0.25 / 12);
+	DrawFG2DTex(note, &notes_img[type], &disp, true, 0, 200);
 }
 
 int main()
@@ -115,8 +115,6 @@ int main()
     Wav_Init();
     g2dInit();
     FntInit("assets/font/font.png");
-
-
 
 
 
@@ -153,8 +151,7 @@ int main()
         DrawNote(notetex, section.sectionNotes[0], section.sectionNotes[1], section.sectionNotes[2], section.mustHitSection);
         DrawDummyNotes(notetex, test);
 
-        if ((parser.curStep % 32) == 31) 
-        	PrintMSG(0, 10, "PEACE");
+        	PrintMSG(0, 10, "%d", bopeebo->dataLength);
 
 
 

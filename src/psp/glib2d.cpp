@@ -1403,4 +1403,21 @@ void DrawG2DTex(g2dTexture* tex, Rect *Img, Rect *Disp, bool linear, float angle
 	g2dEnd();
 }
 
+void DrawFG2DTex(g2dTexture* tex, Rect *Img, FRect *Disp, bool linear, float angle, int alpha)
+{
+	g2dBeginRects(tex);
+	g2dSetCropXY(Img->x, Img->y);
+	g2dSetCropWH(Img->w, Img->h);
+	g2dSetCoordXY(Disp->x, Disp->y);
+	g2dSetScaleWH(Disp->w, Disp->h);
+	g2dSetTexLinear(linear);
+    g2dSetRotationRad(angle);
+	if (alpha >= 0)
+		g2dSetColor(G2D_MODULATE(0xFFFFFFFF, 255, alpha));
+	else
+		g2dSetColor(G2D_MODULATE(0xFFFFFFFF, 255, 0));
+	g2dAdd();
+	g2dEnd();
+}
+
 // EOF

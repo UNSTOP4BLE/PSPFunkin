@@ -65,5 +65,4 @@ void tickStep()
 {
     parser.songPos += (0.017) * 1000;
     parser.curStep = parser.songPos / parser.step_crochet;
-
-}
+}	
