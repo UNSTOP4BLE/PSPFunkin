@@ -41,7 +41,7 @@ int notecount;
 
 Section readChartData(int thesection)
 {
-	if (notecount > (int)chart["song"]["notes"][thesection]["sectionNotes"].size())
+	if (notecount >= (int)chart["song"]["notes"][thesection]["sectionNotes"].size())
 		notecount = 0;
 	else
 	{
