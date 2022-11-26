@@ -64,5 +64,5 @@ Section readChartData(int thesection)
 void tickStep(Wav* theWav)
 {
     parser.songPos = Wav_GetTime(theWav);
-    parser.curStep = (parser.songPos*1000 / parser.step_crochet);
+    parser.curStep = (parser.songPos / parser.step_crochet);
 }	

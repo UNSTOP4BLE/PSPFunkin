@@ -5,6 +5,7 @@
 #include <stdlib.h>
 
 #include "wav.h"
+#include "../chartparser.h"
 #include "audio.h"
 
 #define SND_MAXSLOT 16
@@ -112,8 +113,7 @@ static void wavout_snd_callback(void *_buf, int _reqn, void *pdata)
 			wi = &wavout_snd_wavinfo[slot];
 			frac = wi->playPtr_frac + wi->rateRatio;
 			wi->playPtr = ptr = wi->playPtr + (frac>>16);
-			wi->playPtr_frac = ptr;
-			len[slot] = wi->playPtr_frac;
+			wi->playPtr_frac = (frac & 0xffff);
 
 			if (ptr >= wi->sampleCount)
 			{
@@ -405,5 +405,6 @@ bool Wav_Playing()
 
 int Wav_GetTime(Wav *theWav)
 {
-	return (len[theWav->slot] / theWav->sampleRate) * 1000;
+	len[theWav->slot] ++;
+	return (len[theWav->slot]/60) * 1000;
 }
