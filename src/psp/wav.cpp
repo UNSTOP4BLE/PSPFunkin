@@ -90,6 +90,7 @@ signed long RefcountRelease( const void* data )
 	return(0);
 }
 
+int len[SND_MAXSLOT];
 static void wavout_snd_callback(void *_buf, int _reqn, void *pdata)
 {
 	int i,slot;
@@ -111,7 +112,8 @@ static void wavout_snd_callback(void *_buf, int _reqn, void *pdata)
 			wi = &wavout_snd_wavinfo[slot];
 			frac = wi->playPtr_frac + wi->rateRatio;
 			wi->playPtr = ptr = wi->playPtr + (frac>>16);
-			wi->playPtr_frac = (frac & 0xffff);
+			wi->playPtr_frac = ptr;
+			len[slot] = wi->playPtr_frac;
 
 			if (ptr >= wi->sampleCount)
 			{
@@ -237,6 +239,7 @@ bool Wav_Play(Wav *theWav)
 	wavout_snd_playing[i] = 1;
 	wavout_snd_id[i] = theWav->id;
 	wid->bitPerSample = theWav->bitPerSample;
+	theWav->slot = i;
 
 	return(1);
 }
@@ -398,4 +401,9 @@ bool Wav_Playing()
 		return true;
 	else
 		return false;
+}
+
+int Wav_GetTime(Wav *theWav)
+{
+	return (len[theWav->slot] / theWav->sampleRate) * 1000;
 }

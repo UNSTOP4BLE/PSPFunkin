@@ -14,6 +14,7 @@ typedef struct
         void *data; /**< A pointer to the actual WAV data */
         int id; /**<  The ID of the WAV */
         unsigned long bitPerSample; /**<  The bit rate of the WAV */
+		int slot;
 } Wav;
 
 bool Wav_Init();
@@ -24,5 +25,6 @@ void Wav_Stop(Wav *theWav);
 void Wav_StopAll();
 void Wav_SetLoop(Wav *theWav, int loop);
 bool Wav_Playing();
+int Wav_GetTime(Wav *theWav);
 
 #endif 

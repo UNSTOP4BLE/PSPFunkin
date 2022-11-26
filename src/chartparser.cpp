@@ -2,6 +2,7 @@
 #include <json/json.h>
 #include "chartparser.h"
 #include "error.h"
+#include "psp/wav.h"
 #include "game.h"
 
 Json::Value chart;
@@ -54,15 +55,14 @@ Section readChartData(int thesection)
 		}
 		notecount ++;
 	}
-	section.lengthInSteps = chart["song"]["notes"][thesection]["lengthInSteps"].asInt(); //section length in steps
 	section.mustHitSection = chart["song"]["notes"][thesection]["mustHitSection"].asBool(); //is it a opponent section
 	section.altAnim = chart["song"]["notes"][thesection]["altAnim"].asBool(); //play a alt animation
 
 	return section;
 }
 
-void tickStep()
+void tickStep(Wav* theWav)
 {
-    parser.songPos += (0.017) * 1000;
-    parser.curStep = parser.songPos / parser.step_crochet;
+    parser.songPos = Wav_GetTime(theWav);
+    parser.curStep = (parser.songPos*1000 / parser.step_crochet);
 }	

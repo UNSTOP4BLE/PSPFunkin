@@ -25,7 +25,7 @@ int notePos[2][8] = {
 
 double elapsedTime[2][4];
 Rect imganim[4];
-void DrawDummyNotes(g2dTexture *note, bool hitnote[4])
+void DrawDummyNotes(g2dTexture *note, bool *hitnote)
 {
 	Rect img = {0, 1, 39, 39};
 	Rect disp = {0, 0, 39, 39};
@@ -124,7 +124,6 @@ int main()
     loadChart("assets/chart/bopeebo.json");
     readInitialData();
     Section section;
-	section.lengthInSteps = 16;
 
 
 	//parser.noteScroll = -5000;
@@ -141,17 +140,17 @@ int main()
 
 
 
-        tickStep();
+        tickStep(bopeebo);
 
-        section = readChartData(parser.curStep / section.lengthInSteps);
 
-        PrintMSG(0, 0, "%d %d %f %fsection%d musthit %d", parser.curStep, parser.songPos, parser.step_crochet, game.deltaTime, parser.curStep/16, section.mustHitSection);
+        section = readChartData(parser.curStep / 16);
+
+        PrintMSG(0, 0, "%d", Wav_GetTime(bopeebo));
 
         bool test[4] = {0, 0, 1, 0};
         DrawNote(notetex, section.sectionNotes[0], section.sectionNotes[1], section.sectionNotes[2], section.mustHitSection);
-        DrawDummyNotes(notetex, test);
+        DrawDummyNotes(notetex, &test[0]);
 
-        	PrintMSG(0, 10, "%d", bopeebo->dataLength);
 
 
 
