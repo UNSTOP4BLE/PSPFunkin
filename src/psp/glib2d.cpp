@@ -18,6 +18,8 @@
  */
 
 #include "glib2d.h"
+#include "../error.h"
+#include "../game.h"
 
 #include <pspkernel.h>
 #include <pspdisplay.h>
@@ -1315,9 +1317,9 @@ g2dTexture* g2dTexLoad(const char* path, g2dTex_Mode mode)
     FILE *fp = NULL;
 
     if (path == NULL)
-        return NULL;
+    	goto error;
     if ((fp = fopen(path, "rb")) == NULL)
-        return NULL;
+    	goto error;
 
 #ifdef USE_PNG
     if (strstr(path, ".png"))
@@ -1366,6 +1368,8 @@ error:
 
     g2dTexFree(&tex);
 
+	sprintf(error.message, "FAILED TO FIND IMAGE: %s", path);
+    game.gamestate = 4;
     return NULL;
 }
 
