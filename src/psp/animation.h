@@ -12,10 +12,12 @@ typedef struct
 typedef struct
 {
 	float speed, time;
-	float angle;
+	float angle = 0;
 	int curframe;
+	int size;
 	int alpha = 255;
-	bool linear;
+	bool linear = false;
+	bool visible = true;
 	bool tick;
 	AnimFrames *frames;
 

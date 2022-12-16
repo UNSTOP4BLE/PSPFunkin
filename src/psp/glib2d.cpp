@@ -1316,10 +1316,11 @@ g2dTexture* g2dTexLoad(const char* path, g2dTex_Mode mode)
     g2dTexture *tex = NULL;
     FILE *fp = NULL;
 
-    if (path == NULL)
-    	goto error;
     if ((fp = fopen(path, "rb")) == NULL)
+    {
+		sprintf(error.message, "FAILED TO FIND IMAGE AT %s", path);
     	goto error;
+    }
 
 #ifdef USE_PNG
     if (strstr(path, ".png"))
@@ -1336,14 +1337,20 @@ g2dTexture* g2dTexLoad(const char* path, g2dTex_Mode mode)
 #endif
 
     if (tex == NULL)
+    {
+		sprintf(error.message, "TEXTURE IS NULL: %s", path);
         goto error;
+	}
 
     fclose(fp);
     fp = NULL;
 
     // The PSP can't draw 512*512+ textures.
     if (tex->w > 512 || tex->h > 512)
+    {
+		sprintf(error.message, "IMAGE RESOLUTION IS LARGER THAN 512x512: %s", path);
         goto error;
+    }
 
     // Swizzling is useless with small textures.
     if ((mode & G2D_SWIZZLE) && (tex->w >= 16 || tex->h >= 16))
@@ -1368,7 +1375,6 @@ error:
 
     g2dTexFree(&tex);
 
-	sprintf(error.message, "FAILED TO FIND IMAGE: %s", path);
     game.gamestate = 4;
     return NULL;
 }

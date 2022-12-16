@@ -26,21 +26,19 @@ int main()
 
 	Anim_OBJECT dad;
 
-	g2dTexture *tex[2] = {
-		
-	};
-
+	g2dTexture *tex[2];
 	tex[0] = g2dTexLoad("assets/characters/dad/sheet0.png", G2D_SWIZZLE);
 	tex[1] = g2dTexLoad("assets/characters/dad/sheet1.png", G2D_SWIZZLE);
 	
-	AnimFrames left[2] =
+	AnimFrames left[] =
 	{
 		{tex[0], 0, 0, 118, 200, 0, 0},
-		{tex[1], 118, 0, 114, 200, 0, 0}
+		{tex[0], 118, 0, 114, 200, 0, 0}
 	};
 
 
     AnimOBJECT_SetAnim(&dad, &left[0], 20);
+
     while(1)
     {
         auto last = std::chrono::high_resolution_clock::now();
@@ -51,7 +49,7 @@ int main()
         	AnimOBJECT_SetAnim(&dad, &left[0], 20);
 
         AnimOBJECT_Tick(&dad);
-       // AnimOBJECT_Draw(&dad, 20, 20);
+        AnimOBJECT_Draw(&dad, 20, 20);
 
         switch (game.gamestate)
         {

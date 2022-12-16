@@ -1,7 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "../game.h"
+#include "../error.h"
 #include "animation.h"
+#include "font.h"
 
 void AnimOBJECT_SetAnim(Anim_OBJECT *obj, AnimFrames *frames, float speed)
 {
@@ -13,11 +15,20 @@ void AnimOBJECT_SetAnim(Anim_OBJECT *obj, AnimFrames *frames, float speed)
 
 void AnimOBJECT_Tick(Anim_OBJECT *obj)
 {
+	if (obj->frames[obj->curframe].tex == NULL)
+	{
+		sprintf(error.message, "ANIMATION DATA IS NULL");
+		game.gamestate = 4;
+	}
 	if (obj->tick)
 	{
 		obj->time += obj->speed;
-		obj->curframe = obj->time / 10;
+		obj->curframe = (int)(obj->time / 100);
+		//if (obj->frames[obj->curframe] == NULL)
+		//	obj->curframe -= 1;
 	}
+	else 
+		obj->tick = false;
 }
 
 void AnimOBJECT_Draw(Anim_OBJECT *obj, int x, int y)
@@ -31,6 +42,6 @@ void AnimOBJECT_Draw(Anim_OBJECT *obj, int x, int y)
 				 y,
 				 obj->frames[obj->curframe].w,
 				 obj->frames[obj->curframe].h};
-
-	DrawG2DTex(obj->frames[obj->curframe].tex, &img, &disp, obj->linear, obj->angle, obj->alpha);
+	if (obj->visible)
+		DrawG2DTex(obj->frames[obj->curframe].tex, &img, &disp, obj->linear, obj->angle, obj->alpha);
 }
