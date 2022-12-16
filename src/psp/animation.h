@@ -14,7 +14,7 @@ typedef struct
 	float speed, time;
 	float angle = 0;
 	int curframe;
-	int size;
+	int *conf;
 	int alpha = 255;
 	bool linear = false;
 	bool visible = true;
@@ -23,7 +23,7 @@ typedef struct
 
 } Anim_OBJECT;
 
-void AnimOBJECT_SetAnim(Anim_OBJECT *obj, AnimFrames *frames, float speed);
+void AnimOBJECT_SetAnim(Anim_OBJECT *obj, AnimFrames *frames, int *conf, float speed);
 void AnimOBJECT_Tick(Anim_OBJECT *obj);
 void AnimOBJECT_Draw(Anim_OBJECT *obj, int x, int y);
 

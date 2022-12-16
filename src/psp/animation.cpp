@@ -5,10 +5,11 @@
 #include "animation.h"
 #include "font.h"
 
-void AnimOBJECT_SetAnim(Anim_OBJECT *obj, AnimFrames *frames, float speed)
+void AnimOBJECT_SetAnim(Anim_OBJECT *obj, AnimFrames *frames, int *conf, float speed)
 {
 	obj->time = 0;
 	obj->frames = frames;
+	obj->conf = conf;
 	obj->speed = speed;
 	obj->tick = true;
 }
@@ -23,7 +24,7 @@ void AnimOBJECT_Tick(Anim_OBJECT *obj)
 	if (obj->tick)
 	{
 		obj->time += obj->speed;
-		obj->curframe = (int)(obj->time / 100);
+		obj->curframe = obj->conf[(int)(obj->time / 100)];
 		//if (obj->frames[obj->curframe] == NULL)
 		//	obj->curframe -= 1;
 	}

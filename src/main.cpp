@@ -35,9 +35,10 @@ int main()
 		{tex[0], 0, 0, 118, 200, 0, 0},
 		{tex[0], 118, 0, 114, 200, 0, 0}
 	};
+	int leftconf[] = {0, 1};
 
 
-    AnimOBJECT_SetAnim(&dad, &left[0], 20);
+    AnimOBJECT_SetAnim(&dad, &left[0], &leftconf[0], 20);
 
     while(1)
     {
@@ -46,7 +47,7 @@ int main()
         Pad_Update();  
 
         if (Pad_Pressed(PSP_CTRL_LEFT))
-        	AnimOBJECT_SetAnim(&dad, &left[0], 20);
+   			AnimOBJECT_SetAnim(&dad, &left[0], &leftconf[0], 20);
 
         AnimOBJECT_Tick(&dad);
         AnimOBJECT_Draw(&dad, 20, 20);
