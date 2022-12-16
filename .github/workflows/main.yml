@@ -37,5 +37,9 @@ jobs:
           mkdir export 
           cp -R assets export
           cp EBOOT.PBP export
-          zip -r build.zip export
-          curl --upload-file build.zip https://transfer.sh/
+
+      - name: Publish Artifact
+        uses: actions/upload-artifact@main
+        with:
+          name: build
+          path: 'export/*'
