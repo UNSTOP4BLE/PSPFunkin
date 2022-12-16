@@ -38,7 +38,7 @@ int main()
 	int leftconf[] = {0, 1};
 
 
-    AnimOBJECT_SetAnim(&dad, &left[0], &leftconf[0], 20);
+    AnimOBJECT_SetAnim(&dad, &left[0], &leftconf[0], 15, sizeof(leftconf)/sizeof(leftconf[0]));
 
     while(1)
     {
@@ -46,8 +46,8 @@ int main()
         g2dClear(GREEN);
         Pad_Update();  
 
-        if (Pad_Pressed(PSP_CTRL_LEFT))
-   			AnimOBJECT_SetAnim(&dad, &left[0], &leftconf[0], 20);
+        if (Pad_Held(PSP_CTRL_LEFT))
+   			AnimOBJECT_SetAnim(&dad, &left[0], &leftconf[0], 15, sizeof(leftconf)/sizeof(leftconf[0]));
 
         AnimOBJECT_Tick(&dad);
         AnimOBJECT_Draw(&dad, 20, 20);

@@ -5,11 +5,13 @@
 #include "animation.h"
 #include "font.h"
 
-void AnimOBJECT_SetAnim(Anim_OBJECT *obj, AnimFrames *frames, int *conf, float speed)
+void AnimOBJECT_SetAnim(Anim_OBJECT *obj, AnimFrames *frames, int *conf, float speed, int size)
 {
 	obj->time = 0;
 	obj->frames = frames;
+	obj->curframe = 0;
 	obj->conf = conf;
+	obj->size = size-1;
 	obj->speed = speed;
 	obj->tick = true;
 }
@@ -18,15 +20,22 @@ void AnimOBJECT_Tick(Anim_OBJECT *obj)
 {
 	if (obj->frames[obj->curframe].tex == NULL)
 	{
-		sprintf(error.message, "ANIMATION DATA IS NULL");
+		sprintf(error.message, "ANIMATION DATA IS NULL AT FRAME %d", obj->curframe);
 		game.gamestate = 4;
 	}
+
 	if (obj->tick)
 	{
 		obj->time += obj->speed;
-		obj->curframe = obj->conf[(int)(obj->time / 100)];
-		//if (obj->frames[obj->curframe] == NULL)
-		//	obj->curframe -= 1;
+		if (obj->time > 0)
+			obj->curframe = obj->conf[(int)(obj->time / 100)];
+
+		while (obj->curframe > obj->size)
+		{
+			obj->time -= 100;
+		    obj->curframe -= 1;
+		    obj->tick = false;
+		}
 	}
 	else 
 		obj->tick = false;
