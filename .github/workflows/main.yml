@@ -29,7 +29,7 @@ jobs:
           apk add cmake gmp mpc1 mpfr4 make zip curl
   
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@main
       
       - name: Build
         run: |
@@ -37,5 +37,9 @@ jobs:
           mkdir export 
           cp -R assets export
           cp EBOOT.PBP export
-          zip -r build.zip export
-          curl --upload-file build.zip https://transfer.sh/
+
+      - name: Publish Artifact
+        uses: actions/upload-artifact@main
+        with:
+          name: build
+          path: 'export/*'
