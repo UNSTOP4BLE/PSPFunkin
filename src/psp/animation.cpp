@@ -52,6 +52,8 @@ void AnimOBJECT_Draw(Anim_OBJECT *obj, int x, int y)
 				 y,
 				 obj->frames[obj->curframe].w,
 				 obj->frames[obj->curframe].h};
+	if (obj->flipped)
+		disp.w = -disp.w;
 	if (obj->visible)
 		DrawG2DTex(obj->frames[obj->curframe].tex, &img, &disp, obj->linear, obj->angle, obj->alpha);
 }

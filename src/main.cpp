@@ -26,19 +26,7 @@ int main()
 
 	Anim_OBJECT dad;
 
-	g2dTexture *tex[2];
-	tex[0] = g2dTexLoad("assets/characters/dad/sheet0.png", G2D_SWIZZLE);
-	tex[1] = g2dTexLoad("assets/characters/dad/sheet1.png", G2D_SWIZZLE);
-	
-	AnimFrames left[] =
-	{
-		{tex[0], 0, 0, 118, 200, 0, 0},
-		{tex[0], 118, 0, 114, 200, 0, 0}
-	};
 	int leftconf[] = {0, 1};
-
-
-    AnimOBJECT_SetAnim(&dad, &left[0], &leftconf[0], 15, sizeof(leftconf)/sizeof(leftconf[0]));
 
     while(1)
     {
@@ -48,9 +36,6 @@ int main()
 
         if (Pad_Held(PSP_CTRL_LEFT))
    			AnimOBJECT_SetAnim(&dad, &left[0], &leftconf[0], 15, sizeof(leftconf)/sizeof(leftconf[0]));
-
-        AnimOBJECT_Tick(&dad);
-        AnimOBJECT_Draw(&dad, 20, 20);
 
         switch (game.gamestate)
         {

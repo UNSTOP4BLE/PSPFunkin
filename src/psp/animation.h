@@ -18,6 +18,7 @@ typedef struct
 	int size;
 	int alpha = 255;
 	bool linear = false;
+	bool flipped = false;
 	bool visible = true;
 	bool tick;
 	AnimFrames *frames;

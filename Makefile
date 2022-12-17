@@ -3,6 +3,7 @@ OBJS = src/main.o \
 	   src/game.o \
 	   src/error.o \
 	   src/chartparser.o \
+	   src/character.o \
 	   src/psp/animation.o \
 	   src/psp/audio.o \
 	   src/psp/wav.o \
