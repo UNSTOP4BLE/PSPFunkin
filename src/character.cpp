@@ -6,7 +6,7 @@ void Character_isPlayer(Character *chr)
 
 	if (chr->player)
 	{
-		chr->obj->flipped = true;
+		chr->obj.flipped = true;
 	}
 }
 

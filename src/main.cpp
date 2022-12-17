@@ -10,9 +10,7 @@
 #include "game.h"
 #include "error.h"
 
-#include "chartparser.h"
-
-#include "psp/animation.h"
+#include "characters/dad.h"
 
 PSP_MODULE_INFO("PSPFunkin", 0, 1, 0);
 
@@ -24,9 +22,7 @@ int main()
     g2dInit();
     FntInit("assets/font/font.png");
 
-	Anim_OBJECT dad;
-
-	int leftconf[] = {0, 1};
+    Dad_Init();
 
     while(1)
     {
@@ -34,8 +30,8 @@ int main()
         g2dClear(GREEN);
         Pad_Update();  
 
-        if (Pad_Held(PSP_CTRL_LEFT))
-   			AnimOBJECT_SetAnim(&dad, &left[0], &leftconf[0], 15, sizeof(leftconf)/sizeof(leftconf[0]));
+   		Dad_SetAnim(ANIM_IDLE);
+        //Dad_Tick();
 
         switch (game.gamestate)
         {

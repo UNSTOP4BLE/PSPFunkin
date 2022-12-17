@@ -11,7 +11,8 @@ typedef struct
 
 typedef struct
 {
-	float speed, time;
+	float speed;
+	float time;
 	float angle = 0;
 	int curframe;
 	int *conf;

@@ -11,7 +11,6 @@
 
 typedef struct
 {
-	g2dTexture *tex;
 	Anim_OBJECT obj;
 	bool player;
 	int icon;

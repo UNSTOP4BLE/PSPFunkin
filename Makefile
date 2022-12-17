@@ -4,6 +4,7 @@ OBJS = src/main.o \
 	   src/error.o \
 	   src/chartparser.o \
 	   src/character.o \
+	   src/characters/dad.o \
 	   src/psp/animation.o \
 	   src/psp/audio.o \
 	   src/psp/wav.o \
