@@ -25,6 +25,7 @@ void loadChart(const char *filename)
 	{
 		sprintf(message, "FAILED TO FIND CHART: %s", filename);
 		game.gamestate = 4;
+		return;
 	}
 }
 
