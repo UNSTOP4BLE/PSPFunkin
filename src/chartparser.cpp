@@ -23,7 +23,7 @@ void loadChart(const char *filename)
 	LoadJson(filename, &chart);
 	if (!chart)
 	{
-		sprintf(error.message, "FAILED TO FIND CHART: %s", filename);
+		sprintf(message, "FAILED TO FIND CHART: %s", filename);
 		game.gamestate = 4;
 	}
 }

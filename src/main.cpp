@@ -24,14 +24,16 @@ int main()
 
     Dad_Init();
 
+ //  	Dad_SetAnim(ANIM_IDLE);
     while(1)
     {
         auto last = std::chrono::high_resolution_clock::now();
         g2dClear(GREEN);
         Pad_Update();  
 
-   		Dad_SetAnim(ANIM_IDLE);
-        //Dad_Tick();
+        if (Pad_Pressed(PSP_CTRL_UP))
+        	Dad_SetAnim(ANIM_UP);
+        Dad_Tick();
 
         switch (game.gamestate)
         {

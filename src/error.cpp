@@ -1,10 +1,12 @@
 #include "error.h"
 #include "psp/font.h"
 
-Error error;
-
+char message[256];
 void ErrMSG()
 {
-	PrintMSG(0, 0, "ERROR");
-	PrintMSG(0, 20, error.message);
+	while(1)
+	{
+		PrintMSG(0, 0, "ERROR");
+		PrintMSG(0, 20, message);
+	}
 }

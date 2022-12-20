@@ -3,12 +3,7 @@
 
 #include <string>
 
-typedef struct 
-{
-	char message[256];
-} Error;
-
-extern Error error;
+extern char message[256];
 
 void ErrMSG();
 

@@ -3,25 +3,26 @@
 
 #include "glib2d.h"
 
+#define CountOf(x) (sizeof(x) / sizeof(x[0]))
 typedef struct
 {
 	g2dTexture *tex;
-	int x, y, w, h, offsetx, offsety;
+	int x, y, w, h, offsetx, offsety = 0;
 } AnimFrames;
 
 typedef struct
 {
-	float speed;
-	float time;
+	float speed = 0;
+	float time = 0;
 	float angle = 0;
-	int curframe;
+	int curframe = 0;
 	int *conf;
-	int size;
+	int size = 0;
 	int alpha = 255;
 	bool linear = false;
 	bool flipped = false;
 	bool visible = true;
-	bool tick;
+	bool tick = false;
 	AnimFrames *frames;
 
 } Anim_OBJECT;

@@ -12,10 +12,11 @@
 typedef struct
 {
 	Anim_OBJECT obj;
-	bool player;
-	int icon;
-	int x, y;
-	int camx, camy, camzoom;
+	bool player = false;
+	int icon = 0;
+	int x = 0;
+	int y = 0;
+	int camx, camy, camzoom = 0;
 } Character;
 
 void Character_isPlayer(Character *chr);

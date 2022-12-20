@@ -36,19 +36,19 @@ void Dad_SetAnim(int anim)
 	switch (anim)
 	{
    		case ANIM_IDLE:
-    		AnimOBJECT_SetAnim(&Dad.obj, &dadFrames[0], &dadConfIdle[0], 15, sizeof(dadConfIdle)/sizeof(dadConfIdle[0]));
+    		AnimOBJECT_SetAnim(&Dad.obj, &dadFrames[0], &dadConfIdle[0], 15, CountOf(dadConfIdle));
     		break;
    		case ANIM_LEFT:
-    		AnimOBJECT_SetAnim(&Dad.obj, &dadFrames[0], &dadConfLeft[0], 15, sizeof(dadConfLeft)/sizeof(dadConfLeft[0]));
+    		AnimOBJECT_SetAnim(&Dad.obj, &dadFrames[0], &dadConfLeft[0], 15, CountOf(dadConfLeft));
     		break;
    		case ANIM_DOWN:
-    		AnimOBJECT_SetAnim(&Dad.obj, &dadFrames[0], &dadConfDown[0], 15, sizeof(dadConfDown)/sizeof(dadConfDown[0]));
+    		AnimOBJECT_SetAnim(&Dad.obj, &dadFrames[0], &dadConfDown[0], 15, CountOf(dadConfDown));
     		break;
    		case ANIM_UP:
-    		AnimOBJECT_SetAnim(&Dad.obj, &dadFrames[0], &dadConfUp[0], 15, sizeof(dadConfUp)/sizeof(dadConfUp[0]));
+    		AnimOBJECT_SetAnim(&Dad.obj, &dadFrames[0], &dadConfUp[0], 15, CountOf(dadConfUp));
     		break;
    		case ANIM_RIGHT:
-    		AnimOBJECT_SetAnim(&Dad.obj, &dadFrames[0], &dadConfRight[0], 15, sizeof(dadConfRight)/sizeof(dadConfRight[0]));
+    		AnimOBJECT_SetAnim(&Dad.obj, &dadFrames[0], &dadConfRight[0], 15, CountOf(dadConfRight));
     		break;
 	}
 }
@@ -62,7 +62,7 @@ void Dad_Init()
 void Dad_Tick(void)
 {
     AnimOBJECT_Tick(&Dad.obj);
-    AnimOBJECT_Draw(&Dad.obj, Dad.x, Dad.y);
+ //   AnimOBJECT_Draw(&Dad.obj, Dad.x, Dad.y);
 }
 
 void Dad_FreeChar(void)

@@ -3,8 +3,8 @@
 
 typedef struct 
 {
-	int gamestate;
-	double deltaTime;
+	int gamestate = 0;
+	double deltaTime = 0;
 } Game;
 
 extern Game game;
