@@ -5,7 +5,7 @@
 #include "psp/callbacks.h"
 #include "psp/pad.h"
 #include "psp/font.h"
-#include "psp/wav.h"
+#include "psp/audio.h"
 #include "psp/glib2d.h"
 #include "game.h"
 #include "error.h"
@@ -18,9 +18,13 @@ int main()
 {
     setupcallbacks();
     Pad_Init();
-    Wav_Init();
+    Audio_Init();
     g2dInit();
     FntInit("assets/font/font.png");
+
+    Mix_Music *test = Audio_LoadSong("assets/Vocals.wav");
+   	
+   	Audio_PlaySong(test, false);
 
     Dad_Init();
 

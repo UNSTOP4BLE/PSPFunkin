@@ -1,8 +1,7 @@
 #ifndef __CHARTPARSER_H__
 #define __CHARTPARSER_H__
 
-#include <string>          
-#include "psp/wav.h"
+#include <string>       
 
 typedef struct 
 {
@@ -28,6 +27,6 @@ extern Parser parser;
 void loadChart(const char *filename);
 void readInitialData();
 Section readChartData(int thesection);
-void tickStep(Wav* theWav);
+void tickStep();
 
 #endif

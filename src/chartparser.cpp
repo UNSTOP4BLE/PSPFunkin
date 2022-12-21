@@ -2,7 +2,6 @@
 #include <json/json.h>
 #include "chartparser.h"
 #include "error.h"
-#include "psp/wav.h"
 #include "game.h"
 
 Json::Value chart;
@@ -62,8 +61,8 @@ Section readChartData(int thesection)
 	return section;
 }
 
-void tickStep(Wav* theWav)
+void tickStep()
 {
-    parser.songPos = Wav_GetTime(theWav);
-    parser.curStep = (parser.songPos / parser.step_crochet);
+//    parser.songPos = Wav_GetTime(theWav);
+  //  parser.curStep = (parser.songPos / parser.step_crochet);
 }	
