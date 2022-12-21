@@ -1,26 +1,16 @@
 #ifndef __AUDIO_H__
 #define __AUDIO_H__
 
-#define _NUM_AUDIO_CHANNELS	4
-#define _NUM_AUDIO_SAMPLES	1024
-#define _VOLUME_MAX		0x8000
+#include "SDL/SDL.h"
+#include "SDL/SDL_mixer.h"
 
-typedef void (* AudioCallback)(void *buf, int reqn, void *pdata);
-
-typedef struct
-{
-	int threadHandle;
-        int handle;
-        int volumeLeft;
-        int volumeRight;
-        AudioCallback callback;
-        void *data;
-} AudioChannelInfo;
-
-bool AudioInit(int priority); // 0x12
-void AudioShutdown();
-void AudioSetVolume(int channel, int left, int right);
-void AudioSetChannelCallback(int channel, AudioCallback callback, void *data);
-int AudioOutBlocking(int channel, int left, int right, void *data);
+void Audio_Init(void);
+void Audio_LoadSong(Mix_Music *music, const char *path);
+void Audio_LoadSFX(Mix_Chunk *audio, const char *path);
+void Audio_PlaySong(Mix_Chunk *music, bool loop);
+int Audio_GetSongMilli(Mix_Chunk *music);
+void Audio_PlaySFX(Mix_Chunk *audio, bool loop);
+void Audio_FreeSong(Mix_Music *music);
+void Audio_FreeSFX(Mix_Chunk *audio);
 
 #endif

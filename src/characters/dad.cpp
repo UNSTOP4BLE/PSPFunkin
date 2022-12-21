@@ -62,7 +62,7 @@ void Dad_Init()
 void Dad_Tick(void)
 {
     AnimOBJECT_Tick(&Dad.obj);
-   // AnimOBJECT_Draw(&Dad.obj, Dad.x, Dad.y);
+    AnimOBJECT_Draw(&Dad.obj, Dad.x, Dad.y);
 }
 
 void Dad_FreeChar(void)
