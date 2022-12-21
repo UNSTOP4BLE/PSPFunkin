@@ -23,7 +23,6 @@ int main()
     FntInit("assets/font/font.png");
 
     Mix_Music *test = Audio_LoadSong("assets/Vocals.wav");
-   	
    	Audio_PlaySong(test, false);
 
     Dad_Init();
