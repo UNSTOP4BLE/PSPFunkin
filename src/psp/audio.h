@@ -12,5 +12,6 @@ int Audio_GetSongMilli(Mix_Music *music);
 void Audio_PlaySFX(Mix_Chunk *audio, bool loop);
 void Audio_FreeSong(Mix_Music *music);
 void Audio_FreeSFX(Mix_Chunk *audio);
+bool Audio_IsPlaying();
 
 #endif

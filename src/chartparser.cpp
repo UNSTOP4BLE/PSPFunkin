@@ -61,8 +61,11 @@ Section readChartData(int thesection)
 	return section;
 }
 
-void tickStep()
+void tickStep(Mix_Music *song)
 {
-//    parser.songPos = Wav_GetTime(theWav);
-  //  parser.curStep = (parser.songPos / parser.step_crochet);
+	if (Audio_IsPlaying())
+	{
+    	parser.songPos = Audio_GetSongMilli(song);
+	    parser.curStep = (parser.songPos / parser.step_crochet);
+	}
 }	

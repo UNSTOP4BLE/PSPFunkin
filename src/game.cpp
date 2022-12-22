@@ -1,7 +1,16 @@
 #include "game.h"
 
+#include "psp/pad.h"
+#include "psp/font.h"
+#include "psp/audio.h"
+#include "psp/glib2d.h"
+#include "chartparser.h"
+#include "error.h"
+
+#include "characters/dad.h"
+
 Game game;
-/*
+
 int notePos[2][8] = {
 	//x
 	{27,  67,  107, 147, //opponent	
@@ -11,11 +20,54 @@ int notePos[2][8] = {
      14,  14,  14,  14}, //player
 };
 
+
+Section section;
+g2dTexture *notetex;
+Mix_Music *inst;
+Mix_Music *vocals;
+void DrawDummyNotes(g2dTexture *note, bool *hitnote);
+void DrawNote(g2dTexture *note, double pos, int type, double sus, bool musthit);
+
+void PlayState_Init(void)
+{
+	//load characters
+    Dad_Init();
+ // 	Dad_SetAnim(ANIM_IDLE);
+
+    //laod game stuff
+    loadChart("assets/chart/bopeebo.json");
+    readInitialData();
+
+  //  inst = Audio_LoadSong("assets/Inst.wav");
+    vocals = Audio_LoadSong("assets/Vocals.wav");
+	notetex = g2dTexLoad("assets/hud.png", G2D_SWIZZLE);
+   	Audio_PlaySong(vocals, false);
+}
+
+void PlayState(void)
+{
+	if (Pad_Pressed(PSP_CTRL_UP))
+      	Dad_SetAnim(ANIM_UP);
+    Dad_Tick();
+    
+    tickStep(vocals);
+
+    PrintMSG(0, 0, "step %d time %d", parser.curStep, parser.songPos);
+
+    section = readChartData(parser.curStep / 16);
+
+    bool test[4] = {0, 0, 1, 0};
+    DrawNote(notetex, section.sectionNotes[0], section.sectionNotes[1], section.sectionNotes[2], section.mustHitSection);
+    DrawDummyNotes(notetex, &test[0]);
+}
+
+//todo rewrite this shit
 double elapsedTime[2][4];
 Rect imganim[4];
 
 void DrawDummyNotes(g2dTexture *note, bool *hitnote)
 {
+//todo rewrite this shit
 	Rect img = {0, 1, 39, 39};
 	Rect disp = {0, 0, 39, 39};
 
@@ -78,6 +130,7 @@ void DrawDummyNotes(g2dTexture *note, bool *hitnote)
 
 void DrawNote(g2dTexture *note, double pos, int type, double sus, bool musthit)
 {
+//todo rewrite this shit
 	Rect notes_img[4] = {  
 		{1, 121, 39, 39}, //left
 		{41, 121, 39, 39}, //down
@@ -92,48 +145,6 @@ void DrawNote(g2dTexture *note, double pos, int type, double sus, bool musthit)
 	else
 		disp.x = notePos[0][type];
 
-	//disp.y = ((pos - parser.songPos) * parser.initspeed * 0.25);
-	disp.y = ((pos - parser.songPos) * parser.initspeed * 0.25 / 12);
+    disp.y = ((pos - parser.songPos) * parser.initspeed * 0.25);
 	DrawFG2DTex(note, &notes_img[type], &disp, true, 0, 200);
 }
-
-void PlayState(void)
-{
-    loadChart("assets/chart/bopeebo.json");
-    readInitialData();
-    Section section;
-
-    Wav *bopeebo = Wav_Load("assets/Vocals.wav");
-    Wav_Play(bopeebo);
-
-	g2dTexture* notetex = g2dTexLoad("assets/hud.png", G2D_SWIZZLE);
-
-
-
-
-
-
-
-
-        tickStep(bopeebo);
-
-
-        section = readChartData(parser.curStep / 16);
-
-        PrintMSG(0, 0, "%d", Wav_GetTime(bopeebo));
-
-        bool test[4] = {0, 0, 1, 0};
-        DrawNote(notetex, section.sectionNotes[0], section.sectionNotes[1], section.sectionNotes[2], section.mustHitSection);
-        DrawDummyNotes(notetex, &test[0]);
-
-
-
-
-
-
-
-
-
-
-
-}*/

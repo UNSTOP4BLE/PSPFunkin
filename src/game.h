@@ -9,4 +9,6 @@ typedef struct
 
 extern Game game;
 
+void PlayState_Init(void);
+void PlayState(void);
 #endif

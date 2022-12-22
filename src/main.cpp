@@ -1,3 +1,4 @@
+#define SDL_MAIN_HANDLED
 #include <pspdebug.h>
 #include <pspkernel.h>
 #include <psputility.h>
@@ -10,8 +11,6 @@
 #include "game.h"
 #include "error.h"
 
-#include "characters/dad.h"
-
 PSP_MODULE_INFO("PSPFunkin", 0, 1, 0);
 
 int main()
@@ -22,25 +21,25 @@ int main()
     g2dInit();
     FntInit("assets/font/font.png");
 
-    Mix_Music *test = Audio_LoadSong("assets/Vocals.wav");
-   	Audio_PlaySong(test, false);
+   	PlayState_Init();
 
-    Dad_Init();
-
- //  	Dad_SetAnim(ANIM_IDLE);
     while(1)
     {
         auto last = std::chrono::high_resolution_clock::now();
         g2dClear(GREEN);
         Pad_Update();  
 
-        if (Pad_Pressed(PSP_CTRL_UP))
-        	Dad_SetAnim(ANIM_UP);
-        Dad_Tick();
-
-        PrintMSG(0, 0, "%d", Audio_GetSongMilli(test));
         switch (game.gamestate)
         {
+        	case 0:
+        		PlayState();
+            break;
+        	case 1:
+            break;
+        	case 2:
+            break;
+        	case 3:
+            break;
             case 4: //error
                 ErrMSG();
             break;

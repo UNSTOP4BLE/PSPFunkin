@@ -53,3 +53,7 @@ void Audio_PlaySFX(Mix_Chunk *audio, bool loop)
  	Mix_PlayChannel(-1, audio, loop);
 }
 
+bool Audio_IsPlaying()
+{
+	return Mix_PlayingMusic();
+}

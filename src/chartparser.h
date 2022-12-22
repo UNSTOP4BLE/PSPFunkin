@@ -2,6 +2,7 @@
 #define __CHARTPARSER_H__
 
 #include <string>       
+#include "psp/audio.h"
 
 typedef struct 
 {
@@ -16,7 +17,7 @@ typedef struct
 typedef struct 
 {
 	int curStep;
-	int songPos;
+	double songPos;
 	double initbpm, initspeed;
 	double crochet;
 	double step_crochet;
@@ -27,6 +28,6 @@ extern Parser parser;
 void loadChart(const char *filename);
 void readInitialData();
 Section readChartData(int thesection);
-void tickStep();
+void tickStep(Mix_Music *song);
 
 #endif
