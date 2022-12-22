@@ -1,8 +1,8 @@
 #ifndef __AUDIO_H__
 #define __AUDIO_H__
 
-#include "SDL/SDL.h"
-#include "SDL/SDL_mixer.h"
+#include "SDL2/SDL.h"
+#include "SDL2/SDL_mixer.h"
 
 void Audio_Init(void);
 Mix_Music *Audio_LoadSong(const char *path);

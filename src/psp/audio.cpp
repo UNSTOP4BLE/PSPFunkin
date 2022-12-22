@@ -43,9 +43,9 @@ void Audio_PlaySong(Mix_Music *music, bool loop)
 	Mix_PlayMusic(music, loop);
 }
 
-int Audio_GetSongMilli(Mix_Chunk *music)
+int Audio_GetSongMilli(Mix_Music *music)
 {
-//	return Mix_GetMusicPosition(music) * 1000;
+	return Mix_GetMusicPosition(music) * 1000;
 }
 
 void Audio_PlaySFX(Mix_Chunk *audio, bool loop)
