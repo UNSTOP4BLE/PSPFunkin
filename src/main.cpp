@@ -38,6 +38,7 @@ int main()
         	Dad_SetAnim(ANIM_UP);
         Dad_Tick();
 
+        PrintMSG(0, 0, "%d", Audio_GetSongMilli(test));
         switch (game.gamestate)
         {
             case 4: //error
