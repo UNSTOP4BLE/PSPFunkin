@@ -57,6 +57,7 @@ void PlayState(void)
     section = readChartData(parser.curStep / 16);
 
     bool test[4] = {0, 0, 1, 0};
+    
     DrawNote(notetex, section.sectionNotes[0], section.sectionNotes[1], section.sectionNotes[2], section.mustHitSection);
     DrawDummyNotes(notetex, &test[0]);
 }

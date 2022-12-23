@@ -17,13 +17,15 @@ typedef struct
 typedef struct 
 {
 	int curStep;
-	double songPos;
+	int songPos;
+	double interpPos;
 	double initbpm, initspeed;
 	double crochet;
 	double step_crochet;
 } Parser;
 
 extern Parser parser;
+extern int notecount;
 
 void loadChart(const char *filename);
 void readInitialData();

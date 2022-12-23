@@ -65,7 +65,9 @@ void tickStep(Mix_Music *song)
 {
 	if (Audio_IsPlaying())
 	{
-    	parser.songPos = Audio_GetSongMilli(song);
+		parser.interpPos += 16.666666666666668;
+    	parser.songPos = (int)(parser.interpPos + (parser.interpPos - Audio_GetSongMilli(song)));
+		//parser.songPos =  Audio_GetSongMilli(song);
 	    parser.curStep = (parser.songPos / parser.step_crochet);
 	}
 }	
