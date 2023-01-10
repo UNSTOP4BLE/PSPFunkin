@@ -27,12 +27,6 @@ void AnimOBJECT_Tick(Anim_OBJECT *obj)
 			return;
 		}
 
-		if (obj->frames[obj->curframe].tex == NULL)
-		{
-			sprintf(message, "ANIMATION DATA IS NULL AT FRAME %d", obj->curframe);
-			game.gamestate = 4;
-			return;
-		}
 		obj->time += obj->speed+game.deltaTime;
 		if (obj->time > 0)
 			obj->curframe = obj->conf[(int)(obj->time / 100)];
@@ -45,7 +39,7 @@ void AnimOBJECT_Tick(Anim_OBJECT *obj)
 	}
 }
 
-void AnimOBJECT_Draw(Anim_OBJECT *obj, int x, int y)
+void AnimOBJECT_Draw(g2dTexture **textures, Anim_OBJECT *obj, int x, int y)
 {
 	if (obj->tick)
 	{
@@ -61,13 +55,13 @@ void AnimOBJECT_Draw(Anim_OBJECT *obj, int x, int y)
 		if (obj->flipped)
 			disp.w = -disp.w;
 
-		if (obj->frames[obj->curframe].tex == NULL)
+		if (textures[obj->frames[obj->curframe].tex] == NULL)
 		{
 			sprintf(message, "ANIMATION DATA IS NULL AT FRAME %d", obj->curframe);
 			game.gamestate = 4;
 		}
 
 		if (obj->visible)
-			DrawG2DTex((g2dTexture *)&obj->frames[obj->curframe].tex, &img, &disp, obj->linear, obj->angle, obj->alpha);
+			DrawG2DTex(textures[obj->frames[obj->curframe].tex], &img, &disp, obj->linear, obj->angle, obj->alpha);
 	}
 }

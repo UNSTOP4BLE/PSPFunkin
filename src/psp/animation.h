@@ -6,7 +6,7 @@
 #define CountOf(x) (sizeof(x) / sizeof(x[0]))
 typedef struct
 {
-	g2dTexture *tex;
+	int tex;
 	int x, y, w, h, offsetx, offsety = 0;
 } AnimFrames;
 
@@ -16,7 +16,6 @@ typedef struct
 	float time = 0;
 	float angle = 0;
 	int curframe = 0;
-	int *conf;
 	int size = 0;
 	int alpha = 255;
 	bool linear = false;
@@ -24,11 +23,11 @@ typedef struct
 	bool visible = true;
 	bool tick = false;
 	AnimFrames *frames;
-
+	int *conf;
 } Anim_OBJECT;
 
 void AnimOBJECT_SetAnim(Anim_OBJECT *obj, AnimFrames *frames, int *conf, float speed, int size);
 void AnimOBJECT_Tick(Anim_OBJECT *obj);
-void AnimOBJECT_Draw(Anim_OBJECT *obj, int x, int y);
+void AnimOBJECT_Draw(g2dTexture **textures, Anim_OBJECT *obj, int x, int y);
 
 #endif
