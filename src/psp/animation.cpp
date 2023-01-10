@@ -41,8 +41,8 @@ void AnimOBJECT_Tick(Anim_OBJECT *obj)
 
 void AnimOBJECT_Draw(g2dTexture **textures, Anim_OBJECT *obj, int x, int y)
 {
-	if (obj->tick)
-	{
+	//if (obj->tick)
+	//{
 		Rect img = {obj->frames[obj->curframe].x,
 					obj->frames[obj->curframe].y,
 					obj->frames[obj->curframe].w,
@@ -63,5 +63,5 @@ void AnimOBJECT_Draw(g2dTexture **textures, Anim_OBJECT *obj, int x, int y)
 
 		if (obj->visible)
 			DrawG2DTex(textures[obj->frames[obj->curframe].tex], &img, &disp, obj->linear, obj->angle, obj->alpha);
-	}
+	//}
 }

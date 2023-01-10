@@ -4,12 +4,12 @@
 
 #include "pad.h"
 
-typedef struct Input
+struct Input
 {
 	SceCtrlData	  Input;
 	unsigned long Pressed;
 	unsigned long Held;
-} Input;
+};
 
 static Input Pad;
 

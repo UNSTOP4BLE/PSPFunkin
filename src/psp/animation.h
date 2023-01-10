@@ -4,27 +4,41 @@
 #include "glib2d.h"
 
 #define CountOf(x) (sizeof(x) / sizeof(x[0]))
-typedef struct
+
+struct AnimFrames
 {
 	int tex;
-	int x, y, w, h, offsetx, offsety = 0;
-} AnimFrames;
+	int x, y, w, h, offsetx, offsety;
+};
 
-typedef struct
+struct Anim_OBJECT
 {
-	float speed = 0;
-	float time = 0;
-	float angle = 0;
-	int curframe = 0;
-	int size = 0;
-	int alpha = 255;
-	bool linear = false;
-	bool flipped = false;
-	bool visible = true;
-	bool tick = false;
+	float speed;
+	float time;
+	float angle;
+	int curframe;
+	int size;
+	int alpha;
+	bool linear;
+	bool flipped;
+	bool visible;
+	bool tick;
 	AnimFrames *frames;
 	int *conf;
-} Anim_OBJECT;
+	inline Anim_OBJECT(void)
+	{
+		speed = 0;
+		time = 0;
+		angle = 0;
+		curframe = 0;
+		size = 0;
+		alpha = 255;
+		linear = false;
+		flipped = false;
+		visible = true;
+		tick = false;
+	}
+};
 
 void AnimOBJECT_SetAnim(Anim_OBJECT *obj, AnimFrames *frames, int *conf, float speed, int size);
 void AnimOBJECT_Tick(Anim_OBJECT *obj);

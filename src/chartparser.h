@@ -4,7 +4,7 @@
 #include <string>       
 #include "psp/audio.h"
 
-typedef struct 
+struct Section
 {
 	double sectionNotes[3];
 	//int typeOfSection;
@@ -12,9 +12,9 @@ typedef struct
 	//int bpm;
 	//bool changeBPM;
 	bool altAnim;
-} Section;
+};
 
-typedef struct 
+struct Parser
 {
 	int curStep;
 	int songPos;
@@ -22,7 +22,7 @@ typedef struct
 	double initbpm, initspeed;
 	double crochet;
 	double step_crochet;
-} Parser;
+};
 
 extern Parser parser;
 extern int notecount;
