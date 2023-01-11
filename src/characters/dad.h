@@ -3,7 +3,7 @@
 
 #include "../character.h"
 
-extern Character Dad;
+//extern Character *Dad;
 
 void Dad_SetAnim(int anim);
 void Dad_Init(void);

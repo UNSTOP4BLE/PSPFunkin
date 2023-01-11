@@ -7,6 +7,14 @@
 
 void AnimOBJECT_SetAnim(Anim_OBJECT *obj, AnimFrames *frames, int *conf, float speed, int size)
 {
+
+		if (obj == NULL)
+		{
+			sprintf(message, "OBJECT IS NULL");
+			game.gamestate = 4;
+			return;
+		}
+
 	obj->time = 0;
 	obj->frames = frames;
 	obj->curframe = 0;
@@ -18,8 +26,6 @@ void AnimOBJECT_SetAnim(Anim_OBJECT *obj, AnimFrames *frames, int *conf, float s
 
 void AnimOBJECT_Tick(Anim_OBJECT *obj)
 {
-	if (obj->tick)
-	{
 		if (obj == NULL)
 		{
 			sprintf(message, "OBJECT IS NULL");
@@ -27,6 +33,8 @@ void AnimOBJECT_Tick(Anim_OBJECT *obj)
 			return;
 		}
 
+	if (obj->tick)
+	{
 		obj->time += obj->speed+game.deltaTime;
 		if (obj->time > 0)
 			obj->curframe = obj->conf[(int)(obj->time / 100)];
@@ -41,8 +49,8 @@ void AnimOBJECT_Tick(Anim_OBJECT *obj)
 
 void AnimOBJECT_Draw(g2dTexture **textures, Anim_OBJECT *obj, int x, int y)
 {
-	//if (obj->tick)
-	//{
+	if (obj->tick)
+	{
 		Rect img = {obj->frames[obj->curframe].x,
 					obj->frames[obj->curframe].y,
 					obj->frames[obj->curframe].w,
@@ -63,5 +71,5 @@ void AnimOBJECT_Draw(g2dTexture **textures, Anim_OBJECT *obj, int x, int y)
 
 		if (obj->visible)
 			DrawG2DTex(textures[obj->frames[obj->curframe].tex], &img, &disp, obj->linear, obj->angle, obj->alpha);
-	//}
+	}
 }

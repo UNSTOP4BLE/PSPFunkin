@@ -1,6 +1,6 @@
 #include "dad.h"
 
-Character Dad;
+Character *Dad = new Character();
 g2dTexture *Dad_tex[2];
 
 static AnimFrames dadFrames[] =
@@ -25,10 +25,10 @@ static AnimFrames dadFrames[] =
 	{0, 118,   1, 113, 198,   0,   0}
 };
 
-static int dadConfIdle[]  = { 0,  1,  2,  3,  4};
-static int dadConfLeft[]  = { 5,  6};
-static int dadConfDown[]  = { 7,  8};
-static int dadConfUp[]    = { 9, 10};
+static int  dadConfIdle[] = { 0,  1,  2,  3,  4};
+static int  dadConfLeft[] = { 5,  6};
+static int  dadConfDown[] = { 7,  8};
+static int    dadConfUp[] = { 9, 10};
 static int dadConfRight[] = {11, 12};
 
 void Dad_SetAnim(int anim)
@@ -36,19 +36,19 @@ void Dad_SetAnim(int anim)
 	switch (anim)
 	{
    		case ANIM_IDLE:
-    		AnimOBJECT_SetAnim(&Dad.obj, &dadFrames[0], &dadConfIdle[0], 15, CountOf(dadConfIdle));
+    		AnimOBJECT_SetAnim(&Dad->obj, &dadFrames[0], &dadConfIdle[0], 15, CountOf(dadConfIdle));
     		break;
    		case ANIM_LEFT:
-    		AnimOBJECT_SetAnim(&Dad.obj, &dadFrames[0], &dadConfLeft[0], 15, CountOf(dadConfLeft));
+    		AnimOBJECT_SetAnim(&Dad->obj, &dadFrames[0], &dadConfLeft[0], 15, CountOf(dadConfLeft));
     		break;
    		case ANIM_DOWN:
-    		AnimOBJECT_SetAnim(&Dad.obj, &dadFrames[0], &dadConfDown[0], 15, CountOf(dadConfDown));
+    		AnimOBJECT_SetAnim(&Dad->obj, &dadFrames[0], &dadConfDown[0], 15, CountOf(dadConfDown));
     		break;
    		case ANIM_UP:
-    		AnimOBJECT_SetAnim(&Dad.obj, &dadFrames[0], &dadConfUp[0], 15, CountOf(dadConfUp));
+    		AnimOBJECT_SetAnim(&Dad->obj, &dadFrames[0], &dadConfUp[0], 15, CountOf(dadConfUp));
     		break;
    		case ANIM_RIGHT:
-    		AnimOBJECT_SetAnim(&Dad.obj, &dadFrames[0], &dadConfRight[0], 15, CountOf(dadConfRight));
+    		AnimOBJECT_SetAnim(&Dad->obj, &dadFrames[0], &dadConfRight[0], 15, CountOf(dadConfRight));
     		break;
 	}
 }
@@ -61,12 +61,13 @@ void Dad_Init()
 
 void Dad_Tick(void)
 {
-    AnimOBJECT_Tick(&Dad.obj);
-    AnimOBJECT_Draw(&Dad_tex[0], &Dad.obj, Dad.x, Dad.y);
+    AnimOBJECT_Tick(&Dad->obj);
+    AnimOBJECT_Draw(&Dad_tex[0], &Dad->obj, Dad->x, Dad->y);
 }
 
 void Dad_FreeChar(void)
 {
 	g2dTexFree(&Dad_tex[0]);
 	g2dTexFree(&Dad_tex[1]);
+	delete Dad;
 }
