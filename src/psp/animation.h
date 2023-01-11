@@ -25,6 +25,7 @@ struct Anim_OBJECT
 	bool tick;
 	AnimFrames *frames;
 	int *conf;
+	
 	inline Anim_OBJECT(void)
 	{
 		speed = 0;

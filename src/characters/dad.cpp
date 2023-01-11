@@ -53,10 +53,14 @@ void Dad_SetAnim(int anim)
 	}
 }
 
-void Dad_Init()
+void Dad_Init(void)
 {
 	Dad_tex[0] = g2dTexLoad("assets/characters/dad/sheet0.png", G2D_SWIZZLE);
 	Dad_tex[1] = g2dTexLoad("assets/characters/dad/sheet1.png", G2D_SWIZZLE);
+
+	Dad->setAnim = Dad_SetAnim;
+	Dad->tick = Dad_Tick;
+	Dad->free = Dad_FreeChar;
 }
 
 void Dad_Tick(void)

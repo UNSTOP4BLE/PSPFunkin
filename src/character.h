@@ -17,6 +17,10 @@ struct Character
 	int x;
 	int y;
 	int camx, camy, camzoom;
+	void (*setAnim)(int anim);
+	void (*tick)(void);
+	void (*free)(void);
+
     inline Character(void) {
        	player = false;
 		icon = 0;
