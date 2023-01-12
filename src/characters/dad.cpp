@@ -1,7 +1,8 @@
 #include "dad.h"
+#include "../game.h"
 
-Character *Dad = new Character();
-g2dTexture *Dad_tex[2];
+static Character *Dad = new Character();
+static g2dTexture *Dad_tex[2];
 
 static AnimFrames dadFrames[] =
 {
@@ -31,7 +32,22 @@ static int  dadConfDown[] = { 7,  8};
 static int    dadConfUp[] = { 9, 10};
 static int dadConfRight[] = {11, 12};
 
-void Dad_SetAnim(int anim)
+static void Dad_SetAnim(int anim);
+static void Dad_Tick(void);
+static void Dad_FreeChar(void);
+
+void Dad_Init(void)
+{
+	Dad_tex[0] = g2dTexLoad("assets/characters/dad/sheet0.png", G2D_SWIZZLE);
+	Dad_tex[1] = g2dTexLoad("assets/characters/dad/sheet1.png", G2D_SWIZZLE);
+
+	Dad->setAnim = Dad_SetAnim;
+	Dad->tick = Dad_Tick;
+	Dad->free = Dad_FreeChar;
+	game.opponent = Dad;
+}
+
+static void Dad_SetAnim(int anim)
 {
 	switch (anim)
 	{
@@ -53,23 +69,13 @@ void Dad_SetAnim(int anim)
 	}
 }
 
-void Dad_Init(void)
-{
-	Dad_tex[0] = g2dTexLoad("assets/characters/dad/sheet0.png", G2D_SWIZZLE);
-	Dad_tex[1] = g2dTexLoad("assets/characters/dad/sheet1.png", G2D_SWIZZLE);
-
-	Dad->setAnim = Dad_SetAnim;
-	Dad->tick = Dad_Tick;
-	Dad->free = Dad_FreeChar;
-}
-
-void Dad_Tick(void)
+static void Dad_Tick(void)
 {
     AnimOBJECT_Tick(&Dad->obj);
     AnimOBJECT_Draw(&Dad_tex[0], &Dad->obj, Dad->x, Dad->y);
 }
 
-void Dad_FreeChar(void)
+static void Dad_FreeChar(void)
 {
 	g2dTexFree(&Dad_tex[0]);
 	g2dTexFree(&Dad_tex[1]);

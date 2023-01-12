@@ -21,7 +21,7 @@ int main()
     g2dInit();
     FntInit("assets/font/font.png");
 
-   	PlayState_Init();
+   	PlayState_Init(); //remove later
 
     while(1)
     {
