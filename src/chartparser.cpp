@@ -1,6 +1,5 @@
-#include <fstream>
-#include <json/json.h>
 #include "chartparser.h"
+#include "psp/file.h"
 #include "error.h"
 #include "game.h"
 
@@ -8,40 +7,32 @@ Json::Value chart;
 
 Parser parser;
 
-static void LoadJson(std::string filename, Json::Value *data) 
-{
-    std::ifstream configFile(filename);
-    Json::CharReaderBuilder builder;
-    JSONCPP_STRING errs;
-    parseFromStream(builder, configFile, data, &errs);
-    configFile.close();
-}
-
 void loadChart(const char *filename) 
 {
-	LoadJson(filename, &chart);
-	if (!chart)
-	{
-		sprintf(message, "FAILED TO FIND CHART: %s", filename);
-		game.gamestate = 4;
-		return;
-	}
+	loadJson(filename, &chart);
 }
 
 void readInitialData()
 {
+	parser.curStep = 0;
+	parser.songPos = 0;
+	parser.initbpm = 0;
+	parser.initspeed = 0;
+	parser.crochet = 0;
+	parser.step_crochet = 0;
+
 	//read initial data from the json
 	parser.initspeed = chart["song"]["speed"].asDouble();	
 	parser.initbpm = chart["song"]["bpm"].asDouble();	
-	parser.crochet = (60.0 / parser.initbpm) * 1000.0;
+	parser.crochet = (60 / parser.initbpm) * 1000;
 	parser.step_crochet = parser.crochet / 4;
 }
 
-static Section section;
 int notecount;
 
 Section readChartData(int thesection)
 {
+	Section section;
 	if (notecount >= (int)chart["song"]["notes"][thesection]["sectionNotes"].size())
 		notecount = 0;
 	else
@@ -65,9 +56,7 @@ void tickStep(Mix_Music *song)
 {
 	if (Audio_IsPlaying())
 	{
-		parser.interpPos += 16.666666666666668;
-    	parser.songPos = (int)(parser.interpPos + (parser.interpPos - Audio_GetSongMilli(song)));
-		//parser.songPos =  Audio_GetSongMilli(song);
+    	parser.songPos = Audio_GetSongMilli(song);
 	    parser.curStep = (parser.songPos / parser.step_crochet);
 	}
 }	

@@ -7,6 +7,7 @@ OBJS = src/main.o \
 	   src/character.o \
 	   src/characters/dad.o \
 	   src/psp/animation.o \
+	   src/psp/file.o \
 	   src/psp/audio.o \
 	   src/psp/pad.o \
 	   src/psp/font.o \

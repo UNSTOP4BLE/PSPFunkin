@@ -18,8 +18,8 @@ struct Parser
 {
 	int curStep;
 	int songPos;
-	double interpPos;
-	double initbpm, initspeed;
+	double initbpm;
+	double initspeed;
 	double crochet;
 	double step_crochet;
 };

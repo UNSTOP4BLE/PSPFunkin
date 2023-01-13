@@ -3,11 +3,14 @@
 
 #include "psp/animation.h"
 
-#define ANIM_IDLE 0
-#define ANIM_LEFT 1
-#define ANIM_DOWN 2
-#define ANIM_UP 3
-#define ANIM_RIGHT 4
+enum CharAnims 
+{   
+	IDLE, 
+    LEFT, 
+   	DOWN,
+   	UP,
+   	RIGHT
+};
 
 struct Character
 {
@@ -17,7 +20,7 @@ struct Character
 	int x;
 	int y;
 	int camx, camy, camzoom;
-	void (*setAnim)(int anim);
+	void (*setAnim)(CharAnims anim);
 	void (*tick)(void);
 	void (*free)(void);
 

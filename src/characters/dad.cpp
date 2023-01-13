@@ -1,20 +1,20 @@
 #include "dad.h"
 #include "../game.h"
 
-static Character *Dad = new Character();
+static Character *Dad;
 static g2dTexture *Dad_tex[2];
 
 static AnimFrames dadFrames[] =
 {
 	//idle
-	{0, 398, 184, 107, 190,   0,   0},
-	{1,   1,   1, 106, 190,   0,   0},
-	{1, 108,   1, 106, 190,   0,   0},
-	{1, 215,   1, 104, 192,   0,   0},
-	{1, 320,   1, 106, 192,   0,   0},
+	{0, 398, 184, 107, 190,  79, 189},
+	{1,   1,   1, 106, 190,  78, 189},
+	{1, 108,   1, 106, 190,  78, 189},
+	{1, 215,   1, 104, 192,  77, 191},
+	{1, 320,   1, 106, 192,  77, 191},
 	//left
-	{0, 207, 186,  93, 195,   0,   0},
-	{0, 301, 186,  96, 195,   0,   0},
+	{0, 207, 186,  93, 195,   0, 195},
+	{0, 301, 186,  96, 195,   0, 195},
 	//down
 	{0, 232,   1, 118, 183,   0,   0},
 	{0, 351,   1, 115, 184,   0,   0},
@@ -32,12 +32,13 @@ static int  dadConfDown[] = { 7,  8};
 static int    dadConfUp[] = { 9, 10};
 static int dadConfRight[] = {11, 12};
 
-static void Dad_SetAnim(int anim);
+static void Dad_SetAnim(CharAnims anim);
 static void Dad_Tick(void);
 static void Dad_FreeChar(void);
 
 void Dad_Init(void)
 {
+	Dad = new Character();
 	Dad_tex[0] = g2dTexLoad("assets/characters/dad/sheet0.png", G2D_SWIZZLE);
 	Dad_tex[1] = g2dTexLoad("assets/characters/dad/sheet1.png", G2D_SWIZZLE);
 
@@ -47,24 +48,24 @@ void Dad_Init(void)
 	game.opponent = Dad;
 }
 
-static void Dad_SetAnim(int anim)
+static void Dad_SetAnim(CharAnims anim)
 {
 	switch (anim)
 	{
-   		case ANIM_IDLE:
-    		AnimOBJECT_SetAnim(&Dad->obj, &dadFrames[0], &dadConfIdle[0], 15, CountOf(dadConfIdle));
+   		case IDLE:
+    		AnimOBJECT_SetAnim(&Dad->obj, &dadFrames[0], &dadConfIdle[0], 24, CountOf(dadConfIdle));
     		break;
-   		case ANIM_LEFT:
-    		AnimOBJECT_SetAnim(&Dad->obj, &dadFrames[0], &dadConfLeft[0], 15, CountOf(dadConfLeft));
+   		case LEFT:
+    		AnimOBJECT_SetAnim(&Dad->obj, &dadFrames[0], &dadConfLeft[0], 24, CountOf(dadConfLeft));
     		break;
-   		case ANIM_DOWN:
-    		AnimOBJECT_SetAnim(&Dad->obj, &dadFrames[0], &dadConfDown[0], 15, CountOf(dadConfDown));
+   		case DOWN:
+    		AnimOBJECT_SetAnim(&Dad->obj, &dadFrames[0], &dadConfDown[0], 24, CountOf(dadConfDown));
     		break;
-   		case ANIM_UP:
-    		AnimOBJECT_SetAnim(&Dad->obj, &dadFrames[0], &dadConfUp[0], 15, CountOf(dadConfUp));
+   		case UP:
+    		AnimOBJECT_SetAnim(&Dad->obj, &dadFrames[0], &dadConfUp[0], 24, CountOf(dadConfUp));
     		break;
-   		case ANIM_RIGHT:
-    		AnimOBJECT_SetAnim(&Dad->obj, &dadFrames[0], &dadConfRight[0], 15, CountOf(dadConfRight));
+   		case RIGHT:
+    		AnimOBJECT_SetAnim(&Dad->obj, &dadFrames[0], &dadConfRight[0], 24, CountOf(dadConfRight));
     		break;
 	}
 }

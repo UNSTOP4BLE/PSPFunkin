@@ -12,7 +12,6 @@
 #include "error.h"
 
 PSP_MODULE_INFO("PSPFunkin", 0, 1, 0);
-
 int main()
 {
     setupcallbacks();

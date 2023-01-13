@@ -23,6 +23,7 @@ struct Anim_OBJECT
 	bool flipped;
 	bool visible;
 	bool tick;
+	bool cananimate;
 	AnimFrames *frames;
 	int *conf;
 	
@@ -38,6 +39,7 @@ struct Anim_OBJECT
 		flipped = false;
 		visible = true;
 		tick = false;
+		cananimate = false;
 	}
 };
 
