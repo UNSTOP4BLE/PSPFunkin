@@ -1,5 +1,6 @@
 #include "game.h"
 #include "chartparser.h"
+#include "error.h"
 #include "psp/file.h"
 #include "psp/audio.h"
 #include "psp/pad.h"
@@ -20,8 +21,12 @@ void PlayState_Init(void)
 	loadJson(_path, &_config);
 
 	//load characters
+	setChar(_config["player"].asString());
 	setChar(_config["opponent"].asString());
+	setChar(_config["gf"].asString());
+	game.player->setAnim(IDLE);
 	game.opponent->setAnim(IDLE);
+	game.gf->setAnim(IDLE);
 
     //load game assets
     sprintf(_path, "assets/songs/%s/%s.json", song, song); //todo implement difficulty
@@ -37,16 +42,19 @@ void PlayState_Init(void)
 
 void PlayState(void)
 {
-	game.opponent->tick();
-    
+
     tickStep(vocals);
+    section = readChartData(parser.curStep / 16);
+
 
     PrintMSG(0, 0, "step %d time %f", parser.curStep, parser.songPos);
 
 	if (parser.curStep % 8 == 7)
 		game.opponent->setAnim(IDLE);
     
-    	section = readChartData(parser.curStep / 16);
+	game.player->tick();
+	game.opponent->tick();
+	game.gf->tick();
 
   //  DrawNote(notetex, section.sectionNotes[0], section.sectionNotes[1], section.sectionNotes[2], section.mustHitSection);
  //   DrawDummyNotes(notetex, &test[0]);

@@ -7,7 +7,9 @@ struct Game
 {
 	int gamestate;
 	double deltaTime;
+	Character *player; 
 	Character *opponent; 
+	Character *gf; 
 };
 
 extern Game game;

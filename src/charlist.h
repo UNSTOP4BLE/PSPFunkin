@@ -11,6 +11,11 @@ static void setChar(std::string str)
 			game.opponent->x = 100;
 			game.opponent->y = 100;
   	        break;
+  	    default:
+			sprintf(message, "CHARACTER %s IS NULL", str.c_str());
+			game.gamestate = 4;
+			break;
+
 	}
 		
 }

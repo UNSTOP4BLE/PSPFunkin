@@ -1,6 +1,7 @@
 {	
 	"player": "Char_BF",
 	"opponent": "Char_Dad",
+	"gf": "Char_GF",
 
 	"back": "stage",
 	
