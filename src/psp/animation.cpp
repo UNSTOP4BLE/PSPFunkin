@@ -38,8 +38,8 @@ void AnimOBJECT_Tick(Anim_OBJECT *obj)
 		obj->time += obj->speed+game.deltaTime;
 		if (obj->time > 0)
 			obj->curframe = obj->conf[(int)(obj->time / 100)];
-
-		if (obj->curframe+1 > obj->size)
+		int frame = (int)(obj->time / 100);
+		if (frame+1 > obj->size)
 			obj->cananimate = false;
 	}
 }

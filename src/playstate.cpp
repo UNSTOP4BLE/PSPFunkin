@@ -21,10 +21,10 @@ void PlayState_Init(void)
 	loadJson(_path, &_config);
 
 	//load characters
-	setChar(_config["player"].asString());
+	//setChar(_config["player"].asString());
 	setChar(_config["opponent"].asString());
 	setChar(_config["gf"].asString());
-	game.player->setAnim(IDLE);
+	//game.player->setAnim(IDLE);
 	game.opponent->setAnim(IDLE);
 	game.gf->setAnim(IDLE);
 
@@ -42,17 +42,15 @@ void PlayState_Init(void)
 
 void PlayState(void)
 {
-
+    int lastbeat = parser.curBeat;
     tickStep(vocals);
-    section = readChartData(parser.curStep / 16);
+    game.justBeat = (lastbeat >= parser.curBeat);
 
+    section = readChartData(parser.curStep / 16);
 
     PrintMSG(0, 0, "step %d time %f", parser.curStep, parser.songPos);
 
-	if (parser.curStep % 8 == 7)
-		game.opponent->setAnim(IDLE);
-    
-	game.player->tick();
+	//game.player->tick();
 	game.opponent->tick();
 	game.gf->tick();
 

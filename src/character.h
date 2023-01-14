@@ -9,7 +9,11 @@ enum CharAnims
     LEFT, 
    	DOWN,
    	UP,
-   	RIGHT
+   	RIGHT,
+    LEFTALT, 
+   	DOWNALT,
+   	UPALT,
+   	RIGHTALT
 };
 
 struct Character

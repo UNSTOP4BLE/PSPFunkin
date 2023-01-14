@@ -16,6 +16,7 @@ struct Section
 
 struct Parser
 {
+	int curBeat;
 	int curStep;
 	int songPos;
 	double initbpm;

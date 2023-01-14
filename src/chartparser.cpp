@@ -58,5 +58,6 @@ void tickStep(Mix_Music *song)
 	{
     	parser.songPos = Audio_GetSongMilli(song);
 	    parser.curStep = (parser.songPos / parser.step_crochet);
+	   	parser.curBeat = parser.curStep / 4;
 	}
 }	

@@ -1,5 +1,6 @@
 #include "dad.h"
 #include "../game.h"
+#include "../chartparser.h"
 
 static Character *Dad;
 static g2dTexture *Dad_tex[2];
@@ -67,11 +68,16 @@ static void Dad_SetAnim(CharAnims anim)
    		case RIGHT:
     		AnimOBJECT_SetAnim(&Dad->obj, &dadFrames[0], &dadConfRight[0], 24, CountOf(dadConfRight));
     		break;
+    	default:
+    		break;
 	}
 }
 
 static void Dad_Tick(void)
 {
+	if (parser.curStep % 8 == 7)
+		game.opponent->setAnim(IDLE);
+
     AnimOBJECT_Tick(&Dad->obj);
     AnimOBJECT_Draw(&Dad_tex[0], &Dad->obj, Dad->x, Dad->y);
 }

@@ -5,6 +5,8 @@
 
 struct Game
 {
+	bool justBeat;
+	bool justBump;
 	int gamestate;
 	double deltaTime;
 	Character *player; 

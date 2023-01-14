@@ -6,6 +6,7 @@ OBJS = src/main.o \
 	   src/chartparser.o \
 	   src/character.o \
 	   src/characters/dad.o \
+	   src/characters/gf.o \
 	   src/psp/animation.o \
 	   src/psp/file.o \
 	   src/psp/audio.o \
