@@ -42,10 +42,7 @@ void PlayState_Init(void)
 
 void PlayState(void)
 {
-    int lastbeat = parser.curBeat;
     tickStep(vocals);
-    game.justBeat = (lastbeat >= parser.curBeat);
-
     section = readChartData(parser.curStep / 16);
 
     PrintMSG(0, 0, "step %d time %f", parser.curStep, parser.songPos);
@@ -56,4 +53,5 @@ void PlayState(void)
 
   //  DrawNote(notetex, section.sectionNotes[0], section.sectionNotes[1], section.sectionNotes[2], section.mustHitSection);
  //   DrawDummyNotes(notetex, &test[0]);
+
 }

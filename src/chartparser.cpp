@@ -61,3 +61,4 @@ void tickStep(Mix_Music *song)
 	   	parser.curBeat = parser.curStep / 4;
 	}
 }	
+
