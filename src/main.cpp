@@ -1,4 +1,5 @@
 #define SDL_MAIN_HANDLED
+#include "main.h"
 #include <pspdebug.h>
 #include <pspkernel.h>
 #include <psputility.h>
@@ -8,9 +9,8 @@
 #include "psp/font.h"
 #include "psp/audio.h"
 #include "psp/glib2d.h"
-#include "game.h"
-#include "error.h"
 
+#include "playstate.h" //remove later
 PSP_MODULE_INFO("PSPFunkin", 0, 1, 0);
 int main()
 {
@@ -19,8 +19,9 @@ int main()
     Audio_Init();
     g2dInit();
     FntInit("assets/font/font.png");
-    
-	Screen *currentScreen = Playstate; //remove later
+        
+    Game game;
+	Screen *currentScreen = game.Playstate; //remove later
 	Screen->init();
     
     while(1)
@@ -34,7 +35,7 @@ int main()
         g2dFlip(G2D_VSYNC);
 
         auto current = std::chrono::high_resolution_clock::now();
-		game.deltaTime = std::chrono::duration_cast<std::chrono::duration<double, std::ratio<1>>>(current - last).count();
+		currentScreen->deltaTime = std::chrono::duration_cast<std::chrono::duration<double, std::ratio<1>>>(current - last).count();
 		last = current;
     }
 
