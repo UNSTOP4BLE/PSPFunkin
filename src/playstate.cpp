@@ -13,7 +13,7 @@ Mix_Music *inst;
 Mix_Music *vocals;
 const char *song = "bopeebo";
 
-void PlayState_Init(void)
+void PlayState::init(void)
 {
     char _path[40];
     sprintf(_path, "assets/songs/%s/config.json", song);
@@ -40,7 +40,7 @@ void PlayState_Init(void)
    	Audio_PlaySong(vocals, false);
 }
 
-void PlayState(void)
+void PlayState::update(void)
 {
     tickStep(vocals);
     section = readChartData(parser.curStep / 16);

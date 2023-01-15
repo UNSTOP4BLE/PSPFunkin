@@ -19,30 +19,17 @@ int main()
     Audio_Init();
     g2dInit();
     FntInit("assets/font/font.png");
-
-   	PlayState_Init(); //remove later
-
+    
+	Screen *currentScreen = Playstate; //remove later
+	Screen->init();
+    
     while(1)
     {
         auto last = std::chrono::high_resolution_clock::now();
         g2dClear(GREEN);
         Pad_Update();  
 
-        switch (game.gamestate)
-        {
-        	case 0:
-        		PlayState();
-            break;
-        	case 1:
-            break;
-        	case 2:
-            break;
-        	case 3:
-            break;
-            case 4: //error
-                ErrMSG();
-            break;
-        }
+	    currentScreen->update();
 
         g2dFlip(G2D_VSYNC);
 
@@ -50,9 +37,6 @@ int main()
 		game.deltaTime = std::chrono::duration_cast<std::chrono::duration<double, std::ratio<1>>>(current - last).count();
 		last = current;
     }
-
-    Pad_Shutdown();
-    FntFree();
 
     return 0;
 }
