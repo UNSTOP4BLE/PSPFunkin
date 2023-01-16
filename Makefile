@@ -1,7 +1,7 @@
 TARGET = PSPFunkin
 OBJS = src/main.o \
+	   src/screen.o \
 	   src/playstate.o \
-	   src/error.o \
 	   src/chartparser.o \
 	   src/character.o \
 	   src/characters/dad.o \

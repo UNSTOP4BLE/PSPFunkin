@@ -1,7 +1,7 @@
 #ifndef __PLAYSTATE_H__
 #define __PLAYSTATE_H__
 
-#include "main.h"
+#include "screen.h"
 #include "character.h"
 #include "chartparser.h"
 
@@ -16,5 +16,6 @@ private:
 	Section section;
 	Mix_Music *inst;
 	Mix_Music *vocals;
+	int curStep;
 };
 #endif

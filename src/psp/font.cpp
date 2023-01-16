@@ -106,7 +106,7 @@ static struct
 
 typedef struct 
 {
-    g2dTexture* fnttex; //1 tex, 2 font
+    g2dTexture* fnttex; 
 } Tex;
 
 Tex tex;

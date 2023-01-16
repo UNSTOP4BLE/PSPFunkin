@@ -1,5 +1,4 @@
-#include "chartparser.h"
-#include "error.h"
+#include "playstate.h"
 #include "psp/file.h"
 #include "psp/audio.h"
 #include "psp/pad.h"
@@ -32,7 +31,7 @@ void PlayState::init(void)
     //sprintf(_path, "assets/songs/%s/Inst.wav", song);
     //inst = Audio_LoadSong(_path);
     sprintf(_path, "assets/songs/%s/Vocals.wav", song);
-    PlayState::vocals = Audio_LoadSong(_path);
+    Playstate::vocals = Audio_LoadSong(_path);
    	Audio_PlaySong(PlayState::vocals, false);
 }
 
