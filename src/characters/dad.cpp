@@ -46,7 +46,7 @@ void Dad_Init(void)
 	Dad->setAnim = Dad_SetAnim;
 	Dad->tick = Dad_Tick;
 	Dad->free = Dad_FreeChar;
-	game.opponent = Dad;
+//	game.opponent = Dad;
 }
 
 static void Dad_SetAnim(CharAnims anim)
@@ -75,8 +75,8 @@ static void Dad_SetAnim(CharAnims anim)
 
 static void Dad_Tick(void)
 {
-	if (parser.curStep % 8 == 7)
-		game.opponent->setAnim(IDLE);
+//	if (parser.curStep % 8 == 7)
+//		game.opponent->setAnim(IDLE);
 
     AnimOBJECT_Tick(&Dad->obj);
     AnimOBJECT_Draw(&Dad_tex[0], &Dad->obj, Dad->x, Dad->y);

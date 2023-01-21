@@ -1,10 +1,12 @@
 #ifndef __SCREEN_H__
 #define __SCREEN_H__
 
+#include "common.h"
+
 class Screen {
 public:
     virtual void init(void) {}
-    virtual void update(double delta) {}
+    virtual void update(void) {}
 };
 
 class ErrorScreen : public Screen {
@@ -15,7 +17,22 @@ public:
 class TitleScreen : public Screen {
 public:
     void init(void); 
-    void update(double delta);
+    void update(void);
 };
-  
+
+#include "character.h"
+#include "chartparser.h"
+class PlayStateScreen : public Screen {
+public:
+	Character *player;
+	Character *opponent;
+	Character *gf;
+	void init(void); 
+    void update(void);
+private:	
+	Section section;
+	Mix_Music *inst;
+	Mix_Music *vocals;
+	int curStep;
+};
 #endif

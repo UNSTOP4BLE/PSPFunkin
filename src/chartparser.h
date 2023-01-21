@@ -2,7 +2,7 @@
 #define __CHARTPARSER_H__
 
 #include <string>       
-#include "psp/audio.h"
+#include "common.h"
 
 struct Section
 {

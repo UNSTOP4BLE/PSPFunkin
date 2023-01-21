@@ -1,5 +1,6 @@
 #include "characters/dad.h"
 #include "characters/gf.h"
+
 #include "psp/hash.h"
 
 static void setChar(std::string str)
@@ -9,18 +10,18 @@ static void setChar(std::string str)
 	switch (Hash::FromString(str.c_str())) {
  	    case "Char_Dad"_h:
 			Dad_Init();
-			game.opponent->x = 100;
-			game.opponent->y = 100;
+		//	PlayState::opponent->x = 100;
+		//	PlayState::opponent->y = 100;
   	        break;
  	    case "Char_GF"_h:
 			GF_Init();
-			game.gf->x = 100;
-			game.gf->y = 200;
+		//	PlayState::gf->x = 100;
+		//	PlayState::gf->y = 200;
   	        break;
   	    default:
-			sprintf(message, "CHARACTER %s IS NULL", str.c_str());
-			game.gamestate = 4;
-			return;
+		//	sprintf(message, "CHARACTER %s IS NULL", str.c_str());
+		//	game.gamestate = 4;
+		//	return;
 			break;
 
 	}

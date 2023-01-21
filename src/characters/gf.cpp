@@ -52,7 +52,7 @@ void GF_Init(void)
 	GF->setAnim = GF_SetAnim;
 	GF->tick = GF_Tick;
 	GF->free = GF_FreeChar;
-	game.gf = GF;
+//	game.gf = GF;
 	AnimOBJECT_SetAnim(&speaker, &speakerFrames[0], &speakerConf[0], 48, CountOf(speakerConf));
 }
 
@@ -91,7 +91,7 @@ static void GF_Tick(void)
 {
     if (parser.curStep % 4 == 3) //switch bop every beat
     {
-    	game.gf->setAnim(IDLE);
+  //  	game.gf->setAnim(IDLE);
     }
 
     PrintMSG(0,40, "%d", bop);

@@ -14,7 +14,7 @@ static int callbackthread(SceSize args, void* argp) {
     return 0;
 }
 
-void setupcallbacks() {
+static void setupcallbacks() {
     int thid =sceKernelCreateThread("update_thread", callbackthread, 0x11, 0xFA0, 0, NULL );
     if (thid >= 0){
         sceKernelStartThread(thid, 0, NULL);

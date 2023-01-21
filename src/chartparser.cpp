@@ -1,7 +1,5 @@
 #include "chartparser.h"
-#include "psp/file.h"
-#include "error.h"
-#include "game.h"
+#include "common.h"
 
 Json::Value chart;
 

@@ -1,17 +1,15 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "../game.h"
-#include "../error.h"
-#include "animation.h"
-#include "font.h"
+#include "../common.h"
 
 void AnimOBJECT_SetAnim(Anim_OBJECT *obj, AnimFrames *frames, int *conf, float speed, int size)
 {
 	if (obj == NULL)
 	{
-		sprintf(message, "OBJECT IS NULL");
-		game.gamestate = 4;
-		return;
+	//	sprintf(message, "OBJECT IS NULL");
+	//	game.gamestate = 4;
+	//	return;
 	}
 
 	obj->time = 0;
@@ -28,14 +26,14 @@ void AnimOBJECT_Tick(Anim_OBJECT *obj)
 {
 	if (obj == NULL)
 	{
-		sprintf(message, "OBJECT IS NULL");
-		game.gamestate = 4;
-		return;
+	//	sprintf(message, "OBJECT IS NULL");
+	//	game.gamestate = 4;
+	//	return;
 	}
 
 	if (obj->tick && obj->cananimate)
 	{
-		obj->time += obj->speed+game.deltaTime;
+		obj->time += obj->speed+deltaTime;
 		if (obj->time > 0)
 			obj->curframe = obj->conf[(int)(obj->time / 100)];
 		int frame = (int)(obj->time / 100);
@@ -62,9 +60,9 @@ void AnimOBJECT_Draw(g2dTexture **textures, Anim_OBJECT *obj, int x, int y)
 
 		if (textures[obj->frames[obj->curframe].tex] == NULL)
 		{
-			sprintf(message, "ANIMATION DATA IS NULL AT FRAME %d", obj->curframe);
-			game.gamestate = 4;
-			return;
+	//		sprintf(message, "ANIMATION DATA IS NULL AT FRAME %d", obj->curframe);
+	//		game.gamestate = 4;
+	//		return;
 		}
 
 		if (obj->visible)

@@ -2,9 +2,9 @@
 #include <cstdarg>
 #include <cstring>  
 #include <cstdio>
+#include "common.h"
 
 //error handler
-#include "psp/font.h"
 void ErrorScreen::update(const char *format, ...){
 	char str[256] = "";
 	va_list list;
@@ -17,8 +17,11 @@ void ErrorScreen::update(const char *format, ...){
 	PrintMSG(0, 20, str);
 }
 
-//menu
 void TitleScreen::init(void) 
 {
 
+}
+
+void TitleScreen::update(void) 
+{
 }

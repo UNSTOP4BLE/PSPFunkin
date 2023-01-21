@@ -4,13 +4,13 @@
 #include <psputility.h>
 #include <chrono>
 #include "psp/callbacks.h"
-#include "psp/pad.h"
-#include "psp/font.h"
-#include "psp/audio.h"
-#include "psp/glib2d.h"
-
 #include "game.h"
+#include "common.h"
+
 PSP_MODULE_INFO("PSPFunkin", 0, 1, 0);
+
+double deltaTime;
+
 int main()
 {
     setupcallbacks();
@@ -26,12 +26,11 @@ int main()
     while(1)
     {
         auto last = std::chrono::high_resolution_clock::now();
-        double deltaTime;
 
         g2dClear(GREEN);
         Pad_Update();  
 
-	    currentScreen->update(deltaTime);
+	    currentScreen->update();
 
         g2dFlip(G2D_VSYNC);
 

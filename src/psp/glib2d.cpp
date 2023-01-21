@@ -18,8 +18,7 @@
  */
 
 #include "glib2d.h"
-#include "../error.h"
-#include "../game.h"
+//#include "../error.h"
 
 #include <pspkernel.h>
 #include <pspdisplay.h>
@@ -1318,7 +1317,7 @@ g2dTexture* g2dTexLoad(const char* path, g2dTex_Mode mode)
 
     if ((fp = fopen(path, "rb")) == NULL)
     {
-		sprintf(message, "FAILED TO FIND IMAGE AT %s", path);
+	//	sprintf(message, "FAILED TO FIND IMAGE AT %s", path);
     	goto error;
     }
 
@@ -1338,7 +1337,7 @@ g2dTexture* g2dTexLoad(const char* path, g2dTex_Mode mode)
 
     if (tex == NULL)
     {
-		sprintf(message, "TEXTURE IS NULL: %s", path);
+	//	sprintf(message, "TEXTURE IS NULL: %s", path);
         goto error;
 	}
 
@@ -1348,7 +1347,7 @@ g2dTexture* g2dTexLoad(const char* path, g2dTex_Mode mode)
     // The PSP can't draw 512*512+ textures.
     if (tex->w > 512 || tex->h > 512)
     {
-		sprintf(message, "IMAGE RESOLUTION IS LARGER THAN 512x512: %s", path);
+	//	sprintf(message, "IMAGE RESOLUTION IS LARGER THAN 512x512: %s", path);
         goto error;
     }
 
@@ -1375,7 +1374,7 @@ error:
 
     g2dTexFree(&tex);
 
-    game.gamestate = 4;
+ //   game.gamestate = 4;
     return NULL;
 }
 
