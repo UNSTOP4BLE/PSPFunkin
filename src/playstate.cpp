@@ -1,5 +1,4 @@
 #include "common.h"
-#include "game.h"
 
 #include "charlist.h"
 

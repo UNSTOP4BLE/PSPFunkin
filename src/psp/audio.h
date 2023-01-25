@@ -1,6 +1,4 @@
-#ifndef __AUDIO_H__
-#define __AUDIO_H__
-
+#pragma once
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
 
@@ -13,5 +11,3 @@ void Audio_PlaySFX(Mix_Chunk *audio, bool loop);
 void Audio_FreeSong(Mix_Music *music);
 void Audio_FreeSFX(Mix_Chunk *audio);
 bool Audio_IsPlaying();
-
-#endif

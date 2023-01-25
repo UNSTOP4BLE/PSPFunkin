@@ -1,6 +1,4 @@
-#ifndef __SCREEN_H__
-#define __SCREEN_H__
-
+#pragma once
 #include "common.h"
 
 class Screen {
@@ -9,9 +7,16 @@ public:
     virtual void update(void) {}
 };
 
+extern Screen *currentScreen;
+
 class ErrorScreen : public Screen {
 public:
-    void update(const char *format, ...);
+	char msg[256];
+    void init(void) {}
+    void update(void) {
+		PrintMSG(0, 0, "ERROR");
+		PrintMSG(0, 20, msg);
+    }
 };
 
 class TitleScreen : public Screen {
@@ -35,4 +40,15 @@ private:
 	Mix_Music *vocals;
 	int curStep;
 };
-#endif
+
+class GameScreens {
+public:
+	ErrorScreen     Error;
+    TitleScreen     Menu_Title;
+    PlayStateScreen Playstate;
+};
+
+extern GameScreens game;
+
+void ErrMSG(const char *format, ...);
+void setScreen(Screen scr);

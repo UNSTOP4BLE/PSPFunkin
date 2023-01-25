@@ -1,6 +1,4 @@
-#ifndef __CHARACTER_H__
-#define __CHARACTER_H__
-
+#pragma once
 #include "psp/animation.h"
 
 enum CharAnims 
@@ -43,5 +41,3 @@ void Character_isPlayer(Character *chr);
 void Character_setPos(Character *chr, int x, int y);
 void Character_setFocus(Character *chr, int x, int y, int zoom);
 void Character_setIcon(Character *chr, int i);
-
-#endif

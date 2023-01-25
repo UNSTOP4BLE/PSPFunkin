@@ -1,5 +1,4 @@
-#ifndef __CALLBACKS_H__
-#define __CALLBACKS_H__
+#pragma once
 
 static int exit_callback(int arg1, int arg2, void* common) {
     sceKernelExitGame();
@@ -20,5 +19,3 @@ static void setupcallbacks() {
         sceKernelStartThread(thid, 0, NULL);
     }
 }
-
-#endif

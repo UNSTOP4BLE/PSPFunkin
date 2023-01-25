@@ -1,6 +1,4 @@
-#ifndef	__PAD_H__
-#define	__PAD_H__
-
+#pragma once
 #include <pspctrl.h>
 #include <stdbool.h>
 
@@ -9,5 +7,3 @@ extern void			Pad_Shutdown	(void);
 extern void			Pad_Update  	(void);
 extern bool	    	Pad_Pressed	    (const unsigned long Button);
 extern bool		    Pad_Held		(const unsigned long Button);
-
-#endif

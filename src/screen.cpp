@@ -3,18 +3,24 @@
 #include <cstring>  
 #include <cstdio>
 #include "common.h"
+        
+GameScreens game;
+Screen *currentScreen;
 
 //error handler
-void ErrorScreen::update(const char *format, ...){
-	char str[256] = "";
+void ErrMSG(const char *format, ...)
+{
 	va_list list;
 
     va_start(list, format);
-    std::vsprintf(str, format, list);
+    std::vsprintf(game.Error.msg, format, list);
     va_end(list);
+}
 
-	PrintMSG(0, 0, "ERROR");
-	PrintMSG(0, 20, str);
+void setScreen(Screen scr)
+{
+	currentScreen = &scr;
+	currentScreen->init();
 }
 
 void TitleScreen::init(void) 

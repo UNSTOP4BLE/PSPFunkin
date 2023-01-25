@@ -1,6 +1,6 @@
+#include "animation.h"
 #include <stdlib.h>
 #include <stdio.h>
-#include "../game.h"
 #include "../common.h"
 
 void AnimOBJECT_SetAnim(Anim_OBJECT *obj, AnimFrames *frames, int *conf, float speed, int size)
@@ -33,7 +33,7 @@ void AnimOBJECT_Tick(Anim_OBJECT *obj)
 
 	if (obj->tick && obj->cananimate)
 	{
-		obj->time += obj->speed+deltaTime;
+		obj->time += obj->speed+getDT();
 		if (obj->time > 0)
 			obj->curframe = obj->conf[(int)(obj->time / 100)];
 		int frame = (int)(obj->time / 100);

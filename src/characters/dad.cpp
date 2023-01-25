@@ -1,5 +1,4 @@
 #include "dad.h"
-#include "../game.h"
 #include "../chartparser.h"
 
 static Character *Dad;

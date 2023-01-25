@@ -1,6 +1,5 @@
 #include "file.h"
 #include <fstream>
-#include "../game.h"
 
 void loadJson(const char *filename, Json::Value *data) 
 {

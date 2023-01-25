@@ -1,8 +1,8 @@
 #ifndef __CHARTPARSER_H__
 #define __CHARTPARSER_H__
 
-#include <string>       
-#include "common.h"
+#include <string>      
+#include "psp/audio.h"
 
 struct Section
 {

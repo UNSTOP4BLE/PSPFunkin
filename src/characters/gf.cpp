@@ -1,5 +1,4 @@
 #include "gf.h"
-#include "../game.h"
 #include "../chartparser.h"
 #include "../psp/animation.h"
 
