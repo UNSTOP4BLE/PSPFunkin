@@ -1,4 +1,5 @@
 #include "audio.h"
+#include "../screen.h"
 
 void Audio_Init(void)
 {
@@ -14,9 +15,8 @@ Mix_Music *Audio_LoadSong(const char *path)
     //If there was a problem loading the music
     if (music == NULL)
     {
-	//	sprintf(message, "FAILED TO FIND/LOAD MUSIC AT: %s", path);
-	//	game.gamestate = 4;
-	//	return NULL;
+        ErrMSG("FAILED TO FIND/LOAD MUSIC AT: %s", path);
+        return NULL;
     }
     return music;
 }
@@ -29,9 +29,8 @@ Mix_Chunk *Audio_LoadSFX(const char *path)
     //If there was a problem loading the sound effects
     if (audio == NULL)
     {
-	//	sprintf(message, "FAILED TO FIND/LOAD SOUND AT: %s", path);
-	//	game.gamestate = 4;
-	//	return NULL;
+        ErrMSG("FAILED TO FIND/LOAD SOUND AT: %s", path);
+        return NULL;
     }
     return audio;
 }

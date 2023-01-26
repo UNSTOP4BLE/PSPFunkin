@@ -19,6 +19,8 @@ int main()
     g2dInit();
     FntInit("assets/font/font.png");
 
+   // setScreen(new PlayStateScreen());
+
     while(1)
     {
         auto last = std::chrono::high_resolution_clock::now();

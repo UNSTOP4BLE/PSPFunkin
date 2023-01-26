@@ -19,9 +19,8 @@ static void setChar(std::string str)
 		//	PlayState::gf->y = 200;
   	        break;
   	    default:
-		//	sprintf(message, "CHARACTER %s IS NULL", str.c_str());
-		//	game.gamestate = 4;
-		//	return;
+			ErrMSG("CHARACTER %s IS NULL", str.c_str());	
+			return;
 			break;
 
 	}

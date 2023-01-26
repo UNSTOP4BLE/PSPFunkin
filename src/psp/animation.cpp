@@ -7,9 +7,8 @@ void AnimOBJECT_SetAnim(Anim_OBJECT *obj, AnimFrames *frames, int *conf, float s
 {
 	if (obj == NULL)
 	{
-	//	sprintf(message, "OBJECT IS NULL");
-	//	game.gamestate = 4;
-	//	return;
+		ErrMSG("OBJECT IS NULL");	
+		return;
 	}
 
 	obj->time = 0;
@@ -26,9 +25,8 @@ void AnimOBJECT_Tick(Anim_OBJECT *obj)
 {
 	if (obj == NULL)
 	{
-	//	sprintf(message, "OBJECT IS NULL");
-	//	game.gamestate = 4;
-	//	return;
+		ErrMSG("OBJECT IS NULL");	
+		return;
 	}
 
 	if (obj->tick && obj->cananimate)
@@ -60,9 +58,8 @@ void AnimOBJECT_Draw(g2dTexture **textures, Anim_OBJECT *obj, int x, int y)
 
 		if (textures[obj->frames[obj->curframe].tex] == NULL)
 		{
-	//		sprintf(message, "ANIMATION DATA IS NULL AT FRAME %d", obj->curframe);
-	//		game.gamestate = 4;
-	//		return;
+			ErrMSG("ANIMATION DATA IS NULL AT FRAME %d", obj->curframe);
+			return;	
 		}
 
 		if (obj->visible)

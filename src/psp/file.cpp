@@ -1,5 +1,6 @@
 #include "file.h"
 #include <fstream>
+#include "../screen.h"
 
 void loadJson(const char *filename, Json::Value *data) 
 {
@@ -9,9 +10,8 @@ void loadJson(const char *filename, Json::Value *data)
     parseFromStream(builder, file, data, &errs);
     file.close();
     if (!data)
-	{
-	//	sprintf(message, "FAILED TO FIND CHART: %s", filename);
-	//	game.gamestate = 4;
-	//	return;
-	}
+    {
+        ErrMSG( "FAILED TO FIND JSON: %s", filename);
+        return;
+    }
 }
