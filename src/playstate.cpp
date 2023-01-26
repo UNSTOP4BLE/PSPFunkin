@@ -4,7 +4,7 @@
 
 const char *song = "bopeebo";
 
-void PlayStateScreen::init(void)
+void PlayStateScreen::load(void)
 {
     char _path[40];
     sprintf(_path, "assets/songs/%s/config.json", song);

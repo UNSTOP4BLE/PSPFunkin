@@ -4,8 +4,8 @@
 #include <cstdio>
 #include "common.h"
         
-GameScreens game;
 Screen *currentScreen;
+char msg[256];
 
 //error handler
 void ErrMSG(const char *format, ...)
@@ -13,17 +13,27 @@ void ErrMSG(const char *format, ...)
 	va_list list;
 
     va_start(list, format);
-    std::vsprintf(game.Error.msg, format, list);
+    std::vsprintf(msg, format, list);
     va_end(list);
+
+    setScreen(new ErrorScreen());
 }
 
-void setScreen(Screen scr)
+void ErrorScreen::update(void) 
 {
-	currentScreen = &scr;
-	currentScreen->init();
+	PrintMSG(0, 0, "ERROR");
+	PrintMSG(0, 20, msg);
 }
 
-void TitleScreen::init(void) 
+void setScreen(Screen *scr)
+{	
+	if (currentScreen != NULL)
+		delete currentScreen;
+	currentScreen = scr;
+	currentScreen->load();
+}
+
+void TitleScreen::load(void) 
 {
 
 }

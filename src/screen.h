@@ -3,25 +3,21 @@
 
 class Screen {
 public:
-    virtual void init(void) {}
+	inline Screen(void) {}
+    virtual void load(void) {}
     virtual void update(void) {}
+	virtual ~Screen(void) {}
 };
-
-extern Screen *currentScreen;
 
 class ErrorScreen : public Screen {
 public:
-	char msg[256];
-    void init(void) {}
-    void update(void) {
-		PrintMSG(0, 0, "ERROR");
-		PrintMSG(0, 20, msg);
-    }
+    void load(void) {}
+    void update(void);
 };
 
 class TitleScreen : public Screen {
 public:
-    void init(void); 
+    void load(void); 
     void update(void);
 };
 
@@ -32,7 +28,7 @@ public:
 	Character *player;
 	Character *opponent;
 	Character *gf;
-	void init(void); 
+	void load(void); 
     void update(void);
 private:	
 	Section section;
@@ -41,14 +37,7 @@ private:
 	int curStep;
 };
 
-class GameScreens {
-public:
-	ErrorScreen     Error;
-    TitleScreen     Menu_Title;
-    PlayStateScreen Playstate;
-};
-
-extern GameScreens game;
+extern Screen *currentScreen;
 
 void ErrMSG(const char *format, ...);
-void setScreen(Screen scr);
+void setScreen(Screen *scr);

@@ -18,11 +18,6 @@ int main()
     Audio_Init();
     g2dInit();
     FntInit("assets/font/font.png");
-    
-    //setScreen(game.Menu_Title);
-
-    ErrMSG("SCREEN IS NULL");  	  
-    setScreen(game.Error);
 
     while(1)
     {
@@ -30,7 +25,9 @@ int main()
 
         g2dClear(GREEN);
         Pad_Update();  
-	//	ErrMSG("SCREEN IS NULL");			
+
+        if (currentScreen == NULL)
+			ErrMSG("SCREEN IS NULL");			
 	
 		currentScreen->update();  
 
