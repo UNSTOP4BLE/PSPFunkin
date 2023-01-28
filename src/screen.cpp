@@ -2,7 +2,6 @@
 #include <cstdarg>
 #include <cstring>  
 #include <cstdio>
-#include "common.h"
         
 Screen *currentScreen;
 char msg[256];
@@ -19,7 +18,7 @@ void ErrMSG(const char *format, ...)
     setScreen(new ErrorScreen());
 }
 
-void ErrorScreen::update(void) 
+void ErrorScreen::draw(void) 
 {
 	PrintMSG(0, 0, "ERROR");
 	PrintMSG(0, 20, msg);
@@ -31,13 +30,4 @@ void setScreen(Screen *scr)
 		delete currentScreen;
 	currentScreen = scr;
 	currentScreen->load();
-}
-
-void TitleScreen::load(void) 
-{
-
-}
-
-void TitleScreen::update(void) 
-{
 }

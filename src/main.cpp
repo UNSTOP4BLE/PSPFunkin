@@ -1,12 +1,13 @@
 #define SDL_MAIN_HANDLED
 #include "main.h"
+#include "screen.h"
 #include <pspdebug.h>
 #include <pspkernel.h>
 #include <psputility.h>
 #include <chrono>
 #include "psp/callbacks.h"
-#include "common.h"
 
+PSP_MAIN_THREAD_ATTR(THREAD_ATTR_USER | THREAD_ATTR_VFPU);
 PSP_MODULE_INFO("PSPFunkin", 0, 1, 0);
 
 double deltaTime;
@@ -19,19 +20,20 @@ int main()
     g2dInit();
     FntInit("assets/font/font.png");
 
-   // setScreen(new PlayStateScreen());
+    setScreen(new TitleScreen());
 
     while(1)
     {
         auto last = std::chrono::high_resolution_clock::now();
 
-        g2dClear(GREEN);
+        g2dClear(BLACK);
         Pad_Update();  
 
         if (currentScreen == NULL)
 			ErrMSG("SCREEN IS NULL");			
 	
 		currentScreen->update();  
+		currentScreen->draw();  
 
         g2dFlip(G2D_VSYNC);
 
@@ -43,7 +45,7 @@ int main()
     return 0;
 }
 
-double getDT()
+double getDT(void)
 {
 	return deltaTime;
 }

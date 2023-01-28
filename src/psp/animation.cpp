@@ -1,7 +1,7 @@
 #include "animation.h"
 #include <stdlib.h>
 #include <stdio.h>
-#include "../common.h"
+#include "../screen.h"
 
 void AnimOBJECT_SetAnim(Anim_OBJECT *obj, AnimFrames *frames, int *conf, float speed, int size)
 {

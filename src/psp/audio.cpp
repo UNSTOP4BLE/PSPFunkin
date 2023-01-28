@@ -4,8 +4,15 @@
 void Audio_Init(void)
 {
     //Initialize all SDL subsystems
-    SDL_Init(SDL_INIT_AUDIO);
-    Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096);
+    if (SDL_Init(SDL_INIT_AUDIO) == -1)
+    {
+		ErrMSG("SDL_INIT FAILED");
+    }
+
+    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024) != 0)
+    {
+		ErrMSG("FAILED TO OPEN AUDIO: %s\n", Mix_GetError());
+    }
 }
 
 Mix_Music *Audio_LoadSong(const char *path)
@@ -48,6 +55,15 @@ int Audio_GetSongMilli(Mix_Music *music)
 void Audio_PlaySFX(Mix_Chunk *audio, bool loop)
 {
  	Mix_PlayChannel(-1, audio, loop);
+}
+
+{
+    Mix_FreeMusic(music);
+}
+
+void Audio_FreeSFX(Mix_Chunk *audio)
+{
+    Mix_FreeChunk(audio);
 }
 
 bool Audio_IsPlaying()

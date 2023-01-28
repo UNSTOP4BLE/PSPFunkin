@@ -1,5 +1,5 @@
 #include "chartparser.h"
-#include "common.h"
+#include "screen.h"
 
 Json::Value chart;
 

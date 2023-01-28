@@ -1,3 +1,3 @@
 #pragma once
 
-double getDT();
+double getDT(void);

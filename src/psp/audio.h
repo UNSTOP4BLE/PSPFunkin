@@ -1,6 +1,7 @@
 #pragma once
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
+#include <stdbool.h>   
 
 void Audio_Init(void);
 Mix_Music *Audio_LoadSong(const char *path);

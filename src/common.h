@@ -5,4 +5,3 @@
 #include "psp/font.h"
 #include "psp/glib2d.h"
 #include "psp/pad.h"
-#include "screen.h"

@@ -1,4 +1,5 @@
 #pragma once
+
 #include "common.h"
 
 class Screen {
@@ -6,19 +7,32 @@ public:
 	inline Screen(void) {}
     virtual void load(void) {}
     virtual void update(void) {}
+    virtual void draw(void) {}
+    virtual void deload(void) {}
 	virtual ~Screen(void) {}
 };
 
 class ErrorScreen : public Screen {
 public:
     void load(void) {}
-    void update(void);
+    void update(void) {}
+    void draw(void);
+    void deload(void) {}
 };
 
 class TitleScreen : public Screen {
 public:
     void load(void); 
     void update(void);
+    void draw(void);
+    void deload(void); 
+	inline ~TitleScreen(void) {
+		deload();
+	}
+private:
+	Anim_OBJECT gf_title;
+	Mix_Music *menutrack;
+	int curStep;
 };
 
 #include "character.h"
@@ -30,6 +44,8 @@ public:
 	Character *gf;
 	void load(void); 
     void update(void);
+    void draw(void);
+    void deload(void);
 private:	
 	Section section;
 	Mix_Music *inst;
