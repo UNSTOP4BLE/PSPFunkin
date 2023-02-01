@@ -19,14 +19,15 @@ int main()
     Audio_Init();
     g2dInit();
     FntInit("assets/font/font.png");
-
+    setScreenCol(GREEN);
+    
     setScreen(new TitleScreen());
 
     while(1)
     {
         auto last = std::chrono::high_resolution_clock::now();
 
-        g2dClear(BLACK);
+        g2dClear(screenCol);
         Pad_Update();  
 
         if (currentScreen == NULL)

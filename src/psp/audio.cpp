@@ -57,6 +57,7 @@ void Audio_PlaySFX(Mix_Chunk *audio, bool loop)
  	Mix_PlayChannel(-1, audio, loop);
 }
 
+void Audio_FreeSong(Mix_Music *music)
 {
     Mix_FreeMusic(music);
 }

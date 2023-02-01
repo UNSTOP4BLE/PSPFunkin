@@ -4,6 +4,7 @@
 #include <cstdio>
         
 Screen *currentScreen;
+g2dColor screenCol;
 char msg[256];
 
 //error handler
@@ -27,7 +28,15 @@ void ErrorScreen::draw(void)
 void setScreen(Screen *scr)
 {	
 	if (currentScreen != NULL)
+	{
+		currentScreen->deload();
 		delete currentScreen;
+	}
 	currentScreen = scr;
 	currentScreen->load();
+}
+
+void setScreenCol(g2dColor color)
+{
+	screenCol = color;
 }

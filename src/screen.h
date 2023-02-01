@@ -1,6 +1,8 @@
 #pragma once
 
-#include "common.h"
+#include "psp/types.h"
+#include "psp/glib2d.h"
+#include "psp/audio.h"
 
 class Screen {
 public:
@@ -26,17 +28,12 @@ public:
     void update(void);
     void draw(void);
     void deload(void); 
-	inline ~TitleScreen(void) {
-		deload();
-	}
 private:
 	Anim_OBJECT gf_title;
 	Mix_Music *menutrack;
 	int curStep;
 };
 
-#include "character.h"
-#include "chartparser.h"
 class PlayStateScreen : public Screen {
 public:
 	Character *player;
@@ -54,6 +51,7 @@ private:
 };
 
 extern Screen *currentScreen;
-
+extern g2dColor screenCol;
 void ErrMSG(const char *format, ...);
 void setScreen(Screen *scr);
+void setScreenCol(g2dColor color);
