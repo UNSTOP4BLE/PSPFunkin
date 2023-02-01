@@ -2,6 +2,7 @@
 #include <cstdarg>
 #include <cstring>  
 #include <cstdio>
+#include "psp/font.h"
         
 Screen *currentScreen;
 g2dColor screenCol;
