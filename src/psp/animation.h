@@ -1,5 +1,6 @@
 #pragma once
 #include "glib2d.h"
+#include "types.h"
 
 void AnimOBJECT_SetAnim(Anim_OBJECT *obj, AnimFrames *frames, int *conf, float speed, int size);
 void AnimOBJECT_Tick(Anim_OBJECT *obj);

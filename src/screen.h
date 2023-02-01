@@ -1,5 +1,6 @@
 #pragma once
 
+#include "main.h"
 #include "psp/types.h"
 #include "psp/glib2d.h"
 #include "psp/audio.h"

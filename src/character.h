@@ -1,6 +1,6 @@
 #pragma once
 #include "psp/animation.h"
-
+#include "psp/types.h"
 
 void Character_isPlayer(Character *chr);
 void Character_setPos(Character *chr, int x, int y);

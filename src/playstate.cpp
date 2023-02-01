@@ -1,5 +1,6 @@
 #include "screen.h"
-
+#include "psp/font.h"
+#include "chartparser.h"
 const char *song = "bopeebo";
 #include "charlist.h"
 

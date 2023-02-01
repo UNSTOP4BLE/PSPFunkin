@@ -9,7 +9,6 @@
 #include "psp/font.h"
 #include "psp/pad.h"
 
-
 PSP_MAIN_THREAD_ATTR(THREAD_ATTR_USER | THREAD_ATTR_VFPU);
 PSP_MODULE_INFO("PSPFunkin", 0, 1, 0);
 
