@@ -4,12 +4,12 @@ Json::Value chart;
 
 Parser parser;
 
-void loadChart(const char *filename) 
+void Parser_loadChart(const char *filename) 
 {
 	loadJson(filename, &chart);
 }
 
-void readInitialData()
+void Parser_readInitialData()
 {
 	parser.curStep = 0;
 	parser.songPos = 0;
@@ -21,13 +21,18 @@ void readInitialData()
 	//read initial data from the json
 	parser.initspeed = chart["song"]["speed"].asDouble();	
 	parser.initbpm = chart["song"]["bpm"].asDouble();	
+	Parser_calcCrochet();
+}
+
+void Parser_calcCrochet()
+{
 	parser.crochet = (60 / parser.initbpm) * 1000;
 	parser.step_crochet = parser.crochet / 4;
 }
 
 int notecount;
 
-Section readChartData(int thesection)
+Section Parser_readChartData(int thesection)
 {
 	Section section;
 	if (notecount >= (int)chart["song"]["notes"][thesection]["sectionNotes"].size())
@@ -49,7 +54,7 @@ Section readChartData(int thesection)
 	return section;
 }
 
-void tickStep(Mix_Music *song)
+void Parser_tickStep(Mix_Music *song)
 {
 	if (Audio_IsPlaying())
 	{

@@ -93,7 +93,7 @@ static void GF_Tick(void)
   //  	game.gf->setAnim(IDLE);
     }
 
-    PrintMSG(0,40, "%d", bop);
+    PrintFont(Left, 0,40, "%d", bop);
     AnimOBJECT_Tick(&GF->obj);
     AnimOBJECT_Draw(&GF_tex[0], &GF->obj, GF->x, GF->y);
 

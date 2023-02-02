@@ -1,6 +1,13 @@
 #pragma once
-#include <cstring>
- 
-void FntInit(const char* path);
-void FntFree();
-void PrintMSG(int x, int y, const char *format, ...);
+
+enum Align
+{   
+	Center,
+	Left,
+	Right
+};
+
+void FntInit(void);
+void PrintFont(Align all, int x, int y, const char *format, ...);
+void Bold_Tick(void);
+void PrintBOLD(Align all, int x, int y, const char *format, ...);

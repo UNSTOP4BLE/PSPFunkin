@@ -22,8 +22,8 @@ void PlayStateScreen::load(void)
 
     //load game assets
     sprintf(_path, "assets/songs/%s/%s.json", song, song); //todo implement difficulty
-    loadChart(_path);
-    readInitialData();
+    Parser_loadChart(_path);
+    Parser_readInitialData();
 
     //sprintf(_path, "assets/songs/%s/Inst.wav", song);
     //inst = Audio_LoadSong(_path);
@@ -34,11 +34,11 @@ void PlayStateScreen::load(void)
 
 void PlayStateScreen::update(void)
 {
-    tickStep(PlayStateScreen::vocals);
-    PlayStateScreen::section = readChartData(PlayStateScreen::curStep / 16);
+    Parser_tickStep(PlayStateScreen::vocals);
+    PlayStateScreen::section = Parser_readChartData(PlayStateScreen::curStep / 16);
 
    
-    PrintMSG(0, 0, "step %d time %d", parser.curStep, parser.songPos);
+    PrintFont(Left, 0, 0, "step %d time %d", parser.curStep, parser.songPos);
 
 	//game.player->tick();
 //	PlayStateScreen::opponent->tick();

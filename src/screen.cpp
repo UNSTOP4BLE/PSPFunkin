@@ -22,8 +22,8 @@ void ErrMSG(const char *format, ...)
 
 void ErrorScreen::draw(void) 
 {
-	PrintMSG(0, 0, "ERROR");
-	PrintMSG(0, 20, msg);
+	PrintFont(Left, 0, 0, "ERROR");
+	PrintFont(Left, 0, 20, msg);
 }
 
 void setScreen(Screen *scr)

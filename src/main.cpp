@@ -20,7 +20,7 @@ int main()
     Pad_Init();
     Audio_Init();
     g2dInit();
-    FntInit("assets/font/font.png");
+    FntInit();
     setScreenCol(GREEN);
     
     setScreen(new TitleScreen());

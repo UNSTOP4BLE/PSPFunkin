@@ -8,7 +8,8 @@
 extern Parser parser;
 extern int notecount;
 
-void loadChart(const char *filename);
-void readInitialData();
-Section readChartData(int thesection);
-void tickStep(Mix_Music *song);
+void Parser_loadChart(const char *filename);
+void Parser_readInitialData();
+void Parser_calcCrochet();
+Section Parser_readChartData(int thesection);
+void Parser_tickStep(Mix_Music *song);
