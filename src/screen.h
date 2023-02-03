@@ -30,7 +30,10 @@ public:
     void draw(void);
     void deload(void); 
 private:
-	Anim_OBJECT gf_title;
+	g2dTexture *ng;
+	bool gfBop;
+	Anim_OBJECT titleGF;
+	std::string funnymessage[2];
 	Mix_Music *menutrack;
 	int curStep;
 };

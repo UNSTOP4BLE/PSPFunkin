@@ -16,6 +16,7 @@ struct Parser
 	int curBeat;
 	int curStep;
 	int songPos;
+	bool justStep;
 	double initbpm;
 	double initspeed;
 	double crochet;

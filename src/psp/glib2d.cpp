@@ -1387,6 +1387,12 @@ void g2dSetScissor(int x, int y, int w, int h)
 
 void DrawG2DTex(g2dTexture* tex, Rect *Img, Rect *Disp, bool linear, float angle, int alpha)
 {
+	if (tex == NULL)
+	{
+        ErrMSG("g2dTexture is NULL");
+        return ;
+	}
+
 	g2dBeginRects(tex);
 	g2dSetCropXY(Img->x, Img->y);
 	g2dSetCropWH(Img->w, Img->h);

@@ -16,6 +16,9 @@ double deltaTime;
 
 int main()
 {
+	//get a random number seed
+	srand(time(NULL));
+
     setupcallbacks();
     Pad_Init();
     Audio_Init();

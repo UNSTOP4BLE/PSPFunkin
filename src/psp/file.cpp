@@ -8,10 +8,12 @@ void loadJson(const char *filename, Json::Value *data)
     Json::CharReaderBuilder builder;
     JSONCPP_STRING errs;
     parseFromStream(builder, file, data, &errs);
-    file.close();
-    if (!data)
+
+    if (!*data)
     {
         ErrMSG( "FAILED TO FIND JSON: %s", filename);
         return;
     }
+
+    file.close();
 }
