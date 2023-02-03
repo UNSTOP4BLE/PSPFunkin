@@ -44,7 +44,7 @@ static int Font_GetW(Font *font, const char *str)
     }
     return width;
 }
-
+	
 bool boldAnim;
 int animtimer;
 
@@ -72,8 +72,8 @@ static void PrintMSG(g2dTexture *tex, Font *font, int x, int y, const char *str,
 		if (c == '\n')
 		{
 			x = xhold;
-			//if (all == Center)
-			//	x -= Font_GetW(font, str) >> 1;
+			if (all == Center)
+				x -= Font_GetW(font, str) >> 1;
 			if (bold)
 				y += 38;
 			else

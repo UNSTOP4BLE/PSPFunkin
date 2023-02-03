@@ -26,32 +26,31 @@ void TitleScreen::draw(void)
 	switch (parser.curBeat) 
 	{
 		case 3:
-			PrintBOLD(Center, G2D_SCR_W / 2, G2D_SCR_H / 2, "PRESENT");
+			PrintBOLD(Center, G2D_SCR_W / 2, G2D_SCR_H / 2 + 76, "PRESENT");
 		case 2:
 		case 1:
-			PrintBOLD(Center, G2D_SCR_W / 2, G2D_SCR_H / 2, "UNSTOPABLE\nIGORSOU\nMAXDEV\nSPICYJPEG\nBILIOUS");
+			PrintBOLD(Center, G2D_SCR_W / 2, G2D_SCR_H / 2 - 114, "UNSTOPABLE\nIGORSOU\nMAXDEV\nSPICYJPEG\nBILIOUS");
 			break;
 		case 7:
-			PrintBOLD(Center, G2D_SCR_W / 2, G2D_SCR_H / 2, "NEWGROUNDS");
-						//draw newgrounds logo
+			PrintBOLD(Center, G2D_SCR_W / 2, G2D_SCR_H / 2 + 19, "NEWGROUNDS");
+						//draw newgrounds logo 
     	case 6:
 		case 5:
-			PrintBOLD(Center, G2D_SCR_W / 2, G2D_SCR_H / 2, "IN ASSOCIATION\nWITH");
+			PrintBOLD(Center, G2D_SCR_W / 2, G2D_SCR_H / 2 - 57, "IN ASSOCIATION\nWITH");
 			break;
 
 		case 11:
 			//funny message 2
 		case 10:
 		case 9:
-			//funny message 1
+			//funny messsage 1 
 			break;
-					
 		case 15:
-			PrintBOLD(Center, G2D_SCR_W / 2, G2D_SCR_H / 2, "FUNKIN");
+			PrintBOLD(Center, G2D_SCR_W / 2, G2D_SCR_H / 2 + 38, "FUNKIN");
 		case 14:
-			PrintBOLD(Center, G2D_SCR_W / 2, G2D_SCR_H / 2, "FRIDAY");
-		case 13:
 			PrintBOLD(Center, G2D_SCR_W / 2, G2D_SCR_H / 2, "NIGHT");
+		case 13:
+			PrintBOLD(Center, G2D_SCR_W / 2, G2D_SCR_H / 2 - 38, "FRIDAY");
 			break;
 	}
 }
