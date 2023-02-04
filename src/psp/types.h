@@ -65,6 +65,19 @@ struct Anim_OBJECT
 };
 
 //character
+enum CharAnims 
+{   
+	IDLE, 
+    LEFT, 
+   	DOWN,
+   	UP,
+   	RIGHT,
+    LEFTALT, 
+   	DOWNALT,
+   	UPALT,
+   	RIGHTALT
+};
+
 struct Character
 {
 	Anim_OBJECT obj;
