@@ -12,13 +12,10 @@ jobs:
     runs-on: ubuntu-latest
     container: pspdev/pspdev:latest
     steps:
-      - name: Install Dependencies
-        run: |
-          apk add cmake gmp mpc1 mpfr4 make zip curl --quiet
       - name: Checkout
         uses: actions/checkout@main
-      - name: Build
-        run: make > log-file 2>&1 && mkdir export && cp -R assets export && cp EBOOT.PBP export
+      - name: Install Dependencies And Compile
+        run: apk add cmake gmp mpc1 mpfr4 make zip curl --quiet && make && mkdir export && cp -R assets export && cp EBOOT.PBP export
       - name: Publish Artifact
         uses: actions/upload-artifact@main
         with:
