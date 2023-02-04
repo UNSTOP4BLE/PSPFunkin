@@ -7,6 +7,7 @@ const char *song = "bopeebo";
 
 void PlayStateScreen::load(void)
 {
+	setScreenCol(GREEN);
     char _path[40];
     sprintf(_path, "assets/songs/%s/config.json", song);
 	Json::Value _config;
@@ -34,6 +35,7 @@ void PlayStateScreen::load(void)
 
 void PlayStateScreen::update(void)
 {
+	parser.justStep = false;
     Parser_tickStep(PlayStateScreen::vocals);
     PlayStateScreen::section = Parser_readChartData(PlayStateScreen::curStep / 16);
 

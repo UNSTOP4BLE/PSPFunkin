@@ -65,22 +65,10 @@ struct Anim_OBJECT
 };
 
 //character
-enum CharAnims 
-{   
-	IDLE, 
-    LEFT, 
-   	DOWN,
-   	UP,
-   	RIGHT,
-    LEFTALT, 
-   	DOWNALT,
-   	UPALT,
-   	RIGHTALT
-};
-
 struct Character
 {
 	Anim_OBJECT obj;
+	AnimFrames *frames;
 	bool player;
 	int icon;
 	int x;

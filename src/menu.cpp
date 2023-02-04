@@ -2,6 +2,8 @@
 #include "psp/font.h"
 #include "chartparser.h"
 #include "psp/animation.h"
+#include "psp/pad.h"
+
 
 g2dTexture *gfTex[4];
 AnimFrames gfFrames[] = {
@@ -76,6 +78,8 @@ void TitleScreen::update(void)
 			AnimOBJECT_SetAnim((Anim_OBJECT *)&titleGF, &gfFrames[0], &gfConfIdleR[0], 48, CountOf(gfConfIdleR));
 	}
     AnimOBJECT_Tick((Anim_OBJECT *)&titleGF);
+	if (Pad_Pressed(PSP_CTRL_CROSS | PSP_CTRL_START))
+		setScreen(new PlayStateScreen());
 }
 
 void TitleScreen::draw(void) 
