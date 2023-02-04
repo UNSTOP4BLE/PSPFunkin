@@ -1,4 +1,4 @@
-name: PSPFunkin Compile Real
+name: PSPFunkin Compile
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  Build:
     runs-on: ubuntu-latest
     container: pspdev/pspdev:latest
     steps:
@@ -18,7 +18,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@main
       - name: Build
-        run: make --slient && mkdir export && cp -R assets export && cp EBOOT.PBP export
+        run: make 2>&1 | tee log-file | filter && mkdir export && cp -R assets export && cp EBOOT.PBP export
       - name: Publish Artifact
         uses: actions/upload-artifact@main
         with:
