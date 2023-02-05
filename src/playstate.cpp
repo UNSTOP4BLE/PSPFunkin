@@ -4,7 +4,6 @@
 const char *song = "bopeebo";
 #include "charlist.h"
 
-
 void PlayStateScreen::load(void)
 {
 	setScreenCol(GREEN);
@@ -31,6 +30,16 @@ void PlayStateScreen::load(void)
 	sprintf(_path, "assets/songs/%s/Vocals.wav", song);
 	PlayStateScreen::vocals = Audio_LoadSong(_path);
 	Audio_PlaySong(PlayStateScreen::vocals, false);
+
+//	notepos = {
+//		//x
+//		{27,  67,  107, 147, //opponent	
+//		 294, 334, 374, 414}, //player
+//		//y
+//		{14,  14,  14,  14, //opponent	
+//		 14,  14,  14,  14}, //player
+	};
+	
 }
 
 void PlayStateScreen::update(void)

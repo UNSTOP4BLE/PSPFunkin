@@ -48,9 +48,11 @@ public:
 	void draw(void);
 	void deload(void);
 private:	
+	void drawDummyNotes(void);
 	Section section;
 	Mix_Music *inst;
-	Mix_Music *vocals;
+	Mix_Music *vocals;	
+	int notePos[2][8]
 	int curStep;
 };
 
