@@ -3,43 +3,43 @@
 
 void Audio_Init(void)
 {
-    //Initialize all SDL subsystems
-    if (SDL_Init(SDL_INIT_AUDIO) == -1)
-    {
+	//Initialize all SDL subsystems
+	if (SDL_Init(SDL_INIT_AUDIO) == -1)
+	{
 		ErrMSG("SDL_INIT FAILED");
-    }
+	}
 
-    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024) != 0)
-    {
+	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024) != 0)
+	{
 		ErrMSG("FAILED TO OPEN AUDIO: %s\n", Mix_GetError());
-    }
+	}
 }
 
 Mix_Music *Audio_LoadSong(const char *path)
 {
-    Mix_Music *music = Mix_LoadMUS(path);
+	Mix_Music *music = Mix_LoadMUS(path);
 
-    //If there was a problem loading the music
-    if (music == NULL)
-    {
-        ErrMSG("FAILED TO FIND/LOAD MUSIC AT: %s", path);
-        return NULL;
-    }
-    return music;
+	//If there was a problem loading the music
+	if (music == NULL)
+	{
+		ErrMSG("FAILED TO FIND/LOAD MUSIC AT: %s", path);
+		return NULL;
+	}
+	return music;
 }
 
 Mix_Chunk *Audio_LoadSFX(const char *path)
 {   
-    //Load the sound effects
-    Mix_Chunk *audio = Mix_LoadWAV(path);
+	//Load the sound effects
+	Mix_Chunk *audio = Mix_LoadWAV(path);
 
-    //If there was a problem loading the sound effects
-    if (audio == NULL)
-    {
-        ErrMSG("FAILED TO FIND/LOAD SOUND AT: %s", path);
-        return NULL;
-    }
-    return audio;
+	//If there was a problem loading the sound effects
+	if (audio == NULL)
+	{
+		ErrMSG("FAILED TO FIND/LOAD SOUND AT: %s", path);
+		return NULL;
+	}
+	return audio;
 }
 
 void Audio_PlaySong(Mix_Music *music, bool loop)
@@ -59,12 +59,12 @@ void Audio_PlaySFX(Mix_Chunk *audio, bool loop)
 
 void Audio_FreeSong(Mix_Music *music)
 {
-    Mix_FreeMusic(music);
+	Mix_FreeMusic(music);
 }
 
 void Audio_FreeSFX(Mix_Chunk *audio)
 {
-    Mix_FreeChunk(audio);
+	Mix_FreeChunk(audio);
 }
 
 bool Audio_IsPlaying()

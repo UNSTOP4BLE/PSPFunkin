@@ -72,14 +72,14 @@ struct Anim_OBJECT
 enum CharAnims 
 {   
 	IDLE, 
-    LEFT, 
-   	DOWN,
-   	UP,
-   	RIGHT,
-    LEFTALT, 
-   	DOWNALT,
-   	UPALT,
-   	RIGHTALT
+	LEFT, 
+	DOWN,
+	UP,
+	RIGHT,
+	LEFTALT, 
+	DOWNALT,
+	UPALT,
+	RIGHTALT
 };
 
 struct Character
@@ -95,13 +95,13 @@ struct Character
 	void (*tick)(void);
 	void (*free)(void);
 
-    inline Character(void) {
-       	player = false;
+	inline Character(void) {
+		player = false;
 		icon = 0;
 		x = 0;
 		y = 0;
 		camx = 0;
 		camy = 0;
 		camzoom = 0;
-    }
+	}
 };

@@ -4,18 +4,18 @@
 
 void loadJson(const char *filename, Json::Value *data) 
 {
-    std::ifstream file(filename);
-    Json::CharReaderBuilder builder;
-    JSONCPP_STRING errs;
-    parseFromStream(builder, file, data, &errs);
+	std::ifstream file(filename);
+	Json::CharReaderBuilder builder;
+	JSONCPP_STRING errs;
+	parseFromStream(builder, file, data, &errs);
 
-    if (!*data)
-    {
-        ErrMSG( "FAILED TO FIND JSON: %s", filename);
-        return;
-    }
+	if (!*data)
+	{
+		ErrMSG( "FAILED TO FIND JSON: %s", filename);
+		return;
+	}
 
-    file.close();
+	file.close();
 }
 
 std::vector<AnimFrames> readFramesFromJson(const char *filename)

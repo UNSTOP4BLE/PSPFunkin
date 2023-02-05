@@ -3,7 +3,7 @@
 #include <cstring>  
 #include <cstdio>
 #include "psp/font.h"
-        
+		
 Screen *currentScreen;
 g2dColor screenCol;
 char msg[256];
@@ -13,11 +13,11 @@ void ErrMSG(const char *format, ...)
 {
 	va_list list;
 
-    va_start(list, format);
-    std::vsprintf(msg, format, list);
-    va_end(list);
+	va_start(list, format);
+	std::vsprintf(msg, format, list);
+	va_end(list);
 
-    setScreen(new ErrorScreen());
+	setScreen(new ErrorScreen());
 }
 
 void ErrorScreen::draw(void) 

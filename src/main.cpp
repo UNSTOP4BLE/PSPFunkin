@@ -19,36 +19,36 @@ int main()
 	//get a random number seed
 	srand(time(NULL));
 
-    setupcallbacks();
-    Pad_Init();
-    Audio_Init();
-    g2dInit();
-    FntInit();
-    setScreenCol(GREEN);
-    
-    setScreen(new TitleScreen());
+	setupcallbacks();
+	Pad_Init();
+	Audio_Init();
+	g2dInit();
+	FntInit();
+	setScreenCol(GREEN);
+	
+	setScreen(new TitleScreen());
 
-    while(1)
-    {
-        auto last = std::chrono::high_resolution_clock::now();
+	while(1)
+	{
+		auto last = std::chrono::high_resolution_clock::now();
 
-        g2dClear(screenCol);
-        Pad_Update();  
+		g2dClear(screenCol);
+		Pad_Update();  
 
-        if (currentScreen == NULL)
+		if (currentScreen == NULL)
 			ErrMSG("SCREEN IS NULL");			
 	
 		currentScreen->update();  
 		currentScreen->draw();  
 
-        g2dFlip(G2D_VSYNC);
+		g2dFlip(G2D_VSYNC);
 
-        auto current = std::chrono::high_resolution_clock::now();
+		auto current = std::chrono::high_resolution_clock::now();
 		deltaTime = std::chrono::duration_cast<std::chrono::duration<double, std::ratio<1>>>(current - last).count();
 		last = current;
-    }
+	}
 
-    return 0;
+	return 0;
 }
 
 double getDT(void)

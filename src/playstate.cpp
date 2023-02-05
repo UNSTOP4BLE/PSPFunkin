@@ -8,8 +8,8 @@ const char *song = "bopeebo";
 void PlayStateScreen::load(void)
 {
 	setScreenCol(GREEN);
-    char _path[40];
-    sprintf(_path, "assets/songs/%s/config.json", song);
+	char _path[40];
+	sprintf(_path, "assets/songs/%s/config.json", song);
 	Json::Value _config;
 	loadJson(_path, &_config);
 
@@ -21,26 +21,26 @@ void PlayStateScreen::load(void)
 //	PlayStateScreen::opponent->setAnim(IDLE);
 //	PlayStateScreen::gf->setAnim(IDLE);
 
-    //load game assets
-    sprintf(_path, "assets/songs/%s/%s.json", song, song); //todo implement difficulty
-    Parser_loadChart(_path);
-    Parser_readInitialData();
+	//load game assets
+	sprintf(_path, "assets/songs/%s/%s.json", song, song); //todo implement difficulty
+	Parser_loadChart(_path);
+	Parser_readInitialData();
 
-    //sprintf(_path, "assets/songs/%s/Inst.wav", song);
-    //inst = Audio_LoadSong(_path);
-    sprintf(_path, "assets/songs/%s/Vocals.wav", song);
-    PlayStateScreen::vocals = Audio_LoadSong(_path);
-   	Audio_PlaySong(PlayStateScreen::vocals, false);
+	//sprintf(_path, "assets/songs/%s/Inst.wav", song);
+	//inst = Audio_LoadSong(_path);
+	sprintf(_path, "assets/songs/%s/Vocals.wav", song);
+	PlayStateScreen::vocals = Audio_LoadSong(_path);
+	Audio_PlaySong(PlayStateScreen::vocals, false);
 }
 
 void PlayStateScreen::update(void)
 {
 	parser.justStep = false;
-    Parser_tickStep(PlayStateScreen::vocals);
-    PlayStateScreen::section = Parser_readChartData(PlayStateScreen::curStep / 16);
+	Parser_tickStep(PlayStateScreen::vocals);
+	PlayStateScreen::section = Parser_readChartData(PlayStateScreen::curStep / 16);
 
    
-    PrintFont(Left, 0, 0, "step %d time %d", parser.curStep, parser.songPos);
+	PrintFont(Left, 0, 0, "step %d time %d", parser.curStep, parser.songPos);
 
 	//game.player->tick();
 //	PlayStateScreen::opponent->tick();

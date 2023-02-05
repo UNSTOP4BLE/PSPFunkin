@@ -13,8 +13,8 @@ struct Font
 
 struct Tex
 {
-    g2dTexture* fonttex; 
-    g2dTexture* boldtex; 
+	g2dTexture* fonttex; 
+	g2dTexture* boldtex; 
 };
 
 Tex tex;
@@ -34,15 +34,15 @@ static int Font_GetW(Font *font, const char *str)
 	int c;
 	int width = 0;
 	while ((c = *str++) != '\0')
-    {
-        //Shift and validate character
-        if ((c -= 0x20) >= 0x60)
-            continue;
-            
-        //Add width
-        width += font[c].charW;
-    }
-    return width;
+	{
+		//Shift and validate character
+		if ((c -= 0x20) >= 0x60)
+			continue;
+			
+		//Add width
+		width += font[c].charW;
+	}
+	return width;
 }
 	
 bool boldAnim;
@@ -102,38 +102,38 @@ static void PrintMSG(g2dTexture *tex, Font *font, int x, int y, const char *str,
 
 void PrintFont(Align all, int x, int y, const char *format, ...)
 {
-    va_list list;
-    
+	va_list list;
+	
 	char string[256] = "";
 
-    va_start(list, format);
-    std::vsprintf(string, format, list);
-    va_end(list);
-    
-    PrintMSG(tex.fonttex, fontmap, x, y, string, false, all);
+	va_start(list, format);
+	std::vsprintf(string, format, list);
+	va_end(list);
+	
+	PrintMSG(tex.fonttex, fontmap, x, y, string, false, all);
 }
 
 
 void Bold_Tick(void)
 {
-    animtimer += 1 + getDT();
+	animtimer += 1 + getDT();
 
-    if (animtimer > 3)
-    {
-    	boldAnim = !boldAnim;
-    	animtimer = 0;
-    }
+	if (animtimer > 3)
+	{
+		boldAnim = !boldAnim;
+		animtimer = 0;
+	}
 }
 
 void PrintBOLD(Align all, int x, int y, const char *format, ...)
 {	
-    va_list list;
-    
+	va_list list;
+	
 	char string[256] = "";
 
-    va_start(list, format);
-    std::vsprintf(string, format, list);
-    va_end(list);
-    
-    PrintMSG(tex.boldtex, boldmap, x, y, string, true, all);
+	va_start(list, format);
+	std::vsprintf(string, format, list);
+	va_end(list);
+	
+	PrintMSG(tex.boldtex, boldmap, x, y, string, true, all);
 }

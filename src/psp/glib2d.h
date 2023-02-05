@@ -10,18 +10,18 @@
  * \section limits Known limitations
  *
  * - Draw & display buffers can't actually be used as real textures. Just a way
- *     to get the vram pointer.
+ *	 to get the vram pointer.
  * - No support for multiples contexts (e.g. sharing coordinates beetween
- *     textures using some gBegin calls at a time).
+ *	 textures using some gBegin calls at a time).
  * - Manipulating textures (clear, get pixel info...) is not possible.
  * - When some 512*512 rotated, colorized and scaled textures are rendered
- *     at a time, the framerate *could* go under 60 fps.
+ *	 at a time, the framerate *could* go under 60 fps.
  *
  * \section install Installation
  *
  * - Simply put glib2d.c and glib2d.h in your source directory. \n
  * - Then add glib2d.o and link "-lpng -ljpeg -lz -lpspgu -lm -lpspvram"
- *     in your Makefile.
+ *	 in your Makefile.
  * - You're done !
  *
  * \section copyright License
@@ -120,7 +120,7 @@
  * \def G2D_GET_A(color)
  * \brief Get alpha channel value from a g2dColor.
  */
-#define G2D_GET_R(color) (((color)      ) & 0xFF)
+#define G2D_GET_R(color) (((color)	  ) & 0xFF)
 #define G2D_GET_G(color) (((color) >>  8) & 0xFF)
 #define G2D_GET_B(color) (((color) >> 16) & 0xFF)
 #define G2D_GET_A(color) (((color) >> 24) & 0xFF)
@@ -133,10 +133,10 @@
  * Input range is from 0 to 255.
  */
 #define G2D_MODULATE(color,luminance,alpha) \
-    G2D_RGBA((int)(luminance) * G2D_GET_R(color) / 255, \
-             (int)(luminance) * G2D_GET_G(color) / 255, \
-             (int)(luminance) * G2D_GET_B(color) / 255, \
-             (int)(alpha    ) * G2D_GET_A(color) / 255)
+	G2D_RGBA((int)(luminance) * G2D_GET_R(color) / 255, \
+			 (int)(luminance) * G2D_GET_G(color) / 255, \
+			 (int)(luminance) * G2D_GET_B(color) / 255, \
+			 (int)(alpha	) * G2D_GET_A(color) / 255)
 
 typedef struct 
 {
@@ -145,7 +145,7 @@ typedef struct
 
 typedef struct
 {
-    int x,y,w,h;
+	int x,y,w,h;
 } Rect;
 /**
  * \enum g2dColors
@@ -155,27 +155,27 @@ typedef struct
  */
 enum g2dColors
 {
-    // Primary colors
-    RED             = 0xFF0000FF,
-    GREEN           = 0xFF00FF00,
-    BLUE            = 0xFFFF0000,
-    // Secondary colors
-    CYAN            = 0xFFFFFF00,
-    MAGENTA         = 0xFFFF00FF,
-    YELLOW          = 0xFF00FFFF,
-    // Tertiary colors
-    AZURE           = 0xFFFF7F00,
-    VIOLET          = 0xFFFF007F,
-    ROSE            = 0xFF7F00FF,
-    ORANGE          = 0xFF007FFF,
-    CHARTREUSE      = 0xFF00FF7F,
-    SPRING_GREEN    = 0xFF7FFF00,
-    // Grayscale
-    WHITE           = 0xFFFFFFFF,
-    LITEGRAY        = 0xFFBFBFBF,
-    GRAY            = 0xFF7F7F7F,
-    DARKGRAY        = 0xFF3F3F3F,
-    BLACK           = 0xFF000000
+	// Primary colors
+	RED			 = 0xFF0000FF,
+	GREEN		   = 0xFF00FF00,
+	BLUE			= 0xFFFF0000,
+	// Secondary colors
+	CYAN			= 0xFFFFFF00,
+	MAGENTA		 = 0xFFFF00FF,
+	YELLOW		  = 0xFF00FFFF,
+	// Tertiary colors
+	AZURE		   = 0xFFFF7F00,
+	VIOLET		  = 0xFFFF007F,
+	ROSE			= 0xFF7F00FF,
+	ORANGE		  = 0xFF007FFF,
+	CHARTREUSE	  = 0xFF00FF7F,
+	SPRING_GREEN	= 0xFF7FFF00,
+	// Grayscale
+	WHITE		   = 0xFFFFFFFF,
+	LITEGRAY		= 0xFFBFBFBF,
+	GRAY			= 0xFF7F7F7F,
+	DARKGRAY		= 0xFF3F3F3F,
+	BLACK		   = 0xFF000000
 };
 
 /**
@@ -208,24 +208,24 @@ enum g2dColors
  */
 typedef enum
 {
-    G2D_UP_LEFT,
-    G2D_UP_RIGHT,
-    G2D_DOWN_RIGHT,
-    G2D_DOWN_LEFT,
-    G2D_CENTER
+	G2D_UP_LEFT,
+	G2D_UP_RIGHT,
+	G2D_DOWN_RIGHT,
+	G2D_DOWN_LEFT,
+	G2D_CENTER
 } g2dCoord_Mode;
 typedef enum
 {
-    G2D_STRIP = 1 /**< Make a line strip. */
+	G2D_STRIP = 1 /**< Make a line strip. */
 } g2dLine_Mode;
 typedef enum
 {
-    G2D_VSYNC = 1 /**< Limit the FPS to 60 (synchronized with the screen).
-                       Better quality and less power consumption. */
+	G2D_VSYNC = 1 /**< Limit the FPS to 60 (synchronized with the screen).
+					   Better quality and less power consumption. */
 } g2dFlip_Mode;
 typedef enum
 {
-    G2D_SWIZZLE = 1 /**< Recommended. Use it to speedup rendering. */
+	G2D_SWIZZLE = 1 /**< Recommended. Use it to speedup rendering. */
 } g2dTex_Mode;
 
 /**
@@ -245,13 +245,13 @@ typedef unsigned int g2dColor;
  */
 typedef struct
 {
-    int tw;             /**< Real texture width. A power of two. */
-    int th;             /**< Real texture height. A power of two. */
-    int w;              /**< Texture width, as seen when drawing. */
-    int h;              /**< Texture height, as seen when drawing. */
-    float ratio;        /**< Width/height ratio. */
-    bool swizzled;      /**< Is the texture swizzled ? */
-    g2dColor *data;     /**< Pointer to raw data. */
+	int tw;			 /**< Real texture width. A power of two. */
+	int th;			 /**< Real texture height. A power of two. */
+	int w;			  /**< Texture width, as seen when drawing. */
+	int h;			  /**< Texture height, as seen when drawing. */
+	float ratio;		/**< Width/height ratio. */
+	bool swizzled;	  /**< Is the texture swizzled ? */
+	g2dColor *data;	 /**< Pointer to raw data. */
 } g2dTexture;
 
 /**
@@ -494,7 +494,7 @@ void g2dSetCoordXYZRelative(float x, float y, float z);
 /**
  * \brief Use integer coordinates.
  * @param use false to desactivate (better look, by default),
-                            true to activate (can be useful when you have glitches).
+							true to activate (can be useful when you have glitches).
  *
  * This function must be called during object rendering.
  */
@@ -789,7 +789,7 @@ void g2dSetTexRepeat(bool use);
 /**
  * \brief Use the bilinear filter with the texture.
  * @param use true to activate (better look, by default).
-                            false to desactivate (better performance).
+							false to desactivate (better performance).
  *
  * This function must be called during object rendering.
  * Only useful when scaling.

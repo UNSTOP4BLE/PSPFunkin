@@ -8,27 +8,27 @@
 class Screen {
 public:
 	inline Screen(void) {}
-    virtual void load(void) {}
-    virtual void update(void) {}
-    virtual void draw(void) {}
-    virtual void deload(void) {}
+	virtual void load(void) {}
+	virtual void update(void) {}
+	virtual void draw(void) {}
+	virtual void deload(void) {}
 	virtual ~Screen(void) {}
 };
 
 class ErrorScreen : public Screen {
 public:
-    void load(void) {}
-    void update(void) {}
-    void draw(void);
-    void deload(void) {}
+	void load(void) {}
+	void update(void) {}
+	void draw(void);
+	void deload(void) {}
 };
 
 class TitleScreen : public Screen {
 public:
-    void load(void); 
-    void update(void);
-    void draw(void);
-    void deload(void); 
+	void load(void); 
+	void update(void);
+	void draw(void);
+	void deload(void); 
 private:
 	g2dTexture *ng;
 	bool gfBop;
@@ -44,9 +44,9 @@ public:
 	Character *opponent;
 	Character *gf;
 	void load(void); 
-    void update(void);
-    void draw(void);
-    void deload(void);
+	void update(void);
+	void draw(void);
+	void deload(void);
 private:	
 	Section section;
 	Mix_Music *inst;
