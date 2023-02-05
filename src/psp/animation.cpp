@@ -3,7 +3,13 @@
 #include <stdio.h>
 #include "../screen.h"
 
-void AnimOBJECT_SetAnim(Anim_OBJECT *obj, AnimFrames *frames, int *conf, float speed, int size)
+void AnimOBJECT_Init(Anim_OBJECT *obj, std::vector<AnimFrames> frames, std::vector<std::vector<int>> conf)
+{
+	obj->frames = frames;
+	obj->conf = conf;
+}
+
+void AnimOBJECT_SetAnim(Anim_OBJECT *obj, int anim, float speed)
 {
 	if (obj == NULL)
 	{
@@ -12,10 +18,9 @@ void AnimOBJECT_SetAnim(Anim_OBJECT *obj, AnimFrames *frames, int *conf, float s
 	}
 
 	obj->time = 0;
-	obj->frames = frames;
 	obj->curframe = 0;
-	obj->conf = conf;
-	obj->size = size-1;
+	obj->curanim = anim;
+	obj->size = obj->conf[anim].size()-1;
 	obj->speed = speed;
 	obj->tick = true;
 	obj->cananimate = true;
@@ -33,7 +38,7 @@ void AnimOBJECT_Tick(Anim_OBJECT *obj)
 	{
 		obj->time += obj->speed+getDT();
 		if (obj->time > 0)
-			obj->curframe = obj->conf[(int)(obj->time / 100)];
+			obj->curframe = obj->conf[obj->curanim][(int)(obj->time / 100)];
 		int frame = (int)(obj->time / 100);
 		if (frame+1 > obj->size)
 			obj->cananimate = false;

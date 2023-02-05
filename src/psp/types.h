@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 //chartparser
 struct Section
 {
@@ -38,6 +40,7 @@ struct Anim_OBJECT
 	float time;
 	float angle;
 	int curframe;
+	int curanim;
 	int size;
 	int alpha;
 	bool linear;
@@ -45,8 +48,8 @@ struct Anim_OBJECT
 	bool visible;
 	bool tick;
 	bool cananimate;
-	AnimFrames *frames;
-	int *conf;
+	std::vector<AnimFrames> frames;
+	std::vector<std::vector<int>> conf;
 	
 	inline Anim_OBJECT(void)
 	{
@@ -54,6 +57,7 @@ struct Anim_OBJECT
 		time = 0;
 		angle = 0;
 		curframe = 0;
+		curanim = 0;
 		size = 0;
 		alpha = 255;
 		linear = false;

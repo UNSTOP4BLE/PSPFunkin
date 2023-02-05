@@ -50,6 +50,7 @@ void Dad_Init(void)
 
 static void Dad_SetAnim(CharAnims anim)
 {
+	/*
 	switch (anim)
 	{
    		case IDLE:
@@ -69,7 +70,7 @@ static void Dad_SetAnim(CharAnims anim)
     		break;
     	default:
     		break;
-	}
+	}*/
 }
 
 static void Dad_Tick(void)

@@ -52,11 +52,11 @@ void GF_Init(void)
 	GF->tick = GF_Tick;
 	GF->free = GF_FreeChar;
 //	game.gf = GF;
-	AnimOBJECT_SetAnim(&speaker, &speakerFrames[0], &speakerConf[0], 48, CountOf(speakerConf));
+	//AnimOBJECT_SetAnim(&speaker, &speakerFrames[0], &speakerConf[0], 48, CountOf(speakerConf));
 }
 
 static void GF_SetAnim(CharAnims anim)
-{
+{/*
 	switch (anim)
 	{
    		case IDLE:
@@ -82,7 +82,7 @@ static void GF_SetAnim(CharAnims anim)
     		break;
     	default:
     		break;
-	}
+	}*/
 }
 
 #include "../psp/font.h"
@@ -98,8 +98,8 @@ static void GF_Tick(void)
     AnimOBJECT_Draw(&GF_tex[0], &GF->obj, GF->x, GF->y);
 
     //draw speaker
-    if (parser.curStep % 4 == 3)
-		AnimOBJECT_SetAnim(&speaker, &speakerFrames[0], &speakerConf[0], 48, CountOf(speakerConf));
+  //  if (parser.curStep % 4 == 3)
+//		AnimOBJECT_SetAnim(&speaker, &speakerFrames[0], &speakerConf[0], 48, CountOf(speakerConf));
     
     AnimOBJECT_Tick(&speaker);
     AnimOBJECT_Draw(&GF_tex[0], &speaker, 80, 80);
