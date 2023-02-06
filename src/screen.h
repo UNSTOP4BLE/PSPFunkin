@@ -52,7 +52,7 @@ private:
 	Section section;
 	Mix_Music *inst;
 	Mix_Music *vocals;	
-	int notePos[2][8]
+	int notePos[2][8];
 	int curStep;
 };
 
