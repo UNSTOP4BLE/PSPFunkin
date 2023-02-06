@@ -29,17 +29,19 @@ void PlayStateScreen::load(void)
 	//inst = Audio_LoadSong(_path);
 	sprintf(_path, "assets/songs/%s/Vocals.wav", song);
 	PlayStateScreen::vocals = Audio_LoadSong(_path);
-	Audio_PlaySong(PlayStateScreen::vocals, false);
+	Audio_PlaySong(PlayStateScreen::vocals, false);	
 
-//	notepos = {
-//		//x
-//		{27,  67,  107, 147, //opponent	
-//		 294, 334, 374, 414}, //player
-//		//y
-//		{14,  14,  14,  14, //opponent	
-//		 14,  14,  14,  14}, //player
-//	};
-	
+	hud = g2dTexLoad("assets/hud.png", G2D_SWIZZLE);
+
+	//set note positions
+	notePos.player[0] = {294,  14};	
+	notePos.player[1] = {334,  14};	
+	notePos.player[2] = {374,  14};	
+	notePos.player[3] = {414,  14};	
+	notePos.opponent[0] = { 27,  14};	
+	notePos.opponent[1] = { 67,  14};	
+	notePos.opponent[2] = {107,  14};	
+	notePos.opponent[3] = {147,  14};	
 }
 
 void PlayStateScreen::update(void)
@@ -62,6 +64,7 @@ void PlayStateScreen::update(void)
 
 void PlayStateScreen::draw(void)
 {
+	drawDummyNotes();
 }
 
 void PlayStateScreen::deload(void)

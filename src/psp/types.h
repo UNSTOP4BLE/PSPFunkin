@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include "glib2d.h"
 
 //chartparser
 struct Section
@@ -104,4 +105,16 @@ struct Character
 		camy = 0;
 		camzoom = 0;
 	}
+};
+
+//playstate
+struct Pos 
+{
+	int x, y;
+};
+
+struct NotePos 
+{
+	Pos player[4];
+	Pos opponent[4];
 };

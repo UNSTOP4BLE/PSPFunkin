@@ -49,10 +49,11 @@ public:
 	void deload(void);
 private:	
 	void drawDummyNotes(void);
+	g2dTexture *hud;
 	Section section;
 	Mix_Music *inst;
 	Mix_Music *vocals;	
-	int notePos[2][8];
+	NotePos notePos;
 	int curStep;
 };
 

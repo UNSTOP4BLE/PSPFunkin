@@ -3,6 +3,7 @@ OBJS = src/main.o \
 	   src/screen.o \
 	   src/menu.o \
 	   src/playstate.o \
+	   src/note.o \
 	   src/chartparser.o \
 	   src/character.o \
 	   src/characters/dad.o \
