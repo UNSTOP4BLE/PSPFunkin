@@ -48,7 +48,7 @@ void PlayStateScreen::update(void)
 {
 	parser.justStep = false;
 	Parser_tickStep(PlayStateScreen::vocals);
-	PlayStateScreen::section = Parser_readChartData(PlayStateScreen::curStep / 16);
+	//PlayStateScreen::section = Parser_readChartData(PlayStateScreen::curStep / 16);
 
    
 	PrintFont(Left, 0, 0, "step %d time %d", parser.curStep, parser.songPos);

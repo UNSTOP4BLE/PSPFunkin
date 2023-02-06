@@ -6,12 +6,20 @@
 //chartparser
 struct Section
 {
-	double sectionNotes[3];
+	std::vector<double> pos;
+	std::vector<double> type;
+	std::vector<double> sus;
+	int notecount;
 	//int typeOfSection;
 	bool mustHitSection;
 	//int bpm;
-	//bool changeBPM;
+	//bool changeBPM;	
 	bool altAnim;
+};
+
+struct noteData
+{
+	std::vector<Section> chartData;
 };
 
 struct Parser
