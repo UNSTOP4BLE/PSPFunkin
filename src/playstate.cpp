@@ -38,7 +38,7 @@ void PlayStateScreen::load(void)
 //		//y
 //		{14,  14,  14,  14, //opponent	
 //		 14,  14,  14,  14}, //player
-	};
+//	};
 	
 }
 
