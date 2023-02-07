@@ -7,7 +7,7 @@
 struct Section
 {
 	std::vector<double> pos;
-	std::vector<double> type;
+	std::vector<int> type;
 	std::vector<double> sus;
 	int notecount;
 	//int typeOfSection;
@@ -19,7 +19,7 @@ struct Section
 
 struct noteData
 {
-	std::vector<Section> chartData;
+	std::vector<Section> Sections;
 };
 
 struct Parser

@@ -11,5 +11,5 @@ extern int notecount;
 void Parser_loadChart(const char *filename);
 void Parser_readInitialData();
 void Parser_calcCrochet();
-void Parser_readChartData(int thesection, noteData *data);
+void Parser_readChartData(noteData &data);
 void Parser_tickStep(Mix_Music *song);

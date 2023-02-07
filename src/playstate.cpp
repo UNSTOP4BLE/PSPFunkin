@@ -24,6 +24,7 @@ void PlayStateScreen::load(void)
 	sprintf(_path, "assets/songs/%s/%s.json", song, song); //todo implement difficulty
 	Parser_loadChart(_path);
 	Parser_readInitialData();
+	Parser_readChartData(chartData);
 
 	//sprintf(_path, "assets/songs/%s/Inst.wav", song);
 	//inst = Audio_LoadSong(_path);
@@ -65,6 +66,7 @@ void PlayStateScreen::update(void)
 void PlayStateScreen::draw(void)
 {
 	drawDummyNotes();
+	drawNotes();
 }
 
 void PlayStateScreen::deload(void)

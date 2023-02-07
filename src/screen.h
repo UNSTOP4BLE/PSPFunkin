@@ -49,9 +49,11 @@ public:
 	void deload(void);
 private:	
 	void drawDummyNotes(void);
+	void drawNotes(void);
 	g2dTexture *hud;
 	Mix_Music *inst;
-	Mix_Music *vocals;	
+	Mix_Music *vocals;
+	noteData chartData;	
 	NotePos notePos;
 	int curStep;
 };
