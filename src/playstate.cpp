@@ -1,5 +1,6 @@
 #include "screen.h"
 #include "psp/font.h"
+#include "psp/pad.h"
 #include "chartparser.h"
 const char *song = "bopeebo";
 #include "charlist.h"
@@ -49,6 +50,8 @@ void PlayStateScreen::update(void)
 {
 	parser.justStep = false;
 	Parser_tickStep(PlayStateScreen::vocals);
+	updateInput();
+
 	//PlayStateScreen::section = Parser_readChartData(PlayStateScreen::curStep / 16);
 
    
@@ -71,4 +74,16 @@ void PlayStateScreen::draw(void)
 
 void PlayStateScreen::deload(void)
 {
+}
+
+void PlayStateScreen::updateInput(void)
+{
+	checkPad[0] = Pad_Pressed(PSP_CTRL_LEFT | PSP_CTRL_SQUARE);
+	checkPad[1] = Pad_Pressed(PSP_CTRL_DOWN | PSP_CTRL_CROSS | PSP_CTRL_LTRIGGER);
+	checkPad[2] = Pad_Pressed(PSP_CTRL_UP | PSP_CTRL_TRIANGLE | PSP_CTRL_RTRIGGER);
+	checkPad[3] = Pad_Pressed(PSP_CTRL_LEFT | PSP_CTRL_CIRCLE);
+	checkPadHeld[0] = Pad_Pressed(PSP_CTRL_LEFT | PSP_CTRL_SQUARE);
+	checkPadHeld[1] = Pad_Pressed(PSP_CTRL_DOWN | PSP_CTRL_CROSS | PSP_CTRL_LTRIGGER);
+	checkPadHeld[2] = Pad_Pressed(PSP_CTRL_UP | PSP_CTRL_TRIANGLE | PSP_CTRL_RTRIGGER);
+	checkPadHeld[3] = Pad_Pressed(PSP_CTRL_LEFT | PSP_CTRL_CIRCLE);	
 }

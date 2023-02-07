@@ -49,10 +49,14 @@ public:
 	void deload(void);
 private:	
 	void drawDummyNotes(void);
+	void drawNotesAtSection(int sec);
 	void drawNotes(void);
+	void updateInput(void);
 	g2dTexture *hud;
 	Mix_Music *inst;
 	Mix_Music *vocals;
+	bool checkPad[4];
+	bool checkPadHeld[4];
 	noteData chartData;	
 	NotePos notePos;
 	int curStep;

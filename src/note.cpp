@@ -17,30 +17,42 @@ void PlayStateScreen::drawDummyNotes(void)
 	}
 }
 
+void PlayStateScreen::drawNotesAtSection(int sec)
+{
+	for (int i = 0; i < chartData.Sections[sec].notecount; i++)
+	{
+		int curNotex = notePos.opponent[chartData.Sections[sec].type[i]].x;
+		float curNotey = ((chartData.Sections[sec].pos[i] - parser.songPos) * parser.initspeed) + notePos.opponent[chartData.Sections[sec].type[i]].y;
+		if (chartData.Sections[sec].mustHitSection) //if its a players note
+		{
+			curNotex = notePos.player[chartData.Sections[sec].type[i]].x;
+			curNotey = ((chartData.Sections[sec].pos[i] - parser.songPos) * parser.initspeed) + notePos.player[chartData.Sections[sec].type[i]].y;
+		}
+		if (curNotex+39 >= 0 && curNotex <= G2D_SCR_W && curNotey + 39 >= 0 && curNotey <= G2D_SCR_H)
+		{
+			Rect img = {
+				1 + (40*chartData.Sections[sec].type[i]),
+				121,
+				39,
+				39
+			};
+			
+			FRect disp = {
+				(float)curNotex,
+				curNotey,
+				39,
+				39
+			};
+			DrawFG2DTex(hud, &img, &disp, true, 0, 200);
+		}
+	}
+}
 void PlayStateScreen::drawNotes(void) 
 {
 	int curSec = parser.curStep / 16; 
 	//draw the visible notes from the count of notes of the current section
-	for (int i = 0; i < chartData.Sections[curSec].notecount; i++)
-	{
-		int curNotex = notePos.opponent[chartData.Sections[curSec].type[i]].x;
-		if (chartData.Sections[curSec].mustHitSection) //if its a players note
-			curNotex = notePos.player[chartData.Sections[curSec].type[i] + 4].x;
-		float curNotey = (chartData.Sections[curSec].pos[i] - parser.songPos) * parser.initspeed;
-
-		Rect img = {
-			1 + (40*chartData.Sections[curSec].type[i]),
-			121,
-			39,
-			39
-		};
-		
-		FRect disp = {
-			(float)curNotex,
-			curNotey,
-			39,
-			39
-		};
-		DrawFG2DTex(hud, &img, &disp, true, 0, 200);
-	}
+	drawNotesAtSection(curSec);
+	//read 1 section ahead for smoother note movement
+	if (chartData.Sections[curSec+1].notecount != NULL)
+		drawNotesAtSection(curSec+1);
 }
