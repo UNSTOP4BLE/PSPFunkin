@@ -8,6 +8,7 @@ const char *song = "bopeebo";
 void PlayStateScreen::load(void)
 {
 	setScreenCol(GREEN);
+
 	char _path[40];
 	sprintf(_path, "assets/songs/%s/config.json", song);
 	Json::Value _config;
@@ -26,12 +27,12 @@ void PlayStateScreen::load(void)
 	Parser_loadChart(_path);
 	Parser_readInitialData();
 	Parser_readChartData(chartData);
+	parser.songPos = -3000;
 
 	//sprintf(_path, "assets/songs/%s/Inst.wav", song);
 	//inst = Audio_LoadSong(_path);
 	sprintf(_path, "assets/songs/%s/Vocals.wav", song);
 	PlayStateScreen::vocals = Audio_LoadSong(_path);
-	Audio_PlaySong(PlayStateScreen::vocals, false);	
 
 	hud = g2dTexLoad("assets/hud.png", G2D_SWIZZLE);
 
@@ -45,13 +46,29 @@ void PlayStateScreen::load(void)
 	notePos.opponent[2] = {107,  14};	
 	notePos.opponent[3] = {147,  14};	
 }
-
 void PlayStateScreen::update(void)
 {
 	parser.justStep = false;
 	Parser_tickStep(PlayStateScreen::vocals);
-	updateInput();
 
+	if (parser.curStep <= 0)
+	{
+		parser.songPos += getDT();
+		if (parser.curStep == 0 && !Audio_IsPlaying())
+		{
+			Audio_PlaySong(PlayStateScreen::vocals, false);	
+
+		}
+
+	}
+	else if (Audio_IsPlaying())
+	{
+		updateInput();
+	}
+	else
+	{
+		parser.songPos += 1+getDT();
+	}
 	//PlayStateScreen::section = Parser_readChartData(PlayStateScreen::curStep / 16);
 
    
