@@ -53,20 +53,19 @@ void Parser_readChartData(noteData &data)
 	}
 }
 
+
 void Parser_tickStep(Mix_Music *song)
 {
 	if (Audio_IsPlaying())
-	{
 		parser.songPos = Audio_GetSongMilli(song);
-		int nextstep = (parser.songPos / parser.step_crochet);
-		if (nextstep != parser.curStep)
-		{
-			parser.curStep = nextstep;	
-			parser.justStep = true;
-		}
-
-		parser.curBeat = parser.curStep / 4;
+	int nextstep = (parser.songPos / parser.step_crochet);
+	if (nextstep != parser.curStep)
+	{
+		parser.curStep = nextstep;	
+		parser.justStep = true;
 	}
+
+	parser.curBeat = parser.curStep / 4;
 
 }	
 
