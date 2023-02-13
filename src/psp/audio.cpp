@@ -1,73 +1,67 @@
 #include "audio.h"
+#include <vorbis/codec.h>
+#include <vorbis/vorbisfile.h>
 #include "../screen.h"
 
-void Audio_Init(void)
+constexpr static inline uint32_t operator"" _m(const char *const str, size_t length) {
+  return str[0] | (str[1] << 8) | (str[2] << 16) | (str[3] << 24);
+}
+
+// THIS WILL BREAK ON BIG ENDIAN PLATFORMS (don't remove this warning)
+template<typename T> T _readValue(FILE *fp) {
+    T value;
+    assert(fread(&value, sizeof(T), 1, fp));
+    return T;
+}
+
+class Buffer
 {
-    //Initialize all SDL subsystems
-    if (SDL_Init(SDL_INIT_AUDIO) == -1)
-    {
-		ErrMSG("SDL_INIT FAILED");
+public:
+    size_t sampleRate;
+    int channels;
+};
+
+class WAVStreamSource
+{
+public:
+    void open(const char *path) {
+        wavFile = fopen(path, "rb");
+        if (wavFile == NULL)
+        {
+            ErrMSG("FAILED TO FIND WAV FILE AT PATH %s", path);
+            close();
+            return;
+        }  
     }
 
-    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024) != 0)
-    {
-		ErrMSG("FAILED TO OPEN AUDIO: %s\n", Mix_GetError());
+    int readBuf(Buffer &buf, size_t numSamples) {
+        if (fp.readUint32("RIFF" || "WAVE") == NULL)
+        {
+            ErrMSG("INVALID WAV FILE");
+            close();
+            return;
+        }  
+        while (1)
+        {
+            auto chunkType = _readValue<uint32_t>(wavFile);
+            auto chunkLength = _readValue<uint32_t>(wavFile);
+            if (chunkType == "fmt "_m)
+                parseFmtChunk(fp.read(chunkLength)); //todo
+            else if(chunkType == "data"_m) {
+                dataOffset = ftell(wavFile);    
+                dataLength = chunkLength;
+                return;
+            }    
+            else
+                fseek(wavFile, chunkLength, SEEK_CUR);
+        }
     }
-}
 
-Mix_Music *Audio_LoadSong(const char *path)
-{
-    Mix_Music *music = Mix_LoadMUS(path);
-
-    //If there was a problem loading the music
-    if (music == NULL)
-    {
-        ErrMSG("FAILED TO FIND/LOAD MUSIC AT: %s", path);
-        return NULL;
+    void close() {
+        fclose(wavFile);
     }
-    return music;
-}
-
-Mix_Chunk *Audio_LoadSFX(const char *path)
-{   
-    //Load the sound effects
-    Mix_Chunk *audio = Mix_LoadWAV(path);
-
-    //If there was a problem loading the sound effects
-    if (audio == NULL)
-    {
-        ErrMSG("FAILED TO FIND/LOAD SOUND AT: %s", path);
-        return NULL;
-    }
-    return audio;
-}
-
-void Audio_PlaySong(Mix_Music *music, bool loop)
-{
-	Mix_PlayMusic(music, loop);
-}
-
-int Audio_GetSongMilli(Mix_Music *music)
-{
-	return Mix_GetMusicPosition(music) * 1000;
-}
-
-void Audio_PlaySFX(Mix_Chunk *audio, bool loop)
-{
- 	Mix_PlayChannel(-1, audio, loop);
-}
-
-void Audio_FreeSong(Mix_Music *music)
-{
-    Mix_FreeMusic(music);
-}
-
-void Audio_FreeSFX(Mix_Chunk *audio)
-{
-    Mix_FreeChunk(audio);
-}
-
-bool Audio_IsPlaying()
-{
-	return Mix_PlayingMusic();
-}
+private:
+    //fmt chunk data
+    uint32_t fmt;
+    FILE *wavFile;
+};
