@@ -1,4 +1,5 @@
 #include "audio.h"
+#include <SDL2/SDL.h>
 #include <vorbis/codec.h>
 #include <vorbis/vorbisfile.h>
 #include "../screen.h"
@@ -8,60 +9,87 @@ constexpr static inline uint32_t operator"" _m(const char *const str, size_t len
 }
 
 // THIS WILL BREAK ON BIG ENDIAN PLATFORMS (don't remove this warning)
-template<typename T> T _readValue(FILE *fp) {
-    T value;
-    assert(fread(&value, sizeof(T), 1, fp));
-    return T;
+template<typename T> static inline T _readValue(FILE *fp) {
+	T value;
+	assert(fread(&value, sizeof(T), 1, fp));
+	return T;
 }
 
-class Buffer
+template<typename T> static inline void _readValueInPlace(FILE *fp, T &value) {
+	assert(fread(&value, sizeof(T), 1, fp));
+}
+
+struct __attribute__((packed))FMT
 {
-public:
-    size_t sampleRate;
-    int channels;
+	uint16_t format;
+	uint16_t channels;
+	uint32_t samplerate;
+	uint32_t byterate;
+	uint16_t allign;
+	uint16_t bps;
 };
 
 class WAVStreamSource
 {
 public:
-    void open(const char *path) {
-        wavFile = fopen(path, "rb");
-        if (wavFile == NULL)
-        {
-            ErrMSG("FAILED TO FIND WAV FILE AT PATH %s", path);
-            close();
-            return;
-        }  
-    }
+	inline WAVStreamSource(const char *path) {
+		wavFile = fopen(path, "rb");
 
-    int readBuf(Buffer &buf, size_t numSamples) {
-        if (fp.readUint32("RIFF" || "WAVE") == NULL)
-        {
-            ErrMSG("INVALID WAV FILE");
-            close();
-            return;
-        }  
-        while (1)
-        {
-            auto chunkType = _readValue<uint32_t>(wavFile);
-            auto chunkLength = _readValue<uint32_t>(wavFile);
-            if (chunkType == "fmt "_m)
-                parseFmtChunk(fp.read(chunkLength)); //todo
-            else if(chunkType == "data"_m) {
-                dataOffset = ftell(wavFile);    
-                dataLength = chunkLength;
-                return;
-            }    
-            else
-                fseek(wavFile, chunkLength, SEEK_CUR);
-        }
-    }
+		if (wavFile == NULL)
+		{
+			ErrMSG("FAILED TO FIND WAV FILE AT PATH %s", path);
+			close();
+			return;
+		}
 
-    void close() {
-        fclose(wavFile);
-    }
+		assert(_readValue<uint32_t>(wavFile) == "RIFF"_m);
+		_readValue<uint32_t>(wavFile); //ignore total file size
+		assert(_readValue<uint32_t>(wavFile) == "WAVE"_m);
+
+		//if (_readValue<uint32_t>(wavFile) != ("RIFF"_m || "WAVE"_m))
+		//{
+		//	ErrMSG("INVALID WAV FILE");
+		//	close();
+	//		return;
+	//	}  
+		uint32_t chunkType = _readValue<uint32_t>(wavFile);
+		uint32_t chunkLength = _readValue<uint32_t>(wavFile);
+
+		while (!feof(wavFile))
+		{
+			if (chunkType == "fmt "_m)
+			{
+				_readValueInPlace(wavFile, fmt);
+				assert(fmt.format == 1); // 1 is PCM, 0x11 is ADPCM
+				assert(fmt.bps == 16);
+			}
+			else if (chunkType == "data"_m) {
+				dataOffset = ftell(wavFile);    
+				dataLength = chunkLength;
+				return;
+			}  
+			else
+				fseek(wavFile, chunkLength, SEEK_CUR);
+		}
+	}
+
+	inline ~WAVStreamSource(void) {
+		fclose(wavFile);
+	}
 private:
-    //fmt chunk data
-    uint32_t fmt;
-    FILE *wavFile;
+	FILE *wavFile;
+	FMT fmt;
+	int dataOffset;
+	uint32_t dataLength;
+};
+
+class AudioBuffer {
+public:
+	uint16_t *data;
+	uint16_t channels;
+	uint32_t samplerate;
+	uint32_t dataLength;
+private:
+
+
 };
