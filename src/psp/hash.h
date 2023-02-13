@@ -5,7 +5,7 @@
 namespace Hash
 {
 	static const uint32_t FNV32_PRIME = 0x01000193;
-	static const uint32_t FNV32_IV    = 0x811C9DC5;
+	static const uint32_t FNV32_IV	= 0x811C9DC5;
 
 	constexpr static inline uint32_t FromConst(const char *const literal, size_t max_length = 0xFFFFFFFF, uint32_t accumulator = FNV32_IV)
 	{
