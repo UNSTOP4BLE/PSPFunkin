@@ -7,59 +7,59 @@
 
 class Screen {
 public:
-	inline Screen(void) {}
-	virtual void load(void) {}
-	virtual void update(void) {}
-	virtual void draw(void) {}
-	virtual void deload(void) {}
-	virtual ~Screen(void) {}
+    inline Screen(void) {}
+    virtual void load(void) {}
+    virtual void update(void) {}
+    virtual void draw(void) {}
+    virtual void deload(void) {}
+    virtual ~Screen(void) {}
 };
 
 class ErrorScreen : public Screen {
 public:
-	void load(void) {}
-	void update(void) {}
-	void draw(void);
-	void deload(void) {}
+    void load(void) {}
+    void update(void) {}
+    void draw(void);
+    void deload(void) {}
 };
 
 class TitleScreen : public Screen {
 public:
-	void load(void); 
-	void update(void);
-	void draw(void);
-	void deload(void); 
+    void load(void); 
+    void update(void);
+    void draw(void);
+    void deload(void); 
 private:
-	g2dTexture *ng;
-	bool gfBop;
-	Anim_OBJECT titleGF;
-	std::string funnymessage[2];
-	Mix_Music *menutrack;
-	int curStep;
+    g2dTexture *ng;
+    bool gfBop;
+    Anim_OBJECT titleGF;
+    std::string funnymessage[2];
+    Mix_Music *menutrack;
+    int curStep;
 };
 
 class PlayStateScreen : public Screen {
 public:
-	Character *player;
-	Character *opponent;
-	Character *gf;
-	void load(void); 
-	void update(void);
-	void draw(void);
-	void deload(void);
-private:	
-	void drawDummyNotes(void);
-	void drawNotesAtSection(int sec);
-	void drawNotes(void);
-	void updateInput(void);
-	g2dTexture *hud;
-	Mix_Music *inst;
-	Mix_Music *vocals;
-	bool checkPad[4];
-	bool checkPadHeld[4];
-	noteData chartData;	
-	NotePos notePos;
-	int curStep;
+    Character *player;
+    Character *opponent;
+    Character *gf;
+    void load(void); 
+    void update(void);
+    void draw(void);
+    void deload(void);
+private:    
+    void drawDummyNotes(void);
+    void drawNotesAtSection(int sec);
+    void drawNotes(void);
+    void updateInput(void);
+    g2dTexture *hud;
+    Mix_Music *inst;
+    Mix_Music *vocals;
+    bool checkPad[4];
+    bool checkPadHeld[4];
+    noteData chartData; 
+    NotePos notePos;
+    int curStep;
 };
 
 extern Screen *currentScreen;

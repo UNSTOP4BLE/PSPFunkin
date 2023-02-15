@@ -6,30 +6,30 @@ static g2dTexture *Dad_tex[2];
 
 static AnimFrames dadFrames[] =
 {
-	//idle
-	{0, 398, 184, 107, 190,  79, 189},
-	{1,   1,   1, 106, 190,  78, 189},
-	{1, 108,   1, 106, 190,  78, 189},
-	{1, 215,   1, 104, 192,  77, 191},
-	{1, 320,   1, 106, 192,  77, 191},
-	//left
-	{0, 207, 186,  93, 195,   0, 195},
-	{0, 301, 186,  96, 195,   0, 195},
-	//down
-	{0, 232,   1, 118, 183,   0,   0},
-	{0, 351,   1, 115, 184,   0,   0},
-	//up
-	{0,   1, 200, 102, 205,   0,   0},
-	{0, 104, 200, 102, 203,   0,   0},
-	//right
-	{0,   1,   1, 116, 198,   0,   0},
-	{0, 118,   1, 113, 198,   0,   0}
+    //idle
+    {0, 398, 184, 107, 190,  79, 189},
+    {1,   1,   1, 106, 190,  78, 189},
+    {1, 108,   1, 106, 190,  78, 189},
+    {1, 215,   1, 104, 192,  77, 191},
+    {1, 320,   1, 106, 192,  77, 191},
+    //left
+    {0, 207, 186,  93, 195,   0, 195},
+    {0, 301, 186,  96, 195,   0, 195},
+    //down
+    {0, 232,   1, 118, 183,   0,   0},
+    {0, 351,   1, 115, 184,   0,   0},
+    //up
+    {0,   1, 200, 102, 205,   0,   0},
+    {0, 104, 200, 102, 203,   0,   0},
+    //right
+    {0,   1,   1, 116, 198,   0,   0},
+    {0, 118,   1, 113, 198,   0,   0}
 };
 
 static int  dadConfIdle[] = { 0,  1,  2,  3,  4};
 static int  dadConfLeft[] = { 5,  6};
 static int  dadConfDown[] = { 7,  8};
-static int	dadConfUp[] = { 9, 10};
+static int  dadConfUp[] = { 9, 10};
 static int dadConfRight[] = {11, 12};
 
 static void Dad_SetAnim(CharAnims anim);
@@ -38,53 +38,53 @@ static void Dad_FreeChar(void);
 
 void Dad_Init(void)
 {
-	Dad = new Character();
-	Dad_tex[0] = g2dTexLoad("assets/characters/dad/sheet0.png", G2D_SWIZZLE);
-	Dad_tex[1] = g2dTexLoad("assets/characters/dad/sheet1.png", G2D_SWIZZLE);
+    Dad = new Character();
+    Dad_tex[0] = g2dTexLoad("assets/characters/dad/sheet0.png", G2D_SWIZZLE);
+    Dad_tex[1] = g2dTexLoad("assets/characters/dad/sheet1.png", G2D_SWIZZLE);
 
-	Dad->setAnim = Dad_SetAnim;
-	Dad->tick = Dad_Tick;
-	Dad->free = Dad_FreeChar;
-//	game.opponent = Dad;
+    Dad->setAnim = Dad_SetAnim;
+    Dad->tick = Dad_Tick;
+    Dad->free = Dad_FreeChar;
+//  game.opponent = Dad;
 }
 
 static void Dad_SetAnim(CharAnims anim)
 {
-	/*
-	switch (anim)
-	{
-		case IDLE:
-			AnimOBJECT_SetAnim(&Dad->obj, &dadFrames[0], &dadConfIdle[0], 24, CountOf(dadConfIdle));
-			break;
-		case LEFT:
-			AnimOBJECT_SetAnim(&Dad->obj, &dadFrames[0], &dadConfLeft[0], 24, CountOf(dadConfLeft));
-			break;
-		case DOWN:
-			AnimOBJECT_SetAnim(&Dad->obj, &dadFrames[0], &dadConfDown[0], 24, CountOf(dadConfDown));
-			break;
-		case UP:
-			AnimOBJECT_SetAnim(&Dad->obj, &dadFrames[0], &dadConfUp[0], 24, CountOf(dadConfUp));
-			break;
-		case RIGHT:
-			AnimOBJECT_SetAnim(&Dad->obj, &dadFrames[0], &dadConfRight[0], 24, CountOf(dadConfRight));
-			break;
-		default:
-			break;
-	}*/
+    /*
+    switch (anim)
+    {
+        case IDLE:
+            AnimOBJECT_SetAnim(&Dad->obj, &dadFrames[0], &dadConfIdle[0], 24, CountOf(dadConfIdle));
+            break;
+        case LEFT:
+            AnimOBJECT_SetAnim(&Dad->obj, &dadFrames[0], &dadConfLeft[0], 24, CountOf(dadConfLeft));
+            break;
+        case DOWN:
+            AnimOBJECT_SetAnim(&Dad->obj, &dadFrames[0], &dadConfDown[0], 24, CountOf(dadConfDown));
+            break;
+        case UP:
+            AnimOBJECT_SetAnim(&Dad->obj, &dadFrames[0], &dadConfUp[0], 24, CountOf(dadConfUp));
+            break;
+        case RIGHT:
+            AnimOBJECT_SetAnim(&Dad->obj, &dadFrames[0], &dadConfRight[0], 24, CountOf(dadConfRight));
+            break;
+        default:
+            break;
+    }*/
 }
 
 static void Dad_Tick(void)
 {
-//	if (parser.curStep % 8 == 7)
-//		game.opponent->setAnim(IDLE);
+//  if (parser.curStep % 8 == 7)
+//      game.opponent->setAnim(IDLE);
 
-	AnimOBJECT_Tick(&Dad->obj);
-	AnimOBJECT_Draw(&Dad_tex[0], &Dad->obj, Dad->x, Dad->y);
+    AnimOBJECT_Tick(&Dad->obj);
+    AnimOBJECT_Draw(&Dad_tex[0], &Dad->obj, Dad->x, Dad->y);
 }
 
 static void Dad_FreeChar(void)
 {
-	g2dTexFree(&Dad_tex[0]);
-	g2dTexFree(&Dad_tex[1]);
-	delete Dad;
+    g2dTexFree(&Dad_tex[0]);
+    g2dTexFree(&Dad_tex[1]);
+    delete Dad;
 }

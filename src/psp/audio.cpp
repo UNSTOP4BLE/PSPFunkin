@@ -10,23 +10,23 @@ constexpr static inline uint32_t operator"" _m(const char *const str, size_t len
 
 // THIS WILL BREAK ON BIG ENDIAN PLATFORMS (don't remove this warning)
 template<typename T> static inline T _readValue(FILE *fp) {
-	T value;
-	assert(fread(&value, sizeof(T), 1, fp));
-	return T;
+    T value;
+    assert(fread(&value, sizeof(T), 1, fp));
+    return T;
 }
 
 template<typename T> static inline void _readValueInPlace(FILE *fp, T &value) {
-	assert(fread(&value, sizeof(T), 1, fp));
+    assert(fread(&value, sizeof(T), 1, fp));
 }
 
 struct __attribute__((packed))FMT
 {
-	uint16_t format;
-	uint16_t channels;
-	uint32_t samplerate;
-	uint32_t byterate;
-	uint16_t align;
-	uint16_t bps;
+    uint16_t format;
+    uint16_t channels;
+    uint32_t samplerate;
+    uint32_t byterate;
+    uint16_t align;
+    uint16_t bps;
 };
 
 class AudioBuffer {
@@ -44,7 +44,7 @@ public:
 class WAVStreamSource
 {
 public:
-	WAVStreamSource(const char *path);
+    WAVStreamSource(const char *path);
 
     inline int getPosition(void)
     {
@@ -53,14 +53,14 @@ public:
 
     int readBuf(AudioBuffer &buf, int numSamples);
 
-	inline ~WAVStreamSource(void) {
-		fclose(wavFile);
-	}
+    inline ~WAVStreamSource(void) {
+        fclose(wavFile);
+    }
 private:
-	FILE *wavFile;
-	FMT fmt;
-	int dataOffset;
-	uint32_t totalNumSamples;
+    FILE *wavFile;
+    FMT fmt;
+    int dataOffset;
+    uint32_t totalNumSamples;
     SDL_AudioFormat format;
 };
 
@@ -88,22 +88,25 @@ WAVStreamSource::WAVStreamSource(const char *path)
     uint32_t chunkType = _readValue<uint32_t>(wavFile);
     uint32_t chunkLength = _readValue<uint32_t>(wavFile);
 
-    while (!feof(wavFile))
-    {
-        if (chunkType == "fmt "_m)
-        {
+    while (!feof(wavFile)) {
+        if (chunkType == "fmt "_m) {
             _readValueInPlace(wavFile, fmt);
-            assert(fmt.format == 1); // 1 is PCM, 0x11 is ADPCM
-            assert(fmt.bps == 16);
-        }
-        else if (chunkType == "data"_m) {
+            assert(fmt.format == 1); // 1 is int PCM, 3 is float PCM, 0x11 is ADPCM
+
+            // ugly hack but SDL doesn't provide any API for this
+            format = fmt.bps;
+            if (fmt.bps >= 16) format |= SDL_AUDIO_MASK_SIGNED;
+        } else if (chunkType == "data"_m) {
             dataOffset = ftell(wavFile);    
-            totalNumSamples = chunkLength / (fmt.channels * sizeof(uint16_t));
+            totalNumSamples = chunkLength / (fmt.channels * SDL_AUDIO_BITSIZE(format) / 8);
             return;
-        }  
-        else
+        } else {
+            // skip the chunk
             fseek(wavFile, chunkLength, SEEK_CUR);
+        }
     }
+    ErrMSG("FAILED TO FIND A CHUNK ON WAV FILE %s", path);
+    close();
 }
 
 int WAVStreamSource::readBuf(AudioBuffer &buf, int numSamples) {
@@ -114,5 +117,5 @@ int WAVStreamSource::readBuf(AudioBuffer &buf, int numSamples) {
     buf.channels = fmt.channels;
     buf.samplerate = fmt.samplerate;
 
-    return fread(buf.data.data(), fmt.channels * sizeof(uint16_t), actualNumSamples, wavFile);
+    return fread(buf.data.data(), fmt.channels * SDL_AUDIO_BITSIZE(format) / 8, actualNumSamples, wavFile);
 }

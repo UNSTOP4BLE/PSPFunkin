@@ -2,9 +2,9 @@
 
 enum Align
 {   
-	Center,
-	Left,
-	Right
+    Center,
+    Left,
+    Right
 };
 
 void FntInit(void);
