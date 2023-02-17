@@ -53,8 +53,8 @@ void PlayStateScreen::update(void)
 
     if (parser.curStep <= 0)
     {
-        parser.songPos += getDT();
-        if (parser.curStep == 0 && !Audio_IsPlaying())
+        parser.songPos += 16.6 + getDT();
+        if (parser.songPos == 0 && !Audio_IsPlaying())
         {
             Audio_PlaySong(PlayStateScreen::vocals, false); 
 
@@ -67,7 +67,7 @@ void PlayStateScreen::update(void)
     }
     else
     {
-        parser.songPos += 1+getDT();
+        parser.songPos += 16.6+getDT();
     }
     //PlayStateScreen::section = Parser_readChartData(PlayStateScreen::curStep / 16);
 

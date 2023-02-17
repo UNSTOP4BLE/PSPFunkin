@@ -1,7 +1,8 @@
 #include "audio.h"
 #include <SDL2/SDL.h>
 #include <vorbis/codec.h>
-#include <vorbis/vorbisfile.h>
+#include <vorbis/vorbisfile.h>                                                                                                                                                                                 
+#include <cassert>    
 #include "../screen.h"
 
 constexpr static inline uint32_t operator"" _m(const char *const str, size_t length) {
@@ -12,7 +13,7 @@ constexpr static inline uint32_t operator"" _m(const char *const str, size_t len
 template<typename T> static inline T _readValue(FILE *fp) {
     T value;
     assert(fread(&value, sizeof(T), 1, fp));
-    return T;
+    return value;
 }
 
 template<typename T> static inline void _readValueInPlace(FILE *fp, T &value) {
@@ -71,7 +72,7 @@ WAVStreamSource::WAVStreamSource(const char *path)
     if (wavFile == NULL)
     {
         ErrMSG("FAILED TO FIND WAV FILE AT PATH %s", path);
-        close();
+        fclose(wavFile);
         return;
     }
 
@@ -106,16 +107,30 @@ WAVStreamSource::WAVStreamSource(const char *path)
         }
     }
     ErrMSG("FAILED TO FIND A CHUNK ON WAV FILE %s", path);
-    close();
+    fclose(wavFile);
 }
 
 int WAVStreamSource::readBuf(AudioBuffer &buf, int numSamples) {
-    int actualNumSamples = std::min(numSamples, totalNumSamples - getPosition());
+    int actualNumSamples = std::min(numSamples, (int) (totalNumSamples - getPosition()));
     if (!actualNumSamples) return 0;
 
-    buf.data.resize(actualNumSamples * fmt.channels);
+    buf.data.resize(actualNumSamples * fmt.channels * SDL_AUDIO_BITSIZE(format) / 8);
     buf.channels = fmt.channels;
     buf.samplerate = fmt.samplerate;
 
     return fread(buf.data.data(), fmt.channels * SDL_AUDIO_BITSIZE(format) / 8, actualNumSamples, wavFile);
 }
+
+
+//       //
+// MIXER //
+//       //
+class AudioMixer {
+public:
+    AudioMixer(SDL_AudioFormat format, int channels, int samplerate) {
+        stream = SDL_NewAudioStream(format, channels, samplerate, format, channels, samplerate);
+    }
+
+private:
+    SDL_AudioStream *stream;
+};
