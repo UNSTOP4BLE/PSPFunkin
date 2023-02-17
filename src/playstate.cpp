@@ -32,7 +32,7 @@ void PlayStateScreen::load(void)
     //sprintf(_path, "assets/songs/%s/Inst.wav", song);
     //inst = Audio_LoadSong(_path);
     sprintf(_path, "assets/songs/%s/Vocals.wav", song);
-    PlayStateScreen::vocals = Audio_LoadSong(_path);
+    PlayStateScreen::vocals = Mix_LoadMUS(_path);
 
     hud = g2dTexLoad("assets/hud.png", G2D_SWIZZLE);
 
@@ -54,20 +54,19 @@ void PlayStateScreen::update(void)
     if (parser.curStep <= 0)
     {
         parser.songPos += 16.6 + getDT();
-        if (parser.songPos == 0 && !Audio_IsPlaying())
+        if (parser.songPos >= 0 && !Mix_PlayingMusic())
         {
-            Audio_PlaySong(PlayStateScreen::vocals, false); 
-
+            Mix_PlayMusic(PlayStateScreen::vocals, false);
         }
 
     }
-    else if (Audio_IsPlaying())
+    else if (Mix_PlayingMusic())
     {
         updateInput();
     }
     else
     {
-        parser.songPos += 16.6+getDT();
+        parser.songPos += 16.6 + getDT();
     }
     //PlayStateScreen::section = Parser_readChartData(PlayStateScreen::curStep / 16);
 

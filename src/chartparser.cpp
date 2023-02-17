@@ -56,8 +56,8 @@ void Parser_readChartData(noteData &data)
 
 void Parser_tickStep(Mix_Music *song)
 {
-    if (Audio_IsPlaying())
-        parser.songPos = Audio_GetSongMilli(song);
+    if (Mix_PlayingMusic())
+        parser.songPos = Mix_GetMusicPosition(song) * 1000;
     int nextstep = (parser.songPos / parser.step_crochet);
     if (nextstep != parser.curStep)
     {

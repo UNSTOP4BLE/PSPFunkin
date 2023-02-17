@@ -27,8 +27,8 @@ void TitleScreen::load(void)
     funnymessage[1] = titleJson["messages"][curmsg][1].asString();
 
     //load and play music
-    menutrack = Audio_LoadSong("assets/songs/freaky/freaky.wav");
-    Audio_PlaySong(menutrack, true);
+    menutrack = Mix_LoadMUS("assets/songs/freaky/freaky.wav");
+    Mix_PlayMusic(menutrack, true);
     parser.initbpm = titleJson["menuSongBPM"].asDouble();   
     Parser_calcCrochet();
 
@@ -126,7 +126,7 @@ void TitleScreen::draw(void)
 
 void TitleScreen::deload(void) 
 {
-    Audio_FreeSong(menutrack);
+    Mix_FreeMusic(menutrack);
     g2dTexFree(&ng);
     for (int i = 0; i < (int)CountOf(gfTex); i++)
         g2dTexFree(&gfTex[i]);

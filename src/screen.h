@@ -50,6 +50,7 @@ public:
 private:    
     void drawDummyNotes(void);
     void drawNotesAtSection(int sec);
+    void drawSustain(int sec, int note, float y); 
     void drawNotes(void);
     void updateInput(void);
     g2dTexture *hud;

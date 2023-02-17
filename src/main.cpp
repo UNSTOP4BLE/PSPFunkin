@@ -21,7 +21,11 @@ int main()
 
     setupcallbacks();
     Pad_Init();
-    Audio_Init();
+    
+    //Initialize all SDL subsystems
+    SDL_Init(SDL_INIT_AUDIO);
+    Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024);
+
     g2dInit();
     FntInit();
     setScreenCol(GREEN);
