@@ -51,25 +51,25 @@ void PlayStateScreen::update(void)
     parser.justStep = false;
     Parser_tickStep(PlayStateScreen::vocals);
 
-    if (parser.curStep <= 0)
-    {
-        parser.songPos += 16.6 + getDT();
-        if (parser.songPos >= 0 && !Mix_PlayingMusic())
-        {
-            Mix_PlayMusic(PlayStateScreen::vocals, false);
-        }
-
-    }
-    else if (Mix_PlayingMusic())
+    if (Mix_PlayingMusic())
     {
         updateInput();
     }
     else
     {
         parser.songPos += 16.6 + getDT();
-    }
-    //PlayStateScreen::section = Parser_readChartData(PlayStateScreen::curStep / 16);
 
+        //song start
+        if (parser.curStep <= 0)
+        {
+            if (parser.songPos >= 0 && !Mix_PlayingMusic())
+            {
+                //Mix_PlayMusic(PlayStateScreen::inst, false);
+                Mix_PlayMusic(PlayStateScreen::vocals, false);
+            }
+
+        }
+    }
    
     PrintFont(Left, 0, 0, "step %d time %d", parser.curStep, parser.songPos);
 

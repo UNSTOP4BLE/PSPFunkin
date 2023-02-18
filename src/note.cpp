@@ -22,12 +22,16 @@ void PlayStateScreen::drawNotesAtSection(int sec)
     for (int i = 0; i < chartData.Sections[sec].notecount; i++)
     {
         int curNotex = notePos.opponent[chartData.Sections[sec].type[i]].x;
-        float curNotey = ((chartData.Sections[sec].pos[i] - parser.songPos) * parser.initspeed) + notePos.opponent[chartData.Sections[sec].type[i]].y;
+        float curNotey = ((chartData.Sections[sec].pos[i] - parser.songPos) * parser.initspeed)
+                           + notePos.opponent[chartData.Sections[sec].type[i]].y;
+        
         if (chartData.Sections[sec].mustHitSection) //if its a players note
         {
             curNotex = notePos.player[chartData.Sections[sec].type[i]].x;
-            curNotey = ((chartData.Sections[sec].pos[i] - parser.songPos) * parser.initspeed) + notePos.player[chartData.Sections[sec].type[i]].y;
+            curNotey = ((chartData.Sections[sec].pos[i] - parser.songPos) * parser.initspeed)
+                         + notePos.player[chartData.Sections[sec].type[i]].y;
         }
+
         if (curNotex+39 >= 0 && curNotex <= G2D_SCR_W && curNotey + 39 >= 0 && curNotey <= G2D_SCR_H)
         {
             Rect img = {
@@ -44,6 +48,8 @@ void PlayStateScreen::drawNotesAtSection(int sec)
                 img.h   
             };
             DrawFG2DTex(hud, &img, &disp, true, 0, 200);
+            if (chartData.Sections[sec].sus[i] != 0) //check if the note is a sustain
+                drawSustain(sec, i, curNotey);
         }
     }
 }
@@ -54,46 +60,25 @@ void PlayStateScreen::drawSustain(int sec, int note, float y)
 
     Rect img = {
         161 + (14*chartData.Sections[sec].type[note]),
-        1,
+        18,
         13,
-        16
+        11
     };
-    int xpos = notePos.opponent[chartData.Sections[sec].type[note]].x + img.w / 2;
+    int xpos = notePos.opponent[chartData.Sections[sec].type[note]].x + img.w;
     if (chartData.Sections[sec].mustHitSection) //if its a players note
-        xpos = notePos.player[chartData.Sections[sec].type[note]].x + img.w / 2;
-    int ypos = y + img.h / 2;
-    
-    int h;
+        xpos = notePos.player[chartData.Sections[sec].type[note]].x + img.w;
+    float ypos = y + img.h;
+
     for (int i = 0; i < length; i++)
     {
-    
-        Rect disp = {};
+        if (i == length-1) //draw sustain ends
+        {
+            img.y = 1;
+            img.h = 16;
+        }
+        FRect disp = {(float)xpos, ypos + (11 * i), img.w, img.h};
+        DrawFG2DTex(hud, &img, &disp, true, 0, 200);
     }
-    /*
-
-                swagNote.sustainLength = songNotes[2];
-                swagNote.altNote = songNotes[3];
-                swagNote.scrollFactor.set(0, 0);
-
-                var susLength:Float = swagNote.sustainLength;
-
-                susLength = susLength / Conductor.stepCrochet;
-                unspawnNotes.push(swagNote);
-
-                for (susNote in 0...Math.floor(susLength))
-                {
-                    oldNote = unspawnNotes[Std.int(unspawnNotes.length - 1)];
-
-                    var sustainNote:Note = new Note(daStrumTime + (Conductor.stepCrochet * susNote) + Conductor.stepCrochet, daNoteData, oldNote, true);
-                    sustainNote.scrollFactor.set();
-                    unspawnNotes.push(sustainNote);
-
-                    sustainNote.mustPress = gottaHitNote;
-
-                    if (sustainNote.mustPress)
-                        sustainNote.x += FlxG.width / 2; // general offset
-                }
-*/
 }
 
 void PlayStateScreen::drawNotes(void) 

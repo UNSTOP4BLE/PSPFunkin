@@ -140,7 +140,8 @@
 
 typedef struct 
 {
-    float x,y,w,h;
+    float x,y;
+    int w, h; //width and height will never be decimal
 } FRect;
 
 typedef struct
