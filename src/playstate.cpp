@@ -2,7 +2,7 @@
 #include "psp/font.h"
 #include "psp/pad.h"
 #include "chartparser.h"
-const char *song = "bopeebo";
+const char *song = "frostbite";
 #include "charlist.h"
 
 void PlayStateScreen::load(void)
@@ -31,7 +31,7 @@ void PlayStateScreen::load(void)
 
     //sprintf(_path, "assets/songs/%s/Inst.wav", song);
     //inst = Audio_LoadSong(_path);
-    sprintf(_path, "assets/songs/%s/Vocals.wav", song);
+    sprintf(_path, "assets/songs/%s/Voices.wav", song);
     PlayStateScreen::vocals = Mix_LoadMUS(_path);
 
     hud = g2dTexLoad("assets/hud.png", G2D_SWIZZLE);
@@ -76,9 +76,6 @@ void PlayStateScreen::update(void)
     //game.player->tick();
 //  PlayStateScreen::opponent->tick();
 //  PlayStateScreen::gf->tick();
-
-  //  DrawNote(notetex, section.sectionNotes[0], section.sectionNotes[1], section.sectionNotes[2], section.mustHitSection);
- //   DrawDummyNotes(notetex, &test[0]);
 
 }
 

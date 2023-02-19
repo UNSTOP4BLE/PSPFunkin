@@ -20,6 +20,7 @@ struct Section
 struct noteData
 {
     std::vector<Section> Sections;
+    int sectioncount;
 };
 
 struct Parser

@@ -33,13 +33,20 @@ void Parser_calcCrochet()
 void Parser_readChartData(noteData &data)
 {
     data.Sections.resize(chart["song"]["notes"].size());
+    data.sectioncount = (int)chart["song"]["notes"].size();
 
-    for (int i = 0; i < (int)chart["song"]["notes"].size(); i++) // i is the current section
+    for (int i = 0; i < data.sectioncount; i++) // i is the current section
     {
         data.Sections[i].notecount = (int)chart["song"]["notes"][i]["sectionNotes"].size(); //how many notes are in the section, begins with index 1
 
         for (int j = 0; j < data.Sections[i].notecount; j++) //copy over all the notes
         {
+            if (chart["song"]["notes"][i]["sectionNotes"][j][1].asInt() != -1) //-1 is for events
+            {
+                data.Sections[i].sectionNotes[j].);
+                continue;
+            }
+
             data.Sections[i].pos.resize((int)chart["song"]["notes"][i]["sectionNotes"].size());
             data.Sections[i].type.resize((int)chart["song"]["notes"][i]["sectionNotes"].size());
             data.Sections[i].sus.resize((int)chart["song"]["notes"][i]["sectionNotes"].size());

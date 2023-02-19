@@ -1390,7 +1390,7 @@ void DrawG2DTex(g2dTexture* tex, Rect *Img, Rect *Disp, bool linear, float angle
     if (tex == NULL)
     {
         ErrMSG("g2dTexture is NULL");
-        return ;
+        return;
     }
 
     if (Disp->x+Disp->w >= 0 && Disp->x <= G2D_SCR_W && Disp->y+Disp->h >= 0 && Disp->y <= G2D_SCR_H)
@@ -1413,6 +1413,12 @@ void DrawG2DTex(g2dTexture* tex, Rect *Img, Rect *Disp, bool linear, float angle
 
 void DrawFG2DTex(g2dTexture* tex, Rect *Img, FRect *Disp, bool linear, float angle, int alpha)
 {
+    if (tex == NULL)
+    {
+        ErrMSG("g2dTexture is NULL");
+        return;
+    }
+    
     if (Disp->x+Disp->w >= 0 && Disp->x <= G2D_SCR_W && Disp->y+Disp->h >= 0 && Disp->y <= G2D_SCR_H)
     {
         g2dBeginRects(tex);
