@@ -27,12 +27,11 @@ void PlayStateScreen::drawNotesAtSection(int sec)
             continue;
         int curNotex;
         float curNotey;
-        if (chartData.Sections[sec].mustHitSection || type > 3) //if its a players note
+
+        if (chartData.Sections[sec].mustHitSection) //if its a players note
         {
-            if (type > 3) //note is player note but not player section
-               type -= 4;
             curNotex = notePos.player[type].x;
-            curNotey = ((chartData.Sections[sec].sectionNotes[i].pos - parser.songPos) * (parser.initspeed/3.6))
+            curNotey = ((chartData.Sections[sec].sectionNotes[i].pos - parser.songPos) * (parser.initspeed/3.6)) 
                         + notePos.player[type].y;
         }
         else
@@ -40,8 +39,8 @@ void PlayStateScreen::drawNotesAtSection(int sec)
             curNotex = notePos.opponent[type].x;
             curNotey = ((chartData.Sections[sec].sectionNotes[i].pos - parser.songPos) * (parser.initspeed/3.6))
                         + notePos.opponent[type].y;
-        }    
-        
+        }   
+
         Rect img = {
             1 + (40*type),
             121,
@@ -56,24 +55,24 @@ void PlayStateScreen::drawNotesAtSection(int sec)
             img.h   
         };
         //rewrite 8 note stuff
-        //if (chartData.Sections[sec].sectionNotes[i].sus != 0) //check if the note is a sustain
-        //    drawSustain(sec, i, curNotey);
+        if (chartData.Sections[sec].sectionNotes[i].sus != 0) //check if the note is a sustain
+            drawSustain(sec, i, curNotey, type);
         DrawFG2DTex(hud, &img, &disp, true, 0, 200);
     }
 }
 
-void PlayStateScreen::drawSustain(int sec, int note, float y) 
+void PlayStateScreen::drawSustain(int sec, int note, float y, int type) 
 {
     int clipheight = 11;
     int length = chartData.Sections[sec].sectionNotes[note].sus / parser.step_crochet;
 
     Rect img = {
-        161 + (14*chartData.Sections[sec].sectionNotes[note].type),
+        161 + (14*type),
         18,
         13,
         clipheight
     };
-    int xpos = notePos.opponent[chartData.Sections[sec].sectionNotes[note].type].x + img.w;
+    int xpos = notePos.opponent[type].x + img.w;
     if (chartData.Sections[sec].mustHitSection) //if its a players note
         xpos = notePos.player[chartData.Sections[sec].sectionNotes[note].type].x + img.w;
     float ypos = y + (img.h*2);
