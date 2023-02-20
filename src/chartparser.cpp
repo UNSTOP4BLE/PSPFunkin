@@ -38,21 +38,19 @@ void Parser_readChartData(noteData &data)
     for (int i = 0; i < data.sectioncount; i++) // i is the current section
     {
         data.Sections[i].notecount = (int)chart["song"]["notes"][i]["sectionNotes"].size(); //how many notes are in the section, begins with index 1
-
+        data.Sections[i].sectionNotes.resize(data.Sections[i].notecount);
         for (int j = 0; j < data.Sections[i].notecount; j++) //copy over all the notes
         {
-            if (chart["song"]["notes"][i]["sectionNotes"][j][1].asInt() != -1) //-1 is for events
+            if (chart["song"]["notes"][i]["sectionNotes"][j][1].asInt() == -1) //-1 is for events
             {
-                data.Sections[i].sectionNotes[j].);
+                data.Sections[i].sectionNotes[j].event = true;
                 continue;
             }
 
-            data.Sections[i].pos.resize((int)chart["song"]["notes"][i]["sectionNotes"].size());
-            data.Sections[i].type.resize((int)chart["song"]["notes"][i]["sectionNotes"].size());
-            data.Sections[i].sus.resize((int)chart["song"]["notes"][i]["sectionNotes"].size());
-            data.Sections[i].pos[j] = chart["song"]["notes"][i]["sectionNotes"][j][0].asDouble(); //note position in ms
-            data.Sections[i].type[j] = chart["song"]["notes"][i]["sectionNotes"][j][1].asInt(); //type
-            data.Sections[i].sus[j] = chart["song"]["notes"][i]["sectionNotes"][j][2].asDouble(); //sustain length in ms
+            data.Sections[i].sectionNotes[j].event = false;
+            data.Sections[i].sectionNotes[j].pos = chart["song"]["notes"][i]["sectionNotes"][j][0].asDouble(); //note position in ms
+            data.Sections[i].sectionNotes[j].type = chart["song"]["notes"][i]["sectionNotes"][j][1].asInt(); //type
+            data.Sections[i].sectionNotes[j].sus = chart["song"]["notes"][i]["sectionNotes"][j][2].asDouble(); //sustain length in ms
         }
     
         data.Sections[i].mustHitSection = chart["song"]["notes"][i]["mustHitSection"].asBool(); //is it a opponent section

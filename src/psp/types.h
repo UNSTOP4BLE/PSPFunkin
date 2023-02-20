@@ -4,11 +4,17 @@
 #include "glib2d.h"
 
 //chartparser
+struct Note 
+{
+    bool event; //used only by psych engine
+    double pos;
+    int type;
+    double sus; //amon us
+};
+
 struct Section
 {
-    std::vector<double> pos;
-    std::vector<int> type;
-    std::vector<double> sus;
+    std::vector<Note> sectionNotes;
     int notecount;
     //int typeOfSection;
     bool mustHitSection;

@@ -21,51 +21,61 @@ void PlayStateScreen::drawNotesAtSection(int sec)
 {
     for (int i = 0; i < chartData.Sections[sec].notecount; i++)
     {
-        int curNotex = notePos.opponent[chartData.Sections[sec].type[i]].x;
-        float curNotey = ((chartData.Sections[sec].pos[i] - parser.songPos) * (parser.initspeed/3.6))
-                           + notePos.opponent[chartData.Sections[sec].type[i]].y;
-        
-        if (chartData.Sections[sec].mustHitSection) //if its a players note
+        int type = chartData.Sections[sec].sectionNotes[i].type;
+
+        if (chartData.Sections[sec].sectionNotes[i].event == true) //dont draw if its a event
+            continue;
+        int curNotex;
+        float curNotey;
+        if (chartData.Sections[sec].mustHitSection || type > 3) //if its a players note
         {
-            curNotex = notePos.player[chartData.Sections[sec].type[i]].x;
-            curNotey = ((chartData.Sections[sec].pos[i] - parser.songPos) * (parser.initspeed/3.6))
-                         + notePos.player[chartData.Sections[sec].type[i]].y;
+            if (type > 3) //note is player note but not player section
+               type -= 4;
+            curNotex = notePos.player[type].x;
+            curNotey = ((chartData.Sections[sec].sectionNotes[i].pos - parser.songPos) * (parser.initspeed/3.6))
+                        + notePos.player[type].y;
         }
+        else
+        {
+            curNotex = notePos.opponent[type].x;
+            curNotey = ((chartData.Sections[sec].sectionNotes[i].pos - parser.songPos) * (parser.initspeed/3.6))
+                        + notePos.opponent[type].y;
+        }    
         
         Rect img = {
-            1 + (40*chartData.Sections[sec].type[i]),
+            1 + (40*type),
             121,
             39,
             39
         };
-            
+                
         FRect disp = {
             (float)curNotex,
             curNotey,
             img.w,
             img.h   
         };
-        if (chartData.Sections[sec].sus[i] != 0) //check if the note is a sustain
-            drawSustain(sec, i, curNotey);
+        //rewrite 8 note stuff
+        //if (chartData.Sections[sec].sectionNotes[i].sus != 0) //check if the note is a sustain
+        //    drawSustain(sec, i, curNotey);
         DrawFG2DTex(hud, &img, &disp, true, 0, 200);
-       
     }
 }
 
 void PlayStateScreen::drawSustain(int sec, int note, float y) 
 {
     int clipheight = 11;
-    int length = chartData.Sections[sec].sus[note] / parser.step_crochet;
+    int length = chartData.Sections[sec].sectionNotes[note].sus / parser.step_crochet;
 
     Rect img = {
-        161 + (14*chartData.Sections[sec].type[note]),
+        161 + (14*chartData.Sections[sec].sectionNotes[note].type),
         18,
         13,
         clipheight
     };
-    int xpos = notePos.opponent[chartData.Sections[sec].type[note]].x + img.w;
+    int xpos = notePos.opponent[chartData.Sections[sec].sectionNotes[note].type].x + img.w;
     if (chartData.Sections[sec].mustHitSection) //if its a players note
-        xpos = notePos.player[chartData.Sections[sec].type[note]].x + img.w;
+        xpos = notePos.player[chartData.Sections[sec].sectionNotes[note].type].x + img.w;
     float ypos = y + (img.h*2);
 
     for (int i = 0; i < (int)((length*3.6) * (parser.initspeed)); i++)
