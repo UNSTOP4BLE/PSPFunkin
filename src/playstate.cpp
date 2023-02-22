@@ -16,8 +16,8 @@ void PlayStateScreen::load(void)
 
     //load characters
     //setChar(_config["player"].asString());
-    setChar(_config["opponent"].asString());
-    setChar(_config["gf"].asString());
+    //setChar(_config["opponent"].asString());
+   // setChar(_config["gf"].asString());
     //game.player->setAnim(IDLE);
 //  PlayStateScreen::opponent->setAnim(IDLE);
 //  PlayStateScreen::gf->setAnim(IDLE);
@@ -57,7 +57,7 @@ void PlayStateScreen::update(void)
     }
     else
     {
-        parser.songPos += 16.6 + getDT();
+        parser.songPos += 16 + getDT();
 
         //song start
         if (parser.curStep <= 0)

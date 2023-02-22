@@ -21,10 +21,10 @@ void PlayStateScreen::drawNotesAtSection(int sec)
 {
     for (int i = 0; i < chartData.Sections[sec].notecount; i++)
     {
-        int type = chartData.Sections[sec].sectionNotes[i].type;
-
         if (chartData.Sections[sec].sectionNotes[i].event == true) //dont draw if its a event
             continue;
+
+        int type = chartData.Sections[sec].sectionNotes[i].type;
         int curNotex;
         float curNotey;
 

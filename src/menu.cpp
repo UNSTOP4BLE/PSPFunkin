@@ -13,7 +13,6 @@ enum TitleStates
 TitleStates state;
 
 g2dTexture *gfTex[4];
-std::vector<std::vector<int>> animer;
 void TitleScreen::load(void) 
 {
     setScreenCol(BLACK);
@@ -33,7 +32,6 @@ void TitleScreen::load(void)
     Parser_calcCrochet();
 
     //load textures
-    animer = readConfFromJson("assets/menu/title/gf/frames.json");
     AnimOBJECT_Init(&titleGF, readFramesFromJson("assets/menu/title/gf/frames.json"), readConfFromJson("assets/menu/title/gf/frames.json"));
     gfTex[0] = g2dTexLoad("assets/menu/title/gf/sheet0.png", G2D_SWIZZLE);
     gfTex[1] = g2dTexLoad("assets/menu/title/gf/sheet1.png", G2D_SWIZZLE);
