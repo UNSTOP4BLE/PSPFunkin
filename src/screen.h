@@ -1,9 +1,11 @@
 #pragma once
 
 #include "main.h"
-#include "psp/types.h"
 #include "psp/glib2d.h"
 #include "psp/audio.h"
+
+#include "character.h"
+#include "chartparser.h"
 
 class Screen {
 public:
@@ -36,6 +38,17 @@ private:
     std::string funnymessage[2];
     Mix_Music *menutrack;
     int curStep;
+};
+
+struct Pos 
+{
+    int x, y;
+};
+
+struct NotePos 
+{
+    Pos player[4];
+    Pos opponent[4];
 };
 
 class PlayStateScreen : public Screen {

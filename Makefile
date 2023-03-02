@@ -1,19 +1,17 @@
 TARGET = PSPFunkin
 OBJS = src/main.o \
-	   src/screen.o \
-	   src/menu.o \
-	   src/playstate.o \
-	   src/note.o \
-	   src/chartparser.o \
-	   src/character.o \
-	   src/characters/dad.o \
-	   src/characters/gf.o \
-	   src/psp/animation.o \
-	   src/psp/file.o \
-	   src/psp/audio.o \
-	   src/psp/pad.o \
-	   src/psp/font.o \
-	   src/psp/glib2d.o 
+       src/screen.o \
+       src/menu.o \
+       src/playstate.o \
+       src/character.o \
+       src/note.o \
+       src/chartparser.o \
+       src/psp/animation.o \
+       src/psp/file.o \
+       src/psp/audio.o \
+       src/psp/pad.o \
+       src/psp/font.o \
+       src/psp/glib2d.o 
 
 LIBS = -ljsoncpp -lstdc++ -lpng -lz -lpspgum -lpspgu -lpsprtc -lm -lpspvram -lpspaudio -lSDL2_mixer -lSDL2 -lGL -lvorbisfile -lvorbis -logg -lpspvfpu -lpsphprm -lxmp
 

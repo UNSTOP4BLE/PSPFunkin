@@ -47,12 +47,27 @@ std::vector<std::vector<int>> readConfFromJson(const char *filename)
     loadJson(filename, &data);
 
     //push config data to the vector array
-    std::vector<std::vector<int>> conf(data["config"].size());
+    std::vector<std::vector<int>> conf(data["config"].size()); 
 
     for (int i = 0; i < (int)data["config"].size(); i++)
     {
-        for (int j = 0; j < (int)data["config"][i].size(); j++)
+        for (int j = 1; j < (int)data["config"][i].size()-1; j++)//-1 because the first element is animation speed
             conf[i].push_back(data["config"][i][j].asInt());
     }
     return conf;
+}
+
+std::vector<int> readAnimSpeedFromJson(const char *filename)
+{
+    //load the json file 
+    Json::Value data;
+    loadJson(filename, &data);
+
+    //push config data to the vector array
+    std::vector<int> spd(data["config"].size());
+
+    for (int i = 0; i < (int)data["config"].size(); i++) {
+        spd[i] = data["config"][i][0].asInt();
+    }
+    return spd;
 }

@@ -2,8 +2,9 @@
 #include "psp/font.h"
 #include "psp/pad.h"
 #include "chartparser.h"
-const char *song = "frostbite";
-#include "charlist.h"
+#include "character.h"
+
+const char *song = "bopeebo";
 
 void PlayStateScreen::load(void)
 {
@@ -15,12 +16,12 @@ void PlayStateScreen::load(void)
     loadJson(_path, &_config);
 
     //load characters
-    //setChar(_config["player"].asString());
-    //setChar(_config["opponent"].asString());
-   // setChar(_config["gf"].asString());
-    //game.player->setAnim(IDLE);
-//  PlayStateScreen::opponent->setAnim(IDLE);
-//  PlayStateScreen::gf->setAnim(IDLE);
+    sprintf(_path, "assets/charactes/%s/%s", _config["player"].asString().c_str(), _config["player"].asString().c_str());
+    player = new Character(_path);
+    sprintf(_path, "assets/charactes/%s/%s", _config["opponent"].asString().c_str(), _config["opponent"].asString().c_str());
+    opponent = new Character(_path);
+    sprintf(_path, "assets/charactes/%s/%s", _config["gf"].asString().c_str(), _config["gf"].asString().c_str());
+    gf = new Character(_path);
 
     //load game assets
     sprintf(_path, "assets/songs/%s/%s.json", song, song); //todo implement difficulty
@@ -32,7 +33,7 @@ void PlayStateScreen::load(void)
     //sprintf(_path, "assets/songs/%s/Inst.wav", song);
     //inst = Audio_LoadSong(_path);
     sprintf(_path, "assets/songs/%s/Voices.wav", song);
-    PlayStateScreen::vocals = Mix_LoadMUS(_path);
+    vocals = Mix_LoadMUS(_path);
 
     hud = g2dTexLoad("assets/hud.png", G2D_SWIZZLE);
 
@@ -49,7 +50,7 @@ void PlayStateScreen::load(void)
 void PlayStateScreen::update(void)
 {
     parser.justStep = false;
-    Parser_tickStep(PlayStateScreen::vocals);
+    Parser_tickStep(vocals);
 
     if (Mix_PlayingMusic())
     {
@@ -65,7 +66,7 @@ void PlayStateScreen::update(void)
             if (parser.songPos >= 0 && !Mix_PlayingMusic())
             {
                 //Mix_PlayMusic(PlayStateScreen::inst, false);
-                Mix_PlayMusic(PlayStateScreen::vocals, false);
+                Mix_PlayMusic(vocals, false);
             }
 
         }
@@ -82,7 +83,7 @@ void PlayStateScreen::update(void)
 void PlayStateScreen::draw(void)
 {
     drawDummyNotes();
-    drawNotes();
+    //drawNotes();
 }
 
 void PlayStateScreen::deload(void)

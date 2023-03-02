@@ -1,29 +1,23 @@
 #include "character.h"
+#include "psp/file.h"
 
-void Character_isPlayer(Character *chr)
-{
-    chr->player = !chr->player;
-
-    if (chr->player)
-    {
-        chr->obj.flipped = true;
-    }
+Character::Character(const char *path) {
+    Json::Value chardata;
+    loadJson(path, &chardata);
+    AnimOBJECT_Init(&obj, readFramesFromJson(path), readConfFromJson(path));
 }
 
-void Character_setPos(Character *chr, int x, int y)
-{
-    chr->x = x;
-    chr->y = y;
+void Character::setPos(float _x, float _y) {
+    x = _x;
+    y = _y;
 }
 
-void Character_setFocus(Character *chr, int x, int y, int zoom)
-{
-    chr->camx = x;
-    chr->camy = y;
-    chr->camzoom = zoom;
+void Character::setFocus(float x, float y, float zoom) {
+    camx = x;
+    camy = y;
+    camzoom = zoom;
 }
 
-void Character_setIcon(Character *chr, int i)
-{
-    chr->icon = i;
+void Character::setIcon(int i) {
+    icon = i;
 }
