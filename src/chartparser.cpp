@@ -44,6 +44,8 @@ void Parser_readChartData(noteData &data)
             if (chart["song"]["notes"][i]["sectionNotes"][j][1].asInt() == -1) //-1 is for events
             {
                 data.Sections[i].sectionNotes[j].event = true;
+
+                //put your event code here
                 continue;
             }
 

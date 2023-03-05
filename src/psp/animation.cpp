@@ -9,7 +9,7 @@ void AnimOBJECT_Init(Anim_OBJECT *obj, std::vector<AnimFrames> frames, std::vect
     obj->conf = conf;
 }
 
-void AnimOBJECT_SetAnim(Anim_OBJECT *obj, int anim, float speed)
+void AnimOBJECT_SetAnim(Anim_OBJECT *obj, int anim)
 {
     if (obj == NULL)
     {
@@ -20,8 +20,8 @@ void AnimOBJECT_SetAnim(Anim_OBJECT *obj, int anim, float speed)
     obj->time = 0;
     obj->curframe = 0;
     obj->curanim = anim;
-    obj->size = obj->conf[anim].size()-1;
-    obj->speed = speed;
+    obj->size = obj->conf[anim].size()-2;
+    obj->speed = obj->conf[anim][0];
     obj->tick = true;
     obj->cananimate = true;
 }
@@ -37,9 +37,9 @@ void AnimOBJECT_Tick(Anim_OBJECT *obj)
     if (obj->tick && obj->cananimate)
     {
         obj->time += obj->speed+getDT();
+        int frame = (int)(obj->time / 100)+1;
         if (obj->time > 0)
-            obj->curframe = obj->conf[obj->curanim][(int)(obj->time / 100)];
-        int frame = (int)(obj->time / 100);
+            obj->curframe = obj->conf[obj->curanim][frame];
         if (frame+1 > obj->size)
             obj->cananimate = false;
     }

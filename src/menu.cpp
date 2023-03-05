@@ -53,7 +53,7 @@ void TitleScreen::update(void)
     if (parser.justStep && !(parser.curStep % 4))
     {
         gfBop = !gfBop;
-        AnimOBJECT_SetAnim(&titleGF, gfBop, 48);
+        AnimOBJECT_SetAnim(&titleGF, gfBop);
     }
     AnimOBJECT_Tick(&titleGF);
     if (Pad_Pressed(PSP_CTRL_CROSS | PSP_CTRL_START))
