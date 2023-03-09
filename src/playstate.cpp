@@ -18,11 +18,12 @@ void PlayStateScreen::load(void)
     //load characters
     //sprintf(_path, "assets/characters/%s/%s.json", _config["player"].asString().c_str(), _config["player"].asString().c_str());
     //player = new Character(_path);
+    //opponent
     sprintf(_path, "assets/characters/%s/", _config["opponent"].asString().c_str());
     opponent = new Character(_path, _config["opponent"].asString() + ".json", _config["opponentpos"][0].asFloat(), _config["opponentpos"][1].asFloat());
-    
-    //sprintf(_path, "assets/characters/%s/%s.json", _config["gf"].asString().c_str(), _config["gf"].asString().c_str());
-    //gf = new Character(_path);
+    //gf    
+    sprintf(_path, "assets/characters/%s/", _config["gf"].asString().c_str());
+    gf = new Character(_path, _config["gf"].asString() + ".json", _config["gfpos"][0].asFloat(), _config["gfpos"][1].asFloat());
 
     //load game assets
     sprintf(_path, "assets/songs/%s/%s.json", song, song); //todo implement difficulty
@@ -48,6 +49,7 @@ void PlayStateScreen::load(void)
     notePos.opponent[2] = {107,  14};   
     notePos.opponent[3] = {147,  14};   
 }
+
 void PlayStateScreen::update(void)
 {
     parser.justStep = false;
@@ -72,21 +74,21 @@ void PlayStateScreen::update(void)
 
         }
     }
-   
-    PrintFont(Left, 0, 0, "step %d time %d", parser.curStep, parser.songPos);
 
     //game.player->tick();
     opponent->tick();
-//  PlayStateScreen::gf->tick();
+    gf->tick();
 
 }
 
 void PlayStateScreen::draw(void)
 {
     opponent->draw();
+    gf->draw();
 
     drawDummyNotes();
  //   drawNotes();
+    PrintFont(Left, 0, 0, "step %d time %d", parser.curStep, parser.songPos);
 }
 
 void PlayStateScreen::deload(void)

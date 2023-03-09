@@ -1,6 +1,6 @@
 {
     "icon": 0,
-    "player": false,
+    "type": "opponent",
 
     "textures": [
         "sheet0.png",
