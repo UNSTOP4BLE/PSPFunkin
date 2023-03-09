@@ -4,7 +4,7 @@
 class Character
 {
 public:
-    Character(std::string path, std::string objstr);
+    Character(std::string path, std::string objstr, float _x, float _y);
     void setPos(float _x, float _y);
     void setFocus(float x, float y, float zoom);
     void setAnim(int anim);

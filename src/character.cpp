@@ -2,10 +2,11 @@
 #include "chartparser.h"
 #include "psp/file.h"
 
-Character::Character(std::string path, std::string objstr) {
+Character::Character(std::string path, std::string objstr, float _x, float _y) {
     std::string _path = path + objstr;
     Json::Value chardata;
     loadJson(_path.c_str(), &chardata);
+    setPos(_x, _y);
     AnimOBJECT_Init(&obj, path, objstr);
 }
 

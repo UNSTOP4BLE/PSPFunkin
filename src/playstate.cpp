@@ -19,8 +19,8 @@ void PlayStateScreen::load(void)
     //sprintf(_path, "assets/characters/%s/%s.json", _config["player"].asString().c_str(), _config["player"].asString().c_str());
     //player = new Character(_path);
     sprintf(_path, "assets/characters/%s/", _config["opponent"].asString().c_str());
-    opponent = new Character(_path, _config["opponent"].asString() + ".json");
-    opponent->setPos(100,100);
+    opponent = new Character(_path, _config["opponent"].asString() + ".json", _config["opponentpos"][0].asFloat(), _config["opponentpos"][1].asFloat());
+    
     //sprintf(_path, "assets/characters/%s/%s.json", _config["gf"].asString().c_str(), _config["gf"].asString().c_str());
     //gf = new Character(_path);
 
@@ -86,7 +86,7 @@ void PlayStateScreen::draw(void)
     opponent->draw();
 
     drawDummyNotes();
-//    drawNotes();
+ //   drawNotes();
 }
 
 void PlayStateScreen::deload(void)
