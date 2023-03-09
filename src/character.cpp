@@ -1,10 +1,12 @@
 #include "character.h"
+#include "chartparser.h"
 #include "psp/file.h"
 
-Character::Character(const char *path) {
+Character::Character(std::string path, std::string objstr) {
+    std::string _path = path + objstr;
     Json::Value chardata;
-    loadJson(path, &chardata);
-    AnimOBJECT_Init(&obj, readFramesFromJson(path), readConfFromJson(path));
+    loadJson(_path.c_str(), &chardata);
+    AnimOBJECT_Init(&obj, path, objstr);
 }
 
 void Character::setPos(float _x, float _y) {
@@ -18,6 +20,21 @@ void Character::setFocus(float x, float y, float zoom) {
     camzoom = zoom;
 }
 
+void Character::setAnim(int anim) {
+    AnimOBJECT_SetAnim(&obj, anim);   
+}
+
 void Character::setIcon(int i) {
     icon = i;
+}
+
+void Character::tick(void) {
+    AnimOBJECT_Tick(&obj);  
+    //set animations
+    if (parser.justStep && !(parser.curStep % 8))
+        setAnim(0);
+}
+
+void Character::draw(void) {
+    AnimOBJECT_Draw(&obj, x, y);
 }

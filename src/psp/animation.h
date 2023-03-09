@@ -1,6 +1,7 @@
 #pragma once
 #include "glib2d.h"
 #include <vector>       
+#include <string>
 
 struct AnimFrames
 {
@@ -24,6 +25,7 @@ struct Anim_OBJECT
     bool cananimate;
     std::vector<AnimFrames> frames;
     std::vector<std::vector<int>> conf;
+    std::vector<g2dTexture*> textures;
     
     inline Anim_OBJECT(void)
     {
@@ -40,8 +42,16 @@ struct Anim_OBJECT
         tick = false;
         cananimate = false;
     }
+
+    inline ~Anim_OBJECT(void)
+    {
+        for (int i = 0; i < (int)textures.size(); i++)
+        {
+            g2dTexFree(&textures[i]);
+        }   
+    }
 };
-void AnimOBJECT_Init(Anim_OBJECT *obj, std::vector<AnimFrames> frames, std::vector<std::vector<int>> conf);
+void AnimOBJECT_Init(Anim_OBJECT *obj, std::string path, std::string objname);
 void AnimOBJECT_SetAnim(Anim_OBJECT *obj, int anim);
 void AnimOBJECT_Tick(Anim_OBJECT *obj);
-void AnimOBJECT_Draw(g2dTexture **textures, Anim_OBJECT *obj, int x, int y);
+void AnimOBJECT_Draw(Anim_OBJECT *obj, int x, int y);

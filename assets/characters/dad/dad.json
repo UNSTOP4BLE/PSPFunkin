@@ -1,6 +1,12 @@
 {
     "icon": 0,
     "player": false,
+
+    "textures": [
+        "sheet0.png",
+        "sheet1.png"
+    ],
+
     "frames": [
         [0, 398, 184, 107, 190,  79, 189],
         [1,   1,   1, 106, 190,  78, 189],

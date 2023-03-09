@@ -1,4 +1,10 @@
 {
+    "textures": [
+        "sheet0.png",
+        "sheet1.png",
+        "sheet2.png",
+        "sheet3.png"
+    ],
     "frames": [
         [0,   1,   1, 179, 162, 103, 158],
         [0, 181,   1, 181, 162, 104, 158],

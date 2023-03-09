@@ -16,12 +16,13 @@ void PlayStateScreen::load(void)
     loadJson(_path, &_config);
 
     //load characters
-    sprintf(_path, "assets/charactes/%s/%s", _config["player"].asString().c_str(), _config["player"].asString().c_str());
-    player = new Character(_path);
-    sprintf(_path, "assets/charactes/%s/%s", _config["opponent"].asString().c_str(), _config["opponent"].asString().c_str());
-    opponent = new Character(_path);
-    sprintf(_path, "assets/charactes/%s/%s", _config["gf"].asString().c_str(), _config["gf"].asString().c_str());
-    gf = new Character(_path);
+    //sprintf(_path, "assets/characters/%s/%s.json", _config["player"].asString().c_str(), _config["player"].asString().c_str());
+    //player = new Character(_path);
+    sprintf(_path, "assets/characters/%s/", _config["opponent"].asString().c_str());
+    opponent = new Character(_path, _config["opponent"].asString() + ".json");
+    opponent->setPos(100,100);
+    //sprintf(_path, "assets/characters/%s/%s.json", _config["gf"].asString().c_str(), _config["gf"].asString().c_str());
+    //gf = new Character(_path);
 
     //load game assets
     sprintf(_path, "assets/songs/%s/%s.json", song, song); //todo implement difficulty
@@ -75,15 +76,17 @@ void PlayStateScreen::update(void)
     PrintFont(Left, 0, 0, "step %d time %d", parser.curStep, parser.songPos);
 
     //game.player->tick();
-//  PlayStateScreen::opponent->tick();
+    opponent->tick();
 //  PlayStateScreen::gf->tick();
 
 }
 
 void PlayStateScreen::draw(void)
 {
+    opponent->draw();
+
     drawDummyNotes();
-    //drawNotes();
+//    drawNotes();
 }
 
 void PlayStateScreen::deload(void)

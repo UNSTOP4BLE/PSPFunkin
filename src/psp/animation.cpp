@@ -3,10 +3,20 @@
 #include <stdio.h>
 #include "../screen.h"
 
-void AnimOBJECT_Init(Anim_OBJECT *obj, std::vector<AnimFrames> frames, std::vector<std::vector<int>> conf)
+void AnimOBJECT_Init(Anim_OBJECT *obj, std::string path, std::string objname)
 {
-    obj->frames = frames;
-    obj->conf = conf;
+    std::string _path;
+    _path = path + objname;
+    obj->frames = readFramesFromJson(_path.c_str());
+    obj->conf = readConfFromJson(_path.c_str());
+    Json::Value data;
+    loadJson(_path.c_str(), &data);
+    obj->textures.resize(data["textures"].size());
+    for (int i = 0; i < (int)data["textures"].size(); i++)
+    {
+        _path = path + data["textures"][i].asString();     
+        obj->textures[i] = g2dTexLoad(_path.c_str(), G2D_SWIZZLE);  
+    }
 }
 
 void AnimOBJECT_SetAnim(Anim_OBJECT *obj, int anim)
@@ -45,7 +55,7 @@ void AnimOBJECT_Tick(Anim_OBJECT *obj)
     }
 }
 
-void AnimOBJECT_Draw(g2dTexture **textures, Anim_OBJECT *obj, int x, int y)
+void AnimOBJECT_Draw(Anim_OBJECT *obj, int x, int y)
 {
     if (obj->tick)
     {
@@ -61,13 +71,13 @@ void AnimOBJECT_Draw(g2dTexture **textures, Anim_OBJECT *obj, int x, int y)
         if (obj->flipped)
             disp.w = -disp.w;
 
-        if (textures[obj->frames[obj->curframe].tex] == NULL)
+        if (obj->textures[obj->frames[obj->curframe].tex] == NULL)
         {
             ErrMSG("ANIMATION DATA IS NULL AT FRAME %d", obj->curframe);
             return; 
         }
 
         if (obj->visible)
-            DrawG2DTex(textures[obj->frames[obj->curframe].tex], &img, &disp, obj->linear, obj->angle, obj->alpha);
+            DrawG2DTex(obj->textures[obj->frames[obj->curframe].tex], &img, &disp, obj->linear, obj->angle, obj->alpha);
     }
 }

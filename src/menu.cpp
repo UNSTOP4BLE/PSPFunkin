@@ -12,7 +12,6 @@ enum TitleStates
 };
 TitleStates state;
 
-g2dTexture *gfTex[4];
 void TitleScreen::load(void) 
 {
     setScreenCol(BLACK);
@@ -32,12 +31,7 @@ void TitleScreen::load(void)
     Parser_calcCrochet();
 
     //load textures
-    AnimOBJECT_Init(&titleGF, readFramesFromJson("assets/menu/title/gf/frames.json"), readConfFromJson("assets/menu/title/gf/frames.json"));
-    gfTex[0] = g2dTexLoad("assets/menu/title/gf/sheet0.png", G2D_SWIZZLE);
-    gfTex[1] = g2dTexLoad("assets/menu/title/gf/sheet1.png", G2D_SWIZZLE);
-    gfTex[2] = g2dTexLoad("assets/menu/title/gf/sheet2.png", G2D_SWIZZLE);
-    gfTex[3] = g2dTexLoad("assets/menu/title/gf/sheet3.png", G2D_SWIZZLE);
-
+    AnimOBJECT_Init(&titleGF, "assets/menu/title/gf/", "frames.json");
     ng = g2dTexLoad("assets/menu/title/ng.png", G2D_SWIZZLE);
 
     //begin with a flash if you went back to title from menu
@@ -117,7 +111,7 @@ void TitleScreen::draw(void)
             state = Title;
             break;
         case Title:
-            AnimOBJECT_Draw(&gfTex[0], &titleGF, 200, 200);
+            AnimOBJECT_Draw(&titleGF, 200, 200);
             break;
     }
 }
@@ -126,6 +120,4 @@ void TitleScreen::deload(void)
 {
     Mix_FreeMusic(menutrack);
     g2dTexFree(&ng);
-    for (int i = 0; i < (int)CountOf(gfTex); i++)
-        g2dTexFree(&gfTex[i]);
 }
