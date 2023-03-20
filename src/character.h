@@ -1,12 +1,6 @@
 #pragma once
 #include "psp/animation.h"
 
-enum CharTypes { 
-    player,
-    opponent,
-    gf
-};
-
 class Character
 {
 public:
@@ -20,7 +14,7 @@ public:
     void draw(void);
 private:
     Anim_OBJECT obj;
-    CharTypes type;
+    std::string type;
     float x, y, camx, camy, camzoom;
     bool gfBop;
     int icon;

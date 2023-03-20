@@ -10,21 +10,7 @@ Character::Character(std::string path, std::string objstr, float _x, float _y) {
     loadJson(_path.c_str(), &chardata);
     setPos(_x, _y);
     setIcon(chardata["icon"].asInt());
-    switch (Hash::FromString(chardata["type"].asString().c_str())) {
-        case "player"_h:
-            type = player;
-            break;
-        case "opponent"_h:
-            type = opponent;
-            break;
-        case "gf"_h:
-            type = gf;
-            break;
-        default:
-            ErrMSG("CHARACTER %s HAS A UNKNOWN TYPE %s", objstr.c_str(), chardata[type].asString().c_str());    
-            return;
-            break;
-    }
+    type = chardata["type"].asString();
         
     AnimOBJECT_Init(&obj, path, objstr);
     setAnim(0);
@@ -49,22 +35,24 @@ void Character::setIcon(int i) {
     icon = i;
 }
 
+#include "psp/font.h"
 void Character::tick(void) {
     AnimOBJECT_Tick(&obj);  
     //set animations
-    switch (type)
+    switch (Hash::FromString(type.c_str()))
     {
-        case gf:
+        case "gf"_h:
             if (parser.justStep && !(parser.curStep % 4))
             {
                 gfBop = !gfBop;
-                setAnim(gfBop);
+                setAnim(1);
             }
-        break;
+            PrintFont(Left, 0, 20, "%d", obj.curframe);
+            break;
         default:
             if (parser.justStep && !(parser.curStep % 8))
                 setAnim(0);
-        break;
+            break;
     }
 }
 

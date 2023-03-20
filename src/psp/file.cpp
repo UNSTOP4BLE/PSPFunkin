@@ -5,13 +5,11 @@
 void loadJson(const char *filename, Json::Value *data) 
 {
     std::ifstream file(filename);
-    Json::CharReaderBuilder builder;
-    JSONCPP_STRING errs;
-    parseFromStream(builder, file, data, &errs);
-
-    if (!*data)
+    Json::Reader reader;
+   
+    if (reader.parse(file, *data) == false)
     {
-        ErrMSG( "FAILED TO FIND JSON: %s", filename);
+        ErrMSG( "FAILED TO PARSE/FIND JSON: %s", filename);
         return;
     }
 
