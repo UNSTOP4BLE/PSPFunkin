@@ -1,7 +1,6 @@
 #include "../main.h"
 #include "audio.h"
-#include <SDL2/SDL.h>                                                                                                                                                                             
-#include <cassert>    
+#include <SDL2/SDL.h>                                                                                                                                                                                
 #include "../screen.h"
 
 constexpr static inline uint32_t operator"" _m(const char *const str, size_t length) {
@@ -51,7 +50,7 @@ private:
         _rightVolume = INT16_MAX;
         _busy = true;
 
-        assert(_stream);
+        ASSERTFUNC(_stream);
     }
     inline int _read(int16_t *data, int size) {
         return SDL_AudioStreamGet(_stream, data, size);
@@ -145,7 +144,7 @@ void Mixer::process(int16_t *output, int numSamples) {
     int inputBufferSize = numSamples * 2 * sizeof(int16_t);
     int outputBufferSize = numSamples * 2 * sizeof(int32_t);
 
-    assert(numSamples <= MAX_BUFFER_SIZE);
+    ASSERTFUNC(numSamples <= MAX_BUFFER_SIZE);
     memset(outputBuffer, 0, outputBufferSize);
     _sampleOffset += numSamples;
 
@@ -215,9 +214,9 @@ WAVStreamSource::WAVStreamSource(const char *path)
 
     ASSERTFUNC(wavFile);   
 
-    assert(_readValue<uint32_t>(wavFile) == "RIFF"_m);
+    ASSERTFUNC(_readValue<uint32_t>(wavFile) == "RIFF"_m);
     _readValue<uint32_t>(wavFile); //ignore total file size
-    assert(_readValue<uint32_t>(wavFile) == "WAVE"_m);
+    ASSERTFUNC(_readValue<uint32_t>(wavFile) == "WAVE"_m);
 
     uint32_t chunkType = _readValue<uint32_t>(wavFile);
     uint32_t chunkLength = _readValue<uint32_t>(wavFile);
@@ -226,7 +225,7 @@ WAVStreamSource::WAVStreamSource(const char *path)
         if (chunkType == "fmt "_m) {
             _readValueInPlace(wavFile, fmt);
             audioMixer->openStream(format, fmt.channels, fmt.samplerate);
-            assert(fmt.format == 1); // 1 is int PCM, 3 is float PCM, 0x11 is ADPCM
+            ASSERTFUNC(fmt.format == 1); // 1 is int PCM, 3 is float PCM, 0x11 is ADPCM
 
             // ugly hack but SDL doesn't provide any API for this
             format = fmt.bps;
@@ -275,12 +274,12 @@ void Audio_Init(void)
 
 AudioBuffer *Audio_LoadFile(const char *path) {
     const char *ext = &path[strlen(path) - 4];
-    return NULL;
-
+    
     StreamSource *source;
     ASSERTFUNC(strcmp(ext, ".wav") || strcmp(ext, ".ogg"));
     if (!strcmp(ext, ".wav"))
         source = new WAVStreamSource(path);
+
     //else if (!strcmp(ext, ".ogg"))
    //     source = new OGGStreamSource(path);
     else
