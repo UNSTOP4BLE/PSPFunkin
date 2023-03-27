@@ -17,14 +17,6 @@ public:
     virtual ~Screen(void) {}
 };
 
-class ErrorScreen : public Screen {
-public:
-    void load(void) {}
-    void update(void) {}
-    void draw(void);
-    void deload(void) {}
-};
-
 class TitleScreen : public Screen {
 public:
     void load(void); 

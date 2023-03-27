@@ -19,7 +19,13 @@ char errstr[256];
 void ErrMSG(const char *filename, const char *function, int line, const char *expr)
 {
     sprintf(errstr, "error \nexpression: %s \nfile: %s \nfunction %s \nline %d", expr, filename, function, line);
-    setScreen(new ErrorScreen());
+    while(1)
+    {
+        g2dClear(screenCol);
+        PrintFont(Left, 0, 0, errstr);
+        g2dFlip(G2D_VSYNC);
+    }
+
 }
 
 int main()
@@ -30,9 +36,8 @@ int main()
     setupcallbacks();
     Pad_Init();
     
-    //Initialize all SDL subsystems
-    //SDL_Init(SDL_INIT_AUDIO);
-   // Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024);
+    SDL_Init(SDL_INIT_AUDIO);
+
     Audio_Init();
 
     g2dInit();

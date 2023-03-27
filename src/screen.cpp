@@ -8,11 +8,6 @@
 Screen *currentScreen;
 g2dColor screenCol;
 
-void ErrorScreen::draw(void) 
-{
-    PrintFont(Left, 0, 0, errstr);
-}
-
 void setScreen(Screen *scr)
 {   
     if (currentScreen != NULL)

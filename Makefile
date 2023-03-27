@@ -8,6 +8,7 @@ OBJS = src/main.o \
        src/chartparser.o \
        src/psp/animation.o \
        src/psp/file.o \
+       src/psp/mixer.o \
        src/psp/audio.o \
        src/psp/pad.o \
        src/psp/font.o \
