@@ -18,7 +18,7 @@ char errstr[256];
 //error handler
 void ErrMSG(const char *filename, const char *function, int line, const char *expr)
 {
-    sprintf(errstr, "asdasdsada");//"err expr_%s f_%s fn_%s ln_%d", expr, filename, function, line);
+    sprintf(errstr, "error \nexpression: %s \nfile: %s \nfunction %s \nline %d", expr, filename, function, line);
     setScreen(new ErrorScreen());
 }
 
@@ -47,7 +47,7 @@ int main()
 
         g2dClear(screenCol);
         Pad_Update();  
-        ASSERTFUNC(currentScreen);          
+        ASSERTFUNC(currentScreen);                
     
         currentScreen->update();  
         currentScreen->draw();  

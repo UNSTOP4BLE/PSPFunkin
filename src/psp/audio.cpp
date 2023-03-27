@@ -240,7 +240,7 @@ WAVStreamSource::WAVStreamSource(const char *path)
             fseek(wavFile, chunkLength, SEEK_CUR);
         }
     }
- //   ASSERTFUNC(asdsadsadsfailedtofindshit);   
+    ASSERTFUNC(false);  //fail to read file
     fclose(wavFile);
 }
 
@@ -275,14 +275,16 @@ void Audio_Init(void)
 
 AudioBuffer *Audio_LoadFile(const char *path) {
     const char *ext = &path[strlen(path) - 4];
+    return NULL;
 
     StreamSource *source;
+    ASSERTFUNC(strcmp(ext, ".wav") || strcmp(ext, ".ogg"));
     if (!strcmp(ext, ".wav"))
         source = new WAVStreamSource(path);
     //else if (!strcmp(ext, ".ogg"))
    //     source = new OGGStreamSource(path);
     else
-        return nullptr; // unsupported file format
+        ASSERTFUNC(false);
 
     AudioBuffer *buffer = new AudioBuffer();
     source->readBuf(*buffer, source->getNumSamples());

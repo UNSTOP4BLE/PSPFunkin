@@ -1337,7 +1337,7 @@ g2dTexture* g2dTexLoad(const char* path, g2dTex_Mode mode)
     fp = NULL;
 
     // The PSP can't draw 512*512+ textures.
-    ASSERTFUNC(tex->w > 512 || tex->h > 512);
+    ASSERTFUNC(tex->w <= 512 || tex->h <= 512);
 
     // Swizzling is useless with small textures.
     if ((mode & G2D_SWIZZLE) && (tex->w >= 16 || tex->h >= 16))
