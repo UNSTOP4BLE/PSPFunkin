@@ -31,7 +31,8 @@ void TitleScreen::load(void)
     //Mix_PlayMusic(menutrack, true);
     parser.initbpm = titleJson["menuSongBPM"].asDouble();   
     Parser_calcCrochet();
-    AudioBuffer *sound = Audio_LoadFile("assets/sounds/confirmMenu.wav");
+    AudioBuffer *sound = Audio::loadFile("assets/sounds/confirmMenu.wav");
+    
     //load textures
     AnimOBJECT_Init(&titleGF, "assets/menu/title/gf/", "frames.json");
     ng = g2dTexLoad("assets/menu/title/ng.png", G2D_SWIZZLE);
@@ -44,7 +45,7 @@ void TitleScreen::load(void)
 void TitleScreen::update(void) 
 {
     parser.justStep = false;
-    Parser_tickStep(menutrack);
+ //   Parser_tickStep(menutrack);
     Bold_Tick(); //animate bold font
     if (parser.justStep && !(parser.curStep % 4))
     {
@@ -120,6 +121,6 @@ void TitleScreen::draw(void)
 
 void TitleScreen::deload(void) 
 {
-    Mix_FreeMusic(menutrack);
+//    Mix_FreeMusic(menutrack);
     g2dTexFree(&ng);
 }

@@ -1,5 +1,47 @@
-#include "mixer.h"
 #include "../main.h"
+#include "audio.h"
+
+void MixerStream::_open(SDL_AudioFormat format, int channels, int sampleRate, int mixerSampleRate) {
+    if (_stream)
+        SDL_FreeAudioStream(_stream);
+
+    _stream = SDL_NewAudioStream(
+        format, channels, sampleRate, // input
+        AUDIO_S16SYS, 2, mixerSampleRate // output
+    );
+    _leftVolume = INT16_MAX;
+    _rightVolume = INT16_MAX;
+    _busy = true;
+
+    ASSERTFUNC(_stream);
+}
+
+int MixerStream::_read(int16_t *data, int size) {
+    return SDL_AudioStreamGet(_stream, data, size);
+}
+
+void MixerStream::feed(const void *data, int size) {
+    SDL_AudioStreamPut(_stream, data, size);
+}
+
+void MixerStream::feed(AudioBuffer &buffer) {
+    SDL_AudioStreamPut(_stream, buffer.data.data(), buffer.data.size());
+}
+
+bool MixerStream::isBusy(void) {
+    if (!_stream)
+        return false;
+
+    return _busy || (SDL_AudioStreamAvailable(_stream) > 0);
+}
+
+void MixerStream::close(void) {
+    // Do not actually destroy the stream, instead just flush it to make
+    // sure all leftover data is played.
+    _busy = false;
+    if (_stream)
+        SDL_AudioStreamFlush(_stream);
+}
 
 void Mixer::start(int sampleRate, int bufferSize) {
     ASSERTFUNC(bufferSize <= MAX_BUFFER_SIZE);
@@ -10,8 +52,11 @@ void Mixer::start(int sampleRate, int bufferSize) {
         .format   = AUDIO_S16SYS,
         .channels = 2,
         .samples  = (uint16_t)bufferSize,
-        .callback = [](Mixer *mixer, int16_t *output, int size) {
-            mixer->process(output, size / (2 * sizeof(int16_t)));
+        .callback = [](void *userdata, uint8_t *buffer, int size) {
+            auto &mixer = *reinterpret_cast<Mixer *>(userdata);
+            auto output = reinterpret_cast<int16_t *>(buffer);
+
+            mixer.process(output, size / (2 * sizeof(int16_t)));
         },
         .userdata = this
     };
@@ -22,12 +67,15 @@ void Mixer::start(int sampleRate, int bufferSize) {
     ASSERTFUNC(_outputStream);
 
     _sampleRate = actualSpec.freq; // May have been changed by SDL
+    _sampleOffset = 0;
     SDL_PauseAudioDevice(_outputStream, false);
 }
 
 void Mixer::stop(void) {
-    if (_outputStream)
+    if (_outputStream) {
         SDL_CloseAudioDevice(_outputStream);
+        _outputStream = 0;
+    }
 }
 
 MixerStream *Mixer::openStream(SDL_AudioFormat format, int channels, int sampleRate) {
@@ -36,7 +84,10 @@ MixerStream *Mixer::openStream(SDL_AudioFormat format, int channels, int sampleR
         if (stream.isBusy())
             continue;
 
+        enterCriticalSection();
         stream._open(format, channels, sampleRate, _sampleRate);
+        exitCriticalSection();
+
         return &stream;
     }
 

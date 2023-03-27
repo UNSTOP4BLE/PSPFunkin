@@ -1,7 +1,6 @@
 #include "../main.h"
 #include "audio.h"
-#include <SDL2/SDL.h>                                                                                                                                                                                
-#include "../screen.h"
+#include <SDL2/SDL.h>
 
 constexpr static inline uint32_t operator"" _m(const char *const str, size_t length) {
   return str[0] | (str[1] << 8) | (str[2] << 16) | (str[3] << 24);
@@ -18,8 +17,7 @@ template<typename T> static inline void _readValueInPlace(FILE *fp, T &value) {
     ASSERTFUNC(fread(&value, sizeof(T), 1, fp));   
 }
 
-struct __attribute__((packed))FMT
-{
+struct __attribute__((packed)) FormatChunk {
     uint16_t format;
     uint16_t channels;
     uint32_t samplerate;
@@ -46,34 +44,33 @@ public:
     ~WAVStreamSource(void);
 private:
     FILE *wavFile;
-    FMT fmt;
+    FormatChunk fmt;
     int dataOffset;
     uint32_t totalNumSamples;
     SDL_AudioFormat format;
 };
 
-WAVStreamSource::WAVStreamSource(const char *path)
-{
+WAVStreamSource::WAVStreamSource(const char *path) {
     wavFile = fopen(path, "rb");
-
-    ASSERTFUNC(wavFile);   
+    ASSERTFUNC(wavFile);
 
     ASSERTFUNC(_readValue<uint32_t>(wavFile) == "RIFF"_m);
     _readValue<uint32_t>(wavFile); //ignore total file size
     ASSERTFUNC(_readValue<uint32_t>(wavFile) == "WAVE"_m);
 
-    uint32_t chunkType = _readValue<uint32_t>(wavFile);
-    uint32_t chunkLength = _readValue<uint32_t>(wavFile);
     while (!feof(wavFile)) {
+        uint32_t chunkType = _readValue<uint32_t>(wavFile);
+        uint32_t chunkLength = _readValue<uint32_t>(wavFile);
+
         if (chunkType == "fmt "_m) {
             _readValueInPlace(wavFile, fmt);
             ASSERTFUNC(fmt.format == 1); // 1 is int PCM, 3 is float PCM, 0x11 is ADPCM
 
             // ugly hack but SDL doesn't provide any API for this
-            format = fmt.bps;
+            format = fmt.bps & SDL_AUDIO_MASK_BITSIZE;
             if (fmt.bps >= 16) format |= SDL_AUDIO_MASK_SIGNED;
         } else if (chunkType == "data"_m) {
-            dataOffset = ftell(wavFile);    
+            dataOffset = ftell(wavFile);
             totalNumSamples = chunkLength / (fmt.channels * SDL_AUDIO_BITSIZE(format) / 8);
             return;
         } else {
@@ -81,11 +78,12 @@ WAVStreamSource::WAVStreamSource(const char *path)
             fseek(wavFile, chunkLength, SEEK_CUR);
         }
     }
+
     ASSERTFUNC(false);  //fail to read file
     fclose(wavFile);
 }
 
-int WAVStreamSource::getPosition(void){ 
+int WAVStreamSource::getPosition(void) {
     return (ftell(wavFile) - dataOffset) / (fmt.channels * SDL_AUDIO_BITSIZE(format) / 8);
 }
 
@@ -108,27 +106,25 @@ WAVStreamSource::~WAVStreamSource(void) {
     fclose(wavFile);
 }
 
-void Audio_Init(void)
-{
-    audioMixer = new Mixer(44100); //hardcoded sample rate sucks but eh
-    audioMixer->setMasterVolume(100);
-}
+namespace Audio {
 
-AudioBuffer *Audio_LoadFile(const char *path) {
-    const char *ext = &path[strlen(path) - 4];
-    
-    StreamSource *source = NULL;
-    ASSERTFUNC(strcmp(ext, ".wav") || strcmp(ext, ".ogg"));
-    if (!strcmp(ext, ".wav"))
-        source = new WAVStreamSource(path);
+Mixer mixer(); //hardcoded sample rate sucks but eh
+    AudioBuffer *loadFile(const char *path) {
+        const char *ext = &path[strlen(path) - 4];
+        
+        StreamSource *source = NULL;
+        ASSERTFUNC(strcmp(ext, ".wav") || strcmp(ext, ".ogg"));
+        if (!strcmp(ext, ".wav"))
+            source = new WAVStreamSource(path);
+        //else if (!strcmp(ext, ".ogg"))
+            //source = new OGGStreamSource(path);
+        else
+            ASSERTFUNC(false);
 
-    //else if (!strcmp(ext, ".ogg"))
-   //     source = new OGGStreamSource(path);
-    else
-        ASSERTFUNC(false);
+        auto buffer = new AudioBuffer();
+        source->readBuf(*buffer, source->getNumSamples());
 
-    AudioBuffer *buffer = new AudioBuffer();
-    source->readBuf(*buffer, source->getNumSamples());
-    delete source;
-    return buffer;
+        delete source;
+        return buffer;
+    }
 }

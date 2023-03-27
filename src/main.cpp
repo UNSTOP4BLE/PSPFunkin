@@ -37,9 +37,7 @@ int main()
     Pad_Init();
     
     SDL_Init(SDL_INIT_AUDIO);
-
-    Audio_Init();
-
+    Audio::mixer.start(44100, );
     g2dInit();
     FntInit();
     setScreenCol(GREEN);

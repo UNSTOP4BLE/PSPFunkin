@@ -28,7 +28,7 @@ private:
     bool gfBop;
     Anim_OBJECT titleGF;
     std::string funnymessage[2];
-    Mix_Music *menutrack;
+  //  Mix_Music *menutrack;
     int curStep;
 };
 
@@ -59,8 +59,8 @@ private:
     void drawNotes(void);
     void updateInput(void);
     g2dTexture *hud;
-    Mix_Music *inst;
-    Mix_Music *vocals;
+    //Mix_Music *inst;
+   // Mix_Music *vocals;
     bool checkPad[4];
     bool checkPadHeld[4];
     noteData chartData; 

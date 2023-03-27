@@ -35,8 +35,8 @@ void PlayStateScreen::load(void)
 
     //sprintf(_path, "assets/songs/%s/Inst.wav", song);
     //inst = Audio_LoadSong(_path);
-    sprintf(_path, "assets/songs/%s/Voices.wav", song);
-    vocals = Mix_LoadMUS(_path);
+  //  sprintf(_path, "assets/songs/%s/Voices.wav", song);
+//    vocals = Mix_LoadMUS(_path);
 
     hud = g2dTexLoad("assets/hud.png", G2D_SWIZZLE);
 
@@ -54,9 +54,9 @@ void PlayStateScreen::load(void)
 void PlayStateScreen::update(void)
 {
     parser.justStep = false;
-    Parser_tickStep(vocals);
+ //  Parser_tickStep(vocals);
 
-    if (Mix_PlayingMusic())
+    if (true)//Mix_PlayingMusic())
     {
         updateInput();
     }
@@ -67,11 +67,11 @@ void PlayStateScreen::update(void)
         //song start
         if (parser.curStep <= 0)
         {
-            if (parser.songPos >= 0 && !Mix_PlayingMusic())
-            {
+            //if (parser.songPos >= 0 && !Mix_PlayingMusic())
+            //{
                 //Mix_PlayMusic(PlayStateScreen::inst, false);
-                Mix_PlayMusic(vocals, false);
-            }
+             //   Mix_PlayMusic(vocals, false);
+           // }
 
         }
     }
