@@ -1,3 +1,4 @@
+#include "../main.h"
 #include "animation.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -21,11 +22,7 @@ void AnimOBJECT_Init(Anim_OBJECT *obj, std::string path, std::string objname)
 
 void AnimOBJECT_SetAnim(Anim_OBJECT *obj, int anim)
 {
-    if (obj == NULL)
-    {
-        ErrMSG("OBJECT IS NULL");   
-        return;
-    }
+    ASSERTFUNC(obj);   
 
     obj->time = 0;
     obj->curframe = 0;
@@ -38,11 +35,7 @@ void AnimOBJECT_SetAnim(Anim_OBJECT *obj, int anim)
 
 void AnimOBJECT_Tick(Anim_OBJECT *obj)
 {
-    if (obj == NULL)
-    {
-        ErrMSG("OBJECT IS NULL");   
-        return;
-    }
+    ASSERTFUNC(obj);   
 
     if (obj->tick && obj->cananimate)
     {
@@ -71,11 +64,7 @@ void AnimOBJECT_Draw(Anim_OBJECT *obj, int x, int y)
         if (obj->flipped)
             disp.w = -disp.w;
 
-        if (obj->textures[obj->frames[obj->curframe].tex] == NULL)
-        {
-            ErrMSG("ANIMATION DATA IS NULL AT FRAME %d", obj->curframe);
-            return; 
-        }
+        ASSERTFUNC(obj->textures[obj->frames[obj->curframe].tex]);   
 
         if (obj->visible)
             DrawG2DTex(obj->textures[obj->frames[obj->curframe].tex], &img, &disp, obj->linear, obj->angle, obj->alpha);

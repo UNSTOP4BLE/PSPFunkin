@@ -1,3 +1,4 @@
+#include "main.h"
 #include "character.h"
 #include "chartparser.h"
 #include "psp/file.h"

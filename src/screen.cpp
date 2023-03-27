@@ -1,3 +1,4 @@
+#include "main.h"
 #include "screen.h"
 #include <cstdarg>
 #include <cstring>  
@@ -6,24 +7,10 @@
         
 Screen *currentScreen;
 g2dColor screenCol;
-char msg[256];
-
-//error handler
-void ErrMSG(const char *format, ...)
-{
-    va_list list;
-
-    va_start(list, format);
-    std::vsprintf(msg, format, list);
-    va_end(list);
-
-    setScreen(new ErrorScreen());
-}
 
 void ErrorScreen::draw(void) 
 {
-    PrintFont(Left, 0, 0, "ERROR");
-    PrintFont(Left, 0, 20, msg);
+    PrintFont(Left, 0, 0, errstr);
 }
 
 void setScreen(Screen *scr)

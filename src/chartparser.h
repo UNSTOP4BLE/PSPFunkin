@@ -1,4 +1,5 @@
 #pragma once
+#include "main.h"
 #include <string>     
 #include <json/json.h>
 #include "psp/file.h"

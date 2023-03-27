@@ -1,3 +1,4 @@
+#include "main.h"
 #include "screen.h"
 #include "chartparser.h"
 

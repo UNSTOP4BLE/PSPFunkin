@@ -13,6 +13,14 @@ PSP_MAIN_THREAD_ATTR(THREAD_ATTR_USER | THREAD_ATTR_VFPU);
 PSP_MODULE_INFO("PSPFunkin", 0, 1, 0);
 
 double deltaTime;
+char errstr[256];
+
+//error handler
+void ErrMSG(const char *filename, const char *function, int line, const char *expr)
+{
+    sprintf(errstr, "asdasdsada");//"err expr_%s f_%s fn_%s ln_%d", expr, filename, function, line);
+    setScreen(new ErrorScreen());
+}
 
 int main()
 {
@@ -23,8 +31,9 @@ int main()
     Pad_Init();
     
     //Initialize all SDL subsystems
-    SDL_Init(SDL_INIT_AUDIO);
-    Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024);
+    //SDL_Init(SDL_INIT_AUDIO);
+   // Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024);
+    Audio_Init();
 
     g2dInit();
     FntInit();
@@ -38,9 +47,7 @@ int main()
 
         g2dClear(screenCol);
         Pad_Update();  
-
-        if (currentScreen == NULL)
-            ErrMSG("SCREEN IS NULL");           
+        ASSERTFUNC(currentScreen);          
     
         currentScreen->update();  
         currentScreen->draw();  

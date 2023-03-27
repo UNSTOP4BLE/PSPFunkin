@@ -1,4 +1,5 @@
 #pragma once
+#include "../main.h"
 #include "glib2d.h"
 #include <vector>       
 #include <string>

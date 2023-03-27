@@ -1,3 +1,4 @@
+#include "../main.h"
 #include "file.h"
 #include <fstream>
 #include "../screen.h"
@@ -6,12 +7,8 @@ void loadJson(const char *filename, Json::Value *data)
 {
     std::ifstream file(filename);
     Json::Reader reader;
-   
-    if (reader.parse(file, *data) == false)
-    {
-        ErrMSG( "FAILED TO PARSE/FIND JSON: %s", filename);
-        return;
-    }
+ 
+    ASSERTFUNC(reader.parse(file, *data));   
 
     file.close();
 }

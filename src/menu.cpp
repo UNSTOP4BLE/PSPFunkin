@@ -1,7 +1,9 @@
+#include "main.h"
 #include "screen.h"
 #include "psp/font.h"
 #include "chartparser.h"
 #include "psp/animation.h"
+#include "psp/audio.h"
 #include "psp/pad.h"
 
 enum TitleStates
@@ -25,11 +27,11 @@ void TitleScreen::load(void)
     funnymessage[1] = titleJson["messages"][curmsg][1].asString();
 
     //load and play music
-    menutrack = Mix_LoadMUS("assets/songs/freaky/freaky.wav");
-    Mix_PlayMusic(menutrack, true);
+    //menutrack = Mix_LoadMUS("assets/songs/freaky/freaky.wav");
+    //Mix_PlayMusic(menutrack, true);
     parser.initbpm = titleJson["menuSongBPM"].asDouble();   
     Parser_calcCrochet();
-
+    AudioBuffer *sound = Audio_LoadFile("assets/sounds/confirmMenu.wav");
     //load textures
     AnimOBJECT_Init(&titleGF, "assets/menu/title/gf/", "frames.json");
     ng = g2dTexLoad("assets/menu/title/ng.png", G2D_SWIZZLE);

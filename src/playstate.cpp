@@ -1,3 +1,4 @@
+#include "main.h"
 #include "screen.h"
 #include "psp/font.h"
 #include "psp/pad.h"

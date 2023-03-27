@@ -1,3 +1,4 @@
+#include "../main.h"
 #include "font.h"
 #include <cstdarg>
 #include <string>  

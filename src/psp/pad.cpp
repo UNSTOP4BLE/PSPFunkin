@@ -1,3 +1,4 @@
+#include "../main.h"
 #include <string.h>
 #include <pspctrl.h>
 #include <stdbool.h>

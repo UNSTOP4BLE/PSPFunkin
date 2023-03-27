@@ -1,3 +1,4 @@
+#include "main.h"
 #include "chartparser.h"
 
 Json::Value chart;

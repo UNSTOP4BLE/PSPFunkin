@@ -1,4 +1,5 @@
 #pragma once
+#include "../main.h"
 #include <pspctrl.h>
 #include <stdbool.h>
 

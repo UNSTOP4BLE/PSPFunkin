@@ -17,6 +17,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "../main.h"
 #include "glib2d.h"
 #include "../screen.h"
 
@@ -1315,12 +1316,7 @@ g2dTexture* g2dTexLoad(const char* path, g2dTex_Mode mode)
     g2dTexture *tex = NULL;
     FILE *fp = NULL;
 
-    if ((fp = fopen(path, "rb")) == NULL)
-    {
-        ErrMSG("FAILED TO FIND IMAGE AT %s", path);
-        return NULL;
-    }
-
+    ASSERTFUNC((fp = fopen(path, "rb")));
 #ifdef USE_PNG
     if (strstr(path, ".png"))
     {
@@ -1335,21 +1331,13 @@ g2dTexture* g2dTexLoad(const char* path, g2dTex_Mode mode)
     }
 #endif
 
-    if (tex == NULL)
-    {
-        ErrMSG("TEXTURE IS NULL: %s", path);
-        return NULL;
-    }
+    ASSERTFUNC(tex);
 
     fclose(fp);
     fp = NULL;
 
     // The PSP can't draw 512*512+ textures.
-    if (tex->w > 512 || tex->h > 512)
-    {
-        ErrMSG("IMAGE RESOLUTION IS LARGER THAN 512x512: %s", path);
-        return NULL;
-    }
+    ASSERTFUNC(tex->w > 512 || tex->h > 512);
 
     // Swizzling is useless with small textures.
     if ((mode & G2D_SWIZZLE) && (tex->w >= 16 || tex->h >= 16))
@@ -1387,11 +1375,7 @@ void g2dSetScissor(int x, int y, int w, int h)
 
 void DrawG2DTex(g2dTexture* tex, Rect *Img, Rect *Disp, bool linear, float angle, int alpha)
 {   
-    if (tex == NULL)
-    {
-        ErrMSG("g2dTexture is NULL");
-        return;
-    }
+    ASSERTFUNC(tex);
 
     if (Disp->x+Disp->w >= 0 && Disp->x <= G2D_SCR_W && Disp->y+Disp->h >= 0 && Disp->y <= G2D_SCR_H)
     {
@@ -1413,12 +1397,8 @@ void DrawG2DTex(g2dTexture* tex, Rect *Img, Rect *Disp, bool linear, float angle
 
 void DrawFG2DTex(g2dTexture* tex, Rect *Img, FRect *Disp, bool linear, float angle, int alpha)
 {
-    if (tex == NULL)
-    {
-        ErrMSG("g2dTexture is NULL");
-        return;
-    }
-    
+    ASSERTFUNC(tex);
+
     if (Disp->x+Disp->w >= 0 && Disp->x <= G2D_SCR_W && Disp->y+Disp->h >= 0 && Disp->y <= G2D_SCR_H)
     {
         g2dBeginRects(tex);
