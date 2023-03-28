@@ -89,4 +89,6 @@ public:
 
     MixerStream *openStream(SDL_AudioFormat format, int channels, int sampleRate);
     void process(int16_t *output, int numSamples);
+    //used to play sounds
+    MixerStream *playBuffer(AudioBuffer *buffer, bool close = true);
 };

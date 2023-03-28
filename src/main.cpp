@@ -6,19 +6,19 @@
 #include <psputility.h>
 #include <chrono>
 #include "psp/callbacks.h"
-#include "psp/audio.h"
+#include "psp/audioreaders.h"
 #include "psp/font.h"
 #include "psp/pad.h"
 
 PSP_MAIN_THREAD_ATTR(THREAD_ATTR_USER | THREAD_ATTR_VFPU);
 PSP_MODULE_INFO("PSPFunkin", 0, 1, 0);
 
-double deltaTime;
-char errstr[256];
+PSPFunkin *app;
 
 //error handler
 void ErrMSG(const char *filename, const char *function, int line, const char *expr)
 {
+    char errstr[256];
     sprintf(errstr, "error \nexpression: %s \nfile: %s \nfunction %s \nline %d", expr, filename, function, line);
     while(1)
     {
@@ -33,11 +33,13 @@ int main()
     //get a random number seed
     srand(time(NULL));
 
+    app = new PSPFunkin(); //new pspfunkin every single time?? no need for a rewrite!
+
     setupcallbacks();
     Pad_Init();
-    
     SDL_Init(SDL_INIT_AUDIO);
-    Audio::init();
+    app->audioMixer = new Mixer();
+    app->audioMixer->start();
     g2dInit();
     FntInit();
     setScreenCol(GREEN);
@@ -58,14 +60,9 @@ int main()
         g2dFlip(G2D_VSYNC);
 
         auto current = std::chrono::high_resolution_clock::now();
-        deltaTime = std::chrono::duration_cast<std::chrono::duration<double, std::ratio<1>>>(current - last).count();
+        app->deltatime = std::chrono::duration_cast<std::chrono::duration<double, std::ratio<1>>>(current - last).count();
         last = current;
     }
 
     return 0;
-}
-
-double getDT(void)
-{
-    return deltaTime;
 }

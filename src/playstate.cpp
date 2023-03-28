@@ -62,7 +62,7 @@ void PlayStateScreen::update(void)
     }
     else
     {
-        parser.songPos += 16 + getDT();
+        parser.songPos += 16 + app->deltatime;
 
         //song start
         if (parser.curStep <= 0)

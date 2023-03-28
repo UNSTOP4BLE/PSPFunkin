@@ -60,7 +60,6 @@ public:
     ~OGGFileReader(void);
 };
 
-void init(void);
 AudioBuffer *loadFile(const char *path);
 void play(AudioBuffer *buffer);
 }

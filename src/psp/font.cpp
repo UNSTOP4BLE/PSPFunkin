@@ -117,7 +117,7 @@ void PrintFont(Align all, int x, int y, const char *format, ...)
 
 void Bold_Tick(void)
 {
-    animtimer += 1 + getDT();
+    animtimer += 1 + app->deltatime;
 
     if (animtimer > 3)
     {

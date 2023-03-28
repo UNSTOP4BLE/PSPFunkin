@@ -39,7 +39,7 @@ void AnimOBJECT_Tick(Anim_OBJECT *obj)
 
     if (obj->tick && obj->cananimate)
     {
-        obj->time += obj->speed+getDT();
+        obj->time += obj->speed+app->deltatime;
         int frame = (int)(obj->time / 100)+1;
         if (obj->time > 0)
             obj->curframe = obj->conf[obj->curanim][frame];

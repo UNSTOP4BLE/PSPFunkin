@@ -2,7 +2,6 @@
 
 #include "main.h"
 #include "psp/glib2d.h"
-#include "psp/audio.h"
 
 #include "character.h"
 #include "chartparser.h"

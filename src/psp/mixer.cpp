@@ -131,3 +131,13 @@ void Mixer::process(int16_t *output, int numSamples) {
         );
     }
 }
+
+MixerStream *Mixer::playBuffer(AudioBuffer *buffer, bool close) {
+    auto stream = openStream(buffer->format, buffer->channels, buffer->samplerate);
+    if (stream) {
+        stream->feed(buffer);
+        if (close) stream->close();
+    }
+
+    return stream;
+}

@@ -1,5 +1,5 @@
 #include "../main.h"
-#include "audio.h"
+#include "audioreaders.h"
 #include <cstdio>
 
 // Private stuff
@@ -20,7 +20,6 @@ template<typename T> static inline void _readValueInPlace(FILE *fp, T &value) {
 }
 
 namespace Audio {
-Mixer *audioMixer;
 
 WAVFileReader::WAVFileReader(const char *path) {
     wavFile = fopen(path, "rb");
@@ -144,12 +143,6 @@ OGGFileReader::~OGGFileReader(void) {
     ov_clear(&oggFile);
 }
 
-void init(void)
-{
-    audioMixer = new Mixer();
-    audioMixer->start();
-}
-
 AudioBuffer *loadFile(const char *path) {
     const char *ext = &path[strlen(path) - 4];
         
@@ -167,11 +160,5 @@ AudioBuffer *loadFile(const char *path) {
 
     delete reader;
     return buffer;
-}
-void play(AudioBuffer *buffer)
-{
-    auto stream = audioMixer->openStream(buffer->format, buffer->channels, buffer->samplerate);
-    stream->feed(buffer);
-    stream->close();
 }
 }

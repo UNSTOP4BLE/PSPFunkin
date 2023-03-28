@@ -3,7 +3,7 @@
 #include "psp/font.h"
 #include "chartparser.h"
 #include "psp/animation.h"
-#include "psp/audio.h"
+#include "psp/audioreaders.h"
 #include "psp/pad.h"
 
 enum TitleStates
@@ -32,7 +32,7 @@ void TitleScreen::load(void)
     parser.initbpm = titleJson["menuSongBPM"].asDouble();   
     Parser_calcCrochet();
     AudioBuffer *sound = Audio::loadFile("assets/sounds/confirmMenu.ogg");
-    Audio::play(sound);
+    app->audioMixer->playBuffer(sound);
 
     //load textures
     AnimOBJECT_Init(&titleGF, "assets/menu/title/gf/", "frames.json");
