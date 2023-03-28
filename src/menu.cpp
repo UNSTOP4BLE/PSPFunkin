@@ -31,8 +31,9 @@ void TitleScreen::load(void)
     //Mix_PlayMusic(menutrack, true);
     parser.initbpm = titleJson["menuSongBPM"].asDouble();   
     Parser_calcCrochet();
-    AudioBuffer *sound = Audio::loadFile("assets/sounds/confirmMenu.wav");
-    
+    AudioBuffer *sound = Audio::loadFile("assets/sounds/confirmMenu.ogg");
+    Audio::play(sound);
+
     //load textures
     AnimOBJECT_Init(&titleGF, "assets/menu/title/gf/", "frames.json");
     ng = g2dTexLoad("assets/menu/title/ng.png", G2D_SWIZZLE);

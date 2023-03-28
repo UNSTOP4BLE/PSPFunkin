@@ -1,6 +1,8 @@
 #include "../main.h"
 #include "audio.h"
-#include <SDL2/SDL.h>
+#include <cstdio>
+
+// Private stuff
 
 constexpr static inline uint32_t operator"" _m(const char *const str, size_t length) {
   return str[0] | (str[1] << 8) | (str[2] << 16) | (str[3] << 24);
@@ -9,48 +11,18 @@ constexpr static inline uint32_t operator"" _m(const char *const str, size_t len
 // THIS WILL BREAK ON BIG ENDIAN PLATFORMS (don't remove this warning)
 template<typename T> static inline T _readValue(FILE *fp) {
     T value;
-    ASSERTFUNC(fread(&value, sizeof(T), 1, fp));   
+    ASSERTFUNC(fread(&value, sizeof(T), 1, fp));
     return value;
 }
 
 template<typename T> static inline void _readValueInPlace(FILE *fp, T &value) {
-    ASSERTFUNC(fread(&value, sizeof(T), 1, fp));   
+    ASSERTFUNC(fread(&value, sizeof(T), 1, fp));
 }
 
-struct __attribute__((packed)) FormatChunk {
-    uint16_t format;
-    uint16_t channels;
-    uint32_t samplerate;
-    uint32_t byterate;
-    uint16_t align;
-    uint16_t bps;
-};
+namespace Audio {
+Mixer *audioMixer;
 
-class StreamSource {
-public:
-    virtual int getPosition(void);
-    virtual int readBuf(AudioBuffer &buf, int numSamples); 
-    virtual int getNumSamples(void);
-    virtual ~StreamSource(void) {};
-};
-
-class WAVStreamSource : public StreamSource 
-{
-public:
-    WAVStreamSource(const char *path);
-    int getPosition(void);
-    int readBuf(AudioBuffer &buf, int numSamples);
-    int getNumSamples(void);
-    ~WAVStreamSource(void);
-private:
-    FILE *wavFile;
-    FormatChunk fmt;
-    int dataOffset;
-    uint32_t totalNumSamples;
-    SDL_AudioFormat format;
-};
-
-WAVStreamSource::WAVStreamSource(const char *path) {
+WAVFileReader::WAVFileReader(const char *path) {
     wavFile = fopen(path, "rb");
     ASSERTFUNC(wavFile);
 
@@ -69,9 +41,11 @@ WAVStreamSource::WAVStreamSource(const char *path) {
             // ugly hack but SDL doesn't provide any API for this
             format = fmt.bps & SDL_AUDIO_MASK_BITSIZE;
             if (fmt.bps >= 16) format |= SDL_AUDIO_MASK_SIGNED;
+
+            bytesPerSample = fmt.channels * fmt.bps / 8;
         } else if (chunkType == "data"_m) {
             dataOffset = ftell(wavFile);
-            totalNumSamples = chunkLength / (fmt.channels * SDL_AUDIO_BITSIZE(format) / 8);
+            totalNumSamples = chunkLength / bytesPerSample;
             return;
         } else {
             // skip the chunk
@@ -79,52 +53,125 @@ WAVStreamSource::WAVStreamSource(const char *path) {
         }
     }
 
-    ASSERTFUNC(false);  //fail to read file
+    ASSERTFUNCFAIL("failed to parse file");
     fclose(wavFile);
 }
 
-int WAVStreamSource::getPosition(void) {
-    return (ftell(wavFile) - dataOffset) / (fmt.channels * SDL_AUDIO_BITSIZE(format) / 8);
+int WAVFileReader::getPosition(void) {
+    return (ftell(wavFile) - dataOffset) / bytesPerSample;
 }
 
-int WAVStreamSource::readBuf(AudioBuffer &buf, int numSamples) {
-    int actualNumSamples = std::min(numSamples, (int) (totalNumSamples - getPosition()));
+int WAVFileReader::setPosition(int sampleOffset) {
+    fseek(wavFile, dataOffset + (sampleOffset * bytesPerSample), SEEK_SET);
+
+    return getPosition();
+}
+
+int WAVFileReader::readBuf(AudioBuffer &buf, int numSamples) {
+    int actualNumSamples = std::min(numSamples, int(totalNumSamples - getPosition()));
     if (!actualNumSamples) return 0;
 
-    buf.data.resize(actualNumSamples * fmt.channels * SDL_AUDIO_BITSIZE(format) / 8);
+    buf.data.resize(actualNumSamples * bytesPerSample);
     buf.channels = fmt.channels;
     buf.samplerate = fmt.samplerate;
+    buf.format = format;
 
-    return fread(buf.data.data(), fmt.channels * SDL_AUDIO_BITSIZE(format) / 8, actualNumSamples, wavFile);
+    return fread(buf.data.data(), bytesPerSample, actualNumSamples, wavFile);
 }
 
-int WAVStreamSource::getNumSamples(void) {
+int WAVFileReader::getLength(void) {
     return totalNumSamples;
 }
 
-WAVStreamSource::~WAVStreamSource(void) {
+WAVFileReader::~WAVFileReader(void) {
     fclose(wavFile);
 }
 
-namespace Audio {
+OGGFileReader::OGGFileReader(const char *path) {
+    int error = ov_fopen(path, &oggFile);
+    ASSERTFUNC(!error);
 
-Mixer mixer(); //hardcoded sample rate sucks but eh
-    AudioBuffer *loadFile(const char *path) {
-        const char *ext = &path[strlen(path) - 4];
-        
-        StreamSource *source = NULL;
-        ASSERTFUNC(strcmp(ext, ".wav") || strcmp(ext, ".ogg"));
-        if (!strcmp(ext, ".wav"))
-            source = new WAVStreamSource(path);
-        //else if (!strcmp(ext, ".ogg"))
-            //source = new OGGStreamSource(path);
-        else
-            ASSERTFUNC(false);
+    info = ov_info(&oggFile, -1);
+    totalNumSamples = ov_pcm_total(&oggFile, -1);
+    bytesPerSample = sizeof(int16_t) * info->channels;
+    bitstreamIndex = 0;
+}
 
-        auto buffer = new AudioBuffer();
-        source->readBuf(*buffer, source->getNumSamples());
+int OGGFileReader::getPosition(void) {
+    auto offset = ov_pcm_tell(&oggFile);
+    ASSERTFUNC(offset != OV_EINVAL);
 
-        delete source;
-        return buffer;
+    return static_cast<int>(offset);
+}
+
+int OGGFileReader::setPosition(int sampleOffset) {
+    int error = ov_pcm_seek(&oggFile, sampleOffset);
+    ASSERTFUNC(!error);
+
+    return getPosition();
+}
+
+int OGGFileReader::readBuf(AudioBuffer &buf, int numSamples) {
+    buf.data.resize(numSamples * bytesPerSample);
+    buf.channels = info->channels;
+    buf.samplerate = info->rate;
+    buf.format = AUDIO_S16LSB;
+
+    auto ptr = reinterpret_cast<char *>(buf.data.data());
+
+    for (int actualNumSamples = 0; actualNumSamples < numSamples;) {
+        int remaining = (numSamples - actualNumSamples) * bytesPerSample;
+        int length = ov_read(&oggFile, ptr, remaining, false, sizeof(int16_t), true, &bitstreamIndex);
+        ASSERTFUNC(length >= 0);
+
+        if (!length) { // end of file
+            buf.data.resize(actualNumSamples * bytesPerSample);
+            return actualNumSamples;
+        }
+
+        actualNumSamples += length / bytesPerSample;
+        ptr += length;
     }
+
+    return numSamples;
+}
+
+int OGGFileReader::getLength(void) {
+    return totalNumSamples;
+}
+
+OGGFileReader::~OGGFileReader(void) {
+    ov_clear(&oggFile);
+}
+
+void init(void)
+{
+    audioMixer = new Mixer();
+    audioMixer->start();
+}
+
+AudioBuffer *loadFile(const char *path) {
+    const char *ext = &path[strlen(path) - 4];
+        
+    FileReader *reader = NULL;
+    ASSERTFUNC(strcmp(ext, ".wav") || strcmp(ext, ".ogg"));
+    if (!strcmp(ext, ".wav"))
+        reader = new WAVFileReader(path);
+    else if (!strcmp(ext, ".ogg"))
+        reader = new OGGFileReader(path);
+    else
+        ASSERTFUNCFAIL("unsupported audio format");
+
+    auto buffer = new AudioBuffer();
+    reader->readBuf(*buffer, reader->getLength());
+
+    delete reader;
+    return buffer;
+}
+void play(AudioBuffer *buffer)
+{
+    auto stream = audioMixer->openStream(buffer->format, buffer->channels, buffer->samplerate);
+    stream->feed(buffer);
+    stream->close();
+}
 }

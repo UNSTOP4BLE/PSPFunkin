@@ -6,6 +6,7 @@
 #include <psputility.h>
 #include <chrono>
 #include "psp/callbacks.h"
+#include "psp/audio.h"
 #include "psp/font.h"
 #include "psp/pad.h"
 
@@ -25,7 +26,6 @@ void ErrMSG(const char *filename, const char *function, int line, const char *ex
         PrintFont(Left, 0, 0, errstr);
         g2dFlip(G2D_VSYNC);
     }
-
 }
 
 int main()
@@ -37,7 +37,7 @@ int main()
     Pad_Init();
     
     SDL_Init(SDL_INIT_AUDIO);
-    Audio::mixer.start(44100, );
+    Audio::init();
     g2dInit();
     FntInit();
     setScreenCol(GREEN);

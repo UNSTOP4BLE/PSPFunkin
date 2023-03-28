@@ -1,5 +1,5 @@
 #include "../main.h"
-#include "audio.h"
+#include "mixer.h"
 
 void MixerStream::_open(SDL_AudioFormat format, int channels, int sampleRate, int mixerSampleRate) {
     if (_stream)
@@ -24,8 +24,8 @@ void MixerStream::feed(const void *data, int size) {
     SDL_AudioStreamPut(_stream, data, size);
 }
 
-void MixerStream::feed(AudioBuffer &buffer) {
-    SDL_AudioStreamPut(_stream, buffer.data.data(), buffer.data.size());
+void MixerStream::feed(AudioBuffer *buffer) {
+    SDL_AudioStreamPut(_stream, buffer->data.data(), buffer->data.size());
 }
 
 bool MixerStream::isBusy(void) {
@@ -111,7 +111,7 @@ void Mixer::process(int16_t *output, int numSamples) {
         if (!stream.isBusy())
             continue;
 
-        int actualNumSamples = stream._read(&inputBuffer[0][0], inputBufferSize);
+        int actualNumSamples = stream._read(&inputBuffer[0][0], inputBufferSize) / (2 * sizeof(int16_t));
 
         // Apply volume and mix into output buffer
         for (int i = 0; i < actualNumSamples; i++) {

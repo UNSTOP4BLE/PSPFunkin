@@ -14,9 +14,9 @@ OBJS = src/main.o \
        src/psp/font.o \
        src/psp/glib2d.o 
 
-LIBS = -ljsoncpp -lstdc++ -lpng -lz -lpspgum -lpspgu -lpsprtc -lm -lpspvram -lpspaudio -lSDL2_mixer -lSDL2 -lGL -lvorbisfile -lvorbis -logg -lpspvfpu -lpsphprm -lxmp
+LIBS = -ljsoncpp -lstdc++ -lpspaudio -lvorbisfile -lvorbis -logg -lSDL2  -lpng -lz -lpspgum -lpspgu -lm -lpspvram -lGL -lpspvfpu -lpsphprm -lxmp 
 
-CFLAGS = -O2 -G0 -Wall -g -fno-builtin-printf 
+CFLAGS = -O2 -G0 -Wall -g
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti -std=gnu++17
 ASFLAGS = $(CFLAGS)
 
