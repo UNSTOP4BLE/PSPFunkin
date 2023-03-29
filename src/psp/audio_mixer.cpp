@@ -1,5 +1,11 @@
+
+#include <cstdint>
+#include <algorithm>
+#include <SDL2/SDL_audio.h>
 #include "../main.h"
-#include "mixer.h"
+#include "audio_mixer.h"
+
+namespace Audio {
 
 void MixerStream::_open(SDL_AudioFormat format, int channels, int sampleRate, int mixerSampleRate) {
     if (_stream)
@@ -24,8 +30,18 @@ void MixerStream::feed(const void *data, int size) {
     SDL_AudioStreamPut(_stream, data, size);
 }
 
-void MixerStream::feed(AudioBuffer *buffer) {
-    SDL_AudioStreamPut(_stream, buffer->data.data(), buffer->data.size());
+void MixerStream::feed(AudioBuffer &buffer) {
+    SDL_AudioStreamPut(_stream, buffer.data.data(), buffer.data.size());
+}
+
+int MixerStream::getBufferedSamples(void) {
+    return SDL_AudioStreamAvailable(_stream) / (2 * sizeof(int16_t));
+}
+
+int MixerStream::cancelPlayback(void) {
+    int remaining = getBufferedSamples();
+    SDL_AudioStreamClear(_stream);
+    return remaining;
 }
 
 bool MixerStream::isBusy(void) {
@@ -44,7 +60,7 @@ void MixerStream::close(void) {
 }
 
 void Mixer::start(int sampleRate, int bufferSize) {
-    ASSERTFUNC(bufferSize <= MAX_BUFFER_SIZE);
+    ASSERTFUNC(bufferSize <= MIXER_BUFFER_SIZE);
 
     SDL_AudioSpec actualSpec;
     SDL_AudioSpec spec{
@@ -79,7 +95,7 @@ void Mixer::stop(void) {
 }
 
 MixerStream *Mixer::openStream(SDL_AudioFormat format, int channels, int sampleRate) {
-    for (int ch = 0; ch < NUM_CHANNELS; ch++) {
+    for (int ch = 0; ch < NUM_MIXER_CHANNELS; ch++) {
         auto &stream = _streams[ch];
         if (stream.isBusy())
             continue;
@@ -96,17 +112,16 @@ MixerStream *Mixer::openStream(SDL_AudioFormat format, int channels, int sampleR
 
 // The output format is hardcoded to 16 bit stereo.
 void Mixer::process(int16_t *output, int numSamples) {
-    int16_t inputBuffer[MAX_BUFFER_SIZE][2];
-    int32_t outputBuffer[MAX_BUFFER_SIZE][2];
+    int16_t inputBuffer[MIXER_BUFFER_SIZE][2];
+    int32_t outputBuffer[MIXER_BUFFER_SIZE][2];
 
     int inputBufferSize = numSamples * 2 * sizeof(int16_t);
     int outputBufferSize = numSamples * 2 * sizeof(int32_t);
 
-    ASSERTFUNC(numSamples <= MAX_BUFFER_SIZE);
     memset(outputBuffer, 0, outputBufferSize);
     _sampleOffset += numSamples;
 
-    for (int ch = 0; ch < NUM_CHANNELS; ch++) {
+    for (int ch = 0; ch < NUM_MIXER_CHANNELS; ch++) {
         auto &stream = _streams[ch];
         if (!stream.isBusy())
             continue;
@@ -132,12 +147,14 @@ void Mixer::process(int16_t *output, int numSamples) {
     }
 }
 
-MixerStream *Mixer::playBuffer(AudioBuffer *buffer, bool close) {
-    auto stream = openStream(buffer->format, buffer->channels, buffer->samplerate);
+MixerStream *Mixer::playBuffer(AudioBuffer &buffer, bool close) {
+    auto stream = openStream(buffer.format, buffer.channels, buffer.samplerate);
     if (stream) {
         stream->feed(buffer);
         if (close) stream->close();
     }
 
     return stream;
+}
+
 }

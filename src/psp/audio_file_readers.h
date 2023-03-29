@@ -1,11 +1,9 @@
 #pragma once
-#include "../main.h"
-#include "audiobuffer.h"
-#include "mixer.h"
-#include <cstdio>
+
 #include <cstdint>
 #include <vorbis/vorbisfile.h>
-#include <vector>     
+#include "../main.h"
+#include "audio_buffer.h"
 
 namespace Audio {
 
@@ -22,7 +20,7 @@ class FileReader {
 public:
     virtual int getPosition(void);
     virtual int setPosition(int sampleOffset);
-    virtual int readBuf(AudioBuffer &buf, int numSamples); 
+    virtual int read(AudioBuffer &buf, int numSamples); 
     virtual int getLength(void);
     virtual ~FileReader(void) {}
 };
@@ -39,7 +37,7 @@ public:
     WAVFileReader(const char *path);
     int getPosition(void);
     int setPosition(int sampleOffset);
-    int readBuf(AudioBuffer &buf, int numSamples);
+    int read(AudioBuffer &buf, int numSamples);
     int getLength(void);
     ~WAVFileReader(void);
 };
@@ -55,11 +53,12 @@ public:
     OGGFileReader(const char *path);
     int getPosition(void);
     int setPosition(int sampleOffset);
-    int readBuf(AudioBuffer &buf, int numSamples);
+    int read(AudioBuffer &buf, int numSamples);
     int getLength(void);
     ~OGGFileReader(void);
 };
 
+FileReader *openFile(const char *path);
 AudioBuffer *loadFile(const char *path);
-void play(AudioBuffer *buffer);
+
 }

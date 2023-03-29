@@ -6,7 +6,7 @@
 #include <psputility.h>
 #include <chrono>
 #include "psp/callbacks.h"
-#include "psp/audioreaders.h"
+#include "psp/audio_file_readers.h"
 #include "psp/font.h"
 #include "psp/pad.h"
 
@@ -37,8 +37,7 @@ int main()
 
     setupcallbacks();
     Pad_Init();
-    SDL_Init(SDL_INIT_AUDIO);
-    app->audioMixer = new Mixer();
+    app->audioMixer = new Audio::Mixer();
     app->audioMixer->start();
     g2dInit();
     FntInit();

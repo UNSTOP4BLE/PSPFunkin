@@ -1,6 +1,9 @@
-#include "../main.h"
-#include "audioreaders.h"
+
 #include <cstdio>
+#include <cstring>
+#include <vorbis/vorbisfile.h>
+#include "../main.h"
+#include "audio_file_readers.h"
 
 // Private stuff
 
@@ -66,7 +69,7 @@ int WAVFileReader::setPosition(int sampleOffset) {
     return getPosition();
 }
 
-int WAVFileReader::readBuf(AudioBuffer &buf, int numSamples) {
+int WAVFileReader::read(AudioBuffer &buf, int numSamples) {
     int actualNumSamples = std::min(numSamples, int(totalNumSamples - getPosition()));
     if (!actualNumSamples) return 0;
 
@@ -110,7 +113,7 @@ int OGGFileReader::setPosition(int sampleOffset) {
     return getPosition();
 }
 
-int OGGFileReader::readBuf(AudioBuffer &buf, int numSamples) {
+int OGGFileReader::read(AudioBuffer &buf, int numSamples) {
     buf.data.resize(numSamples * bytesPerSample);
     buf.channels = info->channels;
     buf.samplerate = info->rate;
@@ -143,22 +146,28 @@ OGGFileReader::~OGGFileReader(void) {
     ov_clear(&oggFile);
 }
 
-AudioBuffer *loadFile(const char *path) {
+FileReader *openFile(const char *path) {
     const char *ext = &path[strlen(path) - 4];
-        
-    FileReader *reader = NULL;
-    ASSERTFUNC(strcmp(ext, ".wav") || strcmp(ext, ".ogg"));
+
     if (!strcmp(ext, ".wav"))
-        reader = new WAVFileReader(path);
-    else if (!strcmp(ext, ".ogg"))
-        reader = new OGGFileReader(path);
-    else
-        ASSERTFUNCFAIL("unsupported audio format");
+        return (FileReader *) new WAVFileReader(path);
+    if (!strcmp(ext, ".ogg"))
+        return (FileReader *) new OGGFileReader(path);
+
+    ASSERTFUNCFAIL("unsupported audio format");
+    return nullptr;
+}
+
+AudioBuffer *loadFile(const char *path) {
+    auto reader = openFile(path);
+    if (!reader)
+        return nullptr;
 
     auto buffer = new AudioBuffer();
-    reader->readBuf(*buffer, reader->getLength());
-
+    reader->read(*buffer, reader->getLength());
     delete reader;
+
     return buffer;
 }
+
 }

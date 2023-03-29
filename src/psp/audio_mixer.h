@@ -1,10 +1,16 @@
 #pragma once
+
+#include <cstdint>
+#include <algorithm>
+#include <SDL2/SDL_audio.h>
 #include "../main.h"
-#include "audiobuffer.h"
+#include "audio_buffer.h"
+
+namespace Audio {
 
 // 1024-sample buffer at 44100 Hz = ~23ms latency
-static constexpr int NUM_CHANNELS = 32;
-static constexpr int MAX_BUFFER_SIZE = 1024;
+static constexpr int NUM_MIXER_CHANNELS = 32;
+static constexpr int MIXER_BUFFER_SIZE = 1024;
 
 class MixerStream {
     friend class Mixer;
@@ -39,7 +45,9 @@ public:
     }
 
     void feed(const void *data, int size);
-    void feed(AudioBuffer *buffer);
+    void feed(AudioBuffer &buffer);
+    int getBufferedSamples(void);
+    int cancelPlayback(void);
     bool isBusy(void);
     void close(void);
 };
@@ -47,7 +55,7 @@ public:
 class Mixer {
 private:
     SDL_AudioDeviceID _outputStream;
-    MixerStream _streams[NUM_CHANNELS];
+    MixerStream _streams[NUM_MIXER_CHANNELS];
 
     int _leftVolume, _rightVolume;
     int _sampleRate;
@@ -84,11 +92,13 @@ public:
         return static_cast<float>(numSamples) * static_cast<float>(_sampleRate);
     }
 
-    void start(int sampleRate = 44100, int bufferSize = MAX_BUFFER_SIZE);
+    void start(int sampleRate = 44100, int bufferSize = MIXER_BUFFER_SIZE);
     void stop(void);
 
     MixerStream *openStream(SDL_AudioFormat format, int channels, int sampleRate);
     void process(int16_t *output, int numSamples);
     //used to play sounds
-    MixerStream *playBuffer(AudioBuffer *buffer, bool close = true);
+    MixerStream *playBuffer(AudioBuffer &buffer, bool close = true);
 };
+
+}

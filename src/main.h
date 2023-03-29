@@ -1,11 +1,11 @@
 #pragma once
 
-#include "psp/mixer.h"
+#include "psp/audio_mixer.h"
 
 class PSPFunkin
 {
 public:
-    Mixer *audioMixer;
+    Audio::Mixer *audioMixer;
     char errstr[256];
     double deltatime;
 };

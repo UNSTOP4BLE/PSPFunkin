@@ -8,9 +8,9 @@ OBJS = src/main.o \
        src/chartparser.o \
        src/psp/animation.o \
        src/psp/file.o \
-       src/psp/mixer.o \
-       src/psp/audioreaders.o \
-       src/psp/audiostreams.o \
+       src/psp/audio_file_readers.o \
+       src/psp/audio_mixer.o \
+       src/psp/audio_streamed_file.o \
        src/psp/pad.o \
        src/psp/font.o \
        src/psp/glib2d.o 
