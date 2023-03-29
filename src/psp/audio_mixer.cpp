@@ -8,6 +8,12 @@
 namespace Audio {
 
 void MixerStream::_open(SDL_AudioFormat format, int channels, int sampleRate, int mixerSampleRate) {
+    _mixer->enterCriticalSection();
+
+    _leftVolume = INT16_MAX;
+    _rightVolume = INT16_MAX;
+    _busy = true;
+
     if (_stream)
         SDL_FreeAudioStream(_stream);
 
@@ -15,64 +21,88 @@ void MixerStream::_open(SDL_AudioFormat format, int channels, int sampleRate, in
         format, channels, sampleRate, // input
         AUDIO_S16SYS, 2, mixerSampleRate // output
     );
-    _leftVolume = INT16_MAX;
-    _rightVolume = INT16_MAX;
-    _busy = true;
 
-    ASSERTFUNC(_stream);
+    _mixer->exitCriticalSection();
+    ASSERTFUNC(_stream, "stream invalid");
 }
 
 int MixerStream::_read(int16_t *data, int size) {
+    if (!_stream)
+        return 0;
+
     return SDL_AudioStreamGet(_stream, data, size);
 }
 
 void MixerStream::feed(const void *data, int size) {
+    _mixer->enterCriticalSection();
     SDL_AudioStreamPut(_stream, data, size);
+    _mixer->exitCriticalSection();
 }
 
 void MixerStream::feed(AudioBuffer &buffer) {
-    SDL_AudioStreamPut(_stream, buffer.data.data(), buffer.data.size());
+    feed(buffer.data.data(), buffer.data.size());
 }
 
 int MixerStream::getBufferedSamples(void) {
-    return SDL_AudioStreamAvailable(_stream) / (2 * sizeof(int16_t));
+    _mixer->enterCriticalSection();
+    int samples = SDL_AudioStreamAvailable(_stream) / (2 * sizeof(int16_t));
+    _mixer->exitCriticalSection();
+
+    return samples;
 }
 
 int MixerStream::cancelPlayback(void) {
+    _mixer->enterCriticalSection();
     int remaining = getBufferedSamples();
     SDL_AudioStreamClear(_stream);
+    _mixer->exitCriticalSection();
+
     return remaining;
 }
 
 bool MixerStream::isBusy(void) {
     if (!_stream)
         return false;
+    if (_busy)
+        return true;
+    if (getBufferedSamples())
+        return true;
 
-    return _busy || (SDL_AudioStreamAvailable(_stream) > 0);
+    return false;
 }
 
 void MixerStream::close(void) {
     // Do not actually destroy the stream, instead just flush it to make
     // sure all leftover data is played.
     _busy = false;
-    if (_stream)
+
+    if (_stream) {
+        _mixer->enterCriticalSection();
         SDL_AudioStreamFlush(_stream);
+        _mixer->exitCriticalSection();
+    }
+}
+
+Mixer::Mixer(void)
+: _outputStream(0), _leftVolume(INT16_MAX), _rightVolume(INT16_MAX) {
+    for (int ch = 0; ch < NUM_MIXER_CHANNELS; ch++)
+        _streams[ch]._mixer = this;
 }
 
 void Mixer::start(int sampleRate, int bufferSize) {
-    ASSERTFUNC(bufferSize <= MIXER_BUFFER_SIZE);
+    ASSERTFUNC(bufferSize <= MIXER_BUFFER_SIZE, "buffer size is too big");
 
     SDL_AudioSpec actualSpec;
     SDL_AudioSpec spec{
         .freq     = sampleRate,
         .format   = AUDIO_S16SYS,
         .channels = 2,
-        .samples  = (uint16_t)bufferSize,
+        .samples  = static_cast<uint16_t>(bufferSize),
         .callback = [](void *userdata, uint8_t *buffer, int size) {
-            auto &mixer = *reinterpret_cast<Mixer *>(userdata);
+            auto mixer = reinterpret_cast<Mixer *>(userdata);
             auto output = reinterpret_cast<int16_t *>(buffer);
 
-            mixer.process(output, size / (2 * sizeof(int16_t)));
+            mixer->process(output, size / (2 * sizeof(int16_t)));
         },
         .userdata = this
     };
@@ -80,7 +110,7 @@ void Mixer::start(int sampleRate, int bufferSize) {
     _outputStream = SDL_OpenAudioDevice(
         nullptr, false, &spec, &actualSpec, SDL_AUDIO_ALLOW_FREQUENCY_CHANGE
     );
-    ASSERTFUNC(_outputStream);
+    ASSERTFUNC(_outputStream, "failed to open audio device");
 
     _sampleRate = actualSpec.freq; // May have been changed by SDL
     _sampleOffset = 0;
@@ -100,10 +130,7 @@ MixerStream *Mixer::openStream(SDL_AudioFormat format, int channels, int sampleR
         if (stream.isBusy())
             continue;
 
-        enterCriticalSection();
         stream._open(format, channels, sampleRate, _sampleRate);
-        exitCriticalSection();
-
         return &stream;
     }
 
@@ -123,9 +150,6 @@ void Mixer::process(int16_t *output, int numSamples) {
 
     for (int ch = 0; ch < NUM_MIXER_CHANNELS; ch++) {
         auto &stream = _streams[ch];
-        if (!stream.isBusy())
-            continue;
-
         int actualNumSamples = stream._read(&inputBuffer[0][0], inputBufferSize) / (2 * sizeof(int16_t));
 
         // Apply volume and mix into output buffer
@@ -148,7 +172,7 @@ void Mixer::process(int16_t *output, int numSamples) {
 }
 
 MixerStream *Mixer::playBuffer(AudioBuffer &buffer, bool close) {
-    auto stream = openStream(buffer.format, buffer.channels, buffer.samplerate);
+    auto stream = openStream(buffer.format, buffer.channels, buffer.sampleRate);
     if (stream) {
         stream->feed(buffer);
         if (close) stream->close();

@@ -18,43 +18,38 @@ struct __attribute__((packed)) WAVFormatChunk {
 
 class FileReader {
 public:
-    virtual int getPosition(void);
-    virtual int setPosition(int sampleOffset);
-    virtual int read(AudioBuffer &buf, int numSamples); 
-    virtual int getLength(void);
+    int channels, sampleRate, bytesPerSample, totalNumSamples;
+    SDL_AudioFormat format;
+
+    virtual int getPosition(void) { return 0; }
+    virtual int setPosition(int sampleOffset) { return 0; }
+    virtual int read(AudioBuffer &buf, int numSamples) { return 0; }
     virtual ~FileReader(void) {}
 };
 
 class WAVFileReader : public FileReader {
 private:
-    FILE *wavFile;
-    WAVFormatChunk fmt;
-    int dataOffset, bytesPerSample;
-    uint32_t totalNumSamples;
-    SDL_AudioFormat format;
+    FILE *_wavFile;
+    int _dataOffset;
 
 public:
     WAVFileReader(const char *path);
     int getPosition(void);
     int setPosition(int sampleOffset);
     int read(AudioBuffer &buf, int numSamples);
-    int getLength(void);
     ~WAVFileReader(void);
 };
 
 class OGGFileReader : public FileReader {
 private:
-    OggVorbis_File oggFile;
-    vorbis_info *info;
-    int bitstreamIndex, bytesPerSample;
-    uint32_t totalNumSamples;
+    OggVorbis_File _oggFile;
+    int _bitstreamIndex;
 
 public:
     OGGFileReader(const char *path);
     int getPosition(void);
     int setPosition(int sampleOffset);
     int read(AudioBuffer &buf, int numSamples);
-    int getLength(void);
     ~OGGFileReader(void);
 };
 

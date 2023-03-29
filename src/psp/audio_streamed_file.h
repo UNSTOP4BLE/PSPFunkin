@@ -11,37 +11,37 @@ static constexpr int STREAM_BUFFER_SIZE = 4096;
 
 class StreamedFile {
 public:
-    inline StreamedFile(MixerStream &stream, const char *path)
-    : stream(stream), playing(false), loopOffset(-1) {
-        reader = openFile(path);
-        ASSERTFUNC(reader);
-    }
+    StreamedFile(Mixer &mixer, const char *path);
     inline ~StreamedFile(void) {
-        delete reader;
+        _stream->close();
+        delete _reader;
     }
 
+    inline MixerStream &getStream(void) {
+        return *_stream;
+    }
     inline int getPosition(void) {
-        return reader->getPosition();
+        return _reader->getPosition();
     }
     inline int setPosition(int sampleOffset) {
-        return reader->setPosition(sampleOffset);
+        return _reader->setPosition(sampleOffset);
     }
     inline bool isPlaying(void) {
-        return playing;
+        return _playing;
     }
 
     void process(void); // must be called to make sure the file keeps playing
-    void play(int loopPoint = -1);
+    void play(int loopOffset = -1);
     void pause(void);
     //float getTime(void);
     //float setTime(float time);
 
 private:
-    AudioBuffer buffer;
-    MixerStream &stream;
-    FileReader *reader;
-    bool playing;
-    int loopOffset;
+    AudioBuffer _buffer;
+    MixerStream *_stream;
+    FileReader *_reader;
+    bool _playing;
+    int _loopOffset;
 };
 
 }

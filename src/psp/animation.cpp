@@ -22,7 +22,7 @@ void AnimOBJECT_Init(Anim_OBJECT *obj, std::string path, std::string objname)
 
 void AnimOBJECT_SetAnim(Anim_OBJECT *obj, int anim)
 {
-    ASSERTFUNC(obj);   
+    ASSERTFUNC(obj, "object is null");   
 
     obj->time = 0;
     obj->curframe = 0;
@@ -35,7 +35,7 @@ void AnimOBJECT_SetAnim(Anim_OBJECT *obj, int anim)
 
 void AnimOBJECT_Tick(Anim_OBJECT *obj)
 {
-    ASSERTFUNC(obj);   
+    ASSERTFUNC(obj, "object is null");   
 
     if (obj->tick && obj->cananimate)
     {
@@ -64,7 +64,7 @@ void AnimOBJECT_Draw(Anim_OBJECT *obj, int x, int y)
         if (obj->flipped)
             disp.w = -disp.w;
 
-        ASSERTFUNC(obj->textures[obj->frames[obj->curframe].tex]);   
+        ASSERTFUNC(obj->textures[obj->frames[obj->curframe].tex], "texture is null");   
 
         if (obj->visible)
             DrawG2DTex(obj->textures[obj->frames[obj->curframe].tex], &img, &disp, obj->linear, obj->angle, obj->alpha);

@@ -17,8 +17,7 @@ public:
     }
 
     std::vector<uint8_t> data; 
-    uint16_t channels;
-    uint32_t samplerate;
+    int channels, sampleRate;
     SDL_AudioFormat format;
 };
 

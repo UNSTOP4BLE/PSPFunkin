@@ -4,9 +4,12 @@
 #include <pspdebug.h>
 #include <pspkernel.h>
 #include <psputility.h>
+#include <SDL2/SDL.h>
 #include <chrono>
 #include "psp/callbacks.h"
 #include "psp/audio_file_readers.h"
+#include "psp/audio_streamed_file.h"
+#include "psp/font.h"
 #include "psp/font.h"
 #include "psp/pad.h"
 
@@ -16,10 +19,10 @@ PSP_MODULE_INFO("PSPFunkin", 0, 1, 0);
 PSPFunkin *app;
 
 //error handler
-void ErrMSG(const char *filename, const char *function, int line, const char *expr)
+void ErrMSG(const char *filename, const char *function, int line, const char *expr, const char *msg)
 {
     char errstr[256];
-    sprintf(errstr, "error \nexpression: %s \nfile: %s \nfunction %s \nline %d", expr, filename, function, line);
+    sprintf(errstr, "error \nmessage %s\nexpression: %s \nfile: %s \nfunction %s \nline %d", expr, filename, function, line);
     while(1)
     {
         g2dClear(screenCol);
@@ -37,6 +40,7 @@ int main()
 
     setupcallbacks();
     Pad_Init();
+    SDL_Init(SDL_INIT_AUDIO);
     app->audioMixer = new Audio::Mixer();
     app->audioMixer->start();
     g2dInit();
@@ -45,16 +49,19 @@ int main()
     
     setScreen(new TitleScreen());
 
+Audio::StreamedFile file(*app->audioMixer, "assets/songs/freaky/freaky.wav");
+file.play(true);
     while(1)
     {
         auto last = std::chrono::high_resolution_clock::now();
 
         g2dClear(screenCol);
         Pad_Update();  
-        ASSERTFUNC(currentScreen);                
+        ASSERTFUNC(currentScreen, "screen is NULL");                
     
         currentScreen->update();  
         currentScreen->draw();  
+    file.process();
 
         g2dFlip(G2D_VSYNC);
 

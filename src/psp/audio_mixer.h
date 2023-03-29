@@ -12,10 +12,13 @@ namespace Audio {
 static constexpr int NUM_MIXER_CHANNELS = 32;
 static constexpr int MIXER_BUFFER_SIZE = 1024;
 
+class Mixer;
+
 class MixerStream {
     friend class Mixer;
 
 private:
+    Mixer *_mixer;
     SDL_AudioStream *_stream;
     int _leftVolume, _rightVolume; // fixed-point (1 << VOLUME_SHIFT)
     bool _busy;
@@ -33,12 +36,14 @@ private:
 
 public:
     inline void setVolume(float left, float right) {
+        //_mixer->enterCriticalSection();
         _leftVolume = static_cast<int>(
             std::max(-1.0f, std::min(1.0f, left)) * static_cast<float>(INT16_MAX)
         );
         _rightVolume = static_cast<int>(
             std::max(-1.0f, std::min(1.0f, right)) * static_cast<float>(INT16_MAX)
         );
+        //_mixer->exitCriticalSection();
     }
     inline void setVolume(float value) {
         setVolume(value, value);
@@ -62,8 +67,7 @@ private:
     uint64_t _sampleOffset;
 
 public:
-    inline Mixer(void)
-    : _outputStream(0), _leftVolume(INT16_MAX), _rightVolume(INT16_MAX) {}
+    Mixer(void);
     inline ~Mixer(void) {
         stop();
     }

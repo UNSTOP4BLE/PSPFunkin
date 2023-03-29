@@ -1316,7 +1316,7 @@ g2dTexture* g2dTexLoad(const char* path, g2dTex_Mode mode)
     g2dTexture *tex = NULL;
     FILE *fp = NULL;
 
-    ASSERTFUNC((fp = fopen(path, "rb")));
+    ASSERTFUNC((fp = fopen(path, "rb")), "failed to open file");
 #ifdef USE_PNG
     if (strstr(path, ".png"))
     {
@@ -1331,13 +1331,13 @@ g2dTexture* g2dTexLoad(const char* path, g2dTex_Mode mode)
     }
 #endif
 
-    ASSERTFUNC(tex);
+    ASSERTFUNC(tex, "texture failed to load");
 
     fclose(fp);
     fp = NULL;
 
     // The PSP can't draw 512*512+ textures.
-    ASSERTFUNC(tex->w <= 512 || tex->h <= 512);
+    ASSERTFUNC(tex->w <= 512 || tex->h <= 512, "texture is too big");
 
     // Swizzling is useless with small textures.
     if ((mode & G2D_SWIZZLE) && (tex->w >= 16 || tex->h >= 16))
@@ -1375,7 +1375,7 @@ void g2dSetScissor(int x, int y, int w, int h)
 
 void DrawG2DTex(g2dTexture* tex, Rect *Img, Rect *Disp, bool linear, float angle, int alpha)
 {   
-    ASSERTFUNC(tex);
+    ASSERTFUNC(tex, "texture is NULL");
 
     if (Disp->x+Disp->w >= 0 && Disp->x <= G2D_SCR_W && Disp->y+Disp->h >= 0 && Disp->y <= G2D_SCR_H)
     {
@@ -1397,7 +1397,7 @@ void DrawG2DTex(g2dTexture* tex, Rect *Img, Rect *Disp, bool linear, float angle
 
 void DrawFG2DTex(g2dTexture* tex, Rect *Img, FRect *Disp, bool linear, float angle, int alpha)
 {
-    ASSERTFUNC(tex);
+    ASSERTFUNC(tex, "texture is NULL");
 
     if (Disp->x+Disp->w >= 0 && Disp->x <= G2D_SCR_W && Disp->y+Disp->h >= 0 && Disp->y <= G2D_SCR_H)
     {

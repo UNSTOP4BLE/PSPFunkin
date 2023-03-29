@@ -4,38 +4,47 @@
 
 namespace Audio {
 
-void StreamedFile::process(void) {
-    if (!playing) return;
+StreamedFile::StreamedFile(Mixer &mixer, const char *path)
+: _playing(false), _loopOffset(-1) {
+    _reader = openFile(path);
+    ASSERTFUNC(_reader, "reader is invalid");
 
-    while (stream.getBufferedSamples() < STREAM_BUFFER_SIZE) {
-        int length = reader->read(buffer, STREAM_BUFFER_SIZE);
-        stream.feed(buffer);
+    _stream = mixer.openStream(_reader->format, _reader->channels, _reader->sampleRate);
+    ASSERTFUNC(_stream, "failed to open stream");
+}
+
+void StreamedFile::process(void) {
+    if (!_playing) return;
+
+    while (_stream->getBufferedSamples() < STREAM_BUFFER_SIZE) {
+        int length = _reader->read(_buffer, STREAM_BUFFER_SIZE);
+        _stream->feed(_buffer);
 
         if (length < STREAM_BUFFER_SIZE) {
-            if (loopOffset >= 0) {
+            if (_loopOffset >= 0) {
                 // Do seamless looping (keep filling the stream buffer)
-                setPosition(loopOffset);
+                setPosition(_loopOffset);
             } else {
                 // Stop playback
-                playing = false;
+                _playing = false;
                 break;
             }
         }
     }
 }
 
-void StreamedFile::play(int loopPoint) {
-    playing = true;
-    loopOffset = loopPoint;
+void StreamedFile::play(int loopOffset) {
+    _playing = true;
+    _loopOffset = loopOffset;
 
     //process();
 }
 
 void StreamedFile::pause(void) {
-    playing = false;
+    _playing = false;
 
     // Make sure any sample that wasn't played is going to be played again
-    int offset = stream.cancelPlayback();
+    int offset = _stream->cancelPlayback();
     setPosition(getPosition() - offset);
 }
 
