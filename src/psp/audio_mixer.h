@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <algorithm>
+#include <chrono>
 #include <SDL2/SDL_audio.h>
 #include "../main.h"
 #include "audio_buffer.h"
@@ -64,7 +65,10 @@ private:
 
     int _leftVolume, _rightVolume;
     int _sampleRate;
-    uint64_t _sampleOffset;
+    int64_t _sampleOffset;
+    std::chrono::high_resolution_clock::time_point _sampleOffsetTimestamp;
+
+    void _process(int16_t *output, int numSamples);
 
 public:
     Mixer(void);
@@ -100,9 +104,8 @@ public:
     void stop(void);
 
     MixerStream *openStream(SDL_AudioFormat format, int channels, int sampleRate);
-    void process(int16_t *output, int numSamples);
-    //used to play sounds
     MixerStream *playBuffer(AudioBuffer &buffer, bool close = true);
+    int64_t getSampleOffset(void);
 };
 
 }

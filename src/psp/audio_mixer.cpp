@@ -1,7 +1,8 @@
-
 #include <cstdint>
 #include <algorithm>
+#include <chrono>
 #include <SDL2/SDL_audio.h>
+#include <stdint.h>
 #include "../main.h"
 #include "audio_mixer.h"
 
@@ -23,7 +24,7 @@ void MixerStream::_open(SDL_AudioFormat format, int channels, int sampleRate, in
     );
 
     _mixer->exitCriticalSection();
-    ASSERTFUNC(_stream, "stream invalid");
+    ASSERTFUNC(_stream, "failed to allocate audio stream");
 }
 
 int MixerStream::_read(int16_t *data, int size) {
@@ -89,64 +90,17 @@ Mixer::Mixer(void)
         _streams[ch]._mixer = this;
 }
 
-void Mixer::start(int sampleRate, int bufferSize) {
-    ASSERTFUNC(bufferSize <= MIXER_BUFFER_SIZE, "buffer size is too big");
-
-    SDL_AudioSpec actualSpec;
-    SDL_AudioSpec spec{
-        .freq     = sampleRate,
-        .format   = AUDIO_S16SYS,
-        .channels = 2,
-        .samples  = static_cast<uint16_t>(bufferSize),
-        .callback = [](void *userdata, uint8_t *buffer, int size) {
-            auto mixer = reinterpret_cast<Mixer *>(userdata);
-            auto output = reinterpret_cast<int16_t *>(buffer);
-
-            mixer->process(output, size / (2 * sizeof(int16_t)));
-        },
-        .userdata = this
-    };
-
-    _outputStream = SDL_OpenAudioDevice(
-        nullptr, false, &spec, &actualSpec, SDL_AUDIO_ALLOW_FREQUENCY_CHANGE
-    );
-    ASSERTFUNC(_outputStream, "failed to open audio device");
-
-    _sampleRate = actualSpec.freq; // May have been changed by SDL
-    _sampleOffset = 0;
-    SDL_PauseAudioDevice(_outputStream, false);
-}
-
-void Mixer::stop(void) {
-    if (_outputStream) {
-        SDL_CloseAudioDevice(_outputStream);
-        _outputStream = 0;
-    }
-}
-
-MixerStream *Mixer::openStream(SDL_AudioFormat format, int channels, int sampleRate) {
-    for (int ch = 0; ch < NUM_MIXER_CHANNELS; ch++) {
-        auto &stream = _streams[ch];
-        if (stream.isBusy())
-            continue;
-
-        stream._open(format, channels, sampleRate, _sampleRate);
-        return &stream;
-    }
-
-    return nullptr;
-}
-
 // The output format is hardcoded to 16 bit stereo.
-void Mixer::process(int16_t *output, int numSamples) {
+void Mixer::_process(int16_t *output, int numSamples) {
     int16_t inputBuffer[MIXER_BUFFER_SIZE][2];
     int32_t outputBuffer[MIXER_BUFFER_SIZE][2];
 
+    _sampleOffset += numSamples;
+    _sampleOffsetTimestamp = std::chrono::high_resolution_clock::now();
+
     int inputBufferSize = numSamples * 2 * sizeof(int16_t);
     int outputBufferSize = numSamples * 2 * sizeof(int32_t);
-
     memset(outputBuffer, 0, outputBufferSize);
-    _sampleOffset += numSamples;
 
     for (int ch = 0; ch < NUM_MIXER_CHANNELS; ch++) {
         auto &stream = _streams[ch];
@@ -171,6 +125,55 @@ void Mixer::process(int16_t *output, int numSamples) {
     }
 }
 
+void Mixer::start(int sampleRate, int bufferSize) {
+    ASSERTFUNC(bufferSize <= MIXER_BUFFER_SIZE, "unsupported buffer size");
+
+    SDL_AudioSpec actualSpec;
+    SDL_AudioSpec spec{
+        .freq     = sampleRate,
+        .format   = AUDIO_S16SYS,
+        .channels = 2,
+        .samples  = static_cast<uint16_t>(bufferSize),
+        .callback = [](void *userdata, uint8_t *buffer, int size) {
+            auto mixer = reinterpret_cast<Mixer *>(userdata);
+            auto output = reinterpret_cast<int16_t *>(buffer);
+
+            mixer->_process(output, size / (2 * sizeof(int16_t)));
+        },
+        .userdata = this
+    };
+
+    _outputStream = SDL_OpenAudioDevice(
+        nullptr, false, &spec, &actualSpec,
+        SDL_AUDIO_ALLOW_FREQUENCY_CHANGE | SDL_AUDIO_ALLOW_SAMPLES_CHANGE
+    );
+    ASSERTFUNC(_outputStream, "failed to initialize audio device");
+
+    _sampleRate = actualSpec.freq; // May have been changed by SDL
+    _sampleOffset = -(bufferSize * 2); // See note above getSampleOffset()
+    SDL_PauseAudioDevice(_outputStream, false);
+}
+
+void Mixer::stop(void) {
+    if (_outputStream) {
+        SDL_CloseAudioDevice(_outputStream);
+        _outputStream = 0;
+    }
+}
+
+MixerStream *Mixer::openStream(SDL_AudioFormat format, int channels, int sampleRate) {
+    for (int ch = 0; ch < NUM_MIXER_CHANNELS; ch++) {
+        auto &stream = _streams[ch];
+        if (stream.isBusy())
+            continue;
+
+        stream._open(format, channels, sampleRate, _sampleRate);
+        return &stream;
+    }
+
+    return nullptr;
+}
+
 MixerStream *Mixer::playBuffer(AudioBuffer &buffer, bool close) {
     auto stream = openStream(buffer.format, buffer.channels, buffer.sampleRate);
     if (stream) {
@@ -179,6 +182,34 @@ MixerStream *Mixer::playBuffer(AudioBuffer &buffer, bool close) {
     }
 
     return stream;
+}
+
+/*
+ * Buffer processed: ---AAABBB-------AAA-------BBB------- ...
+ * Buffer played:    ------AAAAAAAAAABBBBBBBBBBAAAAAAAAAA ...
+ * _sampleOffset:   -2 -1  0         1         2          ...
+ *
+ * _sampleOffset is initialized to -(bufferSize * 2) by start() and then
+ * incremented twice, first when process() is called initially to prefill the
+ * first buffer and then when SDL actually starts playing the output stream and
+ * process() is invoked again to fill the next buffer. Thus, by the time
+ * _sampleOffset is 0 the audio has started playing and _sampleOffset always
+ * reflects the offset of the currently playing buffer. All that's left to do is
+ * do some linear interpolation using the delta between the current time and the
+ * time _sampleOffset was last updated.
+ */
+
+#define _seconds std::chrono::duration<float, std::ratio<1>>
+
+int64_t Mixer::getSampleOffset(void) {
+    enterCriticalSection();
+    int64_t offset = _sampleOffset;
+    auto delta = std::chrono::duration_cast<_seconds>(
+        std::chrono::high_resolution_clock::now() - _sampleOffsetTimestamp
+    );
+    exitCriticalSection();
+
+    return offset + static_cast<int64_t>(delta.count() * static_cast<float>(_sampleRate));
 }
 
 }

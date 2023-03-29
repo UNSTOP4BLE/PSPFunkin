@@ -7,10 +7,10 @@ namespace Audio {
 StreamedFile::StreamedFile(Mixer &mixer, const char *path)
 : _playing(false), _loopOffset(-1) {
     _reader = openFile(path);
-    ASSERTFUNC(_reader, "reader is invalid");
+    ASSERTFUNC(_reader, "failed to open audio file");
 
     _stream = mixer.openStream(_reader->format, _reader->channels, _reader->sampleRate);
-    ASSERTFUNC(_stream, "failed to open stream");
+    ASSERTFUNC(_stream, "no mixer channels available to play stream");
 }
 
 void StreamedFile::process(void) {

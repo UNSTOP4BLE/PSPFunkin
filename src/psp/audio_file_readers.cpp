@@ -1,3 +1,4 @@
+
 #include <cstdio>
 #include <cstring>
 #include <vorbis/vorbisfile.h>
@@ -13,23 +14,23 @@ constexpr static inline uint32_t operator"" _m(const char *const str, size_t len
 // THIS WILL BREAK ON BIG ENDIAN PLATFORMS (don't remove this warning)
 template<typename T> static inline T _readValue(FILE *fp) {
     T value;
-    ASSERTFUNC(fread(&value, sizeof(T), 1, fp), "fail to read value");
+    ASSERTFUNC(fread(&value, sizeof(T), 1, fp), "file read failure");
     return value;
 }
 
 template<typename T> static inline void _readValueInPlace(FILE *fp, T &value) {
-    ASSERTFUNC(fread(&value, sizeof(T), 1, fp), "fail to read value");
+    ASSERTFUNC(fread(&value, sizeof(T), 1, fp), "file read failure");
 }
 
 namespace Audio {
 
 WAVFileReader::WAVFileReader(const char *path) {
     _wavFile = fopen(path, "rb");
-    ASSERTFUNC(_wavFile, "failed to open wav file");
+    ASSERTFUNC(_wavFile, "failed to open WAV file");
 
-    ASSERTFUNC(_readValue<uint32_t>(_wavFile) == "RIFF"_m, "invalid wav file");
+    ASSERTFUNC(_readValue<uint32_t>(_wavFile) == "RIFF"_m, "not a valid WAV file");
     _readValue<uint32_t>(_wavFile); //ignore total file size
-    ASSERTFUNC(_readValue<uint32_t>(_wavFile) == "WAVE"_m, "invalid wav file");
+    ASSERTFUNC(_readValue<uint32_t>(_wavFile) == "WAVE"_m, "not a valid WAV file");
 
     while (!feof(_wavFile)) {
         uint32_t chunkType = _readValue<uint32_t>(_wavFile);
@@ -39,7 +40,8 @@ WAVFileReader::WAVFileReader(const char *path) {
             case "fmt "_m:
                 WAVFormatChunk fmt;
                 _readValueInPlace(_wavFile, fmt);
-                ASSERTFUNC(fmt.format == 1, "invalid wav file"); // 1 is int PCM, 3 is float PCM, 0x11 is ADPCM
+                // 1 is int PCM, 3 is float PCM, 0x11 is ADPCM
+                ASSERTFUNC(fmt.format == 1, "WAV file is not PCM");
 
                 channels = fmt.channels;
                 sampleRate = fmt.samplerate;
@@ -60,7 +62,7 @@ WAVFileReader::WAVFileReader(const char *path) {
         }
     }
 
-    ASSERTFUNC(false, "failed to parse file");
+    ASSERTFUNC(false, "WAV file has missing chunks");
     fclose(_wavFile);
 }
 
@@ -93,7 +95,7 @@ WAVFileReader::~WAVFileReader(void) {
 
 OGGFileReader::OGGFileReader(const char *path) {
     int error = ov_fopen(path, &_oggFile);
-    ASSERTFUNC(!error, "failed to open ogg file");
+    ASSERTFUNC(!error, "failed to open OGG file");
 
     auto info = ov_info(&_oggFile, -1);
     totalNumSamples = ov_pcm_total(&_oggFile, -1);
@@ -108,14 +110,14 @@ OGGFileReader::OGGFileReader(const char *path) {
 
 int OGGFileReader::getPosition(void) {
     auto offset = ov_pcm_tell(&_oggFile);
-    ASSERTFUNC(offset != OV_EINVAL, "invalid value");
+    ASSERTFUNC(offset != OV_EINVAL, "OGG seek error");
 
     return static_cast<int>(offset);
 }
 
 int OGGFileReader::setPosition(int sampleOffset) {
     int error = ov_pcm_seek(&_oggFile, sampleOffset);
-    ASSERTFUNC(!error, "failed to seek");
+    ASSERTFUNC(!error, "OGG seek error");
 
     return getPosition();
 }
@@ -131,7 +133,7 @@ int OGGFileReader::read(AudioBuffer &buf, int numSamples) {
     for (int actualNumSamples = 0; actualNumSamples < numSamples;) {
         int remaining = (numSamples - actualNumSamples) * bytesPerSample;
         int length = ov_read(&_oggFile, ptr, remaining, false, sizeof(int16_t), true, &_bitstreamIndex);
-        ASSERTFUNC(length >= 0, "read failed");
+        ASSERTFUNC(length >= 0, "OGG decode error");
 
         if (!length) { // end of file
             buf.data.resize(actualNumSamples * bytesPerSample);
@@ -157,7 +159,7 @@ FileReader *openFile(const char *path) {
     if (!strcmp(ext, ".ogg"))
         return (FileReader *) new OGGFileReader(path);
 
-    ASSERTFUNC(false, "unsupported audio format");
+    ASSERTFUNC(false, "unsupported audio file format");
     return nullptr;
 }
 
