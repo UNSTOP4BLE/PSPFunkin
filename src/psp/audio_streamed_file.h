@@ -13,18 +13,20 @@ class StreamedFile {
 public:
     StreamedFile(const char *path);
     inline ~StreamedFile(void) {
-        _stream->close();
+        _channel->close();
         delete _reader;
     }
 
-    inline MixerStream &getStream(void) {
-        return *_stream;
+    inline MixerChannel &getChannel(void) {
+        return *_channel;
     }
     inline int getPosition(void) {
         return _reader->getPosition();
     }
     inline int setPosition(int sampleOffset) {
-        return _reader->setPosition(sampleOffset);
+        int value = _reader->setPosition(sampleOffset);
+        _channel->setSampleOffset(value);
+        return value;
     }
     inline bool isPlaying(void) {
         return _playing;
@@ -33,12 +35,11 @@ public:
     void process(void); // must be called to make sure the file keeps playing
     void play(int loopOffset = -1);
     void pause(void);
-    //float getTime(void);
-    //float setTime(float time);
+    int64_t getSampleOffset(void);
 
 private:
     AudioBuffer _buffer;
-    MixerStream *_stream;
+    MixerChannel *_channel;
     FileReader *_reader;
     bool _playing;
     int _loopOffset;

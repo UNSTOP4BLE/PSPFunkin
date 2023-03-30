@@ -9,16 +9,16 @@ StreamedFile::StreamedFile(const char *path)
     _reader = openFile(path);
     ASSERTFUNC(_reader, "failed to open audio file");
 
-    _stream = app->audioMixer->openStream(_reader->format, _reader->channels, _reader->sampleRate);
-    ASSERTFUNC(_stream, "no mixer channels available to play stream");
+    _channel = app->audioMixer->openChannel(_reader->format, _reader->channels, _reader->sampleRate);
+    ASSERTFUNC(_channel, "no mixer channels available to play stream");
 }
 
 void StreamedFile::process(void) {
     if (!_playing) return;
 
-    while (_stream->getBufferedSamples() < STREAM_BUFFER_SIZE) {
+    while (_channel->getBufferedSamples() < STREAM_BUFFER_SIZE) {
         int length = _reader->read(_buffer, STREAM_BUFFER_SIZE);
-        _stream->feed(_buffer);
+        _channel->feed(_buffer);
 
         if (length < STREAM_BUFFER_SIZE) {
             if (_loopOffset >= 0) {
@@ -27,7 +27,6 @@ void StreamedFile::process(void) {
             } else {
                 // Stop playback
                 _playing = false;
-                app->audioMixer->playingStreams[chan] = false;
                 break;
             }
         }
@@ -36,16 +35,16 @@ void StreamedFile::process(void) {
 
 void StreamedFile::play(int loopOffset) {
     _playing = true;
-    app->audioMixer->playingStreams[chan] = true;
-
     _loopOffset = loopOffset;
+
+    _channel->setSampleOffset(getPosition());
 }
 
 void StreamedFile::pause(void) {
     _playing = false;
 
     // Make sure any sample that wasn't played is going to be played again
-    int offset = _stream->cancelPlayback();
+    int offset = _channel->cancelPlayback();
     setPosition(getPosition() - offset);
 }
 

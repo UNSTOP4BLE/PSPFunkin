@@ -59,7 +59,7 @@ void PlayStateScreen::update(void)
 
     parser.justStep = false;
  //  Parser_tickStep(vocals);
-
+/*
     if (app->audioMixer->isStreaming())
     {
         updateInput();
@@ -78,7 +78,7 @@ void PlayStateScreen::update(void)
             }
 
         }
-    }
+    }*/
 
     //game.player->tick();
     opponent->tick();
