@@ -64,7 +64,7 @@ private:
     int _leftVolume, _rightVolume;
     int _sampleRate;
     volatile int64_t _sampleOffset;
-    volatile std::chrono::high_resolution_clock::time_point _sampleOffsetTimestamp;
+    std::chrono::high_resolution_clock::time_point _sampleOffsetTimestamp;
 
     inline void _lockCallback(void) {
         SDL_LockAudioDevice(_outputStream);

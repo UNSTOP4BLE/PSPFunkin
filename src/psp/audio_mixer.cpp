@@ -29,12 +29,7 @@
  */
 
 #define _seconds std::chrono::duration<float, std::ratio<1>>
-#define _timePointType std::chrono::high_resolution_clock::time_point
-
-// Horrible but as long as it does the job...
-static volatile _timePointType _getCurrentTime(void) {
-    return static_cast<volatile _timePointType>(std::chrono::high_resolution_clock::now());
-}
+#define _timePoint std::chrono::high_resolution_clock::time_point
 
 namespace Audio {
 
@@ -118,7 +113,7 @@ int64_t MixerChannel::getSampleOffset(void) {
 
     int64_t offset = _sampleOffset * static_cast<int64_t>(_sampleRate) / static_cast<int64_t>(_mixer->_sampleRate);
     auto delta = std::chrono::duration_cast<_seconds>(
-        _getCurrentTime() - _mixer->_sampleOffsetTimestamp
+        std::chrono::high_resolution_clock::now() - static_cast<_timePoint>(_mixer->_sampleOffsetTimestamp)
     );
 
     _mixer->_unlockSampleOffset();
@@ -178,7 +173,7 @@ void Mixer::_process(int16_t *output, int numSamples) {
     // Update sample offsets (as fast as possible to avoid introducing delays)
     _lockSampleOffset();
     _sampleOffset += numSamples;
-    _sampleOffsetTimestamp = _getCurrentTime();
+    _sampleOffsetTimestamp = std::chrono::high_resolution_clock::now();
 
     for (int ch = 0; ch < NUM_MIXER_CHANNELS; ch++) {
         auto &channel = _channels[ch];
@@ -292,7 +287,7 @@ int64_t Mixer::getSampleOffset(void) {
 
     int64_t offset = _sampleOffset;
     auto delta = std::chrono::duration_cast<_seconds>(
-        _getCurrentTime() - _sampleOffsetTimestamp
+        std::chrono::high_resolution_clock::now() - _sampleOffsetTimestamp
     );
 
     _unlockSampleOffset();

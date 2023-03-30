@@ -34,7 +34,7 @@ void PlayStateScreen::load(void)
     parser.songPos = -3000;
 
     sprintf(_path, "assets/songs/%s/Inst.ogg", song);
-    vocals = new Audio::StreamedFile(_path);
+    inst = new Audio::StreamedFile(_path);
     sprintf(_path, "assets/songs/%s/Voices.ogg", song);
     vocals = new Audio::StreamedFile(_path);
 
@@ -59,8 +59,9 @@ void PlayStateScreen::update(void)
 
     parser.justStep = false;
  //  Parser_tickStep(vocals);
-/*
-    if (app->audioMixer->isStreaming())
+    bool isPlaying = (inst->isPlaying() || vocals->isPlaying());
+
+    if (isPlaying)
     {
         updateInput();
     }
@@ -71,14 +72,14 @@ void PlayStateScreen::update(void)
         //song start
         if (parser.curStep <= 0)
         {
-            if (parser.songPos >= 0 && !app->audioMixer->isStreaming())
+            if (parser.songPos >= 0 && !isPlaying)
             {
                 inst->play();
                 vocals->play();
             }
 
         }
-    }*/
+    }
 
     //game.player->tick();
     opponent->tick();
