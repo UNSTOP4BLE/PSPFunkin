@@ -49,8 +49,6 @@ int main()
     
     setScreen(new TitleScreen());
 
-Audio::StreamedFile file(*app->audioMixer, "assets/songs/freaky/freaky.wav");
-file.play(true);
     while(1)
     {
         auto last = std::chrono::high_resolution_clock::now();
@@ -61,8 +59,7 @@ file.play(true);
     
         currentScreen->update();  
         currentScreen->draw();  
-    file.process();
-
+        
         g2dFlip(G2D_VSYNC);
 
         auto current = std::chrono::high_resolution_clock::now();

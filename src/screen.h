@@ -2,6 +2,7 @@
 
 #include "main.h"
 #include "psp/glib2d.h"
+#include "psp/audio_streamed_file.h"
 
 #include "character.h"
 #include "chartparser.h"
@@ -27,7 +28,8 @@ private:
     bool gfBop;
     Anim_OBJECT titleGF;
     std::string funnymessage[2];
-  //  Mix_Music *menutrack;
+    Audio::StreamedFile *freaky; 
+    Audio::AudioBuffer *confirm;
     int curStep;
 };
 
@@ -58,8 +60,8 @@ private:
     void drawNotes(void);
     void updateInput(void);
     g2dTexture *hud;
-    //Mix_Music *inst;
-   // Mix_Music *vocals;
+    Audio::StreamedFile *inst; 
+    Audio::StreamedFile *vocals; 
     bool checkPad[4];
     bool checkPadHeld[4];
     noteData chartData; 

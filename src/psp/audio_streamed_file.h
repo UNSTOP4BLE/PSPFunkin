@@ -11,7 +11,7 @@ static constexpr int STREAM_BUFFER_SIZE = 4096;
 
 class StreamedFile {
 public:
-    StreamedFile(Mixer &mixer, const char *path);
+    StreamedFile(const char *path);
     inline ~StreamedFile(void) {
         _stream->close();
         delete _reader;

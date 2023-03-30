@@ -184,6 +184,13 @@ MixerStream *Mixer::playBuffer(AudioBuffer &buffer, bool close) {
     return stream;
 }
 
+bool Mixer::isStreaming(void) {
+    for (int i = 0; i < NUM_MIXER_CHANNELS; i++)
+        if (playingStreams[i] == true) return true;
+    return false;
+}
+
+
 /*
  * Buffer processed: ---AAABBB-------AAA-------BBB------- ...
  * Buffer played:    ------AAAAAAAAAABBBBBBBBBBAAAAAAAAAA ...

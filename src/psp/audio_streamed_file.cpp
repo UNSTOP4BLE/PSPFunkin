@@ -4,12 +4,12 @@
 
 namespace Audio {
 
-StreamedFile::StreamedFile(Mixer &mixer, const char *path)
+StreamedFile::StreamedFile(const char *path)
 : _playing(false), _loopOffset(-1) {
     _reader = openFile(path);
     ASSERTFUNC(_reader, "failed to open audio file");
 
-    _stream = mixer.openStream(_reader->format, _reader->channels, _reader->sampleRate);
+    _stream = app->audioMixer->openStream(_reader->format, _reader->channels, _reader->sampleRate);
     ASSERTFUNC(_stream, "no mixer channels available to play stream");
 }
 
@@ -27,6 +27,7 @@ void StreamedFile::process(void) {
             } else {
                 // Stop playback
                 _playing = false;
+                app->audioMixer->playingStreams[chan] = false;
                 break;
             }
         }
@@ -35,9 +36,9 @@ void StreamedFile::process(void) {
 
 void StreamedFile::play(int loopOffset) {
     _playing = true;
-    _loopOffset = loopOffset;
+    app->audioMixer->playingStreams[chan] = true;
 
-    //process();
+    _loopOffset = loopOffset;
 }
 
 void StreamedFile::pause(void) {

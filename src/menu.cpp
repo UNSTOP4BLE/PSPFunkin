@@ -31,8 +31,9 @@ void TitleScreen::load(void)
     //Mix_PlayMusic(menutrack, true);
     parser.initbpm = titleJson["menuSongBPM"].asDouble();   
     Parser_calcCrochet();
-    Audio::AudioBuffer *sound = Audio::loadFile("assets/sounds/confirmMenu.ogg");
-    app->audioMixer->playBuffer(*sound);
+    freaky = new Audio::StreamedFile("assets/songs/freaky/freaky.wav");
+    freaky->play(true);
+    confirm = Audio::loadFile("assets/sounds/confirmMenu.ogg");
 
     //load textures
     AnimOBJECT_Init(&titleGF, "assets/menu/title/gf/", "frames.json");
@@ -45,6 +46,9 @@ void TitleScreen::load(void)
 
 void TitleScreen::update(void) 
 {
+    //process audio streams
+    freaky->process();
+
     parser.justStep = false;
  //   Parser_tickStep(menutrack);
     Bold_Tick(); //animate bold font
@@ -80,7 +84,7 @@ void TitleScreen::draw(void)
                     PrintBOLD(Center, G2D_SCR_W / 2, G2D_SCR_H / 2 - 114, "UNSTOPABLE");
                     PrintBOLD(Center, G2D_SCR_W / 2, G2D_SCR_H / 2 - 76,  "IGORSOU");
                     PrintBOLD(Center, G2D_SCR_W / 2, G2D_SCR_H / 2 - 38,  "MAXDEV");
-                    PrintBOLD(Center, G2D_SCR_W / 2, G2D_SCR_H / 2,    "SPICYJPEG");
+                    PrintBOLD(Center, G2D_SCR_W / 2, G2D_SCR_H / 2,       "SPICYJPEG");
                     PrintBOLD(Center, G2D_SCR_W / 2, G2D_SCR_H / 2 + 38,  "BILIOUS");
                     break;
                 case 7:
@@ -122,6 +126,6 @@ void TitleScreen::draw(void)
 
 void TitleScreen::deload(void) 
 {
-//    Mix_FreeMusic(menutrack);
+    delete freaky;
     g2dTexFree(&ng);
 }

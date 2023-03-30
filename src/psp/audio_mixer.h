@@ -71,6 +71,8 @@ private:
     void _process(int16_t *output, int numSamples);
 
 public:
+    bool playingStreams[NUM_MIXER_CHANNELS];
+
     Mixer(void);
     inline ~Mixer(void) {
         stop();
@@ -105,6 +107,7 @@ public:
 
     MixerStream *openStream(SDL_AudioFormat format, int channels, int sampleRate);
     MixerStream *playBuffer(AudioBuffer &buffer, bool close = true);
+    bool isStreaming(void); 
     int64_t getSampleOffset(void);
 };
 
