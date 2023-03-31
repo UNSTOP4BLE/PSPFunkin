@@ -31,7 +31,7 @@ void TitleScreen::load(void)
     //Mix_PlayMusic(menutrack, true);
     parser.initbpm = titleJson["menuSongBPM"].asDouble();   
     Parser_calcCrochet();
-    freaky = new Audio::StreamedFile("assets/songs/freaky/freaky.wav");
+    freaky = new Audio::StreamedFile("assets/songs/freaky/freaky.ogg");
     freaky->play(true);
     confirm = Audio::loadFile("assets/sounds/confirmMenu.ogg");
 

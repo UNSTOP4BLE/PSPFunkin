@@ -93,10 +93,13 @@ void PlayStateScreen::draw(void)
     gf->draw();
 
     drawDummyNotes();
- //   drawNotes();
-    PrintFont(Left, 0, 0, "step %d time %d", parser.curStep, parser.songPos);
+ //   drawNotes();int64_t streamTime = inst->getChannel().getSampleOffset();
+    int64_t streamTime = inst->getChannel().getSampleOffset();
+int64_t clockTime = std::chrono::duration_cast<std::chrono::duration<int64_t, std::ratio<1, 44100>>>(
+    std::chrono::high_resolution_clock::now().time_since_epoch()
+).count();
+PrintFont(Left, 0, 0, "step=%d str=%ld clk=%ld diff=%ld", parser.curStep, streamTime, clockTime, streamTime - clockTime);
 }
-
 void PlayStateScreen::deload(void)
 {
     g2dTexFree(&hud);
