@@ -27,7 +27,7 @@ void AnimOBJECT_SetAnim(Anim_OBJECT *obj, int anim)
     obj->time = 0;
     obj->curframe = 0;
     obj->curanim = anim;
-    obj->size = obj->conf[anim].size()-2;
+    obj->size = obj->conf[anim].size()-1;
     obj->speed = obj->conf[anim][0];
     obj->tick = true;
     obj->cananimate = true;

@@ -18,6 +18,8 @@ void PlayStateScreen::drawDummyNotes(void)
     }
 }
 
+bool opponentPlayedAnims[4];
+int opponentlasttype;
 void PlayStateScreen::drawNotesAtSection(int sec)
 {
     for (int i = 0; i < chartData.Sections[sec].notecount; i++)
@@ -40,6 +42,15 @@ void PlayStateScreen::drawNotesAtSection(int sec)
             curNotex = notePos.opponent[type].x;
             curNotey = ((chartData.Sections[sec].sectionNotes[i].pos - parser.songPos) * (parser.initspeed/3.6))
                         + notePos.opponent[type].y;
+            
+            //play opponent animation
+            if (curNotey <= notePos.opponent[type].y && !opponentPlayedAnims[type])
+            {
+                opponentPlayedAnims[opponentlasttype] = false;
+                opponentPlayedAnims[type] = true;
+                opponent->setAnim(type+1); // +1 because 0 is idle
+                opponentlasttype = type;
+            }
         }   
 
         Rect img = {

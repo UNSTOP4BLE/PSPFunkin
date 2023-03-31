@@ -33,9 +33,9 @@ void PlayStateScreen::load(void)
     Parser_readChartData(chartData);
     parser.songPos = -3000;
 
-    sprintf(_path, "assets/songs/%s/Inst.ogg", song);
+    sprintf(_path, "assets/songs/%s/Inst.wav", song);
     inst = new Audio::StreamedFile(_path);
-    sprintf(_path, "assets/songs/%s/Voices.ogg", song);
+    sprintf(_path, "assets/songs/%s/Voices.wav", song);
     vocals = new Audio::StreamedFile(_path);
 
     hud = g2dTexLoad("assets/hud.png", G2D_SWIZZLE);
@@ -58,12 +58,14 @@ void PlayStateScreen::update(void)
     vocals->process();
 
     parser.justStep = false;
- //  Parser_tickStep(vocals);
+    Parser_tickStep(vocals);
     bool isPlaying = (inst->isPlaying() || vocals->isPlaying());
 
     if (isPlaying)
     {
         updateInput();
+        parser.songPos += 16 + app->deltatime;
+ 
     }
     else
     {
@@ -93,12 +95,7 @@ void PlayStateScreen::draw(void)
     gf->draw();
 
     drawDummyNotes();
- //   drawNotes();int64_t streamTime = inst->getChannel().getSampleOffset();
-    int64_t streamTime = inst->getChannel().getSampleOffset();
-int64_t clockTime = std::chrono::duration_cast<std::chrono::duration<int64_t, std::ratio<1, 44100>>>(
-    std::chrono::high_resolution_clock::now().time_since_epoch()
-).count();
-PrintFont(Left, 0, 0, "step=%d str=%ld clk=%ld diff=%ld", parser.curStep, streamTime, clockTime, streamTime - clockTime);
+    drawNotes();
 }
 void PlayStateScreen::deload(void)
 {

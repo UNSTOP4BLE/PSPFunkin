@@ -50,8 +50,9 @@ void TitleScreen::update(void)
     freaky->process();
 
     parser.justStep = false;
- //   Parser_tickStep(menutrack);
+    Parser_tickStep(freaky);
     Bold_Tick(); //animate bold font
+
     if (parser.justStep && !(parser.curStep % 4))
     {
         gfBop = !gfBop;
@@ -69,6 +70,7 @@ void TitleScreen::update(void)
 
 void TitleScreen::draw(void) 
 {
+    PrintFont(Left, 0, 0, "%d", parser.songPos);
     //NG logo 
     Rect NG_img = {0, 0, 90, 88};
     Rect NG_disp = {G2D_SCR_W / 2 - 90/2, (G2D_SCR_H / 2 + 88/2) - 20, 90, 88};

@@ -2,6 +2,7 @@
 #include "main.h"
 #include <string>     
 #include <json/json.h>
+#include "psp/audio_streamed_file.h"
 #include "psp/file.h"
 
 struct Note 
@@ -47,4 +48,4 @@ void Parser_loadChart(const char *filename);
 void Parser_readInitialData();
 void Parser_calcCrochet();
 void Parser_readChartData(noteData &data);
-void Parser_tickStep();//Mix_Music *song);
+void Parser_tickStep(Audio::StreamedFile *song);

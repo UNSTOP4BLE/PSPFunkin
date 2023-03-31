@@ -62,11 +62,10 @@ void Parser_readChartData(noteData &data)
 }
 
 
-void Parser_tickStep()//Mix_Music *song)
+void Parser_tickStep(Audio::StreamedFile *song)
 {
-    /*
-    if (Mix_PlayingMusic())
-        parser.songPos = Mix_GetMusicPosition(song) * 1000;
+ //   if (song->isPlaying())
+   //     parser.songPos = song->getChannel().getSampleOffset()/100;
     int nextstep = (parser.songPos / parser.step_crochet);
     if (nextstep != parser.curStep)
     {
@@ -75,6 +74,5 @@ void Parser_tickStep()//Mix_Music *song)
     }
 
     parser.curBeat = parser.curStep / 4;
-*/
 }   
 
