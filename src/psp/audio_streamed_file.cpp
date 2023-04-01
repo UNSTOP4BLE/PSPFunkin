@@ -35,7 +35,7 @@ void StreamedFile::process(int maxFillLength) {
         length = maxFillLength;
 
     for (int offset = 0; offset < length;) {
-        offset += _reader->read(_buffer, maxFillLength, offset);
+        offset += _reader->read(_buffer, maxFillLength - offset, offset);
 
         if (_reader->getPosition() >= _reader->totalNumSamples) {
             if (_loopOffset >= 0) {

@@ -11,6 +11,7 @@ OBJS = src/main.o \
        src/psp/audio_file_readers.o \
        src/psp/audio_mixer.o \
        src/psp/audio_streamed_file.o \
+       src/psp/audio_adpcm_decoder.o \
        src/psp/pad.o \
        src/psp/font.o \
        src/psp/glib2d.o 

@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <vorbis/vorbisfile.h>
 #include "../main.h"
+#include "audio_adpcm_decoder.h"
 #include "audio_buffer.h"
 
 namespace Audio {
@@ -10,10 +11,21 @@ namespace Audio {
 struct __attribute__((packed)) WAVFormatChunk {
     uint16_t format;
     uint16_t channels;
-    uint32_t samplerate;
+    uint32_t sampleRate;
     uint32_t byterate;
     uint16_t align;
     uint16_t bps;
+};
+
+struct __attribute__((packed)) VAGHeader {
+    uint32_t magic;         // "VAGp" or "VAGi"
+    uint32_t version;
+    uint32_t interleave;    // Little-endian, size of each channel buffer
+    uint32_t size;          // Big-endian, in bytes (for each channel)
+    uint32_t sampleRate;    // Big-endian, in Hertz
+    uint16_t _reserved[5];
+    uint16_t channels;      // Little-endian, if 0 the file is mono
+    char     name[16];
 };
 
 class FileReader {
@@ -51,6 +63,23 @@ public:
     int setPosition(int sampleOffset);
     int read(AudioBuffer &buf, int numSamples, int bufferOffset = 0);
     ~OGGFileReader(void);
+};
+
+class VAGFileReader : public FileReader {
+private:
+    FILE *_vagFile;
+    ADPCMDecoder _decoder;
+    int _dataOffset, _interleave;
+    int _bufferPosition, _sampleBufferLength;
+    uint8_t *_chunkBuffer;
+    int16_t *_sampleBuffer;
+
+public:
+    VAGFileReader(const char *path);
+    int getPosition(void);
+    int setPosition(int sampleOffset);
+    int read(AudioBuffer &buf, int numSamples, int bufferOffset = 0);
+    ~VAGFileReader(void);
 };
 
 FileReader *openFile(const char *path);
