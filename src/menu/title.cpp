@@ -1,10 +1,10 @@
-#include "main.h"
-#include "screen.h"
-#include "psp/font.h"
-#include "chartparser.h"
-#include "psp/animation.h"
-#include "psp/audio_file_readers.h"
-#include "psp/pad.h"
+#include "../main.h"
+#include "../screen.h"
+#include "../psp/font.h"
+#include "../chartparser.h"
+#include "../psp/animation.h"
+#include "../psp/audio_file_readers.h"
+#include "../psp/pad.h"
 
 enum TitleStates
 {
@@ -14,7 +14,7 @@ enum TitleStates
 };
 TitleStates state;
 
-void TitleScreen::load(void) 
+TitleScreen::TitleScreen(void) 
 {
     setScreenCol(BLACK);
 
@@ -27,12 +27,10 @@ void TitleScreen::load(void)
     funnymessage[1] = titleJson["messages"][curmsg][1].asString();
 
     //load and play music
-    //menutrack = Mix_LoadMUS("assets/songs/freaky/freaky.wav");
-    //Mix_PlayMusic(menutrack, true);
     parser.initbpm = titleJson["menuSongBPM"].asDouble();   
     Parser_calcCrochet();
-    freaky = new Audio::StreamedFile(*app->audioMixer, "assets/songs/stream.vag");
-    freaky->play(true);
+ //   freaky = new Audio::StreamedFile(*app->audioMixer, "assets/songs/stream.vag");
+   // freaky->play(true);
     confirm = Audio::loadFile("assets/sounds/confirmMenu.ogg");
 
     //load textures
@@ -47,7 +45,7 @@ void TitleScreen::load(void)
 void TitleScreen::update(void) 
 {
     //process audio streams
-    freaky->process();
+   // freaky->process();
 
     parser.justStep = false;
     Parser_tickStep(freaky);
@@ -64,7 +62,7 @@ void TitleScreen::update(void)
         if (state != Title)
             state = Title;
         else
-            setScreen(new PlayStateScreen());
+            setScreen(new MainMenuScreen());
     }
 }
 
@@ -126,7 +124,7 @@ void TitleScreen::draw(void)
     }
 }
 
-void TitleScreen::deload(void) 
+TitleScreen::~TitleScreen(void) 
 {
     delete freaky;
     g2dTexFree(&ng);

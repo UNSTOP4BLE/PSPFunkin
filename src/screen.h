@@ -1,28 +1,25 @@
 #pragma once
 
-#include "main.h"
 #include "psp/glib2d.h"
 #include "psp/audio_streamed_file.h"
+#include "psp/tween.h"
 
 #include "character.h"
 #include "chartparser.h"
-
 class Screen {
 public:
     inline Screen(void) {}
-    virtual void load(void) {}
     virtual void update(void) {}
     virtual void draw(void) {}
-    virtual void deload(void) {}
     virtual ~Screen(void) {}
 };
 
 class TitleScreen : public Screen {
 public:
-    void load(void); 
+    TitleScreen(void);
     void update(void);
     void draw(void);
-    void deload(void); 
+    ~TitleScreen(void);
 private:
     g2dTexture *ng;
     bool gfBop;
@@ -31,6 +28,18 @@ private:
     Audio::StreamedFile *freaky; 
     Audio::AudioBuffer *confirm;
     int curStep;
+};
+
+class MainMenuScreen : public Screen {
+public:
+    MainMenuScreen(void);
+    void update(void);
+    void draw(void);
+    ~MainMenuScreen(void); 
+private:
+    g2dTexture *background;
+    int selection;
+    Tween<float, QuadInEasing> backgroundy;
 };
 
 struct Pos 
@@ -46,19 +55,20 @@ struct NotePos
 
 class PlayStateScreen : public Screen {
 public:
-    Character *player;
-    Character *opponent;
-    Character *gf;
-    void load(void); 
+    PlayStateScreen(void);
     void update(void);
     void draw(void);
     void deload(void);
+    ~PlayStateScreen(void);
 private:    
     void drawDummyNotes(void);
     void drawNotesAtSection(int sec);
     void drawSustain(int sec, int note, float y, int type);
     void drawNotes(void);
     void updateInput(void);
+    Character *player;
+    Character *opponent;
+    Character *gf;
     g2dTexture *hud;
     Audio::StreamedFile *inst; 
     Audio::StreamedFile *vocals; 
@@ -69,8 +79,6 @@ private:
     int curStep;
 };
 
-extern Screen *currentScreen;
-extern g2dColor screenCol;
 void ErrMSG(const char *format, ...);
 void setScreen(Screen *scr);
 void setScreenCol(g2dColor color);

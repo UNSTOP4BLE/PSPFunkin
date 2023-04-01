@@ -12,6 +12,7 @@
 #include "psp/font.h"
 #include "psp/font.h"
 #include "psp/pad.h"
+#include "psp/tween.h"
 
 PSP_MAIN_THREAD_ATTR(THREAD_ATTR_USER | THREAD_ATTR_VFPU);
 PSP_MODULE_INFO("PSPFunkin", 0, 1, 0);
@@ -25,7 +26,7 @@ void ErrMSG(const char *filename, const char *function, int line, const char *ex
     sprintf(errstr, "error \nmessage %s\nexpression: %s \nfile: %s \nfunction %s \nline %d", msg, expr, filename, function, line);
     while(1)
     {
-        g2dClear(screenCol);
+        g2dClear(app->screenCol);
         PrintFont(Left, 0, 0, errstr);
         g2dFlip(G2D_VSYNC);
     }
@@ -53,12 +54,12 @@ int main()
     {
         auto last = std::chrono::high_resolution_clock::now();
 
-        g2dClear(screenCol);
+        g2dClear(app->screenCol);
         Pad_Update();  
-        ASSERTFUNC(currentScreen, "screen is NULL");                
+        ASSERTFUNC(app->currentScreen, "screen is NULL");                
     
-        currentScreen->update();  
-        currentScreen->draw();  
+        app->currentScreen->update();  
+        app->currentScreen->draw();  
         
         g2dFlip(G2D_VSYNC);
 

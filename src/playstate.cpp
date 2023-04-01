@@ -7,7 +7,7 @@
 
 const char *song = "bopeebo";
 
-void PlayStateScreen::load(void)
+PlayStateScreen::PlayStateScreen(void)
 {
     setScreenCol(GREEN);
 
@@ -97,7 +97,7 @@ void PlayStateScreen::draw(void)
     drawDummyNotes();
     drawNotes();
 }
-void PlayStateScreen::deload(void)
+PlayStateScreen::~PlayStateScreen(void)
 {
     g2dTexFree(&hud);
     delete inst;

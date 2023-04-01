@@ -1,7 +1,8 @@
 TARGET = PSPFunkin
 OBJS = src/main.o \
        src/screen.o \
-       src/menu.o \
+       src/menu/title.o \
+       src/menu/mainmenu.o \
        src/playstate.o \
        src/character.o \
        src/note.o \
