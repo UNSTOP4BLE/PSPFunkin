@@ -76,17 +76,18 @@ int WAVFileReader::setPosition(int sampleOffset) {
     return getPosition();
 }
 
-int WAVFileReader::read(AudioBuffer &buf, int numSamples) {
+int WAVFileReader::read(AudioBuffer &buf, int numSamples, int bufferOffset) {
     int actualNumSamples = std::min(numSamples, totalNumSamples - getPosition());
     if (!actualNumSamples)
         return 0;
 
-    buf.data.resize(actualNumSamples * bytesPerSample);
+    buf.data.resize((actualNumSamples + bufferOffset) * bytesPerSample);
     buf.channels = channels;
     buf.sampleRate = sampleRate;
     buf.format = format;
 
-    return fread(buf.data.data(), bytesPerSample, actualNumSamples, _wavFile);
+    auto ptr = buf.data.data() + (bufferOffset * bytesPerSample);
+    return fread(ptr, bytesPerSample, actualNumSamples, _wavFile);
 }
 
 WAVFileReader::~WAVFileReader(void) {
@@ -122,13 +123,15 @@ int OGGFileReader::setPosition(int sampleOffset) {
     return getPosition();
 }
 
-int OGGFileReader::read(AudioBuffer &buf, int numSamples) {
-    buf.data.resize(numSamples * bytesPerSample);
+int OGGFileReader::read(AudioBuffer &buf, int numSamples, int bufferOffset) {
+    buf.data.resize((numSamples + bufferOffset) * bytesPerSample);
     buf.channels = channels;
     buf.sampleRate = sampleRate;
     buf.format = format;
 
-    auto ptr = reinterpret_cast<char *>(buf.data.data());
+    auto ptr = reinterpret_cast<char *>(
+        buf.data.data() + (bufferOffset * bytesPerSample)
+    );
 
     for (int actualNumSamples = 0; actualNumSamples < numSamples;) {
         int remaining = (numSamples - actualNumSamples) * bytesPerSample;
@@ -136,7 +139,7 @@ int OGGFileReader::read(AudioBuffer &buf, int numSamples) {
         ASSERTFUNC(length >= 0, "OGG decode error");
 
         if (!length) { // end of file
-            buf.data.resize(actualNumSamples * bytesPerSample);
+            buf.data.resize((actualNumSamples + bufferOffset) * bytesPerSample);
             return actualNumSamples;
         }
 

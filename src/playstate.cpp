@@ -33,10 +33,10 @@ void PlayStateScreen::load(void)
     Parser_readChartData(chartData);
     parser.songPos = -3000;
 
-    sprintf(_path, "assets/songs/%s/Inst.wav", song);
-    inst = new Audio::StreamedFile(_path);
-    sprintf(_path, "assets/songs/%s/Voices.wav", song);
-    vocals = new Audio::StreamedFile(_path);
+    sprintf(_path, "assets/songs/%s/Inst.ogg", song);
+    inst = new Audio::StreamedFile(*app->audioMixer, _path);
+    sprintf(_path, "assets/songs/%s/Voices.ogg", song);
+    vocals = new Audio::StreamedFile(*app->audioMixer, _path);
 
     hud = g2dTexLoad("assets/hud.png", G2D_SWIZZLE);
 

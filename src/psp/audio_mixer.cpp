@@ -29,7 +29,6 @@
  */
 
 #define _seconds std::chrono::duration<float, std::ratio<1>>
-#define _timePoint std::chrono::high_resolution_clock::time_point
 
 namespace Audio {
 
@@ -113,7 +112,7 @@ int64_t MixerChannel::getSampleOffset(void) {
 
     int64_t offset = _sampleOffset * static_cast<int64_t>(_sampleRate) / static_cast<int64_t>(_mixer->_sampleRate);
     auto delta = std::chrono::duration_cast<_seconds>(
-        std::chrono::high_resolution_clock::now() - static_cast<_timePoint>(_mixer->_sampleOffsetTimestamp)
+        std::chrono::high_resolution_clock::now() - _mixer->_sampleOffsetTimestamp
     );
 
     _mixer->_unlockSampleOffset();

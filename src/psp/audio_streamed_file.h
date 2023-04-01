@@ -8,10 +8,11 @@
 namespace Audio {
 
 static constexpr int STREAM_BUFFER_SIZE = 4096;
+static constexpr int DEFAULT_MAX_FILL_LENGTH = 1024; // See note in the source file
 
 class StreamedFile {
 public:
-    StreamedFile(const char *path);
+    StreamedFile(Mixer &mixer, const char *path);
     inline ~StreamedFile(void) {
         _channel->close();
         delete _reader;
@@ -32,7 +33,7 @@ public:
         return _playing;
     }
 
-    void process(void); // must be called to make sure the file keeps playing
+    void process(int maxFillLength = DEFAULT_MAX_FILL_LENGTH);
     void play(int loopOffset = -1);
     void pause(void);
     int64_t getSampleOffset(void);

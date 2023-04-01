@@ -23,7 +23,7 @@ public:
 
     virtual int getPosition(void) { return 0; }
     virtual int setPosition(int sampleOffset) { return 0; }
-    virtual int read(AudioBuffer &buf, int numSamples) { return 0; }
+    virtual int read(AudioBuffer &buf, int numSamples, int bufferOffset = 0) { return 0; }
     virtual ~FileReader(void) {}
 };
 
@@ -36,7 +36,7 @@ public:
     WAVFileReader(const char *path);
     int getPosition(void);
     int setPosition(int sampleOffset);
-    int read(AudioBuffer &buf, int numSamples);
+    int read(AudioBuffer &buf, int numSamples, int bufferOffset = 0);
     ~WAVFileReader(void);
 };
 
@@ -49,7 +49,7 @@ public:
     OGGFileReader(const char *path);
     int getPosition(void);
     int setPosition(int sampleOffset);
-    int read(AudioBuffer &buf, int numSamples);
+    int read(AudioBuffer &buf, int numSamples, int bufferOffset = 0);
     ~OGGFileReader(void);
 };
 
