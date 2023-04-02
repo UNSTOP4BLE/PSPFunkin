@@ -1,6 +1,7 @@
 #pragma once
 
 #include <chrono>
+#include "../chartparser.h"
 
 class LinearEasing {
 public:
@@ -24,9 +25,7 @@ public:
 /* ...other easing functions... */
 
 static float getTime(void) {
-    return std::chrono::duration_cast<std::chrono::duration<float, std::ratio<1>>>(
-        std::chrono::high_resolution_clock::now().time_since_epoch()
-    ).count();
+    return parser.curStep;
 }
 
 template<typename T, typename E> class Tween {

@@ -12,7 +12,7 @@ MainMenuScreen::MainMenuScreen(void) {
 void MainMenuScreen::update(void) 
 {
     if (Pad_Pressed(PSP_CTRL_CROSS | PSP_CTRL_START))
-        setScreen(new MainMenuScreen());
+        setScreen(new PlayStateScreen());
     else if (Pad_Pressed(PSP_CTRL_UP))
     {
         selection -= 1;
@@ -34,4 +34,5 @@ void MainMenuScreen::draw(void)
 
 MainMenuScreen::~MainMenuScreen(void) 
 {
+    g2dTexFree(&background);
 }

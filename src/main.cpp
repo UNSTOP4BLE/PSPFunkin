@@ -13,6 +13,7 @@
 #include "psp/font.h"
 #include "psp/pad.h"
 #include "psp/tween.h"
+#include "psp/memory.h"
 
 PSP_MAIN_THREAD_ATTR(THREAD_ATTR_USER | THREAD_ATTR_VFPU);
 PSP_MODULE_INFO("PSPFunkin", 0, 1, 0);
@@ -60,7 +61,8 @@ int main()
     
         app->currentScreen->update();  
         app->currentScreen->draw();  
-        
+        PrintFont(Left, 0, 0, "Memory usage %f", Mem::curusage/1e+6);
+
         g2dFlip(G2D_VSYNC);
 
         auto current = std::chrono::high_resolution_clock::now();

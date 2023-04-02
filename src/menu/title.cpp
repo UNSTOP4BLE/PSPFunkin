@@ -29,10 +29,10 @@ TitleScreen::TitleScreen(void)
     //load and play music
     parser.initbpm = titleJson["menuSongBPM"].asDouble();   
     Parser_calcCrochet();
- //   freaky = new Audio::StreamedFile(*app->audioMixer, "assets/songs/stream.vag");
+    freaky = new Audio::StreamedFile(*app->audioMixer, "assets/songs/freaky/freaky.wav");
    // freaky->play(true);
-    confirm = Audio::loadFile("assets/sounds/confirmMenu.ogg");
-
+    // confirm = Audio::loadFile("assets/songs/stream.vag");
+   // app->audioMixer->playBuffer(*confirm);
     //load textures
     AnimOBJECT_Init(&titleGF, "assets/menu/title/gf/", "frames.json");
     ng = g2dTexLoad("assets/menu/title/ng.png", G2D_SWIZZLE);
@@ -45,7 +45,7 @@ TitleScreen::TitleScreen(void)
 void TitleScreen::update(void) 
 {
     //process audio streams
-   // freaky->process();
+    freaky->process();
 
     parser.justStep = false;
     Parser_tickStep(freaky);
