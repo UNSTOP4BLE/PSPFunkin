@@ -61,7 +61,7 @@ int main()
     
         app->currentScreen->update();  
         app->currentScreen->draw();  
-        PrintFont(Left, 0, 0, "Memory usage %f", Mem::curusage/1e+6);
+        PrintFont(Left, 0, 0, "Memory usage %d/%d", 32-(Mem::freememory()/1024/1024), 32);
 
         g2dFlip(G2D_VSYNC);
 
