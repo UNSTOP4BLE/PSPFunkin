@@ -1,7 +1,6 @@
 #pragma once
 
-#include <chrono>
-#include "../chartparser.h"
+static int TweenTime;
 
 class LinearEasing {
 public:
@@ -24,8 +23,8 @@ public:
 
 /* ...other easing functions... */
 
-static float getTime(void) {
-    return parser.curStep;
+static int getTime(void) {
+    return TweenTime;
 }
 
 template<typename T, typename E> class Tween {

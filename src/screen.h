@@ -62,8 +62,7 @@ public:
     ~PlayStateScreen(void);
 private:    
     void drawDummyNotes(void);
-    void drawNotesAtSection(int sec);
-    void drawSustain(int sec, int note, float y, int type);
+    void drawSustain(int note, float y, int type);
     void drawNotes(void);
     void updateInput(void);
     Character *player;
@@ -74,7 +73,6 @@ private:
     Audio::StreamedFile *vocals; 
     bool checkPad[4];
     bool checkPadHeld[4];
-    noteData chartData; 
     NotePos notePos;
     int curStep;
 };

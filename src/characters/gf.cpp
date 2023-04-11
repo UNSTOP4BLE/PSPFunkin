@@ -88,7 +88,7 @@ static void GF_SetAnim(CharAnims anim)
 #include "../psp/font.h"
 static void GF_Tick(void)
 {
-    if (parser.curStep % 4 == 3) //switch bop every beat
+    if (app->parser.curStep % 4 == 3) //switch bop every beat
     {
   //    game.gf->setAnim(IDLE);
     }
@@ -98,7 +98,7 @@ static void GF_Tick(void)
     AnimOBJECT_Draw(&GF_tex[0], &GF->obj, GF->x, GF->y);
 
     //draw speaker
-  //  if (parser.curStep % 4 == 3)
+  //  if (app->parser.curStep % 4 == 3)
 //      AnimOBJECT_SetAnim(&speaker, &speakerFrames[0], &speakerConf[0], 48, CountOf(speakerConf));
     
     AnimOBJECT_Tick(&speaker);

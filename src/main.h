@@ -1,12 +1,14 @@
 #pragma once
 
 #include "psp/audio_mixer.h"
+#include "chartparser.h"
 #include "screen.h"
 
 class PSPFunkin
 {
 public:
     Audio::Mixer *audioMixer;
+    ChartParser parser;
     double deltatime;
     g2dColor screenCol;
     Screen *currentScreen;

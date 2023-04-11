@@ -1,5 +1,4 @@
 #pragma once
-#include "main.h"
 #include <string>     
 #include <json/json.h>
 #include "psp/audio_streamed_file.h"
@@ -7,15 +6,17 @@
 
 struct Note 
 {
-    bool event; //used only by psych engine
+    bool isevent; //used only by psych engine
     double pos;
     int type;
     double sus; //amon us
+    bool isopponent;
+
+    bool hit;
 };
 
 struct Section
 {
-    std::vector<Note> sectionNotes;
     int notecount;
     //int typeOfSection;
     bool mustHitSection;
@@ -24,28 +25,29 @@ struct Section
     bool altAnim;
 };
 
-struct noteData
+struct ChartData
 {
-    std::vector<Section> Sections;
+    std::vector<Section> sections;
+    std::vector<Note> gamenotes;
     int sectioncount;
 };
 
-struct Parser
+class ChartParser
 {
+public:
+    void loadChart(const char *filename);
+    void calcCrochet(void);
+    void readChartData(void);
+    void tickStep(Audio::StreamedFile *song);
     int curBeat;
     int curStep;
-    int songPos;
+    int songTime;
     bool justStep;
-    double initbpm;
-    double initspeed;
+    double bpm;
+    double speed;
     double crochet;
     double step_crochet;
+    ChartData chartdata;
+private: 
+    Json::Value chart;
 };
-extern Parser parser;
-extern int notecount;
-
-void Parser_loadChart(const char *filename);
-void Parser_readInitialData();
-void Parser_calcCrochet();
-void Parser_readChartData(noteData &data);
-void Parser_tickStep(Audio::StreamedFile *song);

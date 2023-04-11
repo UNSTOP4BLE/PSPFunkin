@@ -58,7 +58,7 @@ int main()
         g2dClear(app->screenCol);
         Pad_Update();  
         ASSERTFUNC(app->currentScreen, "screen is NULL");                
-    
+        TweenTime = app->parser.curStep; 
         app->currentScreen->update();  
         app->currentScreen->draw();  
         PrintFont(Left, 0, 0, "Memory usage %d/%d", 32-(Mem::freememory()/1024/1024), 32);

@@ -28,10 +28,9 @@ PlayStateScreen::PlayStateScreen(void)
 
     //load game assets
     sprintf(_path, "assets/songs/%s/%s.json", song, song); //todo implement difficulty
-    Parser_loadChart(_path);
-    Parser_readInitialData();
-    Parser_readChartData(chartData);
-    parser.songPos = -3000;
+    app->parser.loadChart(_path);
+    app->parser.readChartData();
+    app->parser.songTime = -3000;
 
     sprintf(_path, "assets/songs/%s/Inst.ogg", song);
     inst = new Audio::StreamedFile(*app->audioMixer, _path);
@@ -57,24 +56,24 @@ void PlayStateScreen::update(void)
     inst->process();
     vocals->process();
 
-    parser.justStep = false;
-    Parser_tickStep(vocals);
+    app->parser.justStep = false;
+    app->parser.tickStep(vocals);
     bool isPlaying = (inst->isPlaying() || vocals->isPlaying());
 
     if (isPlaying)
     {
         updateInput();
-        parser.songPos += 16 + app->deltatime;
+        app->parser.songTime += 16 + app->deltatime; //temp
  
     }
     else
     {
-        parser.songPos += 16 + app->deltatime;
+        app->parser.songTime += 16 + app->deltatime;
 
         //song start
-        if (parser.curStep <= 0)
+        if (app->parser.curStep <= 0)
         {
-            if (parser.songPos >= 0 && !isPlaying)
+            if (app->parser.songTime >= 0 && !isPlaying)
             {
                 inst->play();
                 vocals->play();

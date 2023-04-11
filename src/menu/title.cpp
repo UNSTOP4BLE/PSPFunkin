@@ -27,8 +27,8 @@ TitleScreen::TitleScreen(void)
     funnymessage[1] = titleJson["messages"][curmsg][1].asString();
 
     //load and play music
-    parser.initbpm = titleJson["menuSongBPM"].asDouble();   
-    Parser_calcCrochet();
+    app->parser.bpm = titleJson["menuSongBPM"].asDouble();   
+    app->parser.calcCrochet();
     freaky = new Audio::StreamedFile(*app->audioMixer, "assets/songs/freaky/freaky.wav");
    // freaky->play(true);
     // confirm = Audio::loadFile("assets/songs/stream.vag");
@@ -47,11 +47,11 @@ void TitleScreen::update(void)
     //process audio streams
     freaky->process();
 
-    parser.justStep = false;
-    Parser_tickStep(freaky);
+    app->parser.justStep = false;
+    app->parser.tickStep(freaky);
     Bold_Tick(); //animate bold font
 
-    if (parser.justStep && !(parser.curStep % 4))
+    if (app->parser.justStep && !(app->parser.curStep % 4))
     {
         gfBop = !gfBop;
         AnimOBJECT_SetAnim(&titleGF, gfBop);
@@ -68,14 +68,14 @@ void TitleScreen::update(void)
 
 void TitleScreen::draw(void) 
 {
-    PrintFont(Left, 0, 0, "%d", parser.songPos);
+    PrintFont(Left, 0, 0, "%d", app->parser.songTime);
     //NG logo 
     Rect NG_img = {0, 0, 90, 88};
     Rect NG_disp = {G2D_SCR_W / 2 - 90/2, (G2D_SCR_H / 2 + 88/2) - 20, 90, 88};
     switch (state)
     {
         case Intro:
-            switch (parser.curBeat) 
+            switch (app->parser.curBeat) 
             {
                 case 3:
                     PrintBOLD(Center, G2D_SCR_W / 2, G2D_SCR_H / 2 + 76, "PRESENT");

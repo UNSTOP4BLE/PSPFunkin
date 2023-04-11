@@ -1,78 +1,76 @@
 #include "main.h"
 #include "chartparser.h"
 
-Json::Value chart;
-
-Parser parser;
-
-void Parser_loadChart(const char *filename) 
+void ChartParser::loadChart(const char *filename) 
 {
     loadJson(filename, &chart);
-}
 
-void Parser_readInitialData()
-{
-    parser.curStep = 0;
-    parser.songPos = 0;
-    parser.initbpm = 0;
-    parser.initspeed = 0;
-    parser.crochet = 0;
-    parser.step_crochet = 0;
+    curStep = 0;
+    songTime = 0;
+    crochet = 0;
+    step_crochet = 0;
 
     //read initial data from the json
-    parser.initspeed = chart["song"]["speed"].asDouble();   
-    parser.initbpm = chart["song"]["bpm"].asDouble();   
-    Parser_calcCrochet();
+    speed = chart["song"]["speed"].asDouble();   
+    bpm = chart["song"]["bpm"].asDouble();   
+    calcCrochet();
 }
 
-void Parser_calcCrochet()
+void ChartParser::calcCrochet(void)
 {
-    parser.crochet = (60 / parser.initbpm) * 1000;
-    parser.step_crochet = parser.crochet / 4;
+    crochet = (60 / bpm) * 1000;
+    step_crochet = crochet / 4;
 }
 
-void Parser_readChartData(noteData &data)
+void ChartParser::readChartData(void)
 {
-    data.Sections.resize(chart["song"]["notes"].size());
-    data.sectioncount = (int)chart["song"]["notes"].size();
+    chartdata.sections.resize(chart["song"]["notes"].size());
+    chartdata.sectioncount = (int)chart["song"]["notes"].size();
 
-    for (int i = 0; i < data.sectioncount; i++) // i is the current section
+    //parse notes and section data
+    for (int i = 0; i < chartdata.sectioncount; i++) // i is the current section
     {
-        data.Sections[i].notecount = (int)chart["song"]["notes"][i]["sectionNotes"].size(); //how many notes are in the section, begins with index 1
-        data.Sections[i].sectionNotes.resize(data.Sections[i].notecount);
-        for (int j = 0; j < data.Sections[i].notecount; j++) //copy over all the notes
+        chartdata.sections[i].notecount = (int)chart["song"]["notes"][i]["sectionNotes"].size(); //how many notes are in the section, begins with index 1
+     
+        for (int j = 0; j < chartdata.sections[i].notecount; j++) //copy over all the notes
         {
+            Note newnote;
             if (chart["song"]["notes"][i]["sectionNotes"][j][1].asInt() == -1) //-1 is for events
             {
-                data.Sections[i].sectionNotes[j].event = true;
-
-                //put your event code here
+                newnote.isevent = true;
+                //put your event parse code here
                 continue;
             }
 
-            data.Sections[i].sectionNotes[j].event = false;
-            data.Sections[i].sectionNotes[j].pos = chart["song"]["notes"][i]["sectionNotes"][j][0].asDouble(); //note position in ms
-            data.Sections[i].sectionNotes[j].type = chart["song"]["notes"][i]["sectionNotes"][j][1].asInt(); //type
-            data.Sections[i].sectionNotes[j].sus = chart["song"]["notes"][i]["sectionNotes"][j][2].asDouble(); //sustain length in ms
+            newnote.isevent = false;
+            newnote.pos = chart["song"]["notes"][i]["sectionNotes"][j][0].asDouble(); //note position in ms
+            newnote.type = chart["song"]["notes"][i]["sectionNotes"][j][1].asInt(); //type
+            newnote.sus = chart["song"]["notes"][i]["sectionNotes"][j][2].asDouble(); //sustain length in ms
+            //is note opponent's
+            if (!chart["song"]["notes"][i]["mustHitSection"].asBool())
+                newnote.isopponent = (newnote.type < 4);
+            else
+                newnote.isopponent = (newnote.type > 3);
+
+            chartdata.gamenotes.push_back(newnote);
         }
     
-        data.Sections[i].mustHitSection = chart["song"]["notes"][i]["mustHitSection"].asBool(); //is it a opponent section
-        data.Sections[i].altAnim = chart["song"]["notes"][i]["altAnim"].asBool(); //play a alt animation
+        chartdata.sections[i].mustHitSection = chart["song"]["notes"][i]["mustHitSection"].asBool(); //is it a opponent section
+        chartdata.sections[i].altAnim = chart["song"]["notes"][i]["altAnim"].asBool(); //play a alt animation
     }
 }
 
 
-void Parser_tickStep(Audio::StreamedFile *song)
+void ChartParser::tickStep(Audio::StreamedFile *song)
 {
  //   if (song->isPlaying())
-   //     parser.songPos = song->getChannel().getSampleOffset()/100;
-    int nextstep = (parser.songPos / parser.step_crochet);
-    if (nextstep != parser.curStep)
+   //     songTime = song->getChannel().getSampleOffset()/100;
+    int nextstep = (songTime / step_crochet);
+    if (nextstep != curStep)
     {
-        parser.curStep = nextstep;  
-        parser.justStep = true;
+        curStep = nextstep;  
+        justStep = true;
     }
 
-    parser.curBeat = parser.curStep / 4;
+    curBeat = curStep / 4;
 }   
-

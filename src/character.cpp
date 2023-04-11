@@ -43,7 +43,7 @@ void Character::tick(void) {
     switch (Hash::FromString(type.c_str()))
     {
         case "gf"_h:
-            if (parser.justStep && !(parser.curStep % 4))
+            if (app->parser.justStep && !(app->parser.curStep % 4))
             {
                 gfBop = !gfBop;
                 setAnim(1);
@@ -51,7 +51,7 @@ void Character::tick(void) {
             PrintFont(Left, 0, 20, "%d", obj.curframe);
             break;
         default:
-            if (parser.justStep && !(parser.curStep % 8))
+            if (app->parser.justStep && !(app->parser.curStep % 8))
                 setAnim(0);
             break;
     }
