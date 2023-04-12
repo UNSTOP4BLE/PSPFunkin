@@ -8,7 +8,7 @@ void loadJson(const char *filename, Json::Value *data)
     std::ifstream file(filename);
     Json::Reader reader;
  
-    ASSERTFUNC(reader.parse(file, *data), "failed to parse json");   
+    ASSERTFUNC(reader.parse(file, *data), reader.getFormattedErrorMessages().c_str());   
 
     file.close();
 }

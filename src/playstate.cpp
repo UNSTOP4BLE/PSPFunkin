@@ -5,7 +5,7 @@
 #include "chartparser.h"
 #include "character.h"
 
-const char *song = "bopeebo";
+const char *song = "frostbite";
 
 PlayStateScreen::PlayStateScreen(void)
 {

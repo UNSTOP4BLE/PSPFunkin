@@ -70,7 +70,7 @@ void PlayStateScreen::drawNotes(void)
         curNotey = ((app->parser.chartdata.gamenotes[i].pos - app->parser.songTime) * (app->parser.speed/3.6)) 
                     + note.y;
 
-        if (curNotey <= 0 && curNotey >= G2D_SCR_H) //dont draw every note possible please, only visible ones
+        if (curNotey <= 0 || curNotey >= G2D_SCR_H) //dont draw every note possible please, only visible ones
             continue;
 
         Rect img = {
