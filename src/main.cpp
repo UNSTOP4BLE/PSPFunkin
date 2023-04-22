@@ -60,7 +60,7 @@ int main()
         TweenTime = app->parser.curStep; 
         app->currentScreen->update();  
         app->currentScreen->draw();  
-        PrintFont(Right, G2D_SCR_W, 0, "Memory usage %d/%d", 32-(Mem::freememory()/1024/1024), 32);
+        PrintFont(Right, G2D_SCR_W, 0, "Memory usage %d/%d", Mem::curusage/1024/1024, 32);
 
         g2dFlip(G2D_VSYNC);
 

@@ -30,7 +30,7 @@ TitleScreen::TitleScreen(void)
     //load and play music
     app->parser.bpm = titleJson["menuSongBPM"].asDouble();   
     app->parser.calcCrochet();
-    freaky = new Audio::StreamedFile(*app->audioMixer, "assets/songs/stream1.vag");
+    freaky = new Audio::StreamedFile(*app->audioMixer, "assets/songs/freaky/freaky.ogg");
     freaky->play(true);
     // confirm = Audio::loadFile("assets/songs/stream.vag");
    // app->audioMixer->playBuffer(*confirm);

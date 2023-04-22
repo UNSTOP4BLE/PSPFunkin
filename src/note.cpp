@@ -45,6 +45,7 @@ void PlayStateScreen::drawSustain(int note, float y, int type)
             img.y = 1;
             img.h = 16;
         }
+
         FRect disp = {(float)xpos, ypos + (i*clipheight), img.w, img.h};
         DrawFG2DTex(hud, &img, &disp, false, 0, 200);
     }
@@ -69,9 +70,6 @@ void PlayStateScreen::drawNotes(void)
         curNotex = note.x;
         curNotey = ((app->parser.chartdata.gamenotes[i].pos - app->parser.songTime) * (app->parser.speed/3.6)) 
                     + note.y;
-
-        if (curNotey <= 0 || curNotey >= G2D_SCR_H) //dont draw every note possible please, only visible ones
-            continue;
 
         Rect img = {
             1 + (40*type),

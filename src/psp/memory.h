@@ -3,5 +3,9 @@
 #include <cstddef> 
 
 namespace Mem {
-int freememory(void);
+
+extern int curusage;
+
+void *pspf_malloc(size_t size);
+void pspf_free(void *ptr);
 }

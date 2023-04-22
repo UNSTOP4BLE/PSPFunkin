@@ -25,7 +25,7 @@
 #include <pspdisplay.h>
 #include <pspgu.h>
 #include <vram.h>
-#include <malloc.h>
+#include "memory.h"
 #include <math.h>
 #include <string.h>
 
@@ -237,7 +237,7 @@ void g2dInit()
         return;
 
     // Display list allocation
-    dlist = (int*)malloc(DLIST_SIZE);
+    dlist = (int*)Mem::pspf_malloc(DLIST_SIZE);
 
     // Setup GU
     sceGuInit();
@@ -287,7 +287,7 @@ void g2dTerm()
  
     sceGuTerm();
 
-    free(dlist);
+    Mem::pspf_free(dlist);
     
     init = false;
 }
@@ -1152,7 +1152,7 @@ void _swizzle(unsigned char *dest, unsigned char *source, int width, int height)
 
 g2dTexture*g2dTexCreate(int w, int h)
 {
-    g2dTexture *tex = (g2dTexture*)malloc(sizeof(g2dTexture));
+    g2dTexture *tex = (g2dTexture*)Mem::pspf_malloc(sizeof(g2dTexture));
     if (tex == NULL)
         return NULL;
 
@@ -1163,10 +1163,10 @@ g2dTexture*g2dTexCreate(int w, int h)
     tex->ratio = (float)w / h;
     tex->swizzled = false;
 
-    tex->data = (unsigned int*)malloc(tex->tw * tex->th * sizeof(g2dColor));
+    tex->data = (unsigned int*)Mem::pspf_malloc(tex->tw * tex->th * sizeof(g2dColor));
     if (tex->data == NULL)
     {
-        free(tex);
+        Mem::pspf_free(tex);
         return NULL;
     }
 
@@ -1183,8 +1183,8 @@ void g2dTexFree(g2dTexture **tex)
     if (*tex == NULL)
         return;
 
-    free((*tex)->data);
-    free((*tex));
+    Mem::pspf_free((*tex)->data);
+    Mem::pspf_free((*tex));
 
     *tex = NULL;
 }
@@ -1221,7 +1221,7 @@ g2dTexture* _g2dTexLoadPNG(FILE *fp)
     png_set_filler(png_ptr, 0xff, PNG_FILLER_AFTER);
     
     tex = g2dTexCreate(width, height);
-    line = (g2dColor*)malloc(width * 4);
+    line = (g2dColor*)Mem::pspf_malloc(width * 4);
 
     for (y = 0; y < height; y++)
     {
@@ -1231,7 +1231,7 @@ g2dTexture* _g2dTexLoadPNG(FILE *fp)
             tex->data[x + y*tex->tw] = line[x];
     }
 
-    free(line);
+    Mem::pspf_free(line);
     png_read_end(png_ptr, info_ptr);
     png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
 
@@ -1257,7 +1257,7 @@ g2dTexture* _g2dTexLoadJPEG(FILE *fp)
     width = dinfo.image_width;
     height = dinfo.image_height;
     tex = g2dTexCreate(width, height);
-    line = (unsigned char*)malloc(width * 3);
+    line = (unsigned char*)Mem::pspf_malloc(width * 3);
     
     jpeg_start_decompress(&dinfo);
     
@@ -1305,7 +1305,7 @@ g2dTexture* _g2dTexLoadJPEG(FILE *fp)
 
     jpeg_finish_decompress(&dinfo);
     jpeg_destroy_decompress(&dinfo);
-    free(line);
+    Mem::pspf_free(line);
 
     return tex;
 }
@@ -1342,9 +1342,9 @@ g2dTexture* g2dTexLoad(const char* path, g2dTex_Mode mode)
     // Swizzling is useless with small textures.
     if ((mode & G2D_SWIZZLE) && (tex->w >= 16 || tex->h >= 16))
     {
-        u8 *tmp = (unsigned char*)malloc(tex->tw*tex->th*PIXEL_SIZE);
+        u8 *tmp = (unsigned char*)Mem::pspf_malloc(tex->tw*tex->th*PIXEL_SIZE);
         _swizzle(tmp, (u8*)tex->data, tex->tw*PIXEL_SIZE, tex->th);
-        free(tex->data);
+        Mem::pspf_free(tex->data);
         tex->data = (g2dColor*)tmp;
         tex->swizzled = true;
     }

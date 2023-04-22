@@ -6,18 +6,14 @@
 
 struct Note 
 {
-    bool isevent; //used only by psych engine
     double pos;
     int type;
     double sus; //amon us
     bool isopponent;
-
-    bool hit;
 };
 
 struct Section
 {
-    int notecount;
     //int typeOfSection;
     bool mustHitSection;
     //int bpm;
