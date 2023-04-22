@@ -63,8 +63,8 @@ void ChartParser::readChartData(void)
 
 void ChartParser::tickStep(Audio::StreamedFile *song)
 {
- //   if (song->isPlaying())
-   //     songTime = song->getChannel().getSampleOffset()/100;
+    if (song->isPlaying())
+        songTime = song->getChannel().getTime() * 1000;
     int nextstep = (songTime / step_crochet);
     if (nextstep != curStep)
     {

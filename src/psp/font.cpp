@@ -58,12 +58,12 @@ static void PrintMSG(g2dTexture *tex, Font *font, int x, int y, const char *str,
     switch (all)
     {
         case Center:
-        x -= Font_GetW(font, str) >> 1;
+            x -= Font_GetW(font, str) >> 1;
             break;
         case Left:
             break;
         case Right:
-            //todo
+            x -= Font_GetW(font, str);
             break;
     }
 

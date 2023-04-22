@@ -31,6 +31,8 @@ void StreamedFile::process(int maxFillLength) {
         return;
 
     int length = STREAM_BUFFER_SIZE - _channel->getBufferedSamples();
+    if (length <= 0)
+        return;
     if ((maxFillLength > 0) && (maxFillLength < length))
         length = maxFillLength;
 

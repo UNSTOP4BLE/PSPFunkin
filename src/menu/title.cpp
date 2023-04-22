@@ -5,6 +5,7 @@
 #include "../psp/animation.h"
 #include "../psp/audio_file_readers.h"
 #include "../psp/pad.h"
+#include <chrono>
 
 enum TitleStates
 {
@@ -29,8 +30,8 @@ TitleScreen::TitleScreen(void)
     //load and play music
     app->parser.bpm = titleJson["menuSongBPM"].asDouble();   
     app->parser.calcCrochet();
-    freaky = new Audio::StreamedFile(*app->audioMixer, "assets/songs/freaky/freaky.wav");
-   // freaky->play(true);
+    freaky = new Audio::StreamedFile(*app->audioMixer, "assets/songs/stream1.vag");
+    freaky->play(true);
     // confirm = Audio::loadFile("assets/songs/stream.vag");
    // app->audioMixer->playBuffer(*confirm);
     //load textures
@@ -51,12 +52,12 @@ void TitleScreen::update(void)
     app->parser.tickStep(freaky);
     Bold_Tick(); //animate bold font
 
-    if (app->parser.justStep && !(app->parser.curStep % 4))
-    {
-        gfBop = !gfBop;
-        AnimOBJECT_SetAnim(&titleGF, gfBop);
-    }
-    AnimOBJECT_Tick(&titleGF);
+    //if (app->parser.justStep && !(app->parser.curStep % 4))
+    //{
+    //    gfBop = !gfBop;
+   //     AnimOBJECT_SetAnim(&titleGF, gfBop);
+    //}
+    //AnimOBJECT_Tick(&titleGF);
     if (Pad_Pressed(PSP_CTRL_CROSS | PSP_CTRL_START))
     {
         if (state != Title)
@@ -68,7 +69,8 @@ void TitleScreen::update(void)
 
 void TitleScreen::draw(void) 
 {
-    PrintFont(Left, 0, 0, "%d", app->parser.songTime);
+    if (freaky->isPlaying())
+    PrintFont(Left, 0, 0, "time %d", app->parser.songTime);
     //NG logo 
     Rect NG_img = {0, 0, 90, 88};
     Rect NG_disp = {G2D_SCR_W / 2 - 90/2, (G2D_SCR_H / 2 + 88/2) - 20, 90, 88};

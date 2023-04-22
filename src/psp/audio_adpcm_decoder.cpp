@@ -38,7 +38,6 @@ void ADPCMDecoder::reset(void) {
     _state1 = 0;
     _state2 = 0;
 }
-
 int ADPCMDecoder::decode(int16_t *output, const uint8_t *input, int length, int stride) {
     int state1 = _state1, state2 = _state2;
     int numSamples = 0;
@@ -55,8 +54,8 @@ int ADPCMDecoder::decode(int16_t *output, const uint8_t *input, int length, int 
 
         for (int j = 0; j < 28; j++) {
             int value;
-            if (!(j % 2))
-                value = (*(input++) & 0x0f) << 12;
+            if (!(j & 1)) // Lower nibble is decoded first
+                value = (*input & 0x0f) << 12;
             else
                 value = (*(input++) & 0xf0) << 8;
 
@@ -81,5 +80,4 @@ int ADPCMDecoder::decode(int16_t *output, const uint8_t *input, int length, int 
 
     return numSamples;
 }
-
 }

@@ -119,6 +119,18 @@ int64_t MixerChannel::getSampleOffset(void) {
     return offset + static_cast<int64_t>(delta.count() * static_cast<float>(_sampleRate));
 }
 
+float MixerChannel::getTime(void) {
+    _mixer->_lockSampleOffset();
+
+    float offset = static_cast<float>(_sampleOffset) / static_cast<float>(_mixer->_sampleRate);
+    auto delta = std::chrono::duration_cast<_seconds>(
+        std::chrono::high_resolution_clock::now() - _mixer->_sampleOffsetTimestamp
+    );
+
+    _mixer->_unlockSampleOffset();
+    return offset + static_cast<float>(delta.count());
+}
+
 void MixerChannel::setSampleOffset(int64_t value) {
     int offset = value * static_cast<int64_t>(_mixer->_sampleRate) / static_cast<int64_t>(_sampleRate);
 
@@ -164,7 +176,7 @@ Mixer::~Mixer(void) {
     SDL_DestroyMutex(_sampleOffsetMutex);
 }
 
-// The output format is hardcoded to 16 bit stereo.
+// The output format is hardcoded to 16 bit stereo.void Mixer::_process(int16_t *output, int numSamples) {
 void Mixer::_process(int16_t *output, int numSamples) {
     int16_t inputBuffer[MIXER_BUFFER_SIZE][2];
     int32_t outputBuffer[MIXER_BUFFER_SIZE][2];
@@ -176,7 +188,7 @@ void Mixer::_process(int16_t *output, int numSamples) {
 
     for (int ch = 0; ch < NUM_MIXER_CHANNELS; ch++) {
         auto &channel = _channels[ch];
-        channel._sampleOffset += channel._getBufferedSamples();
+        channel._sampleOffset += std::min(numSamples, channel._getBufferedSamples());
     }
 
     _unlockSampleOffset();
@@ -207,7 +219,6 @@ void Mixer::_process(int16_t *output, int numSamples) {
         );
     }
 }
-
 void Mixer::start(int sampleRate, int bufferSize) {
     ASSERTFUNC(bufferSize <= MIXER_BUFFER_SIZE, "unsupported buffer size");
 
