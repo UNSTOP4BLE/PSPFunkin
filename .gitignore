@@ -6,4 +6,5 @@
 *.o
 *.sav
 *.save
+cht2bin/build
 .DS_Store
