@@ -21,7 +21,7 @@ void PlayStateScreen::drawDummyNotes(void)
 void PlayStateScreen::drawSustain(int note, float y, int type) 
 {
     int clipheight = 11;
-    int length = app->parser.chartdata.gamenotes[note].sus / app->parser.step_crochet;
+    int length = app->parser.gamenotes[note].sus / app->parser.step_crochet;
 
     Rect img = {
         161 + (14*type),
@@ -30,7 +30,7 @@ void PlayStateScreen::drawSustain(int note, float y, int type)
         clipheight
     };
     Pos sustain;
-    if (app->parser.chartdata.gamenotes[note].isopponent) 
+    if (app->parser.gamenotes[note].isopponent) 
         sustain = notePos.opponent[type]; 
     else
         sustain = notePos.player[type];
@@ -53,23 +53,20 @@ void PlayStateScreen::drawSustain(int note, float y, int type)
 
 void PlayStateScreen::drawNotes(void) 
 {
-    for (int i = 0; i < (int)app->parser.chartdata.gamenotes.size(); i++)
+    for (int i = 0; i < (int)app->parser.gamenotes.size(); i++)
     {
-        if (app->parser.chartdata.gamenotes[i].isevent == true) //dont draw if its a event
-            continue;
-        int type = app->parser.chartdata.gamenotes[i].type;
+        int type = app->parser.gamenotes[i].type;
         int curNotex;
         float curNotey;
 
         Pos note;
-        if (app->parser.chartdata.gamenotes[i].isopponent)
+        if (app->parser.gamenotes[i].isopponent)
             note = notePos.opponent[type];
         else
             note = notePos.player[type];
 
         curNotex = note.x;
-        curNotey = ((app->parser.chartdata.gamenotes[i].pos - app->parser.songTime) * (app->parser.speed/3.6)) 
-                    + note.y;
+        curNotey = ((app->parser.gamenotes[i].pos - app->parser.songTime) * (app->parser.speed/3.6)) + note.y;
 
         Rect img = {
             1 + (40*type),
@@ -85,8 +82,8 @@ void PlayStateScreen::drawNotes(void)
             img.h   
         };
 
-        if (app->parser.chartdata.gamenotes[i].sus != 0) //check if the note is a sustain
-            drawSustain(i, curNotey, type);
+      //  if (app->parser.gamenotes[i].sus != 0) //check if the note is a sustain
+       //     drawSustain(i, curNotey, type);
         DrawFG2DTex(hud, &img, &disp, true, 0, 200);
     }
 }

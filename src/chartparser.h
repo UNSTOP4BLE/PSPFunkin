@@ -1,16 +1,9 @@
 #pragma once
 #include <string>     
+#include <fstream>
 #include <json/json.h>
 #include "psp/audio_streamed_file.h"
 #include "psp/file.h"
-
-struct Note 
-{
-    double pos;
-    int type;
-    double sus; //amon us
-    bool isopponent;
-};
 
 struct Section
 {
@@ -21,11 +14,20 @@ struct Section
     bool altAnim;
 };
 
-struct ChartData
+struct Note 
 {
-    std::vector<Section> sections;
-    std::vector<Note> gamenotes;
-    int sectioncount;
+    double pos;
+    int32_t type;
+    double sus; //amon us
+    bool isopponent;
+};
+
+struct [[gnu::packed]] ChartData {
+    int32_t magic; //magic number to make sure its the pspfunkin chart, not something else
+    double speed;
+    double bpm;
+    int32_t sectioncount;
+    int32_t notecount;
 };
 
 class ChartParser
@@ -35,15 +37,18 @@ public:
     void calcCrochet(void);
     void readChartData(void);
     void tickStep(Audio::StreamedFile *song);
+    void closeChart(void);
     int curBeat;
     int curStep;
     int songTime;
     bool justStep;
     double bpm;
     double speed;
-    double crochet;
     double step_crochet;
     ChartData chartdata;
+    std::vector<Section> sections;
+    std::vector<Note> gamenotes;
 private: 
-    Json::Value chart;
+    std::ifstream chart;
+    double crochet;
 };

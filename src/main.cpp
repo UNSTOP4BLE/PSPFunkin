@@ -24,7 +24,7 @@ PSPFunkin *app;
 void ErrMSG(const char *filename, const char *function, int line, const char *expr, const char *msg)
 {
     char errstr[256];
-    sprintf(errstr, "error \nmessage %s\nexpression: %s \nfile: %s \nfunction %s \nline %d", msg, expr, filename, function, line);
+    sprintf(errstr, "error \nmessage: %s\nexpression: %s \nfile: %s \nfunction: %s \nline %d", msg, expr, filename, function, line);
     while(1)
     {
         g2dClear(app->screenCol);

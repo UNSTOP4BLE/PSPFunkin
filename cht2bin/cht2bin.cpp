@@ -18,25 +18,26 @@ struct Section
 struct Note 
 {
     double pos;
-    int type;
+    int32_t type;
     double sus; //amon us
     bool isopponent;
 };
 
-struct ChartData
-{
+struct [[gnu::packed]] ChartData {
+    int32_t magic; //magic number to make sure its the pspfunkin chart, not something else
     double speed;
     double bpm;
-    int sectioncount;
-    int notecount;
-    std::vector<Section> sections;
-    std::vector<Note> gamenotes;
+    int32_t sectioncount;
+    int32_t notecount;
 };
 
 int main(int argc, char *argv[])
 {
     if (argc != 3)
+    {
         std::cout << "invalid arguments, usage: ./cht2bin {path_to_chart} {path_to_output}" << std::endl;
+        return 0;
+    }
 
     std::ifstream chtfile(argv[1]);
     if (!chtfile.is_open())
@@ -52,9 +53,12 @@ int main(int argc, char *argv[])
     chartdata.bpm = chart["song"]["bpm"];   
     
     //initialize vars
+    chartdata.magic = 42069; // dont change this
     chartdata.notecount = 1;
-    int eventcount = 1;
-    chartdata.sections.resize(chart["song"]["notes"].size());
+    int eventcount = 0;
+    std::vector<Section> sections;
+    std::vector<Note> gamenotes;
+    sections.resize(chart["song"]["notes"].size());
     chartdata.sectioncount = chart["song"]["notes"].size();
 
     //parse notes and section data
@@ -80,22 +84,24 @@ int main(int argc, char *argv[])
             else
                 newnote.isopponent = (newnote.type > 3);
 
-            chartdata.gamenotes.push_back(newnote);
+            gamenotes.push_back(newnote);
         }
-        chartdata.sections[i].mustHitSection = chart["song"]["notes"][i]["mustHitSection"]; //is it a opponent section
+        sections[i].mustHitSection = chart["song"]["notes"][i]["mustHitSection"]; //is it a opponent section
 
         bool isalt = chart["song"]["notes"][i]["altAnim"] == true;
-        chartdata.sections[i].altAnim = false;
+        sections[i].altAnim = false;
     }
 
-    //write a file       
-    FILE *binFile = fopen(argv[2], "wb"); //remember to fclose the file
-    if (binFile == NULL) {
+    //write a file  
+    std::ofstream binFile(argv[2], std::ostream::binary);
+    if (!binFile.is_open()) {
         std::cout << "failed to write file " << argv[2] << std::endl;
         return 0;
     }
-    fwrite(&chartdata, sizeof(chartdata), sizeof(chartdata), binFile);
-    fclose(binFile);   
+    binFile.write(reinterpret_cast<const char*>(&chartdata), sizeof(chartdata));
+    binFile.write(reinterpret_cast<const char*>(sections.data()), sections.size());
+    binFile.write(reinterpret_cast<const char*>(gamenotes.data()), gamenotes.size());
+    binFile.close();   
 
     std::cout << "found " << eventcount << " events" << std::endl;
     std::cout << "wrote file " << argv[2] << std::endl;

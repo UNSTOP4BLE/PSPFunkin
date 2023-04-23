@@ -27,7 +27,7 @@ PlayStateScreen::PlayStateScreen(void)
     gf = new Character(_path, _config["gf"].asString() + ".json", _config["gfpos"][0].asFloat(), _config["gfpos"][1].asFloat());
 
     //load game assets
-    sprintf(_path, "assets/songs/%s/%s.json", song, song); //todo implement difficulty
+    sprintf(_path, "assets/songs/%s/%s.bin", song, song); //todo implement difficulty
     app->parser.loadChart(_path);
     app->parser.readChartData();
     app->parser.songTime = -3000;
@@ -63,8 +63,6 @@ void PlayStateScreen::update(void)
     if (isPlaying)
     {
         updateInput();
-        app->parser.songTime += 16 + app->deltatime; //temp
- 
     }
     else
     {
@@ -95,10 +93,13 @@ void PlayStateScreen::draw(void)
 
     drawDummyNotes();
     drawNotes();
+PrintFont(Left, 0, 40, "mgc %d\nspd%f\nbpm%f\nscnt%d\nncnt%d", app->parser.chartdata.magic, app->parser.chartdata.speed, app->parser.chartdata.bpm, app->parser.chartdata.sectioncount, app->parser.chartdata.notecount);
+
 }
 PlayStateScreen::~PlayStateScreen(void)
 {
     g2dTexFree(&hud);
+    app->parser.closeChart();
     delete inst;
     delete vocals;
     delete player;

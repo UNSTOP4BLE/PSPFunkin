@@ -6,14 +6,9 @@
 void loadJson(const char *filename, Json::Value *data) 
 {
     std::ifstream file(filename);
-    Json::CharReaderBuilder builder;
-    builder["collectComments"] = true;
-    JSONCPP_STRING errs;
-
-    ASSERTFUNC(parseFromStream(builder, file, data, &errs), errs.c_str());   
-//    Json::Reader reader;
+    Json::Reader reader;
  
-    //ASSERTFUNC(reader.parse(file, *data), reader.getFormattedErrorMessages().c_str());   
+    ASSERTFUNC(reader.parse(file, *data), reader.getFormattedErrorMessages().c_str());   
 
     file.close();
 }

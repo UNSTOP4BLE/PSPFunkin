@@ -1,10 +1,13 @@
-{	
-	"player": "Char_BF",
-	"opponent": "Char_Dad",
-	"gf": "Char_GF",
+{   
+    "player": "bf",
+    "playerpos": [100, 100],
+    "opponent": "dad",
+    "opponentpos": [180, 200],
+    "gf": "gf",
+    "gfpos": [100, 100],
 
-	"back": "stage",
-	
-	"next": "fresh"
+    "back": "stage",
+    
+    "next": "fresh"
 
 }
