@@ -82,8 +82,8 @@ void PlayStateScreen::drawNotes(void)
             img.h   
         };
 
-      //  if (app->parser.gamenotes[i].sus != 0) //check if the note is a sustain
-       //     drawSustain(i, curNotey, type);
+        if (app->parser.gamenotes[i].sus != 0) //check if the note is a sustain
+            drawSustain(i, curNotey, type);
         DrawFG2DTex(hud, &img, &disp, true, 0, 200);
     }
 }

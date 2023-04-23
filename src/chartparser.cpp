@@ -3,7 +3,7 @@
 
 void ChartParser::loadChart(const char *filename) 
 {
-    chart.open(filename);
+    chart.open(filename, std::ostream::binary);
     ASSERTFUNC(chart, "failed to open chart");
     curStep = 0;
     songTime = 0;

@@ -16,18 +16,18 @@ struct Section
 
 struct Note 
 {
-    double pos;
-    int32_t type;
-    double sus; //amon us
+    float pos;
+    int type;
+    float sus; //amon us
     bool isopponent;
 };
 
 struct [[gnu::packed]] ChartData {
-    int32_t magic; //magic number to make sure its the pspfunkin chart, not something else
+    int magic; //magic number to make sure its the pspfunkin chart, not something else
     double speed;
     double bpm;
-    int32_t sectioncount;
-    int32_t notecount;
+    int sectioncount;
+    int notecount;
 };
 
 class ChartParser
