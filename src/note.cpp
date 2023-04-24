@@ -30,7 +30,7 @@ void PlayStateScreen::drawSustain(int note, float y, int type)
         clipheight
     };
     Pos sustain;
-    if (app->parser.gamenotes[note].isopponent) 
+    if (app->parser.gamenotes[note].flag & FLAG_NOTE_ISOPPONENT) 
         sustain = notePos.opponent[type]; 
     else
         sustain = notePos.player[type];
@@ -60,7 +60,7 @@ void PlayStateScreen::drawNotes(void)
         float curNotey;
 
         Pos note;
-        if (app->parser.gamenotes[i].isopponent)
+        if (app->parser.gamenotes[i].flag & FLAG_NOTE_ISOPPONENT)
             note = notePos.opponent[type];
         else
             note = notePos.player[type];

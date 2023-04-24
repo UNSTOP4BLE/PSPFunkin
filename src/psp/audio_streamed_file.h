@@ -8,7 +8,7 @@
 namespace Audio {
 
 static constexpr int STREAM_BUFFER_SIZE = 4096;
-static constexpr int DEFAULT_MAX_FILL_LENGTH = 1024; // See note in the source file
+static constexpr int DEFAULT_MAX_FILL_LENGTH = 2048; // See note in the source file
 
 class StreamedFile {
 public:

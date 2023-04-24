@@ -6,29 +6,34 @@
 #include <vector>         
 #include "json.hpp"                                                                                                                                                                                                                                                                                                                                          
 
-struct Section
+#define FLAG_SEC_MUSTHIT (1 << 2)
+#define FLAG_SEC_ALT     (1 << 3)
+
+#define FLAG_NOTE_ISOPPONENT (1 << 2)
+
+struct [[gnu::packed]] Section
 {
     //int typeOfSection;
-    bool mustHitSection;
     //int bpm;
     //bool changeBPM;   
-    bool altAnim;
+    int32_t flag;
 };
 
-struct Note 
+struct [[gnu::packed]] Note 
 {
     float pos;
-    int type;
+    int32_t type;
     float sus; //amon us
-    bool isopponent;
+    int32_t flag;
 };
 
-struct [[gnu::packed]] ChartData {
-    int magic; //magic number to make sure its the pspfunkin chart, not something else
+struct [[gnu::packed]] ChartData 
+{
+    char magic[16]; //magic string to make sure its the pspfunkin chart, not something else
     double speed;
     double bpm;
-    int sectioncount;
-    int notecount;
+    int32_t sectioncount;
+    int32_t notecount;
 };
 
 int main(int argc, char *argv[])
@@ -53,7 +58,7 @@ int main(int argc, char *argv[])
     chartdata.bpm = chart["song"]["bpm"];   
     
     //initialize vars
-    chartdata.magic = 42069; // dont change this
+    strcpy(chartdata.magic, "PSPFCHTV1"); // dont change this
     chartdata.notecount = 1;
     int eventcount = 0;
     std::vector<Section> sections;
@@ -64,11 +69,11 @@ int main(int argc, char *argv[])
     //parse notes and section data
     for (int i = 0; i < chartdata.sectioncount; i++) // i is the current section
     {
-        chartdata.notecount += chart["song"]["notes"][i]["sectionNotes"].size()-1;
-
+        sections[i].flag = 0;
         for (int j = 0; j < (int)chart["song"]["notes"][i]["sectionNotes"].size(); j++) //copy over all the notes
         {
             Note newnote;
+            newnote.flag = 0;
 
             if ((int)chart["song"]["notes"][i]["sectionNotes"][j][1] == -1) //-1 is for events
             {
@@ -79,18 +84,21 @@ int main(int argc, char *argv[])
             newnote.type = chart["song"]["notes"][i]["sectionNotes"][j][1]; //type
             newnote.sus = chart["song"]["notes"][i]["sectionNotes"][j][2]; //sustain length in ms
             //is note opponent's
-            if (!chart["song"]["notes"][i]["mustHitSection"])
-                newnote.isopponent = (newnote.type < 4);
-            else
-                newnote.isopponent = (newnote.type > 3);
+            if (!chart["song"]["notes"][i]["mustHitSection"] && newnote.type < 4)
+                newnote.flag |= FLAG_NOTE_ISOPPONENT;    
+            else if (newnote.type > 3)
+                newnote.flag |= FLAG_NOTE_ISOPPONENT;
 
             gamenotes.push_back(newnote);
         }
-        sections[i].mustHitSection = chart["song"]["notes"][i]["mustHitSection"]; //is it a opponent section
 
-        bool isalt = chart["song"]["notes"][i]["altAnim"] == true;
-        sections[i].altAnim = false;
+        if (chart["song"]["notes"][i]["mustHitSection"] == true)
+            sections[i].flag |= FLAG_SEC_MUSTHIT;
+
+        if (chart["song"]["notes"][i]["altAnim"] == true)
+            sections[i].flag |= FLAG_SEC_ALT;
     }
+    chartdata.notecount = gamenotes.size();
 
     //write a file  
     std::ofstream binFile(argv[2], std::ostream::binary);
@@ -99,8 +107,8 @@ int main(int argc, char *argv[])
         return 0;
     }
     binFile.write(reinterpret_cast<const char*>(&chartdata), sizeof(chartdata));
-    binFile.write(reinterpret_cast<const char*>(sections.data()), sections.size());
-    binFile.write(reinterpret_cast<const char*>(gamenotes.data()), gamenotes.size());
+    binFile.write(reinterpret_cast<const char*>(sections.data()), sections.size() * sizeof(Section));
+    binFile.write(reinterpret_cast<const char*>(gamenotes.data()), gamenotes.size() * sizeof(Note));
     binFile.close();   
 
     std::cout << "found " << eventcount << " events" << std::endl;

@@ -12,7 +12,7 @@ void ChartParser::loadChart(const char *filename)
 
     //read initial data from the json
     chart.read(reinterpret_cast<char *>(&chartdata), sizeof(chartdata));
-    ASSERTFUNC(chartdata.magic == 42069, "invalid chart");
+    ASSERTFUNC(!strcmp(chartdata.magic, "PSPFCHTV1"), "invalid chart");
     calcCrochet();
 }
 
@@ -27,8 +27,8 @@ void ChartParser::readChartData(void)
     sections.resize(chartdata.sectioncount);
     gamenotes.resize(chartdata.notecount);
 
-    chart.read(reinterpret_cast<char *>(sections.data()), chartdata.sectioncount);
-    chart.read(reinterpret_cast<char *>(gamenotes.data()), chartdata.notecount);
+    chart.read(reinterpret_cast<char *>(sections.data()), sections.size() * sizeof(Section));
+    chart.read(reinterpret_cast<char *>(gamenotes.data()), gamenotes.size() * sizeof(Note));
 }
 
 void ChartParser::tickStep(Audio::StreamedFile *song)

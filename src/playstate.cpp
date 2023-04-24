@@ -5,7 +5,7 @@
 #include "chartparser.h"
 #include "character.h"
 
-const char *song = "bopeebo";
+const char *song = "frostbite";
 
 PlayStateScreen::PlayStateScreen(void)
 {
@@ -93,7 +93,7 @@ void PlayStateScreen::draw(void)
 
     drawDummyNotes();
     drawNotes();
-PrintFont(Left, 0, 40, "mgc %d\nspd%f\nbpm%f\nscnt%d\nncnt%d", app->parser.chartdata.magic, app->parser.chartdata.speed, app->parser.chartdata.bpm, app->parser.chartdata.sectioncount, app->parser.chartdata.notecount);
+PrintFont(Left, 0, 40, "mgc %s\nspd%f\nbpm%f\nscnt%d\nncnt%d", app->parser.chartdata.magic, app->parser.chartdata.speed, app->parser.chartdata.bpm, app->parser.chartdata.sectioncount, app->parser.chartdata.notecount);
 
 }
 PlayStateScreen::~PlayStateScreen(void)
