@@ -30,7 +30,7 @@ struct [[gnu::packed]] Note
 struct [[gnu::packed]] ChartData 
 {
     char magic[16]; //magic string to make sure its the pspfunkin chart, not something else
-    double speed;
+    float speed;
     double bpm;
     int32_t sectioncount;
     int32_t notecount;
@@ -58,8 +58,8 @@ int main(int argc, char *argv[])
     chartdata.bpm = chart["song"]["bpm"];   
     
     //initialize vars
-    strcpy(chartdata.magic, "PSPFCHTV1"); // dont change this
-    chartdata.notecount = 1;
+    strncpy(chartdata.magic, "PSPFCHTV1", sizeof(chartdata.magic)); // dont change this
+    chartdata.notecount = 0;
     int eventcount = 0;
     std::vector<Section> sections;
     std::vector<Note> gamenotes;
@@ -74,6 +74,12 @@ int main(int argc, char *argv[])
         {
             Note newnote;
             newnote.flag = 0;
+
+            if (chart["song"]["notes"][i]["mustHitSection"] == true)
+                sections[i].flag |= FLAG_SEC_MUSTHIT;
+
+            if (chart["song"]["notes"][i]["altAnim"] == true)
+                sections[i].flag |= FLAG_SEC_ALT;
 
             if ((int)chart["song"]["notes"][i]["sectionNotes"][j][1] == -1) //-1 is for events
             {
@@ -91,12 +97,6 @@ int main(int argc, char *argv[])
 
             gamenotes.push_back(newnote);
         }
-
-        if (chart["song"]["notes"][i]["mustHitSection"] == true)
-            sections[i].flag |= FLAG_SEC_MUSTHIT;
-
-        if (chart["song"]["notes"][i]["altAnim"] == true)
-            sections[i].flag |= FLAG_SEC_ALT;
     }
     chartdata.notecount = gamenotes.size();
 
@@ -113,6 +113,7 @@ int main(int argc, char *argv[])
 
     std::cout << "found " << eventcount << " events" << std::endl;
     std::cout << "wrote file " << argv[2] << std::endl;
+    std::cout << "note " << sizeof(Note) << ", sec " << sizeof(Section) << ", header " << sizeof(ChartData) << std::endl;
 
     return 0;
 }

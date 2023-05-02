@@ -38,9 +38,9 @@ void PlayStateScreen::drawSustain(int note, float y, int type)
     int xpos = sustain.x + img.w;
     float ypos = y + (img.h*2);
 
-    for (int i = 0; i < (int)((length*3.6) * (app->parser.speed)); i++)
+    for (int i = 0; i < (int)((length*3.6f) * (app->parser.chartdata.speed)); i++)
     {
-        if (i == (int)((length*3.6) * (app->parser.speed))-1) //draw sustain ends
+        if (i == (int)((length*3.6f) * (app->parser.chartdata.speed))-1) //draw sustain ends
         {
             img.y = 1;
             img.h = 16;
@@ -66,7 +66,7 @@ void PlayStateScreen::drawNotes(void)
             note = notePos.player[type];
 
         curNotex = note.x;
-        curNotey = ((app->parser.gamenotes[i].pos - app->parser.songTime) * (app->parser.speed/3.6)) + note.y;
+        curNotey = ((app->parser.gamenotes[i].pos - app->parser.songTime) * app->parser.chartdata.speed / 3.6f) + note.y;
 
         Rect img = {
             1 + (40*type),
@@ -74,7 +74,7 @@ void PlayStateScreen::drawNotes(void)
             39,
             39
         };
-                
+    
         FRect disp = {
             (float)curNotex,
             curNotey,
@@ -85,5 +85,7 @@ void PlayStateScreen::drawNotes(void)
         if (app->parser.gamenotes[i].sus != 0) //check if the note is a sustain
             drawSustain(i, curNotey, type);
         DrawFG2DTex(hud, &img, &disp, true, 0, 200);
+      //  PrintFont(Left, 0, 40, "pos %f\ntype%d\nsus%f\n", app->parser.gamenotes[1].pos, app->parser.gamenotes[1].type, app->parser.gamenotes[1].sus);
+
     }
 }

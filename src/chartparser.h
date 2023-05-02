@@ -29,7 +29,7 @@ struct [[gnu::packed]] Note
 struct [[gnu::packed]] ChartData 
 {
     char magic[16]; //magic string to make sure its the pspfunkin chart, not something else
-    double speed;
+    float speed;
     double bpm;
     int32_t sectioncount;
     int32_t notecount;
@@ -40,15 +40,11 @@ class ChartParser
 public:
     void loadChart(const char *filename);
     void calcCrochet(void);
-    void readChartData(void);
     void tickStep(Audio::StreamedFile *song);
-    void closeChart(void);
     int curBeat;
     int curStep;
     int songTime;
     bool justStep;
-    double bpm;
-    double speed;
     double step_crochet;
     ChartData chartdata;
     std::vector<Section> sections;
@@ -56,4 +52,5 @@ public:
 private: 
     std::ifstream chart;
     double crochet;
+    void readChartData(void);
 };

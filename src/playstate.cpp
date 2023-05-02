@@ -29,7 +29,6 @@ PlayStateScreen::PlayStateScreen(void)
     //load game assets
     sprintf(_path, "assets/songs/%s/%s.bin", song, song); //todo implement difficulty
     app->parser.loadChart(_path);
-    app->parser.readChartData();
     app->parser.songTime = -3000;
 
     sprintf(_path, "assets/songs/%s/Inst.ogg", song);
@@ -76,7 +75,10 @@ void PlayStateScreen::update(void)
                 inst->play();
                 vocals->play();
             }
-
+        }
+        else
+        {
+            setScreen(new MainMenuScreen());
         }
     }
 
@@ -93,13 +95,15 @@ void PlayStateScreen::draw(void)
 
     drawDummyNotes();
     drawNotes();
-PrintFont(Left, 0, 40, "mgc %s\nspd%f\nbpm%f\nscnt%d\nncnt%d", app->parser.chartdata.magic, app->parser.chartdata.speed, app->parser.chartdata.bpm, app->parser.chartdata.sectioncount, app->parser.chartdata.notecount);
+   PrintFont(Left, 0, 40, "mgc %s\nspd%f\nbpm%f\nscnt%d\nncnt%d", app->parser.chartdata.magic, app->parser.chartdata.speed, app->parser.chartdata.bpm, app->parser.chartdata.sectioncount, app->parser.chartdata.notecount);
+
+   //PrintFont(Left, 0, 40, "note %d, sec %d, data %d", sizeof(Note), sizeof(Section), sizeof(ChartData));
+
 
 }
 PlayStateScreen::~PlayStateScreen(void)
 {
     g2dTexFree(&hud);
-    app->parser.closeChart();
     delete inst;
     delete vocals;
     delete player;

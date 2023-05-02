@@ -28,7 +28,7 @@ TitleScreen::TitleScreen(void)
     funnymessage[1] = titleJson["messages"][curmsg][1].asString();
 
     //load and play music
-    app->parser.bpm = titleJson["menuSongBPM"].asDouble();   
+    app->parser.chartdata.bpm = titleJson["menuSongBPM"].asDouble();   
     app->parser.calcCrochet();
     freaky = new Audio::StreamedFile(*app->audioMixer, "assets/songs/freaky/freaky.ogg");
     freaky->play(true);
