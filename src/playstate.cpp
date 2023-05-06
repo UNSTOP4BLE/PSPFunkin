@@ -58,14 +58,14 @@ PlayStateScreen::PlayStateScreen(void)
 
 void PlayStateScreen::Camera::update(float ox, float oy, float oz, float px, float py, float pz) {
     if (app->parser.sections[app->parser.curStep / 16].flag & FLAG_SEC_MUSTHIT) { 
-        camx += app->lerp(camx, px, 1.3);
-        camy += app->lerp(camy, py, 1.3);
-        //zoom += app->lerp(zoom, pz, 1.3);
+        camx = app->lerp(camx, px, 0.2);
+        camy = app->lerp(camy, py, 0.2);
+        zoom = app->lerp(zoom, pz, 0.3);
     }
     else {
-        camx += app->lerp(camx, ox, 1.3);
-        camy += app->lerp(camy, oy, 1.3);
-        //zoom += app->lerp(zoom, oz, 1.3);
+        camx = app->lerp(camx, ox, 0.2);
+        camy = app->lerp(camy, oy, 0.2);
+        zoom = app->lerp(zoom, oz, 0.3);
     }
 }
 
@@ -117,8 +117,8 @@ void PlayStateScreen::draw(void)
 
     drawDummyNotes();
     drawNotes();
-   PrintFont(Left, 0, 40, "mgc %s\nspd%f\nbpm%f\nscnt%d\nncnt%d", app->parser.chartdata.magic, app->parser.chartdata.speed, app->parser.chartdata.bpm, app->parser.chartdata.sectioncount, app->parser.chartdata.notecount);
-
+  // PrintFont(Left, 0, 40, "mgc %s\nspd%f\nbpm%f\nscnt%d\nncnt%d", app->parser.chartdata.magic, app->parser.chartdata.speed, app->parser.chartdata.bpm, app->parser.chartdata.sectioncount, app->parser.chartdata.notecount);
+    PrintFont(Left, 0, 40, "zoom %f opp %f plr %f", camera.zoom, opponent->camzoom, player->camzoom);
    //PrintFont(Left, 0, 40, "note %d, sec %d, data %d", sizeof(Note), sizeof(Section), sizeof(ChartData));
 
 
@@ -139,8 +139,8 @@ void PlayStateScreen::updateInput(void)
     checkPad[1] = Pad_Pressed(PSP_CTRL_DOWN | PSP_CTRL_CROSS | PSP_CTRL_LTRIGGER);
     checkPad[2] = Pad_Pressed(PSP_CTRL_UP | PSP_CTRL_TRIANGLE | PSP_CTRL_RTRIGGER);
     checkPad[3] = Pad_Pressed(PSP_CTRL_LEFT | PSP_CTRL_CIRCLE);
-    checkPadHeld[0] = Pad_Pressed(PSP_CTRL_LEFT | PSP_CTRL_SQUARE);
-    checkPadHeld[1] = Pad_Pressed(PSP_CTRL_DOWN | PSP_CTRL_CROSS | PSP_CTRL_LTRIGGER);
-    checkPadHeld[2] = Pad_Pressed(PSP_CTRL_UP | PSP_CTRL_TRIANGLE | PSP_CTRL_RTRIGGER);
-    checkPadHeld[3] = Pad_Pressed(PSP_CTRL_LEFT | PSP_CTRL_CIRCLE); 
+    checkPadHeld[0] = Pad_Held(PSP_CTRL_LEFT | PSP_CTRL_SQUARE);
+    checkPadHeld[1] = Pad_Held(PSP_CTRL_DOWN | PSP_CTRL_CROSS | PSP_CTRL_LTRIGGER);
+    checkPadHeld[2] = Pad_Held(PSP_CTRL_UP | PSP_CTRL_TRIANGLE | PSP_CTRL_RTRIGGER);
+    checkPadHeld[3] = Pad_Held(PSP_CTRL_LEFT | PSP_CTRL_CIRCLE); 
 }

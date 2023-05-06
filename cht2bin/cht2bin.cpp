@@ -90,9 +90,9 @@ int main(int argc, char *argv[])
             newnote.type = chart["song"]["notes"][i]["sectionNotes"][j][1]; //type
             newnote.sus = chart["song"]["notes"][i]["sectionNotes"][j][2]; //sustain length in ms
             //is note opponent's
-            if (!chart["song"]["notes"][i]["mustHitSection"] && newnote.type < 4)
+            if (sections[i].flag & FLAG_SEC_MUSTHIT && newnote.type < 4)
                 newnote.flag |= FLAG_NOTE_ISOPPONENT;    
-            else if (newnote.type > 3)
+            if (!(sections[i].flag & FLAG_SEC_MUSTHIT) && newnote.type > 3)
                 newnote.flag |= FLAG_NOTE_ISOPPONENT;
 
             gamenotes.push_back(newnote);
