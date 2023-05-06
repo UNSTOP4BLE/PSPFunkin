@@ -11,11 +11,10 @@ public:
     void setIcon(int i);
 
     void tick(void);
-    void draw(void);
+    void draw(float cx, float cy, float cz);
+    float x, y, camx, camy, camzoom;
 private:
     Anim_OBJECT obj;
     std::string type;
-    float x, y, camx, camy, camzoom;
-    bool gfBop;
     int icon;
 };

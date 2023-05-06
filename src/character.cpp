@@ -12,7 +12,7 @@ Character::Character(std::string path, std::string objstr, float _x, float _y) {
     setPos(_x, _y);
     setIcon(chardata["icon"].asInt());
     type = chardata["type"].asString();
-        
+    
     AnimOBJECT_Init(&obj, path, objstr);
     setAnim(0);
 }
@@ -45,8 +45,10 @@ void Character::tick(void) {
         case "gf"_h:
             if (app->parser.justStep && !(app->parser.curStep % 4))
             {
-                gfBop = !gfBop;
-                setAnim(1);
+                if (obj.curanim == 1)
+                    setAnim(0);
+                else
+                    setAnim(1); 
             }
             PrintFont(Left, 0, 20, "%d", obj.curframe);
             break;
@@ -57,6 +59,6 @@ void Character::tick(void) {
     }
 }
 
-void Character::draw(void) {
-    AnimOBJECT_Draw(&obj, x, y);
+void Character::draw(float cx, float cy, float cz) {
+    AnimOBJECT_Draw(&obj, x-cx, y-cy, cz);
 }

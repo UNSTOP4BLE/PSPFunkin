@@ -121,7 +121,7 @@ void TitleScreen::draw(void)
             state = Title;
             break;
         case Title:
-            AnimOBJECT_Draw(&titleGF, 200, 200);
+            AnimOBJECT_Draw(&titleGF, 200, 200, 1);
             break;
     }
 }

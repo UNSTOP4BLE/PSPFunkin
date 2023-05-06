@@ -48,7 +48,7 @@ void AnimOBJECT_Tick(Anim_OBJECT *obj)
     }
 }
 
-void AnimOBJECT_Draw(Anim_OBJECT *obj, int x, int y)
+void AnimOBJECT_Draw(Anim_OBJECT *obj, float x, float y, float zoom)
 {
     if (obj->tick)
     {
@@ -57,16 +57,16 @@ void AnimOBJECT_Draw(Anim_OBJECT *obj, int x, int y)
                     obj->frames[obj->curframe].w,
                     obj->frames[obj->curframe].h};
 
-        Rect disp = {x - obj->frames[obj->curframe].offsetx,
-                     y - obj->frames[obj->curframe].offsety,
-                     obj->frames[obj->curframe].w,
-                     obj->frames[obj->curframe].h};
+        FRect disp = {(float)(x - obj->frames[obj->curframe].offsetx),
+                      (float)(y - obj->frames[obj->curframe].offsety),
+                      obj->frames[obj->curframe].w,
+                      obj->frames[obj->curframe].h};
         if (obj->flipped)
             disp.w = -disp.w;
 
         ASSERTFUNC(obj->textures[obj->frames[obj->curframe].tex], "texture is null");   
 
         if (obj->visible)
-            DrawG2DTex(obj->textures[obj->frames[obj->curframe].tex], &img, &disp, obj->linear, obj->angle, obj->alpha);
+            DrawZoomG2DTex(obj->textures[obj->frames[obj->curframe].tex], &img, &disp, obj->linear, obj->angle, obj->alpha, zoom);
     }
 }

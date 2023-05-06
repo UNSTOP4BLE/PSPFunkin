@@ -61,6 +61,12 @@ public:
     void deload(void);
     ~PlayStateScreen(void);
 private:    
+    class Camera {
+    public:
+        void update(float ox, float oy, float oz, float px, float py, float pz);
+        float camx, camy;
+        float zoom;
+    } camera;
     void drawDummyNotes(void);
     void drawSustain(int note, float y, int type);
     void drawNotes(void);

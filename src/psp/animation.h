@@ -55,4 +55,4 @@ struct Anim_OBJECT
 void AnimOBJECT_Init(Anim_OBJECT *obj, std::string path, std::string objname);
 void AnimOBJECT_SetAnim(Anim_OBJECT *obj, int anim);
 void AnimOBJECT_Tick(Anim_OBJECT *obj);
-void AnimOBJECT_Draw(Anim_OBJECT *obj, int x, int y);
+void AnimOBJECT_Draw(Anim_OBJECT *obj, float x, float y, float zoom);

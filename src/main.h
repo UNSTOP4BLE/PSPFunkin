@@ -7,6 +7,7 @@
 class PSPFunkin
 {
 public:
+    float lerp(float position, float target, float speed);
     Audio::Mixer *audioMixer;
     ChartParser parser;
     double deltatime;
