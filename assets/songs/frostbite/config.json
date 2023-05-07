@@ -1,8 +1,10 @@
 {   
     "player": "bf",
-    "playerpos": [100, 100],
+    "playerpos": [100, 100,
+                  100.0, 100.0, 1.0],
     "opponent": "dad",
-    "opponentpos": [180, 200],
+    "opponentpos": [180, 200,
+                    0, 0, 1.0],
     "gf": "gf",
     "gfpos": [100, 100],
 

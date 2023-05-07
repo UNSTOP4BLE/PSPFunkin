@@ -8,7 +8,8 @@
 #define FLAG_SEC_MUSTHIT (1 << 2)
 #define FLAG_SEC_ALT     (1 << 3)
 
-#define FLAG_NOTE_ISOPPONENT (1 << 2)
+#define FLAG_NOTE_HIT        (1 << 2)
+#define FLAG_NOTE_ISOPPONENT (1 << 3)
 
 struct [[gnu::packed]] Section
 {

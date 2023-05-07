@@ -132,15 +132,52 @@ PlayStateScreen::~PlayStateScreen(void)
     delete opponent;
     delete gf;
 }
+    int lasthit = 0;
 
 void PlayStateScreen::updateInput(void)
 {
     checkPad[0] = Pad_Pressed(PSP_CTRL_LEFT | PSP_CTRL_SQUARE);
     checkPad[1] = Pad_Pressed(PSP_CTRL_DOWN | PSP_CTRL_CROSS | PSP_CTRL_LTRIGGER);
     checkPad[2] = Pad_Pressed(PSP_CTRL_UP | PSP_CTRL_TRIANGLE | PSP_CTRL_RTRIGGER);
-    checkPad[3] = Pad_Pressed(PSP_CTRL_LEFT | PSP_CTRL_CIRCLE);
+    checkPad[3] = Pad_Pressed(PSP_CTRL_RIGHT | PSP_CTRL_CIRCLE);
     checkPadHeld[0] = Pad_Held(PSP_CTRL_LEFT | PSP_CTRL_SQUARE);
     checkPadHeld[1] = Pad_Held(PSP_CTRL_DOWN | PSP_CTRL_CROSS | PSP_CTRL_LTRIGGER);
     checkPadHeld[2] = Pad_Held(PSP_CTRL_UP | PSP_CTRL_TRIANGLE | PSP_CTRL_RTRIGGER);
     checkPadHeld[3] = Pad_Held(PSP_CTRL_LEFT | PSP_CTRL_CIRCLE); 
+
+    //handle note hits here? why not lol
+    for (int i = 0; i < (int)app->parser.gamenotes.size(); i++) {
+        if (app->parser.gamenotes[i].flag & FLAG_NOTE_ISOPPONENT)
+            continue;
+        int y = notePos.player[app->parser.gamenotes[i].type].y;
+        int hitwindows[4][2] = { //[amount of ratings], [min, max]
+            {y-64, y-48}, //shit
+            {y-48, y-32}, //bad 
+            {y-32, y-16}, //good
+            {y-16, y+16}  //sick
+        };
+
+        float curNotey = ((app->parser.gamenotes[i].pos - app->parser.songTime) * app->parser.chartdata.speed / 3.6f) + y;
+
+        if (checkPad[app->parser.gamenotes[i].type] && curNotey >= hitwindows[0][0] && curNotey <= hitwindows[3][1]) {
+            app->parser.gamenotes[i].flag |= FLAG_NOTE_HIT; //note has been hit
+            for (int j = 0; j < 4; j++) {
+                if (curNotey >= hitwindows[j][0] && curNotey <= hitwindows[j][1]) {
+                    lasthit = j;
+                    break;
+                }
+            }
+        }
+
+    }
+    char hit[24];
+    if (lasthit == 0)
+        sprintf(hit, "shit");
+    if (lasthit == 1)
+        sprintf(hit, "bad");
+    if (lasthit == 2)
+        sprintf(hit, "good");
+    if (lasthit == 3)
+        sprintf(hit, "sick");
+    PrintFont(Left, 0, 0, hit);
 }

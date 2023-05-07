@@ -9,7 +9,8 @@
 #define FLAG_SEC_MUSTHIT (1 << 2)
 #define FLAG_SEC_ALT     (1 << 3)
 
-#define FLAG_NOTE_ISOPPONENT (1 << 2)
+#define FLAG_NOTE_HIT        (1 << 2)
+#define FLAG_NOTE_ISOPPONENT (1 << 3)
 
 struct [[gnu::packed]] Section
 {
@@ -90,10 +91,10 @@ int main(int argc, char *argv[])
             newnote.type = chart["song"]["notes"][i]["sectionNotes"][j][1]; //type
             newnote.sus = chart["song"]["notes"][i]["sectionNotes"][j][2]; //sustain length in ms
             //is note opponent's
-            if (sections[i].flag & FLAG_SEC_MUSTHIT && newnote.type < 4)
+            if (sections[i].flag & FLAG_SEC_MUSTHIT && newnote.type > 3)
                 newnote.flag |= FLAG_NOTE_ISOPPONENT;    
-            if (!(sections[i].flag & FLAG_SEC_MUSTHIT) && newnote.type > 3)
-                newnote.flag |= FLAG_NOTE_ISOPPONENT;
+            if (!(sections[i].flag & FLAG_SEC_MUSTHIT) && newnote.type < 4)
+                newnote.flag |= FLAG_NOTE_ISOPPONENT;    
 
             gamenotes.push_back(newnote);
         }
