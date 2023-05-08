@@ -2,7 +2,6 @@
 #include "animation.h"
 #include <stdlib.h>
 #include <stdio.h>
-#include "../screen.h"
 
 void AnimOBJECT_Init(Anim_OBJECT *obj, std::string path, std::string objname)
 {
@@ -20,15 +19,29 @@ void AnimOBJECT_Init(Anim_OBJECT *obj, std::string path, std::string objname)
     }
 }
 
-void AnimOBJECT_SetAnim(Anim_OBJECT *obj, int anim)
+void AnimOBJECT_SetAnim(Anim_OBJECT *obj, int anim, int mode)
 {
     ASSERTFUNC(obj, "object is null");   
 
-    obj->time = 0;
+    switch (mode) {
+        case 0:
+            obj->mustEnd = 0;
+            break;
+        case 1: 
+            obj->mustEnd = app->parser.curStep + 4; //used for gf
+            break;
+        case 2:
+            obj->mustEnd = app->parser.curStep + 8; //used for player or opponent
+            break;
+        default:
+            obj->mustEnd = 0;
+            break;
+    }
+    obj->mode = mode;
     obj->curframe = 0;
     obj->curanim = anim;
-    obj->size = obj->conf[anim].size()-1;
-    obj->speed = obj->conf[anim][0];
+    obj->speed = obj->conf[0][0];
+    obj->framecount = obj->conf[anim].size();
     obj->tick = true;
     obj->cananimate = true;
 }
@@ -39,16 +52,14 @@ void AnimOBJECT_Tick(Anim_OBJECT *obj)
 
     if (obj->tick && obj->cananimate)
     {
-        obj->time += obj->speed+app->deltatime;
-        int frame = (int)(obj->time / 100)+1;
-        if (obj->time > 0)
-            obj->curframe = obj->conf[obj->curanim][frame];
-        if (frame+1 > obj->size)
+        obj->tweenframe.setValue(obj->mustEnd, obj->speed);
+        if (obj->tweenframe.getValue()+1 > obj->framecount-1)
             obj->cananimate = false;
+        obj->curframe = obj->conf[obj->curanim][(int)obj->tweenframe.getValue() + 1];
     }
 }
 
-void AnimOBJECT_Draw(Anim_OBJECT *obj, float x, float y, float zoom)
+void AnimOBJECT_Draw(Anim_OBJECT *obj, float x, float y, bool linear, float angle, int alpha, float zoom)
 {
     if (obj->tick)
     {
@@ -67,6 +78,6 @@ void AnimOBJECT_Draw(Anim_OBJECT *obj, float x, float y, float zoom)
         ASSERTFUNC(obj->textures[obj->frames[obj->curframe].tex], "texture is null");   
 
         if (obj->visible)
-            DrawZoomG2DTex(obj->textures[obj->frames[obj->curframe].tex], &img, &disp, obj->linear, obj->angle, obj->alpha, zoom);
+            DrawZoomG2DTex(obj->textures[obj->frames[obj->curframe].tex], &img, &disp, linear, angle, alpha, zoom);
     }
 }

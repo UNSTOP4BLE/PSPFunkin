@@ -132,7 +132,6 @@ PlayStateScreen::~PlayStateScreen(void)
     delete opponent;
     delete gf;
 }
-    int lasthit = 0;
 
 void PlayStateScreen::updateInput(void)
 {
@@ -163,21 +162,11 @@ void PlayStateScreen::updateInput(void)
             app->parser.gamenotes[i].flag |= FLAG_NOTE_HIT; //note has been hit
             for (int j = 0; j < 4; j++) {
                 if (curNotey >= hitwindows[j][0] && curNotey <= hitwindows[j][1]) {
-                    lasthit = j;
+                    //j = rating;
                     break;
                 }
             }
         }
 
     }
-    char hit[24];
-    if (lasthit == 0)
-        sprintf(hit, "shit");
-    if (lasthit == 1)
-        sprintf(hit, "bad");
-    if (lasthit == 2)
-        sprintf(hit, "good");
-    if (lasthit == 3)
-        sprintf(hit, "sick");
-    PrintFont(Left, 0, 0, hit);
 }

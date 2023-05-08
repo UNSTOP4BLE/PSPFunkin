@@ -47,8 +47,10 @@ void PlayStateScreen::drawSustain(int note, float y, int type)
         }
 
         FRect disp = {(float)xpos, ypos + (i*clipheight), img.w, img.h};
-        if (app->parser.gamenotes[note].flag & FLAG_NOTE_ISOPPONENT && disp.y < sustain.y+img.h*2)
+        if (app->parser.gamenotes[note].flag & FLAG_NOTE_ISOPPONENT && disp.y < sustain.y+img.h*2) {
+          //  opponent->setAnim(app->parser.gamenotes[note].type+1);
             continue; //stop drawing opponents note if they were "hit"
+        }
         DrawFG2DTex(hud, &img, &disp, false, 0, 200);
     }
 }
@@ -89,7 +91,10 @@ void PlayStateScreen::drawNotes(void)
         if (app->parser.gamenotes[i].sus != 0) //check if the note is a sustain
             drawSustain(i, curNotey, type);
         if (app->parser.gamenotes[i].flag & FLAG_NOTE_ISOPPONENT && curNotey < note.y)
+        {
+            opponent->setAnim(app->parser.gamenotes[i].type+1);
             continue; //stop drawing opponents note if they were "hit"
+        }
         DrawFG2DTex(hud, &img, &disp, true, 0, 200);
     }
 }

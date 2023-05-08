@@ -252,7 +252,7 @@ typedef struct
     int h;            /**< Texture height, as seen when drawing. */
     float ratio;        /**< Width/height ratio. */
     bool swizzled;    /**< Is the texture swizzled ? */
-    g2dColor *data;  /**< Pointer to raw data. */
+    g2dColor *rawdata;  /**< Pointer to raw data. */
 } g2dTexture;
 
 /**

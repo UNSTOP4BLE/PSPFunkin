@@ -243,14 +243,14 @@ void g2dInit()
     sceGuInit();
     sceGuStart(GU_DIRECT, dlist);
 
-    sceGuDrawBuffer(GU_PSM_8888, g2d_draw_buffer.data, LINE_SIZE);
-    sceGuDispBuffer(G2D_SCR_W, G2D_SCR_H, g2d_disp_buffer.data, LINE_SIZE);
+    sceGuDrawBuffer(GU_PSM_8888, g2d_draw_buffer.rawdata, LINE_SIZE);
+    sceGuDispBuffer(G2D_SCR_W, G2D_SCR_H, g2d_disp_buffer.rawdata, LINE_SIZE);
     sceGuDepthBuffer((void*)(FRAMEBUFFER_SIZE*2), LINE_SIZE);
     sceGuOffset(2048-G2D_SCR_W/2, 2048-G2D_SCR_H/2);
     sceGuViewport(2048, 2048, G2D_SCR_W, G2D_SCR_H);
     
-    g2d_draw_buffer.data = (unsigned int*)vabsptr(g2d_draw_buffer.data);
-    g2d_disp_buffer.data = (unsigned int*)vabsptr(g2d_disp_buffer.data);
+    g2d_draw_buffer.rawdata = (unsigned int*)vabsptr(g2d_draw_buffer.rawdata);
+    g2d_disp_buffer.rawdata = (unsigned int*)vabsptr(g2d_disp_buffer.rawdata);
 
     sceGuDepthRange(65535, 0);
     sceGuClearDepth(65535);
@@ -590,7 +590,7 @@ void g2dEnd()
         // Load texture
         sceGuTexMode(GU_PSM_8888, 0, 0, rctx.tex->swizzled);
         sceGuTexImage(0, rctx.tex->tw, rctx.tex->th,
-                      rctx.tex->tw, rctx.tex->data);
+                      rctx.tex->tw, rctx.tex->rawdata);
     }
 
     switch (rctx.type)
@@ -644,8 +644,8 @@ void g2dFlip(g2dFlip_Mode mode)
     if (mode & G2D_VSYNC)
         sceDisplayWaitVblankStart();
 
-    g2d_disp_buffer.data = g2d_draw_buffer.data;
-    g2d_draw_buffer.data = (unsigned int*)vabsptr(sceGuSwapBuffers());
+    g2d_disp_buffer.rawdata = g2d_draw_buffer.rawdata;
+    g2d_draw_buffer.rawdata = (unsigned int*)vabsptr(sceGuSwapBuffers());
 
     start = false;
 }
@@ -1163,14 +1163,14 @@ g2dTexture*g2dTexCreate(int w, int h)
     tex->ratio = (float)w / h;
     tex->swizzled = false;
 
-    tex->data = (unsigned int*)Mem::pspf_malloc(tex->tw * tex->th * sizeof(g2dColor));
-    if (tex->data == NULL)
+    tex->rawdata = (unsigned int*)Mem::pspf_malloc(tex->tw * tex->th * sizeof(g2dColor));
+    if (tex->rawdata == NULL)
     {
         Mem::pspf_free(tex);
         return NULL;
     }
 
-    memset(tex->data, 0, tex->tw * tex->th * sizeof(g2dColor));
+    memset(tex->rawdata, 0, tex->tw * tex->th * sizeof(g2dColor));
 
     return tex;
 }
@@ -1183,7 +1183,7 @@ void g2dTexFree(g2dTexture **tex)
     if (*tex == NULL)
         return;
 
-    Mem::pspf_free((*tex)->data);
+    Mem::pspf_free((*tex)->rawdata);
     Mem::pspf_free((*tex));
 
     *tex = NULL;
@@ -1228,7 +1228,7 @@ g2dTexture* _g2dTexLoadPNG(FILE *fp)
         png_read_row(png_ptr, (u8*) line, NULL);
         
         for (x = 0; x < width; x++)
-            tex->data[x + y*tex->tw] = line[x];
+            tex->rawdata[x + y*tex->tw] = line[x];
     }
 
     Mem::pspf_free(line);
@@ -1275,7 +1275,7 @@ g2dTexture* _g2dTexLoadJPEG(FILE *fp)
                 g2dColor gray = line[x];
                 g2dColor c = gray | (gray << 8) | (gray << 16) | 0xff000000;
 
-                tex->data[x + tex->tw * y] = c;
+                tex->rawdata[x + tex->tw * y] = c;
             }
         }
     }
@@ -1298,7 +1298,7 @@ g2dTexture* _g2dTexLoadJPEG(FILE *fp)
                 c |= (*(pline++)) << 8;
                 c |= (*(pline++)) << 16;
 
-                tex->data[x + tex->tw * y] = c | 0xff000000;
+                tex->rawdata[x + tex->tw * y] = c | 0xff000000;
             }
         }
     }
@@ -1343,15 +1343,15 @@ g2dTexture* g2dTexLoad(const char* path, g2dTex_Mode mode)
     if ((mode & G2D_SWIZZLE) && (tex->w >= 16 || tex->h >= 16))
     {
         u8 *tmp = (unsigned char*)Mem::pspf_malloc(tex->tw*tex->th*PIXEL_SIZE);
-        _swizzle(tmp, (u8*)tex->data, tex->tw*PIXEL_SIZE, tex->th);
-        Mem::pspf_free(tex->data);
-        tex->data = (g2dColor*)tmp;
+        _swizzle(tmp, (u8*)tex->rawdata, tex->tw*PIXEL_SIZE, tex->th);
+        Mem::pspf_free(tex->rawdata);
+        tex->rawdata = (g2dColor*)tmp;
         tex->swizzled = true;
     }
     else
         tex->swizzled = false;
 
-    sceKernelDcacheWritebackRange(tex->data, tex->tw*tex->th*PIXEL_SIZE);
+    sceKernelDcacheWritebackRange(tex->rawdata, tex->tw*tex->th*PIXEL_SIZE);
 
     return tex;
 }

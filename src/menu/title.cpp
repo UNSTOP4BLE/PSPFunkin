@@ -52,12 +52,12 @@ void TitleScreen::update(void)
     app->parser.tickStep(freaky);
     Bold_Tick(); //animate bold font
 
-    //if (app->parser.justStep && !(app->parser.curStep % 4))
-    //{
-    //    gfBop = !gfBop;
-   //     AnimOBJECT_SetAnim(&titleGF, gfBop);
-    //}
-    //AnimOBJECT_Tick(&titleGF);
+    if (app->parser.justStep && !(app->parser.curStep % 4))
+    {
+        gfBop = !gfBop;
+        AnimOBJECT_SetAnim(&titleGF, gfBop, 2);
+    }
+    AnimOBJECT_Tick(&titleGF);
     if (Pad_Pressed(PSP_CTRL_CROSS | PSP_CTRL_START))
     {
         if (state != Title)
@@ -121,7 +121,7 @@ void TitleScreen::draw(void)
             state = Title;
             break;
         case Title:
-            AnimOBJECT_Draw(&titleGF, 200, 200, 1);
+            AnimOBJECT_Draw(&titleGF, 200, 200, false, 0, 255, 1);
             break;
     }
 }
