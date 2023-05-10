@@ -15,10 +15,10 @@ class Anim_OBJECT {
 public:
     float angle;
     int mode;
-    int speed;
     int framecount;
     int curanim;
     int curframe;
+    Tween<float, LinearEasing> tweenstepframe;
     Tween<float, LinearEasing> tweenframe;
     int mustEnd;
     bool visible;
@@ -27,6 +27,7 @@ public:
     bool cananimate;
     std::vector<AnimFrames> frames;
     std::vector<std::vector<int>> conf;
+    std::vector<float> speed;
     std::vector<g2dTexture*> textures;
 };
 

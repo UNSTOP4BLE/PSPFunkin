@@ -54,8 +54,10 @@ void TitleScreen::update(void)
 
     if (app->parser.justStep && !(app->parser.curStep % 4))
     {
-        gfBop = !gfBop;
-        AnimOBJECT_SetAnim(&titleGF, gfBop, 2);
+        if (titleGF.curanim == 1)
+            AnimOBJECT_SetAnim(&titleGF, 0, 1);
+        else
+            AnimOBJECT_SetAnim(&titleGF, 1, 1);
     }
     AnimOBJECT_Tick(&titleGF);
     if (Pad_Pressed(PSP_CTRL_CROSS | PSP_CTRL_START))
@@ -121,7 +123,7 @@ void TitleScreen::draw(void)
             state = Title;
             break;
         case Title:
-            AnimOBJECT_Draw(&titleGF, 200, 200, false, 0, 255, 1);
+            AnimOBJECT_Draw(&titleGF, 200, 200, false, 0, 255, 1.0f);
             break;
     }
 }

@@ -22,7 +22,6 @@ public:
     ~TitleScreen(void);
 private:
     g2dTexture *ng;
-    bool gfBop;
     Anim_OBJECT titleGF;
     std::string funnymessage[2];
     Audio::StreamedFile *freaky; 

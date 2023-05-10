@@ -16,12 +16,12 @@ void MainMenuScreen::update(void)
     else if (Pad_Pressed(PSP_CTRL_UP))
     {
         selection -= 1;
-        backgroundy.setValue(5 * selection, 10);
+//        backgroundy.setValue(5 * selection, 10);
     }
     else if (Pad_Pressed(PSP_CTRL_DOWN))    
     {
         selection += 1;
-        backgroundy.setValue(5 * selection, 10);
+  //      backgroundy.setValue(5 * selection, 10);
     }
 }
 

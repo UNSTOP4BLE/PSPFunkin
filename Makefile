@@ -16,7 +16,6 @@ OBJS = src/main.o \
        src/psp/audio_adpcm_decoder.o \
        src/psp/pad.o \
        src/psp/font.o \
-       src/psp/tween.o \
        src/psp/glib2d.o 
 
 LIBS = -ljsoncpp -lstdc++ -lpspaudio -lvorbisfile -lvorbis -logg -lSDL2  -lpng -lz -lpspgum -lpspgu -lm -lpspvram -lGL -lpspvfpu -lpsphprm -lxmp 

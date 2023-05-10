@@ -34,20 +34,3 @@ std::vector<AnimFrames> readFramesFromJson(const char *filename)
     }
     return frames;
 }
-
-std::vector<std::vector<int>> readConfFromJson(const char *filename)
-{
-    //load the json file 
-    Json::Value data;
-    loadJson(filename, &data);
-
-    //push config data to the vector array
-    std::vector<std::vector<int>> conf(data["config"].size()); 
-
-    for (int i = 0; i < (int)data["config"].size(); i++)
-    {
-        for (int j = 0; j < (int)data["config"][i].size(); j++)
-            conf[i].push_back(data["config"][i][j].asInt());
-    }
-    return conf;
-}

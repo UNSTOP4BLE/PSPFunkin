@@ -5,12 +5,32 @@
 
 void AnimOBJECT_Init(Anim_OBJECT *obj, std::string path, std::string objname)
 {
+    obj->angle = 0;
+    obj->mode = 0;
+    obj->framecount = 0;
+    obj->curanim = 0;
+    obj->curframe = 0;
+    obj->tweenstepframe = 0;
+    obj->tweenframe = 0;
+    obj->mustEnd = 0;
+    obj->visible = true;
+    obj->flipped = false;
+    obj->tick = false;
+    obj->cananimate = false;
     std::string _path;
+
     _path = path + objname;
-    obj->frames = readFramesFromJson(_path.c_str());
-    obj->conf = readConfFromJson(_path.c_str());
     Json::Value data;
     loadJson(_path.c_str(), &data);
+
+    obj->conf.resize(data["config"].size());
+    for (int i = 0; i < (int)data["config"].size(); i++)
+    {
+        obj->speed.push_back(data["config"][i]["speed"].asInt());
+        for (int j = 1; j < (int)data["config"][i]["frames"].size(); j++)
+            obj->conf[i].push_back(data["config"][i]["frames"][j].asInt());
+    }
+    obj->frames = readFramesFromJson(_path.c_str());
     obj->textures.resize(data["textures"].size());
     for (int i = 0; i < (int)data["textures"].size(); i++)
     {
@@ -28,19 +48,19 @@ void AnimOBJECT_SetAnim(Anim_OBJECT *obj, int anim, int mode)
             obj->mustEnd = 0;
             break;
         case 1: 
-            obj->mustEnd = app->parser.curStep + 4; //used for gf
+            obj->mustEnd = 4; //used for gf
             break;
         case 2:
-            obj->mustEnd = app->parser.curStep + 8; //used for player or opponent
+            obj->mustEnd = 8; //used for player or opponent
             break;
         default:
             obj->mustEnd = 0;
             break;
     }
+    obj->tweenframe = 0;
     obj->mode = mode;
     obj->curframe = 0;
     obj->curanim = anim;
-    obj->speed = obj->conf[0][0];
     obj->framecount = obj->conf[anim].size();
     obj->tick = true;
     obj->cananimate = true;
@@ -52,10 +72,14 @@ void AnimOBJECT_Tick(Anim_OBJECT *obj)
 
     if (obj->tick && obj->cananimate)
     {
-        obj->tweenframe.setValue(obj->mustEnd, obj->speed);
-        if (obj->tweenframe.getValue()+1 > obj->framecount-1)
+        obj->tweenstepframe.setValue(obj->mustEnd, obj->speed[obj->curanim], app->parser.curStep);
+
+        if ((int)obj->tweenframe.getValue()+1 > obj->framecount) {
             obj->cananimate = false;
-        obj->curframe = obj->conf[obj->curanim][(int)obj->tweenframe.getValue() + 1];
+            return;
+        }
+        obj->tweenframe.setValue(obj->framecount, obj->speed[obj->curanim], obj->tweenstepframe.getValue());
+        obj->curframe = obj->conf[obj->curanim][(int)obj->tweenframe.getValue()];
     }
 }
 

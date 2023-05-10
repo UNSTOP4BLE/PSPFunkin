@@ -20,14 +20,10 @@ public:
 };
 
 /* ...other easing functions... */
-
-int getTweenTime(void);
-void setTweenTime(int t);
-
 template<typename T, typename E> class Tween {
 private:
     T     _base, _delta;
-    float _endTime, _timeScale;
+    float _endTime, _timeScale, _time;
 
 public:
     inline Tween(void) {
@@ -38,25 +34,26 @@ public:
     }
 
     inline T getValue(void) {
-        float time = _endTime - getTweenTime();
+        float time = _endTime - _time;
         if (time <= 0)
             return _base + _delta;
 
         return _base + _delta * E::apply(1.0 - time * _timeScale);
     }
     inline bool isDone(void) {
-        return (getTweenTime() <= _endTime);
+        return (_time <= _endTime);
     }
 
-    inline void setValue(T start, T target, float duration) {
+    inline void setValue(T start, T target, float duration, float time) {
         _base  = start;
+        _time  = time;
         _delta = target - start;
 
-        _endTime   = getTweenTime() + duration;
+        _endTime   = _time + duration;
         _timeScale = 1.0 / duration;
     }
-    inline void setValue(T target, float duration) {
-        setValue(getValue(), target, duration);
+    inline void setValue(T target, float duration, float time) {
+        setValue(getValue(), target, duration, time);
     }
     inline void setValue(T target) {
         _base    = target;
