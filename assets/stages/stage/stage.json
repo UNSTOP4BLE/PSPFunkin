@@ -1,0 +1,18 @@
+{
+   "gamezoom": 1.0,
+
+   "textures": [
+   		{"def": "curtains", "path": "curtains.png"},
+   		{"def": "stage", "path": "stagefront.png"},
+   		{"def": "stageback", "path": "stageback.png"}
+   ],
+
+   "objects": {
+        "foreground": [],
+        "middleground": [],
+        "background": [
+            {"def": "curtains", "img": [0, 0, 512, 512], "disp": [0, 0, 0, 0], "scrollfactor": 1.0},
+            {"def": "stageback", "img": [0, 0, 512, 512], "disp": [0, 0, 0, 0], "scrollfactor": 1.0}
+        ]
+   }
+}
