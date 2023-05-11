@@ -14,10 +14,10 @@ struct AnimFrames
 class Anim_OBJECT {
 public:
     float angle;
-    int mode;
     int framecount;
     int curanim;
     int curframe;
+    int time;
     Tween<float, LinearEasing> tweenstepframe;
     Tween<float, LinearEasing> tweenframe;
     int mustEnd;
