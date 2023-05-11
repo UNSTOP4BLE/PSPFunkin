@@ -39,26 +39,13 @@ void AnimOBJECT_Init(Anim_OBJECT *obj, std::string path, std::string objname)
     }
 }
 
-void AnimOBJECT_SetAnim(Anim_OBJECT *obj, int anim, int mode)
+void AnimOBJECT_SetAnim(Anim_OBJECT *obj, int anim, int end)
 {
     ASSERTFUNC(obj, "object is null");   
 
-    switch (mode) {
-        case 0:
-            obj->mustEnd = 0;
-            break;
-        case 1: 
-            obj->mustEnd = 4; //used for gf
-            break;
-        case 2:
-            obj->mustEnd = 8; //used for player or opponent
-            break;
-        default:
-            obj->mustEnd = 0;
-            break;
-    }
+    obj->mustEnd = end;
+
     obj->tweenframe = 0;
-    obj->mode = mode;
     obj->curframe = 0;
     obj->curanim = anim;
     obj->framecount = obj->conf[anim].size();
@@ -72,14 +59,18 @@ void AnimOBJECT_Tick(Anim_OBJECT *obj)
 
     if (obj->tick && obj->cananimate)
     {
-        obj->tweenstepframe.setValue(obj->mustEnd, obj->speed[obj->curanim], app->parser.curStep);
+        switch (obj->end)
+        {
+            case -1: // undefined end, end whenever the animation is over
+                obj->tweenstepframe.setValue(obj->framecount, obj->speed[obj->curanim], app->parser.curStep);
 
-        if ((int)obj->tweenframe.getValue()+1 > obj->framecount) {
-            obj->cananimate = false;
-            return;
+                if ((int)obj->tweenframe.getValue()+1 > obj->framecount) {
+                    obj->cananimate = false;
+                    return;
+                }
+                obj->curframe = obj->conf[obj->curanim][(int)obj->tweenframe.getValue()];
+        
         }
-        obj->tweenframe.setValue(obj->framecount, obj->speed[obj->curanim], obj->tweenstepframe.getValue());
-        obj->curframe = obj->conf[obj->curanim][(int)obj->tweenframe.getValue()];
     }
 }
 
