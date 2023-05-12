@@ -6,10 +6,10 @@
 void AnimOBJECT_Init(Anim_OBJECT *obj, std::string path, std::string objname)
 {
     obj->angle = 0;
-    obj->mode = 0;
     obj->framecount = 0;
     obj->curanim = 0;
     obj->curframe = 0;
+    obj->time = 0;  
     obj->tweenstepframe = 0;
     obj->tweenframe = 0;
     obj->mustEnd = 0;
@@ -47,6 +47,7 @@ void AnimOBJECT_SetAnim(Anim_OBJECT *obj, int anim, int end)
 
     obj->tweenframe = 0;
     obj->curframe = 0;
+    obj->time = 0;
     obj->curanim = anim;
     obj->framecount = obj->conf[anim].size();
     obj->tick = true;
@@ -62,15 +63,19 @@ void AnimOBJECT_Tick(Anim_OBJECT *obj)
         switch (obj->mustEnd)
         {
             case -1: // undefined end, end whenever the animation is over
-                obj->tweenstepframe.setValue(obj->framecount, obj->speed[obj->curanim], app->parser.curStep);
+                obj->tweenframe.setValue(obj->framecount, obj->speed[obj->curanim], app->parser.curStep); // maybe dont make synced to step later on? i will see
+                break;
+            default: // animation in steps or beats, 4 step = 1 beat
+                obj->time += obj->speed[obj->curanim] - app->deltatime;
+                break;
 
-                if ((int)obj->tweenframe.getValue()+1 > obj->framecount) {
-                    obj->cananimate = false;
-                    return;
-                }
-                obj->curframe = obj->conf[obj->curanim][(int)obj->tweenframe.getValue()];
-        
+        } 
+
+        if ((int)obj->tweenframe.getValue()+1 > obj->framecount) {
+            obj->cananimate = false;
+            return; 
         }
+        obj->curframe = obj->conf[obj->curanim][(int)obj->tweenframe.getValue()];
     }
 }
 
