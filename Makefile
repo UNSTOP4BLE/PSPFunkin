@@ -5,6 +5,7 @@ OBJS = src/main.o \
        src/menu/title.o \
        src/menu/mainmenu.o \
        src/playstate.o \
+       src/stage.o \
        src/character.o \
        src/note.o \
        src/chartparser.o \

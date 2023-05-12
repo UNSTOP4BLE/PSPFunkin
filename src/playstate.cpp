@@ -31,6 +31,10 @@ PlayStateScreen::PlayStateScreen(void)
     sprintf(_path, "assets/characters/%s/", _config["gf"].asString().c_str());
     gf = new Character(_path, _config["gf"].asString() + ".json", _config["gfpos"][0].asFloat(), _config["gfpos"][1].asFloat());
 
+    //stage
+    sprintf(_path, "assets/stages/%s/%s.json", _config["back"].asString().c_str(), _config["back"].asString().c_str()); 
+    curstage.load(_path);
+
     //load game assets
     sprintf(_path, "assets/songs/%s/%s.bin", song, song); //todo implement difficulty
     app->parser.loadChart(_path);
@@ -44,7 +48,8 @@ PlayStateScreen::PlayStateScreen(void)
     hud = g2dTexLoad("assets/hud.png", G2D_SWIZZLE);
     camera.camx = 0;
     camera.camy = 0;
-    camera.zoom = 1; 
+    camera.zoom = 1;
+
     //set note positions
     notePos.player[0] = {294,  14}; 
     notePos.player[1] = {334,  14}; 
@@ -123,14 +128,16 @@ void PlayStateScreen::draw(void)
 
 
 }
+
 PlayStateScreen::~PlayStateScreen(void)
 {
-    g2dTexFree(&hud);
-    delete inst;
-    delete vocals;
     delete player;
     delete opponent;
     delete gf;
+    curstage.free();
+    g2dTexFree(&hud);
+    delete inst;
+    delete vocals;
 }
 
 void PlayStateScreen::updateInput(void)

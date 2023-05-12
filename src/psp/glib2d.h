@@ -48,7 +48,6 @@
 
 #ifndef GLIB2D_H
 #define GLIB2D_H
-#include "../main.h"
 #include <stdbool.h>
 
 /**

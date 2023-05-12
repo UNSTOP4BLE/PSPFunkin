@@ -59,7 +59,7 @@ void AnimOBJECT_Tick(Anim_OBJECT *obj)
 
     if (obj->tick && obj->cananimate)
     {
-        switch (obj->end)
+        switch (obj->mustEnd)
         {
             case -1: // undefined end, end whenever the animation is over
                 obj->tweenstepframe.setValue(obj->framecount, obj->speed[obj->curanim], app->parser.curStep);

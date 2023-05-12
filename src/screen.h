@@ -6,6 +6,8 @@
 
 #include "character.h"
 #include "chartparser.h"
+#include "stage.h"
+
 class Screen {
 public:
     inline Screen(void) {}
@@ -73,6 +75,7 @@ private:
     Character *player;
     Character *opponent;
     Character *gf;
+    Stage curstage;
     g2dTexture *hud;
     Audio::StreamedFile *inst; 
     Audio::StreamedFile *vocals; 
