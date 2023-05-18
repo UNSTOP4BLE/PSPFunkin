@@ -1,7 +1,5 @@
 {
     "textures": [
-         {"def": "curtains", "path": "curtains.png"},
-         {"def": "stage", "path": "stagefront.png"},
          {"def": "stageback", "path": "stageback.png"}
     ],
 
@@ -9,7 +7,7 @@
          "foreground":[],
          "middleground":[],
          "background":[
-             {"def": "curtains",  "img": [0, 0, 512, 512], "disp": [0, 0, 0, 0], "scrollfactor": 1.0, "angle": 0, "alpha": 255},
+             {"def": "stageback",  "img": [0, 0, 512, 512], "disp": [0, 0, 0, 0], "scrollfactor": 1.0, "angle": 0, "alpha": 255},
              {"def": "stageback", "img": [0, 0, 512, 512], "disp": [0, 0, 0, 0], "scrollfactor": 1.0, "angle": 0, "alpha": 255}
          ]
     }

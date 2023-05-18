@@ -75,7 +75,7 @@ private:
     Character *player;
     Character *opponent;
     Character *gf;
-    Stage curstage;
+ //   Stage curstage;
     g2dTexture *hud;
     Audio::StreamedFile *inst; 
     Audio::StreamedFile *vocals; 

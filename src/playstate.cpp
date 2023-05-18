@@ -17,12 +17,12 @@ PlayStateScreen::PlayStateScreen(void)
     loadJson(_path, &_config);
 
     //load characters
-//    sprintf(_path, "assets/characters/%s/", _config["player"].asString().c_str());
+    
+    //player
     sprintf(_path, "assets/characters/%s/", _config["opponent"].asString().c_str());
     player = new Character(_path, _config["opponent"].asString() + ".json", _config["playerpos"][0].asFloat(), _config["playerpos"][1].asFloat());
     player->setFocus(_config["playerpos"][2].asFloat(), _config["playerpos"][3].asFloat(),  _config["playerpos"][4].asFloat());
 
-    //player = new Character(_path);
     //opponent
     sprintf(_path, "assets/characters/%s/", _config["opponent"].asString().c_str());
     opponent = new Character(_path, _config["opponent"].asString() + ".json", _config["opponentpos"][0].asFloat(), _config["opponentpos"][1].asFloat());
@@ -32,8 +32,8 @@ PlayStateScreen::PlayStateScreen(void)
     gf = new Character(_path, _config["gf"].asString() + ".json", _config["gfpos"][0].asFloat(), _config["gfpos"][1].asFloat());
 
     //stage
-    sprintf(_path, "assets/stages/%s/%s.json", _config["back"].asString().c_str(), _config["back"].asString().c_str()); 
-    curstage.load(_path);
+ //   sprintf(_path, "assets/stages/%s/%s.json", _config["back"].asString().c_str(), _config["back"].asString().c_str()); 
+    //curstage.load(_path);
 
     //load game assets
     sprintf(_path, "assets/songs/%s/%s.bin", song, song); //todo implement difficulty
@@ -110,20 +110,20 @@ void PlayStateScreen::update(void)
     }
 
     //game.player->tick();
-    opponent->tick();
-    gf->tick();
+//    opponent->tick();
+  //  gf->tick();
 
 }
 
 void PlayStateScreen::draw(void)
 {
-    opponent->draw(camera.camx, camera.camy, camera.zoom);
-    gf->draw(camera.camx, camera.camy, camera.zoom);
+  //  opponent->draw(camera.camx, camera.camy, camera.zoom);
+//    gf->draw(camera.camx, camera.camy, camera.zoom);
 
     drawDummyNotes();
     drawNotes();
   // PrintFont(Left, 0, 40, "mgc %s\nspd%f\nbpm%f\nscnt%d\nncnt%d", app->parser.chartdata.magic, app->parser.chartdata.speed, app->parser.chartdata.bpm, app->parser.chartdata.sectioncount, app->parser.chartdata.notecount);
-    PrintFont(Left, 0, 40, "zoom %f opp %f plr %f", camera.zoom, opponent->camzoom, player->camzoom);
+   // PrintFont(Left, 0, 40, "zoom %f opp %f plr %f", camera.zoom, opponent->camzoom, player->camzoom);
    //PrintFont(Left, 0, 40, "note %d, sec %d, data %d", sizeof(Note), sizeof(Section), sizeof(ChartData));
 
 
@@ -134,7 +134,7 @@ PlayStateScreen::~PlayStateScreen(void)
     delete player;
     delete opponent;
     delete gf;
-    curstage.free();
+ //   curstage.free();
     g2dTexFree(&hud);
     delete inst;
     delete vocals;
