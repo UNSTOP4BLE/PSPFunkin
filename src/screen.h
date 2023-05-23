@@ -54,6 +54,17 @@ struct NotePos
     Pos opponent[4];
 };
 
+class Rating
+{
+public:
+    std::string name;
+    Rect img;
+    int hitWindow; //ms
+    float ratingMod;
+    int score;
+    bool noteSplash = true;
+};
+
 class PlayStateScreen : public Screen {
 public:
     PlayStateScreen(void);
@@ -67,18 +78,21 @@ private:
         void update(float ox, float oy, float oz, float px, float py, float pz);
         float camx, camy;
         float zoom;
-    } camera;
+    } gamecam, hudcam;
     void drawDummyNotes(void);
     void drawSustain(int note, float y, int type);
     void drawNotes(void);
+    void increaseScore(int note);
+    Rating judgeNote(float diff);
     void updateInput(void);
     Character *player;
     Character *opponent;
     Character *gf;
- //   Stage curstage;
+    Stage curstage;
     g2dTexture *hud;
     Audio::StreamedFile *inst; 
     Audio::StreamedFile *vocals; 
+    std::vector<Rating> ratingData;
     bool checkPad[4];
     bool checkPadHeld[4];
     NotePos notePos;

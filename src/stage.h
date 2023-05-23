@@ -23,7 +23,7 @@ public:
 
 class Stage {
 public:
-    void load(std::string path);
+    void load(const char *jpath, std::string stage);
     void tick(float cx, float cy);
     void drawObjects(std::vector<StageObject> &objs, float camzoom);
     void free(void);

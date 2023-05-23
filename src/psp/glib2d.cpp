@@ -1421,15 +1421,15 @@ void DrawZoomG2DTex(g2dTexture* tex, Rect *Img, FRect *Disp, bool linear, float 
 {
     ASSERTFUNC(tex, "texture is NULL");
 
-    if (Disp->x+Disp->w >= 0 && Disp->x <= G2D_SCR_W && Disp->y+Disp->h >= 0 && Disp->y <= G2D_SCR_H)
+    float x = (Disp->x - G2D_SCR_W/2) * zoom + G2D_SCR_W/2;
+    float y = (Disp->y - G2D_SCR_H/2) * zoom + G2D_SCR_H/2;
+    float w = Disp->w * zoom;
+    float h = Disp->h * zoom;
+    if (x+w >= 0 && x <= G2D_SCR_W && y+h >= 0 && y <= G2D_SCR_H)
     {
         g2dBeginRects(tex);
         g2dSetCropXY(Img->x, Img->y);
         g2dSetCropWH(Img->w, Img->h);
-        float x = Disp->x * zoom + G2D_SCR_W/2;
-        float y = Disp->y * zoom + G2D_SCR_H/2;
-        float w = Disp->w * zoom;
-        float h = Disp->h * zoom;
         g2dSetCoordXY(x, y);
         g2dSetScaleWH(w, h);
         g2dSetTexLinear(linear);

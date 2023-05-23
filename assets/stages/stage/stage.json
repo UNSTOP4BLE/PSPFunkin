@@ -1,14 +1,16 @@
 {
     "textures": [
-         {"def": "stageback", "path": "stageback.png"}
+        {"def": "stageback", "path": "stageback.png"},
+        {"def": "stagefront", "path": "stagefront.png"}
     ],
 
     "objects": {
-         "foreground":[],
-         "middleground":[],
-         "background":[
-             {"def": "stageback",  "img": [0, 0, 512, 512], "disp": [0, 0, 0, 0], "scrollfactor": 1.0, "angle": 0, "alpha": 255},
-             {"def": "stageback", "img": [0, 0, 512, 512], "disp": [0, 0, 0, 0], "scrollfactor": 1.0, "angle": 0, "alpha": 255}
-         ]
+        "foreground":[],
+        "middleground":[],
+        "background":[
+            {"def": "stageback",  "img": [  0,   0, 512, 350], "disp": [0, 0, 640, 350], "scrollfactor": 1.0, "angle": 0, "alpha": 255}
+      //      {"def": "stagefront", "img": [  0,   0, 512, 273], "disp": [0, 0, 640, 273], "scrollfactor": 1.0, "angle": 0, "alpha": 255} //curtains
+          //  {"def": "stagefront", "img": [  0, 274, 512, 139], "disp": [0, 0, 640, 145], "scrollfactor": 1.0, "angle": 0, "alpha": 255}  //stage front  
+        ]
     }
 }

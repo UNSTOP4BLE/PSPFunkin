@@ -9,11 +9,11 @@ void PlayStateScreen::drawDummyNotes(void)
         Rect img = {1 + (40*i), 1, 39, 39};
         for (int j = 0; j < 8; j++)
         {
-            Rect disp = {notePos.player[i].x, notePos.player[i].y, 39, 39}; 
-            DrawG2DTex(hud, &img, &disp, true, 0, 200);
+            FRect disp = {(float)notePos.player[i].x - hudcam.camx, (float)notePos.player[i].y - hudcam.camy, 39, 39}; 
+            DrawZoomG2DTex(hud, &img, &disp, true, 0, 200, hudcam.zoom);
 
-            disp = {notePos.opponent[i].x, notePos.opponent[i].y, 39, 39};  
-            DrawG2DTex(hud, &img, &disp, true, 0, 200);
+            disp = {(float)notePos.opponent[i].x - hudcam.camx, (float)notePos.opponent[i].y - hudcam.camy, 39, 39};  
+            DrawZoomG2DTex(hud, &img, &disp, true, 0, 200, hudcam.zoom);
         }
     }
 }
@@ -46,12 +46,12 @@ void PlayStateScreen::drawSustain(int note, float y, int type)
             img.h = 16;
         }
 
-        FRect disp = {(float)xpos, ypos + (i*clipheight), img.w, img.h};
+        FRect disp = {(float)xpos - hudcam.camx, ypos + (i*clipheight) - hudcam.camy, img.w, img.h};
         if (app->parser.gamenotes[note].flag & FLAG_NOTE_ISOPPONENT && disp.y < sustain.y+img.h*2) {
           //  opponent->setAnim(app->parser.gamenotes[note].type+1);
             continue; //stop drawing opponents note if they were "hit"
         }
-        DrawFG2DTex(hud, &img, &disp, false, 0, 200);
+        DrawZoomG2DTex(hud, &img, &disp, false, 0, 200, hudcam.zoom);
     }
 }
 
@@ -82,19 +82,19 @@ void PlayStateScreen::drawNotes(void)
         };
     
         FRect disp = {
-            (float)curNotex,
-            curNotey,
+            (float)curNotex - hudcam.camx,
+            curNotey - hudcam.camy,
             img.w,
             img.h   
         };
 
         if (app->parser.gamenotes[i].sus != 0) //check if the note is a sustain
             drawSustain(i, curNotey, type);
-        if (app->parser.gamenotes[i].flag & FLAG_NOTE_ISOPPONENT && curNotey < note.y)
+        if (app->parser.gamenotes[i].flag & FLAG_NOTE_ISOPPONENT && disp.y < note.y)
         {
-            opponent->setAnim(app->parser.gamenotes[i].type+1);
+          //  opponent->setAnim(app->parser.gamenotes[i].type+1);
             continue; //stop drawing opponents note if they were "hit"
         }
-        DrawFG2DTex(hud, &img, &disp, true, 0, 200);
+        DrawZoomG2DTex(hud, &img, &disp, false, 0, 200, hudcam.zoom);
     }
 }
