@@ -12,9 +12,9 @@ Character::Character(std::string path, std::string objstr, float _x, float _y) {
     setPos(_x, _y);
     setIcon(chardata["icon"].asInt());
     type = chardata["type"].asString();
-    obj = new Anim_OBJECT();
-    AnimOBJECT_Init(obj, path, objstr);
-    setAnim(0);
+  //  obj = new Anim_OBJECT();
+   // AnimOBJECT_Init(obj, path, objstr);
+    ///setAnim(0);
 }
 
 void Character::setPos(float _x, float _y) {

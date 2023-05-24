@@ -10,7 +10,7 @@ public:
     Rect img;
     Rect initialdisp;
     FRect disp;
-    float scrollfactor;
+    float scrollfactor[2];
     float angle;
     int alpha;
 };

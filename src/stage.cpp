@@ -13,8 +13,13 @@ void Stage::load(const char *jpath, std::string stage) {
     //textures
     textures.resize((int)data["textures"].size());
     for (int i = 0; i < (int)data["textures"].size(); i++) {
+        if (data["textures"].size() == 0)
+            return;
+        textures[i].def = "";
         textures[i].def = data["textures"][i]["def"].asString();
         std::string texpath = "assets/stages/" + stage + "/" + data["textures"][i]["path"].asString();
+        textures[i].texture = nullptr;
+        textures[i].texture = NULL;
         textures[i].texture = g2dTexLoad(texpath.c_str(), G2D_SWIZZLE); //error
     }
 
@@ -32,6 +37,8 @@ void Stage::tick(float cx, float cy) {
 
 void Stage::free(void) {
     for (int i = 0; i < (int)textures.size(); i++) {
+        if (textures.size() == 0)
+            return;
         g2dTexFree(&textures[i].texture);
     }
 }
@@ -39,10 +46,10 @@ void Stage::free(void) {
 void Stage::drawObjects(std::vector<StageObject> &objs, float camzoom) {
     for (int i = 0; i < (int)objs.size(); i++) {
         if (objs.size() == 0)
-            break;
+            return;
         int tex = -1;
         //check for correct texture
-        for (int j = 0; j < (int)textures.size(); i++) {
+        for (int j = 0; j < (int)textures.size(); j++) {
             if (objs[i].def == textures[j].def) {
                 tex = j;
                 break;
@@ -58,7 +65,7 @@ static void parseObjects(std::vector<StageObject> &objs, std::string gnd, Json::
     objs.resize(data["objects"][gnd].size());   
     for (int i = 0; i < (int)data["objects"][gnd].size(); i++) {
         if (data["objects"][gnd].size() == 0)
-            break;
+            return;
         objs[i].def = data["objects"][gnd][i]["def"].asString();
 
         //parse img
@@ -73,7 +80,8 @@ static void parseObjects(std::vector<StageObject> &objs, std::string gnd, Json::
         objs[i].disp.h = objs[i].initialdisp.h = data["objects"][gnd][i]["disp"][3].asInt();
 
         //parse other
-        objs[i].scrollfactor = data["objects"][gnd][i]["scrollfactor"].asFloat();
+        objs[i].scrollfactor[0] = data["objects"][gnd][i]["scrollfactor"][0].asFloat();
+        objs[i].scrollfactor[1] = data["objects"][gnd][i]["scrollfactor"][1].asFloat();
         objs[i].angle = data["objects"][gnd][i]["angle"].asInt();
         objs[i].alpha = data["objects"][gnd][i]["alpha"].asInt();
     }
@@ -82,9 +90,9 @@ static void parseObjects(std::vector<StageObject> &objs, std::string gnd, Json::
 static void tickObjects(std::vector<StageObject> &objs, float cx, float cy) {
     for (int i = 0; i < (int)objs.size(); i++) {
         if (objs.size() == 0)
-            break;
+            return;
 
-        objs[i].disp.x = objs[i].initialdisp.x - (cx * objs[i].scrollfactor);
-        objs[i].disp.y = objs[i].initialdisp.y - (cy * objs[i].scrollfactor);
+        objs[i].disp.x = objs[i].initialdisp.x - (cx * objs[i].scrollfactor[0]);
+        objs[i].disp.y = objs[i].initialdisp.y - (cy * objs[i].scrollfactor[1]);
     }
 }

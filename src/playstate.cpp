@@ -27,17 +27,18 @@ PlayStateScreen::PlayStateScreen(void)
     //load characters
 
     //player
- //   sprintf(_path, "assets/characters/%s/", _config["opponent"].asString().c_str());
-  //  player = new Character(_path, _config["opponent"].asString() + ".json", _config["playerpos"][0].asFloat(), _config["playerpos"][1].asFloat());
-//    player->setFocus(_config["playerpos"][2].asFloat(), _config["playerpos"][3].asFloat(),  _config["playerpos"][4].asFloat());
+    sprintf(_path, "assets/characters/%s/", _config["opponent"].asString().c_str());
+    player = new Character(_path, _config["opponent"].asString() + ".json", _config["playerpos"][0].asFloat(), _config["playerpos"][1].asFloat());
+    player->setFocus(_config["playerpos"][2].asFloat(), _config["playerpos"][3].asFloat(),  _config["playerpos"][4].asFloat());
 
     //opponent
-    //sprintf(_path, "assets/characters/%s/", _config["opponent"].asString().c_str());
-    //opponent = new Character(_path, _config["opponent"].asString() + ".json", _config["opponentpos"][0].asFloat(), _config["opponentpos"][1].asFloat());
-   // opponent->setFocus(_config["opponentpos"][2].asFloat(), _config["opponentpos"][3].asFloat(),  _config["opponentpos"][4].asFloat());
+    sprintf(_path, "assets/characters/%s/", _config["opponent"].asString().c_str());
+    opponent = new Character(_path, _config["opponent"].asString() + ".json", _config["opponentpos"][0].asFloat(), _config["opponentpos"][1].asFloat());
+    opponent->setFocus(_config["opponentpos"][2].asFloat(), _config["opponentpos"][3].asFloat(),  _config["opponentpos"][4].asFloat());
+
     //gf    
- //   sprintf(_path, "assets/characters/%s/", _config["gf"].asString().c_str());
-  //  gf = new Character(_path, _config["gf"].asString() + ".json", _config["gfpos"][0].asFloat(), _config["gfpos"][1].asFloat());
+    sprintf(_path, "assets/characters/%s/", _config["gf"].asString().c_str());
+    gf = new Character(_path, _config["gf"].asString() + ".json", _config["gfpos"][0].asFloat(), _config["gfpos"][1].asFloat());
 
     //stage
     sprintf(_path, "assets/stages/%s/%s.json", _config["back"].asString().c_str(), _config["back"].asString().c_str()); 
@@ -87,14 +88,14 @@ PlayStateScreen::PlayStateScreen(void)
 
 void PlayStateScreen::Camera::update(float ox, float oy, float oz, float px, float py, float pz) {
     if (app->parser.sections[app->parser.curStep / 16].flag & FLAG_SEC_MUSTHIT) { 
-        camx = app->lerp(camx, px, 0.2);
-        camy = app->lerp(camy, py, 0.2);
-        zoom = app->lerp(zoom, pz, 0.3);
+        camx = lerp(camx, px, 0.2);
+        camy = lerp(camy, py, 0.2);
+        zoom = lerp(zoom, pz, 0.3);
     }
     else {
-        camx = app->lerp(camx, ox, 0.2);
-        camy = app->lerp(camy, oy, 0.2);
-        zoom = app->lerp(zoom, oz, 0.3);
+        camx = lerp(camx, ox, 0.2);
+        camy = lerp(camy, oy, 0.2);
+        zoom = lerp(zoom, oz, 0.3);
     }
 }
 
@@ -110,12 +111,16 @@ void PlayStateScreen::update(void)
 
     if (isPlaying)
     {
-      //  gamecam.update(opponent->camx, opponent->camy, opponent->camzoom,
-        //              player->camx, player->camy, player->camzoom);
+        gamecam.update(opponent->camx, opponent->camy, opponent->camzoom,
+                      player->camx, player->camy, player->camzoom);
         //bump hud
-        hudcam.zoom = app->lerp(hudcam.zoom, 1, 0.2); 
+        hudcam.zoom = lerp(hudcam.zoom, 1, 0.2); 
         if (app->parser.justStep && !(app->parser.curStep % 16))
-            hudcam.zoom = 1.1;
+            hudcam.zoom = 1.1; 
+        //bump game
+        hudcam.zoom = lerp(hudcam.zoom, 1, 0.2); 
+        if (app->parser.justStep && !(app->parser.curStep % 16))
+            hudcam.zoom = 1.05;
 
         updateInput();
     }
@@ -130,7 +135,6 @@ void PlayStateScreen::update(void)
             {
                 inst->play();
                 vocals->play();
-                hudcam.zoom = 1.1; //begin with a bump
             }
         }
         else

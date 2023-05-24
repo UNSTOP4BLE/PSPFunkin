@@ -1,5 +1,7 @@
 #pragma once
 
+#define lerp(p, t, s) {(p * (1.0 - s)) + (t * s)}
+
 class LinearEasing {
 public:
     static inline float apply(float value) {

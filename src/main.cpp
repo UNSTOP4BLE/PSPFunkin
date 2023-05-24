@@ -33,10 +33,6 @@ void ErrMSG(const char *filename, const char *function, int line, const char *ex
     }
 }
 
-float PSPFunkin::lerp(float position, float target, float speed) {
-    return (position * (1.0 - speed)) + (target * speed);
-}
-
 int main()
 {
     //get a random number seed
