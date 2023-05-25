@@ -30,7 +30,7 @@ void ChartParser::calcCrochet(void)
 void ChartParser::tickStep(Audio::StreamedFile *song)
 {
     if (song->isPlaying())
-        songTime = (int)(song->getChannel().getTime() * 1000);
+        songTime = static_cast<int>(song->getChannel().getTime() * 1000);
     int nextstep = (songTime / step_crochet);
     if (nextstep != curStep)
     {

@@ -9,10 +9,10 @@ void PlayStateScreen::drawDummyNotes(void)
         GFX::RECT<int> img = {1 + (40*i), 1, 39, 39};
         for (int j = 0; j < 8; j++)
         {
-            GFX::RECT<float> disp = {(float)notePos.player[i].x - hudcam.camx, (float)notePos.player[i].y - hudcam.camy, 39, 39}; 
+            GFX::RECT<float> disp = {static_cast<float>notePos.player[i].x - hudcam.camx, static_cast<float>notePos.player[i].y - hudcam.camy, 39, 39}; 
             GFX::drawTexZoom<float>(hud, &img, &disp, true, 0, 200, hudcam.zoom);
 
-            disp = {(float)notePos.opponent[i].x - hudcam.camx, (float)notePos.opponent[i].y - hudcam.camy, 39, 39};  
+            disp = {static_cast<float>(notePos.opponent[i].x - hudcam.camx), static_cast<float>notePos.opponent[i].y - hudcam.camy, 39, 39};  
             GFX::drawTexZoom<float>(hud, &img, &disp, true, 0, 200, hudcam.zoom);
         }
     }
@@ -38,15 +38,15 @@ void PlayStateScreen::drawSustain(int note, float y, int type)
     int xpos = sustain.x + img.w;
     float ypos = y + (img.h*2);
 
-    for (int i = 0; i < (int)((length*3.6f) * (app->parser.chartdata.speed)); i++)
+    for (int i = 0; i < static_cast<int>((length*3.6f) * (app->parser.chartdata.speed)); i++)
     {
-        if (i == (int)((length*3.6f) * (app->parser.chartdata.speed))-1) //draw sustain ends
+        if (i == static_cast<int>((length*3.6f) * (app->parser.chartdata.speed))-1) //draw sustain ends
         {
             img.y = 1;
             img.h = 16;
         }
 
-        GFX::RECT<float> disp = {(float)xpos - hudcam.camx, ypos + (i*clipheight) - hudcam.camy, img.w, img.h};
+        GFX::RECT<float> disp = {static_cast<float>(xpos - hudcam.camx), ypos + (i*clipheight) - hudcam.camy, img.w, img.h};
         if (app->parser.gamenotes[note].flag & FLAG_NOTE_ISOPPONENT && disp.y < sustain.y+img.h*2) {
           //  opponent->setAnim(app->parser.gamenotes[note].type+1);
             continue; //stop drawing opponents note if they were "hit"
@@ -57,7 +57,7 @@ void PlayStateScreen::drawSustain(int note, float y, int type)
 
 void PlayStateScreen::drawNotes(void) 
 {
-    for (int i = 0; i < (int)app->parser.gamenotes.size(); i++)
+    for (int i = 0; i < static_cast<int>(app->parser.gamenotes.size()); i++)
     {
         if (app->parser.gamenotes[i].flag & FLAG_NOTE_HIT)
             continue; //dont draw notes if they are hit
@@ -82,7 +82,7 @@ void PlayStateScreen::drawNotes(void)
         };
     
         GFX::RECT<float> disp = {
-            (float)curNotex - hudcam.camx,
+            static_cast<float>(curNotex - hudcam.camx),
             curNotey - hudcam.camy,
             img.w,
             img.h   

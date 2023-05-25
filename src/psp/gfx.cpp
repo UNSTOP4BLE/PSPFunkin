@@ -5,6 +5,7 @@
 #include <pspkernel.h>
 #include <pspdisplay.h>
 #include <pspgu.h>
+#include <png.h>
 #include <vram.h>
 #include "memory.h"
 
@@ -84,6 +85,9 @@ void flip(void) {
 }
 
 Texture *loadTex(const char *path) {
+    FILE *fp = fopen(path, "rb");
+    ASSERTFUNC(fp, "failed to load png file");
+    fclose(fp);
     return reinterpret_cast<Texture *>(1);
 }
 
@@ -103,15 +107,9 @@ template void drawTex<int>(Texture* tex, GFX::RECT<int> *Img, GFX::RECT<int> *Di
 template void drawTex<float>(Texture* tex, GFX::RECT<int> *Img, GFX::RECT<float> *Disp, bool linear, float angle, int alpha);
 
 template<typename T> void drawTexZoom(Texture* tex, GFX::RECT<int> *Img, GFX::RECT<T> *Disp, bool linear, float angle, int alpha, float zoom) {
-    ASSERTFUNC(tex, "texture is NULL");
-
-    float x = (Disp->x - SCREEN_WIDTH/2) * zoom + SCREEN_WIDTH/2;
-    float y = (Disp->y - SCREEN_HEIGHT/2) * zoom + SCREEN_HEIGHT/2;
-    float w = Disp->w * zoom;
-    float h = Disp->h * zoom;
-    if (x+w >= 0 && x <= SCREEN_WIDTH && y+h >= 0 && y <= SCREEN_HEIGHT)
-    {
-    }
+    //no need to check if the texture is null cus drawTex() does it
+    RECT<T> zoomDisp = {(Disp->x - SCREEN_WIDTH/2) * zoom + SCREEN_WIDTH/2, (Disp->y - SCREEN_HEIGHT/2) * zoom + SCREEN_HEIGHT/2, Disp->w * zoom, Disp->h * zoom};
+    drawTex(tex, Img, &zoomDisp, false, angle, alpha);
 }
 
 template void drawTexZoom<int>(Texture* tex, GFX::RECT<int> *Img, GFX::RECT<int> *Disp, bool linear, float angle, int alpha, float zoom);

@@ -212,10 +212,10 @@ void Mixer::_process(int16_t *output, int numSamples) {
     // Apply master volume, clip and copy to SDL buffer
     for (int i = 0; i < numSamples; i++) {
         output[i * 2 + 0] = static_cast<int16_t>(
-            std::max(INT16_MIN, std::min(INT16_MAX, (int)(outputBuffer[i][0] * _leftVolume) >> 16))
+            std::max(INT16_MIN, std::min(INT16_MAX, static_cast<int>(outputBuffer[i][0] * _leftVolume) >> 16))
         );
         output[i * 2 + 1] = static_cast<int16_t>(
-            std::max(INT16_MIN, std::min(INT16_MAX, (int)(outputBuffer[i][0] * _rightVolume) >> 16))
+            std::max(INT16_MIN, std::min(INT16_MAX, static_cast<int>(outputBuffer[i][0] * _rightVolume) >> 16))
         );
     }
 }

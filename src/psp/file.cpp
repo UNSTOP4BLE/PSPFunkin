@@ -22,7 +22,7 @@ std::vector<AnimFrames> readFramesFromJson(const char *filename)
     //push frame data to the vector array
     std::vector<AnimFrames> frames(data["frames"].size());
 
-    for (int i = 0; i < (int)data["frames"].size(); i++)
+    for (int i = 0; i < static_cast<int>(data["frames"].size()); i++)
     {
         frames[i].tex = data["frames"][i][0].asInt(); //tex
         frames[i].x = data["frames"][i][1].asInt(); // x

@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
     for (int i = 0; i < chartdata.sectioncount; i++) // i is the current section
     {
         sections[i].flag = 0;
-        for (int j = 0; j < (int)chart["song"]["notes"][i]["sectionNotes"].size(); j++) //copy over all the notes
+        for (int j = 0; j < static_cast<int>chart["song"]["notes"][i]["sectionNotes"].size(); j++) //copy over all the notes
         {
             Note newnote;
             newnote.flag = 0;
@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
             if (chart["song"]["notes"][i]["altAnim"] == true)
                 sections[i].flag |= FLAG_SEC_ALT;
 
-            if ((int)chart["song"]["notes"][i]["sectionNotes"][j][1] == -1) //-1 is for events
+            if (static_cast<int>chart["song"]["notes"][i]["sectionNotes"][j][1] == -1) //-1 is for events
             {
                 eventcount += 1;
                 continue;

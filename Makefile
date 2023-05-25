@@ -19,7 +19,7 @@ OBJS = src/main.o \
        src/psp/font.o \
        src/psp/gfx.o 
 
-LIBS = -ljsoncpp -lstdc++ -lpspaudio -lvorbisfile -lvorbis -logg -lSDL2  -lpng -lz -lpspgum -lpspgu -lm -lpspvram -lGL -lpspvfpu -lpsphprm -lxmp 
+LIBS = -ljsoncpp -lstdc++ -lpspaudio -lvorbisfile -lvorbis -logg -lSDL2 -lpng -lz -lpspgum -lpspgu -lm -lpspvram -lGL -lpspvfpu -lpsphprm -lxmp 
 
 CFLAGS = -O2 -G0 -Wall -g 
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti -std=gnu++17

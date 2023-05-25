@@ -24,15 +24,15 @@ void AnimOBJECT_Init(Anim_OBJECT *obj, std::string path, std::string objname)
     loadJson(_path.c_str(), &data);
 
     obj->conf.resize(data["config"].size());
-    for (int i = 0; i < (int)data["config"].size(); i++)
+    for (int i = 0; i < static_cast<int>(data["config"].size()); i++)
     {
         obj->speed.push_back(data["config"][i]["speed"].asInt());
-        for (int j = 1; j < (int)data["config"][i]["frames"].size(); j++)
+        for (int j = 1; j < static_cast<int>(data["config"][i]["frames"].size()); j++)
             obj->conf[i].push_back(data["config"][i]["frames"][j].asInt());
     }
     obj->frames = readFramesFromJson(_path.c_str());
     obj->textures.resize(data["textures"].size());
-    for (int i = 0; i < (int)data["textures"].size(); i++)
+    for (int i = 0; i < static_cast<int>(data["textures"].size()); i++)
     {
         _path = path + data["textures"][i].asString();     
         obj->textures[i] = GFX::loadTex(_path.c_str());  
@@ -71,11 +71,11 @@ void AnimOBJECT_Tick(Anim_OBJECT *obj)
 
         } 
 
-        if ((int)obj->tweenframe.getValue()+1 > obj->framecount) {
+        if (static_cast<int>(obj->tweenframe.getValue()+1) > obj->framecount) {
             obj->cananimate = false;
             return; 
         }
-        obj->curframe = obj->conf[obj->curanim][(int)obj->tweenframe.getValue()];
+        obj->curframe = obj->conf[obj->curanim][static_cast<int>(obj->tweenframe.getValue())];
     }
 }
 
@@ -88,8 +88,8 @@ void AnimOBJECT_Draw(Anim_OBJECT *obj, float x, float y, bool linear, float angl
                     obj->frames[obj->curframe].w,
                     obj->frames[obj->curframe].h};
 
-        GFX::RECT<float> disp = {(float)(x - obj->frames[obj->curframe].offsetx),
-                      (float)(y - obj->frames[obj->curframe].offsety),
+        GFX::RECT<float> disp = {static_cast<float>(x - obj->frames[obj->curframe].offsetx),
+                      static_cast<float>(y - obj->frames[obj->curframe].offsety),
                       obj->frames[obj->curframe].w,
                       obj->frames[obj->curframe].h};
         if (obj->flipped)

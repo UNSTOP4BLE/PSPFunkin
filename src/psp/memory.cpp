@@ -9,13 +9,13 @@ int curusage;
 
 void *pspf_malloc(size_t size)
 {
-    curusage += (int)size;
+    curusage += static_cast<int>(size);
     return malloc(size);
 }
 
 void pspf_free(void *ptr)
 {
-    curusage -= (int)sizeof(ptr);
+    curusage -= static_cast<int>(sizeof(ptr));
     return free(ptr);
 }
 
