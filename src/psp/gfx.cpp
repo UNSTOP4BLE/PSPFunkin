@@ -28,7 +28,6 @@ void init(void) {
     // Display list allocation
     dlist = (int*)Mem::pspf_malloc(DLIST_SIZE);
 
-    // Setup GU
     sceGuInit();
     sceGuStart(GU_DIRECT, dlist);
 
@@ -42,7 +41,6 @@ void init(void) {
     disp_buffer.texdata = (unsigned int*)vabsptr(disp_buffer.texdata);
 
     sceGuDepthRange(65535, 0);
-    sceGuScissor(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     sceGuClearDepth(65535);
     sceGuAlphaFunc(GU_GREATER, 0, 255);
     sceGuDepthFunc(GU_LEQUAL);
@@ -58,29 +56,31 @@ void init(void) {
     sceGuEnable(GU_SCISSOR_TEST);
     sceGuEnable(GU_BLEND);
 
+    sceGuScissor(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+
     sceGuFinish();
     sceGuSync(0, 0);
     sceDisplayWaitVblankStart();
     sceGuDisplay(GU_TRUE);
-    //start rendering
-    sceKernelDcacheWritebackRange(dlist, DLIST_SIZE);
-    sceGuStart(GU_DIRECT, dlist);
-
-
 }
 
 void clear(int color) {
+    sceKernelDcacheWritebackRange(dlist, DLIST_SIZE);
+    sceGuStart(GU_DIRECT, dlist);
     sceGuClearColor(color);
     sceGuClear(GU_COLOR_BUFFER_BIT | GU_FAST_CLEAR_BIT);
 }
 
 void flip(void) {
+    sceGuScissor(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
     sceGuFinish();
     sceGuSync(0, 0);
 
     sceDisplayWaitVblankStart();
 
+    disp_buffer.texdata = draw_buffer.texdata;
+    draw_buffer.texdata = (unsigned int*)vabsptr(sceGuSwapBuffers());
 }
 
 Texture *loadTex(const char *path) {
