@@ -108,7 +108,7 @@ template void drawTex<float>(Texture* tex, GFX::RECT<int> *Img, GFX::RECT<float>
 
 template<typename T> void drawTexZoom(Texture* tex, GFX::RECT<int> *Img, GFX::RECT<T> *Disp, bool linear, float angle, int alpha, float zoom) {
     //no need to check if the texture is null cus drawTex() does it
-    RECT<T> zoomDisp = {(Disp->x - SCREEN_WIDTH/2) * zoom + SCREEN_WIDTH/2, (Disp->y - SCREEN_HEIGHT/2) * zoom + SCREEN_HEIGHT/2, Disp->w * zoom, Disp->h * zoom};
+    RECT<T> zoomDisp = {static_cast<T>((Disp->x - SCREEN_WIDTH/2) * zoom + SCREEN_WIDTH/2), static_cast<T>((Disp->y - SCREEN_HEIGHT/2) * zoom + SCREEN_HEIGHT/2), static_cast<T>(Disp->w * zoom), static_cast<T>(Disp->h * zoom)};
     drawTex(tex, Img, &zoomDisp, false, angle, alpha);
 }
 

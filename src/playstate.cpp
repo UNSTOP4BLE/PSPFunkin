@@ -203,7 +203,7 @@ void PlayStateScreen::increaseScore(int note) {
 
 Rating PlayStateScreen::judgeNote(float diff)
 {
-    for (int i = 0; i < static_cast<int>ratingData.size()-1; i++) //skips last window (Shit)
+    for (int i = 0; i < static_cast<int>(ratingData.size()-1); i++) //skips last window (Shit)
     {
         if (diff <= ratingData[i].hitWindow)
         {
@@ -225,11 +225,11 @@ void PlayStateScreen::updateInput(void)
     checkPadHeld[3] = Pad_Held(PSP_CTRL_LEFT | PSP_CTRL_CIRCLE); 
 
     //handle note hits here? why not lol
-    for (int i = 0; i < static_cast<int>app->parser.gamenotes.size(); i++) {
+    for (int i = 0; i < static_cast<int>(app->parser.gamenotes.size()); i++) {
         if (app->parser.gamenotes[i].flag & FLAG_NOTE_ISOPPONENT)
             continue;
-        int y = notePos.player[app->parser.gamenotes[i].type].y;
-        float curNotey = ((app->parser.gamenotes[i].pos - app->parser.songTime) * app->parser.chartdata.speed / 3.6f) + y;
+    //    int y = notePos.player[app->parser.gamenotes[i].type].y;
+  //      float curNotey = ((app->parser.gamenotes[i].pos - app->parser.songTime) * app->parser.chartdata.speed / 3.6f) + y;
 
      //   if (checkPad[app->parser.gamenotes[i].type] && curNotey >= hitwindows[0][0] && curNotey <= hitwindows[3][1]) {
       //      app->parser.gamenotes[i].flag |= FLAG_NOTE_HIT; //note has been hit

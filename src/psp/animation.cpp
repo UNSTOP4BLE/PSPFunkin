@@ -90,8 +90,8 @@ void AnimOBJECT_Draw(Anim_OBJECT *obj, float x, float y, bool linear, float angl
 
         GFX::RECT<float> disp = {static_cast<float>(x - obj->frames[obj->curframe].offsetx),
                       static_cast<float>(y - obj->frames[obj->curframe].offsety),
-                      obj->frames[obj->curframe].w,
-                      obj->frames[obj->curframe].h};
+                      static_cast<float>(obj->frames[obj->curframe].w),
+                      static_cast<float>(obj->frames[obj->curframe].h)};
         if (obj->flipped)
             disp.w = -disp.w;
 

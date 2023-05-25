@@ -11,8 +11,8 @@ void Stage::load(const char *jpath, std::string stage) {
     loadJson(jpath, &data);
 
     //textures
-    textures.resize(static_cast<int>data["textures"].size());
-    for (int i = 0; i < static_cast<int>data["textures"].size(); i++) {
+    textures.resize(static_cast<int>(data["textures"].size()));
+    for (int i = 0; i < static_cast<int>(data["textures"].size()); i++) {
         if (data["textures"].size() == 0)
             return;
         textures[i].def = "";
@@ -36,7 +36,7 @@ void Stage::tick(float cx, float cy) {
 }
 
 void Stage::free(void) {
-    for (int i = 0; i < static_cast<int>textures.size(); i++) {
+    for (int i = 0; i < static_cast<int>(textures.size()); i++) {
         if (textures.size() == 0)
             return;
         GFX::freeTex(&textures[i].texture);
@@ -44,12 +44,12 @@ void Stage::free(void) {
 }
 
 void Stage::drawObjects(std::vector<StageObject> &objs, float camzoom) {
-    for (int i = 0; i < static_cast<int>objs.size(); i++) {
+    for (int i = 0; i < static_cast<int>(objs.size()); i++) {
         if (objs.size() == 0)
             return;
         int tex = -1;
         //check for correct texture
-        for (int j = 0; j < static_cast<int>textures.size(); j++) {
+        for (int j = 0; j < static_cast<int>(textures.size()); j++) {
             if (objs[i].def == textures[j].def) {
                 tex = j;
                 break;
@@ -63,7 +63,7 @@ void Stage::drawObjects(std::vector<StageObject> &objs, float camzoom) {
 //misc functions
 static void parseObjects(std::vector<StageObject> &objs, std::string gnd, Json::Value data) {
     objs.resize(data["objects"][gnd].size());   
-    for (int i = 0; i < static_cast<int>data["objects"][gnd].size(); i++) {
+    for (int i = 0; i < static_cast<int>(data["objects"][gnd].size()); i++) {
         if (data["objects"][gnd].size() == 0)
             return;
         objs[i].def = data["objects"][gnd][i]["def"].asString();
@@ -88,7 +88,7 @@ static void parseObjects(std::vector<StageObject> &objs, std::string gnd, Json::
 }
 
 static void tickObjects(std::vector<StageObject> &objs, float cx, float cy) {
-    for (int i = 0; i < static_cast<int>objs.size(); i++) {
+    for (int i = 0; i < static_cast<int>(objs.size()); i++) {
         if (objs.size() == 0)
             return;
 

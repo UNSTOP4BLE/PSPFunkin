@@ -9,10 +9,10 @@ void PlayStateScreen::drawDummyNotes(void)
         GFX::RECT<int> img = {1 + (40*i), 1, 39, 39};
         for (int j = 0; j < 8; j++)
         {
-            GFX::RECT<float> disp = {static_cast<float>notePos.player[i].x - hudcam.camx, static_cast<float>notePos.player[i].y - hudcam.camy, 39, 39}; 
+            GFX::RECT<float> disp = {static_cast<float>(notePos.player[i].x - hudcam.camx), static_cast<float>(notePos.player[i].y - hudcam.camy), 39, 39}; 
             GFX::drawTexZoom<float>(hud, &img, &disp, true, 0, 200, hudcam.zoom);
 
-            disp = {static_cast<float>(notePos.opponent[i].x - hudcam.camx), static_cast<float>notePos.opponent[i].y - hudcam.camy, 39, 39};  
+            disp = {static_cast<float>(notePos.opponent[i].x - hudcam.camx), static_cast<float>(notePos.opponent[i].y - hudcam.camy), 39, 39};  
             GFX::drawTexZoom<float>(hud, &img, &disp, true, 0, 200, hudcam.zoom);
         }
     }
@@ -46,7 +46,7 @@ void PlayStateScreen::drawSustain(int note, float y, int type)
             img.h = 16;
         }
 
-        GFX::RECT<float> disp = {static_cast<float>(xpos - hudcam.camx), ypos + (i*clipheight) - hudcam.camy, img.w, img.h};
+        GFX::RECT<float> disp = {static_cast<float>(xpos - hudcam.camx), ypos + (i*clipheight) - hudcam.camy, static_cast<float>(img.w), static_cast<float>(img.h)};
         if (app->parser.gamenotes[note].flag & FLAG_NOTE_ISOPPONENT && disp.y < sustain.y+img.h*2) {
           //  opponent->setAnim(app->parser.gamenotes[note].type+1);
             continue; //stop drawing opponents note if they were "hit"
@@ -84,8 +84,8 @@ void PlayStateScreen::drawNotes(void)
         GFX::RECT<float> disp = {
             static_cast<float>(curNotex - hudcam.camx),
             curNotey - hudcam.camy,
-            img.w,
-            img.h   
+            static_cast<float>(img.w),
+            static_cast<float>(img.h)
         };
 
         if (app->parser.gamenotes[i].sus != 0) //check if the note is a sustain
