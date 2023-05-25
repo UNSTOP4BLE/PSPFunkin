@@ -2,14 +2,14 @@
 
 #include <string>     
 #include <vector>     
-#include "psp/glib2d.h"
+#include "psp/gfx.h"
 
 class StageObject {
 public:
     std::string def; //definition of the texture used 
-    Rect img;
-    Rect initialdisp;
-    FRect disp;
+    GFX::RECT<int> img;
+    GFX::RECT<int> initialdisp;
+    GFX::RECT<float> disp;
     float scrollfactor[2];
     float angle;
     int alpha;
@@ -18,7 +18,7 @@ public:
 class StageTex {
 public:
     std::string def; //definition of the texture used 
-    g2dTexture *texture; //pointer to the actual texture data
+    GFX::Texture *texture; //pointer to the actual texture data
 };
 
 class Stage {

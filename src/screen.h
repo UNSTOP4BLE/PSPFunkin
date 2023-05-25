@@ -1,6 +1,6 @@
 #pragma once
 
-#include "psp/glib2d.h"
+#include "psp/gfx.h"
 #include "psp/audio_streamed_file.h"
 #include "psp/tween.h"
 
@@ -23,7 +23,7 @@ public:
     void draw(void);
     ~TitleScreen(void);
 private:
-    g2dTexture *ng;
+    GFX::Texture *ng;
     Anim_OBJECT titleGF;
     std::string funnymessage[2];
     Audio::StreamedFile *freaky; 
@@ -38,7 +38,7 @@ public:
     void draw(void);
     ~MainMenuScreen(void); 
 private:
-    g2dTexture *background;
+    GFX::Texture *background;
     int selection;
     Tween<float, QuadInEasing> backgroundy;
 };
@@ -58,7 +58,7 @@ class Rating
 {
 public:
     std::string name;
-    Rect img;
+    GFX::RECT<int> img;
     int hitWindow; //ms
     float ratingMod;
     int score;
@@ -70,7 +70,6 @@ public:
     PlayStateScreen(void);
     void update(void);
     void draw(void);
-    void deload(void);
     ~PlayStateScreen(void);
 private:    
     class Camera {
@@ -79,6 +78,8 @@ private:
         float camx, camy;
         float zoom;
     } gamecam, hudcam;
+    void initscr(void);
+    void freescr(void);
     void drawDummyNotes(void);
     void drawSustain(int note, float y, int type);
     void drawNotes(void);
@@ -89,7 +90,7 @@ private:
     Character *opponent;
     Character *gf;
     Stage curstage;
-    g2dTexture *hud;
+    GFX::Texture *hud;
     Audio::StreamedFile *inst; 
     Audio::StreamedFile *vocals; 
     std::vector<Rating> ratingData;
@@ -103,4 +104,4 @@ private:
 
 void ErrMSG(const char *format, ...);
 void setScreen(Screen *scr);
-void setScreenCol(g2dColor color);
+void setScreenCol(int color);

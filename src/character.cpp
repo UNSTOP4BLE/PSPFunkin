@@ -64,5 +64,5 @@ void Character::draw(float cx, float cy, float cz) {
 }
 
 Character::~Character(void) {
-   delete obj;
+//   delete obj;
 }

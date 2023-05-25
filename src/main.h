@@ -10,7 +10,7 @@ public:
     Audio::Mixer *audioMixer;
     ChartParser parser;
     double deltatime;
-    g2dColor screenCol;
+    int screenCol;
     Screen *currentScreen;
 };
 extern PSPFunkin *app;

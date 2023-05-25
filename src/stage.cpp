@@ -20,7 +20,7 @@ void Stage::load(const char *jpath, std::string stage) {
         std::string texpath = "assets/stages/" + stage + "/" + data["textures"][i]["path"].asString();
         textures[i].texture = nullptr;
         textures[i].texture = NULL;
-        textures[i].texture = g2dTexLoad(texpath.c_str(), G2D_SWIZZLE); //error
+        textures[i].texture = GFX::loadTex(texpath.c_str()); 
     }
 
     //stage data
@@ -39,7 +39,7 @@ void Stage::free(void) {
     for (int i = 0; i < (int)textures.size(); i++) {
         if (textures.size() == 0)
             return;
-        g2dTexFree(&textures[i].texture);
+        GFX::freeTex(&textures[i].texture);
     }
 }
 
@@ -56,7 +56,7 @@ void Stage::drawObjects(std::vector<StageObject> &objs, float camzoom) {
             }
         }
         ASSERTFUNC(tex != -1, "invalid background texture def, is it defined?");
-        DrawZoomG2DTex(textures[tex].texture, &objs[i].img, &objs[i].disp, false, objs[i].angle, objs[i].alpha, camzoom);
+        GFX::drawTexZoom<float>(textures[tex].texture, &objs[i].img, &objs[i].disp, false, objs[i].angle, objs[i].alpha, camzoom);
     }
 }
 

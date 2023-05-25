@@ -1,6 +1,8 @@
 #pragma once
 
-#define lerp(p, t, s) {(p * (1.0f - s)) + (t * s)}
+constexpr float lerp(float p, float t, float s) {
+    return (p * (1.0f - s)) + (t * s);
+}
 
 class LinearEasing {
 public:

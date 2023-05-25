@@ -17,7 +17,7 @@ TitleStates state;
 
 TitleScreen::TitleScreen(void) 
 {
-    setScreenCol(BLACK);
+    setScreenCol(0xFF000000);
 
     //load menu jsons
     Json::Value titleJson;
@@ -36,7 +36,7 @@ TitleScreen::TitleScreen(void)
    // app->audioMixer->playBuffer(*confirm);
     //load textures
     AnimOBJECT_Init(&titleGF, "assets/menu/title/gf/", "frames.json");
-    ng = g2dTexLoad("assets/menu/title/ng.png", G2D_SWIZZLE);
+    ng = GFX::loadTex("assets/menu/title/ng.png");
 
     //begin with a flash if you went back to title from menu
     if (state != Intro)
@@ -74,44 +74,44 @@ void TitleScreen::draw(void)
     if (freaky->isPlaying())
     PrintFont(Left, 0, 0, "time %d", app->parser.songTime);
     //NG logo 
-    Rect NG_img = {0, 0, 90, 88};
-    Rect NG_disp = {G2D_SCR_W / 2 - 90/2, (G2D_SCR_H / 2 + 88/2) - 20, 90, 88};
+    GFX::RECT<int> NG_img = {0, 0, 90, 88};
+    GFX::RECT<int> NG_disp = {GFX::SCREEN_WIDTH / 2 - 90/2, (GFX::SCREEN_HEIGHT / 2 + 88/2) - 20, 90, 88};
     switch (state)
     {
         case Intro:
             switch (app->parser.curBeat) 
             {
                 case 3:
-                    PrintBOLD(Center, G2D_SCR_W / 2, G2D_SCR_H / 2 + 76, "PRESENT");
+                    PrintBOLD(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2 + 76, "PRESENT");
                 case 2:
                 case 1:
-                    PrintBOLD(Center, G2D_SCR_W / 2, G2D_SCR_H / 2 - 114, "UNSTOPABLE");
-                    PrintBOLD(Center, G2D_SCR_W / 2, G2D_SCR_H / 2 - 76,  "IGORSOU");
-                    PrintBOLD(Center, G2D_SCR_W / 2, G2D_SCR_H / 2 - 38,  "MAXDEV");
-                    PrintBOLD(Center, G2D_SCR_W / 2, G2D_SCR_H / 2,       "SPICYJPEG");
-                    PrintBOLD(Center, G2D_SCR_W / 2, G2D_SCR_H / 2 + 38,  "BILIOUS");
+                    PrintBOLD(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2 - 114, "UNSTOPABLE");
+                    PrintBOLD(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2 - 76,  "IGORSOU");
+                    PrintBOLD(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2 - 38,  "MAXDEV");
+                    PrintBOLD(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2,       "SPICYJPEG");
+                    PrintBOLD(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2 + 38,  "BILIOUS");
                     break;
                 case 7:
-                    PrintBOLD(Center, G2D_SCR_W / 2, G2D_SCR_H / 2 - 20, "NEWGROUNDS");
-                    DrawG2DTex(ng, &NG_img, &NG_disp, false, 0, 255);
+                    PrintBOLD(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2 - 20, "NEWGROUNDS");
+                    GFX::drawTex<int>(ng, &NG_img, &NG_disp, false, 0, 255);
                 case 6:
                 case 5:
-                    PrintBOLD(Center, G2D_SCR_W / 2, G2D_SCR_H / 2 - 96, "IN ASSOCIATION");
-                    PrintBOLD(Center, G2D_SCR_W / 2, G2D_SCR_H / 2 - 58, "WITH");
+                    PrintBOLD(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2 - 96, "IN ASSOCIATION");
+                    PrintBOLD(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2 - 58, "WITH");
                     break;
 
                 case 11:
-                    PrintBOLD(Center, G2D_SCR_W / 2, G2D_SCR_H / 2, funnymessage[1].c_str());
+                    PrintBOLD(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2, funnymessage[1].c_str());
                 case 10:
                 case 9:
-                    PrintBOLD(Center, G2D_SCR_W / 2, G2D_SCR_H / 2 - 38, funnymessage[0].c_str());
+                    PrintBOLD(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2 - 38, funnymessage[0].c_str());
                     break;
                 case 15:
-                    PrintBOLD(Center, G2D_SCR_W / 2, G2D_SCR_H / 2 + 18, "FUNKIN");
+                    PrintBOLD(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2 + 18, "FUNKIN");
                 case 14:
-                    PrintBOLD(Center, G2D_SCR_W / 2, G2D_SCR_H / 2 - 20, "NIGHT");
+                    PrintBOLD(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2 - 20, "NIGHT");
                 case 13:
-                    PrintBOLD(Center, G2D_SCR_W / 2, G2D_SCR_H / 2 - 58, "FRIDAY");
+                    PrintBOLD(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2 - 58, "FRIDAY");
                     break;
                 case 16:
                     state = Flash;
@@ -131,5 +131,5 @@ void TitleScreen::draw(void)
 TitleScreen::~TitleScreen(void) 
 {
     delete freaky;
-    g2dTexFree(&ng);
+    GFX::freeTex(&ng);
 }

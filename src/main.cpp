@@ -27,9 +27,9 @@ void ErrMSG(const char *filename, const char *function, int line, const char *ex
     sprintf(errstr, "error \nmessage: %s\nexpression: %s \nfile: %s \nfunction: %s \nline %d", msg, expr, filename, function, line);
     while(1)
     {
-        g2dClear(app->screenCol);
+        GFX::clear(app->screenCol);
         PrintFont(Left, 0, 0, errstr);
-        g2dFlip(G2D_VSYNC);
+        GFX::flip();
     }
 }
 
@@ -45,23 +45,23 @@ int main()
     SDL_Init(SDL_INIT_AUDIO);
     app->audioMixer = new Audio::Mixer();
     app->audioMixer->start();
-    g2dInit();
+    GFX::init();
     FntInit();
-    setScreenCol(GREEN);
+    setScreenCol(0xFF00FF00);
     
     setScreen(new TitleScreen());
     while(1)
     {
         auto last = std::chrono::high_resolution_clock::now();
 
-        g2dClear(app->screenCol);
+        GFX::clear(app->screenCol);
         Pad_Update();  
         ASSERTFUNC(app->currentScreen, "screen is NULL");                
         app->currentScreen->update();  
         app->currentScreen->draw();  
-        PrintFont(Right, G2D_SCR_W, 0, "Memory usage %d/%d", Mem::curusage/1024/1024, 32);
+        PrintFont(Right, GFX::SCREEN_WIDTH, 0, "Memory usage %d/%d", Mem::curusage/1024/1024, 32);
 
-        g2dFlip(G2D_VSYNC);
+        GFX::flip();
 
         auto current = std::chrono::high_resolution_clock::now();
         app->deltatime = std::chrono::duration_cast<std::chrono::duration<double, std::ratio<1>>>(current - last).count();

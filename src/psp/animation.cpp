@@ -35,7 +35,7 @@ void AnimOBJECT_Init(Anim_OBJECT *obj, std::string path, std::string objname)
     for (int i = 0; i < (int)data["textures"].size(); i++)
     {
         _path = path + data["textures"][i].asString();     
-        obj->textures[i] = g2dTexLoad(_path.c_str(), G2D_SWIZZLE);  
+        obj->textures[i] = GFX::loadTex(_path.c_str());  
     }
 }
 
@@ -83,12 +83,12 @@ void AnimOBJECT_Draw(Anim_OBJECT *obj, float x, float y, bool linear, float angl
 {
     if (obj->tick)
     {
-        Rect img = {obj->frames[obj->curframe].x,
+        GFX::RECT<int> img = {obj->frames[obj->curframe].x,
                     obj->frames[obj->curframe].y,
                     obj->frames[obj->curframe].w,
                     obj->frames[obj->curframe].h};
 
-        FRect disp = {(float)(x - obj->frames[obj->curframe].offsetx),
+        GFX::RECT<float> disp = {(float)(x - obj->frames[obj->curframe].offsetx),
                       (float)(y - obj->frames[obj->curframe].offsety),
                       obj->frames[obj->curframe].w,
                       obj->frames[obj->curframe].h};
@@ -98,6 +98,6 @@ void AnimOBJECT_Draw(Anim_OBJECT *obj, float x, float y, bool linear, float angl
         ASSERTFUNC(obj->textures[obj->frames[obj->curframe].tex], "texture is null");   
 
         if (obj->visible)
-            DrawZoomG2DTex(obj->textures[obj->frames[obj->curframe].tex], &img, &disp, linear, angle, alpha, zoom);
+            GFX::drawTexZoom<float>(obj->textures[obj->frames[obj->curframe].tex], &img, &disp, linear, angle, alpha, zoom);
     }
 }

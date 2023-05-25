@@ -1,6 +1,6 @@
 #pragma once
 #include "../main.h"
-#include "glib2d.h"
+#include "gfx.h"
 #include "tween.h"
 #include <vector>       
 #include <string>
@@ -28,7 +28,7 @@ public:
     std::vector<AnimFrames> frames;
     std::vector<std::vector<int>> conf;
     std::vector<float> speed;
-    std::vector<g2dTexture*> textures;
+    std::vector<GFX::Texture*> textures;
 };
 
 void AnimOBJECT_Init(Anim_OBJECT *obj, std::string path, std::string objname);

@@ -12,7 +12,7 @@ void setScreen(Screen *scr)
     app->currentScreen = scr;
 }
 
-void setScreenCol(g2dColor color)
+void setScreenCol(int color)
 {
     app->screenCol = color;
 }

@@ -4,7 +4,7 @@
 #include <string>  
 #include <cstring>  
 #include <cstdio>
-#include "glib2d.h"
+#include "gfx.h"
 #include "../main.h"
 
 struct Font
@@ -14,8 +14,8 @@ struct Font
 
 struct Tex
 {
-    g2dTexture* fonttex; 
-    g2dTexture* boldtex; 
+    GFX::Texture* fonttex; 
+    GFX::Texture* boldtex; 
 };
 
 Tex tex;
@@ -26,8 +26,8 @@ Tex tex;
 
 void FntInit()
 {   
-    tex.fonttex = g2dTexLoad("assets/font/font.png", G2D_SWIZZLE);
-    tex.boldtex = g2dTexLoad("assets/font/boldfont.png", G2D_SWIZZLE);
+    tex.fonttex = GFX::loadTex("assets/font/font.png");
+    tex.boldtex = GFX::loadTex("assets/font/boldfont.png");
 }
 
 static int Font_GetW(Font *font, const char *str)
@@ -49,7 +49,7 @@ static int Font_GetW(Font *font, const char *str)
 bool boldAnim;
 int animtimer;
 
-static void PrintMSG(g2dTexture *tex, Font *font, int x, int y, const char *str, bool bold, Align all)
+static void PrintMSG(GFX::Texture *tex, Font *font, int x, int y, const char *str, bool bold, Align all)
 {   
     //Draw string character by character
     int c;
@@ -85,7 +85,7 @@ static void PrintMSG(g2dTexture *tex, Font *font, int x, int y, const char *str,
             continue;
         
         //Draw character
-        Rect font_Img = {font[c].charX, font[c].charY, font[c].charW, font[c].charH};
+        GFX::RECT<int> font_Img = {font[c].charX, font[c].charY, font[c].charW, font[c].charH};
         if (bold)
         {
             if (!boldAnim)
@@ -93,8 +93,8 @@ static void PrintMSG(g2dTexture *tex, Font *font, int x, int y, const char *str,
             else 
                 font_Img.y = font[c].charY + 138;
         }
-        Rect font_Disp = {x, y, font[c].charW, font[c].charH};
-        DrawG2DTex(tex, &font_Img, &font_Disp, false, 0, 255);
+        GFX::RECT<int> font_Disp = {x, y, font[c].charW, font[c].charH};
+        GFX::drawTex<int>(tex, &font_Img, &font_Disp, false, 0, 255);
         x += font[c].charW - 1;
     }
 

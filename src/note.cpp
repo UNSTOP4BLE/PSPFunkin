@@ -6,14 +6,14 @@ void PlayStateScreen::drawDummyNotes(void)
 {
     for (int i = 0; i < 4; i++)
     {
-        Rect img = {1 + (40*i), 1, 39, 39};
+        GFX::RECT<int> img = {1 + (40*i), 1, 39, 39};
         for (int j = 0; j < 8; j++)
         {
-            FRect disp = {(float)notePos.player[i].x - hudcam.camx, (float)notePos.player[i].y - hudcam.camy, 39, 39}; 
-            DrawZoomG2DTex(hud, &img, &disp, true, 0, 200, hudcam.zoom);
+            GFX::RECT<float> disp = {(float)notePos.player[i].x - hudcam.camx, (float)notePos.player[i].y - hudcam.camy, 39, 39}; 
+            GFX::drawTexZoom<float>(hud, &img, &disp, true, 0, 200, hudcam.zoom);
 
             disp = {(float)notePos.opponent[i].x - hudcam.camx, (float)notePos.opponent[i].y - hudcam.camy, 39, 39};  
-            DrawZoomG2DTex(hud, &img, &disp, true, 0, 200, hudcam.zoom);
+            GFX::drawTexZoom<float>(hud, &img, &disp, true, 0, 200, hudcam.zoom);
         }
     }
 }
@@ -23,7 +23,7 @@ void PlayStateScreen::drawSustain(int note, float y, int type)
     int clipheight = 11;
     int length = app->parser.gamenotes[note].sus / app->parser.step_crochet;
 
-    Rect img = {
+    GFX::RECT<int> img = {
         161 + (14*type),
         18,
         13,
@@ -46,12 +46,12 @@ void PlayStateScreen::drawSustain(int note, float y, int type)
             img.h = 16;
         }
 
-        FRect disp = {(float)xpos - hudcam.camx, ypos + (i*clipheight) - hudcam.camy, img.w, img.h};
+        GFX::RECT<float> disp = {(float)xpos - hudcam.camx, ypos + (i*clipheight) - hudcam.camy, img.w, img.h};
         if (app->parser.gamenotes[note].flag & FLAG_NOTE_ISOPPONENT && disp.y < sustain.y+img.h*2) {
           //  opponent->setAnim(app->parser.gamenotes[note].type+1);
             continue; //stop drawing opponents note if they were "hit"
         }
-        DrawZoomG2DTex(hud, &img, &disp, false, 0, 200, hudcam.zoom);
+        GFX::drawTexZoom<float>(hud, &img, &disp, false, 0, 200, hudcam.zoom);
     }
 }
 
@@ -74,14 +74,14 @@ void PlayStateScreen::drawNotes(void)
         curNotex = note.x;
         curNotey = ((app->parser.gamenotes[i].pos - app->parser.songTime) * app->parser.chartdata.speed / 3.6f) + note.y;
 
-        Rect img = {
+        GFX::RECT<int> img = {
             1 + (40*type),
             121,
             39,
             39
         };
     
-        FRect disp = {
+        GFX::RECT<float> disp = {
             (float)curNotex - hudcam.camx,
             curNotey - hudcam.camy,
             img.w,
@@ -95,6 +95,6 @@ void PlayStateScreen::drawNotes(void)
           //  opponent->setAnim(app->parser.gamenotes[i].type+1);
             continue; //stop drawing opponents note if they were "hit"
         }
-        DrawZoomG2DTex(hud, &img, &disp, false, 0, 200, hudcam.zoom);
+        GFX::drawTexZoom<float>(hud, &img, &disp, false, 0, 200, hudcam.zoom);
     }
 }

@@ -17,11 +17,11 @@ OBJS = src/main.o \
        src/psp/audio_adpcm_decoder.o \
        src/psp/pad.o \
        src/psp/font.o \
-       src/psp/glib2d.o 
+       src/psp/gfx.o 
 
 LIBS = -ljsoncpp -lstdc++ -lpspaudio -lvorbisfile -lvorbis -logg -lSDL2  -lpng -lz -lpspgum -lpspgu -lm -lpspvram -lGL -lpspvfpu -lpsphprm -lxmp 
 
-CFLAGS = -O2 -G0 -Wall -g
+CFLAGS = -O2 -G0 -Wall -g 
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti -std=gnu++17
 ASFLAGS = $(CFLAGS)
 

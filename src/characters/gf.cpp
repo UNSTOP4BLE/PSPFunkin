@@ -3,7 +3,7 @@
 #include "../psp/animation.h"
 
 static Character *GF;
-static g2dTexture *GF_tex[2];
+static GFX::Texture *GF_tex[2];
 static Anim_OBJECT speaker;
 static bool bop = false;
 
@@ -45,8 +45,8 @@ static void GF_FreeChar(void);
 void GF_Init(void)
 {
     GF = new Character();
-    GF_tex[0] = g2dTexLoad("assets/characters/gf/sheet0.png", G2D_SWIZZLE);
-    GF_tex[1] = g2dTexLoad("assets/characters/gf/sheet1.png", G2D_SWIZZLE);
+    GF_tex[0] = GFX::loadTex("assets/characters/gf/sheet0.png");
+    GF_tex[1] = GFX::loadTex("assets/characters/gf/sheet1.png");
 
     GF->setAnim = GF_SetAnim;
     GF->tick = GF_Tick;
@@ -107,7 +107,7 @@ static void GF_Tick(void)
 
 static void GF_FreeChar(void)
 {
-    g2dTexFree(&GF_tex[0]);
-    g2dTexFree(&GF_tex[1]);
+    GFX::freeTex(&GF_tex[0]);
+    GFX::freeTex(&GF_tex[1]);
     delete GF;
 }

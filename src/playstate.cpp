@@ -13,9 +13,8 @@ static void setRating(Rating &rating, std::string name, int score, bool splash, 
     rating.hitWindow = hitwindow;
 }
 
-PlayStateScreen::PlayStateScreen(void)
-{
-    setScreenCol(GREEN);
+void PlayStateScreen::initscr(void) {
+    setScreenCol(0xFF00FF00);
 
     cursong = "bopeebo";
     char _path[40];
@@ -56,7 +55,7 @@ PlayStateScreen::PlayStateScreen(void)
     sprintf(_path, "assets/songs/%s/Voices.ogg", cursong.c_str());
     vocals = new Audio::StreamedFile(*app->audioMixer, _path);
 
-    hud = g2dTexLoad("assets/hud.png", G2D_SWIZZLE);
+    hud = GFX::loadTex("assets/hud.png");
     gamecam.camx = 0;
     gamecam.camy = 0;
     gamecam.zoom = 1;
@@ -85,7 +84,11 @@ PlayStateScreen::PlayStateScreen(void)
     ratingData.push_back(rating);
     setRating(rating, "shit",  50, false,   0,   0); 
     ratingData.push_back(rating);
+}
 
+PlayStateScreen::PlayStateScreen(void)
+{
+    initscr();
 }
 
 void PlayStateScreen::Camera::update(float ox, float oy, float oz, float px, float py, float pz) {
@@ -145,9 +148,12 @@ void PlayStateScreen::update(void)
                 setScreen(new MainMenuScreen());
             }
             else {
-                std::string song = nextsong;
-                setScreen(new PlayStateScreen()); 
+                cursong = nextsong;
+                //reload the screen
+                freescr();
+                initscr();
             }
+            return;
         }
     }
     curstage.tick(gamecam.camx, gamecam.camy);
@@ -175,15 +181,19 @@ void PlayStateScreen::draw(void)
 
 }
 
-PlayStateScreen::~PlayStateScreen(void)
-{
+void PlayStateScreen::freescr(void) {
     delete player;
     delete opponent;
     delete gf;
     curstage.free();
-    g2dTexFree(&hud);
+    GFX::freeTex(&hud);
     delete inst;
     delete vocals;
+}
+
+PlayStateScreen::~PlayStateScreen(void)
+{
+    freescr();
 }
 
 void PlayStateScreen::increaseScore(int note) {
