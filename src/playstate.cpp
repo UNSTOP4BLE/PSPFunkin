@@ -5,8 +5,6 @@
 #include "chartparser.h"
 #include "character.h"
 
-const char *song = "bopeebo";
-
 static void setRating(Rating &rating, std::string name, int score, bool splash, float ratingmod, int hitwindow) {
     rating.name = name;
     rating.score = score;
@@ -19,10 +17,14 @@ PlayStateScreen::PlayStateScreen(void)
 {
     setScreenCol(GREEN);
 
+    cursong = "bopeebo";
     char _path[40];
-    sprintf(_path, "assets/songs/%s/config.json", song);
+    sprintf(_path, "assets/songs/%s/config.json", cursong.c_str());
     Json::Value _config;
     loadJson(_path, &_config);
+
+    //next song info
+    nextsong = _config["next"].asString();
 
     //load characters
 
@@ -45,13 +47,13 @@ PlayStateScreen::PlayStateScreen(void)
     curstage.load(_path, _config["back"].asString());
 
     //load game assets
-    sprintf(_path, "assets/songs/%s/%s.bin", song, song); //todo implement difficulty
+    sprintf(_path, "assets/songs/%s/%s.bin", cursong.c_str(), cursong.c_str()); //todo implement difficulty
     app->parser.loadChart(_path);
     app->parser.songTime = -3000;
 
-    sprintf(_path, "assets/songs/%s/Inst.ogg", song);
+    sprintf(_path, "assets/songs/%s/Inst.ogg", cursong.c_str());
     inst = new Audio::StreamedFile(*app->audioMixer, _path);
-    sprintf(_path, "assets/songs/%s/Voices.ogg", song);
+    sprintf(_path, "assets/songs/%s/Voices.ogg", cursong.c_str());
     vocals = new Audio::StreamedFile(*app->audioMixer, _path);
 
     hud = g2dTexLoad("assets/hud.png", G2D_SWIZZLE);
@@ -114,11 +116,11 @@ void PlayStateScreen::update(void)
         gamecam.update(opponent->camx, opponent->camy, opponent->camzoom,
                       player->camx, player->camy, player->camzoom);
         //bump hud
-        hudcam.zoom = lerp(hudcam.zoom, 1, 0.2); 
+        hudcam.zoom = lerp(hudcam.zoom, 1.0, 0.2); 
         if (app->parser.justStep && !(app->parser.curStep % 16))
             hudcam.zoom = 1.1; 
         //bump game
-        hudcam.zoom = lerp(hudcam.zoom, 1, 0.2); 
+        hudcam.zoom = lerp(hudcam.zoom, 1.0, 0.2); 
         if (app->parser.justStep && !(app->parser.curStep % 16))
             hudcam.zoom = 1.05;
 
@@ -139,7 +141,13 @@ void PlayStateScreen::update(void)
         }
         else
         {
-            setScreen(new MainMenuScreen());
+            if (nextsong == "NULL" || nextsong == "null") {
+                setScreen(new MainMenuScreen());
+            }
+            else {
+                std::string song = nextsong;
+                setScreen(new PlayStateScreen()); 
+            }
         }
     }
     curstage.tick(gamecam.camx, gamecam.camy);

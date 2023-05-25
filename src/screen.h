@@ -93,6 +93,8 @@ private:
     Audio::StreamedFile *inst; 
     Audio::StreamedFile *vocals; 
     std::vector<Rating> ratingData;
+    std::string cursong;
+    std::string nextsong;
     bool checkPad[4];
     bool checkPadHeld[4];
     NotePos notePos;

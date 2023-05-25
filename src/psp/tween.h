@@ -1,6 +1,6 @@
 #pragma once
 
-#define lerp(p, t, s) {(p * (1.0 - s)) + (t * s)}
+#define lerp(p, t, s) {(p * (1.0f - s)) + (t * s)}
 
 class LinearEasing {
 public:
