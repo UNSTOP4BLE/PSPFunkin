@@ -8,4 +8,5 @@
 *.save
 *.bin
 cht2bin/build
+build
 .DS_Store

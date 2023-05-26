@@ -35,7 +35,7 @@ TitleScreen::TitleScreen(void)
     // confirm = Audio::loadFile("assets/songs/stream.vag");
    // app->audioMixer->playBuffer(*confirm);
     //load textures
-    AnimOBJECT_Init(&titleGF, "assets/menu/title/gf/", "frames.json");
+//    AnimOBJECT_Init(&titleGF, "assets/menu/title/gf/", "frames.json");
     ng = GFX::loadTex("assets/menu/title/ng.png");
 
     //begin with a flash if you went back to title from menu
@@ -54,12 +54,12 @@ void TitleScreen::update(void)
 
     if (app->parser.justStep && !(app->parser.curStep % 4))
     {
-        if (titleGF.curanim == 1)
-            AnimOBJECT_SetAnim(&titleGF, 0, -1);
-        else
-            AnimOBJECT_SetAnim(&titleGF, 1, -1);
+        //if (titleGF.curanim == 1)
+   //         AnimOBJECT_SetAnim(&titleGF, 0, -1);
+    //    else
+      //      AnimOBJECT_SetAnim(&titleGF, 1, -1);
     }
-    AnimOBJECT_Tick(&titleGF);
+//    AnimOBJECT_Tick(&titleGF);
     if (Pad_Pressed(PSP_CTRL_CROSS | PSP_CTRL_START))
     {
         if (state != Title)
@@ -123,7 +123,7 @@ void TitleScreen::draw(void)
             state = Title;
             break;
         case Title:
-            AnimOBJECT_Draw(&titleGF, 200, 200, false, 0, 255, 1.0f);
+          //  AnimOBJECT_Draw(&titleGF, 200, 200, false, 0, 255, 1.0f);
             break;
     }
 }

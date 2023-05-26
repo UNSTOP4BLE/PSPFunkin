@@ -3,10 +3,18 @@
 #include "psp/audio_mixer.h"
 #include "chartparser.h"
 #include "screen.h"
+#ifndef PSP
+#include <SDL2/SDL.h>
+#endif
 
 class PSPFunkin
 {
 public:
+#ifndef PSP
+    SDL_Window *window;
+    SDL_Renderer *renderer;
+    SDL_Surface *screenSurface;
+#endif
     Audio::Mixer *audioMixer;
     ChartParser parser;
     double deltatime;

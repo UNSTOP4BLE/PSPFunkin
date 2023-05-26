@@ -1,12 +1,16 @@
 #define SDL_MAIN_HANDLED
 #include "main.h"
 #include "screen.h"
+#ifdef PSP
 #include <pspdebug.h>
 #include <pspkernel.h>
 #include <psputility.h>
+#include "psp/callbacks.h"
+#else
+#include <SDL2/SDL_image.h>
+#endif
 #include <SDL2/SDL.h>
 #include <chrono>
-#include "psp/callbacks.h"
 #include "psp/audio_file_readers.h"
 #include "psp/audio_streamed_file.h"
 #include "psp/font.h"
@@ -15,8 +19,10 @@
 #include "psp/tween.h"
 #include "psp/memory.h"
 
+#ifdef PSP
 PSP_MAIN_THREAD_ATTR(THREAD_ATTR_USER | THREAD_ATTR_VFPU);
 PSP_MODULE_INFO("PSPFunkin", 0, 1, 0);
+#endif
 
 PSPFunkin *app;
 
@@ -25,6 +31,7 @@ void ErrMSG(const char *filename, const char *function, int line, const char *ex
 {
     char errstr[256];
     sprintf(errstr, "error \nmessage: %s\nexpression: %s \nfile: %s \nfunction: %s \nline %d", msg, expr, filename, function, line);
+    printf(errstr);
     while(1)
     {
         GFX::clear(app->screenCol);
@@ -40,9 +47,13 @@ int main()
 
     app = new PSPFunkin(); //new pspfunkin every single time?? no need for a rewrite!
 
+#ifdef PSP
     setupcallbacks();
-    Pad_Init();
     SDL_Init(SDL_INIT_AUDIO);
+#else
+    ASSERTFUNC(SDL_Init(SDL_INIT_EVERYTHING) >= 0, "failed to init sdl");
+#endif
+    Pad_Init();
     app->audioMixer = new Audio::Mixer();
     app->audioMixer->start();
     GFX::init();
@@ -55,7 +66,7 @@ int main()
         auto last = std::chrono::high_resolution_clock::now();
 
         GFX::clear(app->screenCol);
-        Pad_Update();  
+        Pad_Update();         
         ASSERTFUNC(app->currentScreen, "screen is NULL");                
         app->currentScreen->update();  
         app->currentScreen->draw();  
