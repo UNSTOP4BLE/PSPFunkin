@@ -17,7 +17,6 @@ public:
 #ifdef PSP
 struct Texture {
     unsigned int *texdata;
-    SDL_Texture* texdata;
 };
 #else
 
