@@ -64,7 +64,32 @@ int main()
     while(1)
     {
         auto last = std::chrono::high_resolution_clock::now();
+#ifndef PSP
+        SDL_Event event;
+        while(SDL_PollEvent(&event))
+        {
+            switch (event.type) {
+                case SDL_WINDOWEVENT:
 
+                    switch (event.window.event) {
+
+                        case SDL_WINDOWEVENT_CLOSE:   // exit game
+                            
+                            SDL_DestroyWindow(app->window);
+                            app->window = NULL;
+                            app->screenSurface = NULL;
+                            SDL_Quit();
+                            abort();
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+#endif
         GFX::clear(app->screenCol);
         Pad_Update();         
         ASSERTFUNC(app->currentScreen, "screen is NULL");                

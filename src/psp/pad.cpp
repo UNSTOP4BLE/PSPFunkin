@@ -18,6 +18,10 @@ struct Input
 
 static Input Pad;
 
+#ifndef PSP
+std::map<int, bool> keyboard;
+#endif
+
 bool Pad_Init (void)
 {
 #ifdef PSP
@@ -47,7 +51,7 @@ bool Pad_Held (const unsigned long Button)
 #ifdef PSP
     return ((Pad.Held & Button) != 0);
 #else
-    return 0;
+    return keyboard[Button];
 #endif
 }
 
@@ -87,5 +91,18 @@ void Pad_Update (void)
     AddInput (PSP_CTRL_CROSS);
     AddInput (PSP_CTRL_SQUARE);
 #else
+    SDL_Event event;
+    while(SDL_PollEvent(&event))
+    {
+        switch(event.type)
+        {
+            case SDL_KEYDOWN: //key pressed
+                keyboard[event.key.keysym.sym] = true;
+                break;
+            case SDL_KEYUP: //key released
+                keyboard[event.key.keysym.sym] = false;
+                break;
+        }
+    }
 #endif
 }
