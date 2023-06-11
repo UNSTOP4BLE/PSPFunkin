@@ -15,7 +15,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@main
       - name: Install Dependencies And Compile
-        run: apk add cmake gmp mpc1 mpfr4 --quiet && psp-cmake -S . -B ./build && cd build && make -j48 && mkdir export && cp -R assets export && cp EBOOT.PBP export
+        run: apk add cmake gmp mpc1 mpfr4 --quiet && cd cht2bin && cmake -S . -B ./build && cmake --build ./build && cd .. && psp-cmake -S . -B ./build && cd build && make -j48 && mkdir export && cp -R assets export && cp EBOOT.PBP export
       - name: Publish Artifact
         uses: actions/upload-artifact@main
         with:
