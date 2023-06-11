@@ -1,1 +1,8 @@
-cmake -S . -B ./build -DCMAKE_TOOLCHAIN_FILE="${PSPDEV}/psp/share/pspdev.cmake"
+cht2bin:
+cmake -S . -B ./build
+cmake --build ./build
+
+funkin:
+psp-cmake -S . -B ./build or cmake -S . -B ./build -DCMAKE_TOOLCHAIN_FILE="${PSPDEV}/psp/share/pspdev.cmake"
+cmake --build ./build
+

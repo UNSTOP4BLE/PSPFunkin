@@ -5,10 +5,41 @@ set(CMAKE_CXX_STANDARD         17)
 
 project(PSPFunkin LANGUAGES C CXX)
 
+#glob all files
 file(GLOB MY_SRCS src/*.cpp src/*/*.cpp)
 
-add_executable(${PROJECT_NAME} ${MY_SRCS})
+#find the chart building program
+find_program(_chtbin
+	cht2bin REQUIRED
+	HINTS ${PROJECT_SOURCE_DIR}/cht2bin/build
+)
 
+#copy over the assets folder
+file(COPY ${PROJECT_SOURCE_DIR}/assets/ DESTINATION ${PROJECT_BINARY_DIR}/assets)
+
+#build charts 
+file(
+    GLOB_RECURSE _charts
+    RELATIVE ${PROJECT_SOURCE_DIR}
+    assets/songs/*/*.json
+)
+list(
+    TRANSFORM _charts REPLACE "\.json$" ".bin"
+    OUTPUT_VARIABLE _built_charts
+)
+
+foreach(_in _out IN ZIP_LISTS _charts _built_charts)
+    add_custom_command(
+        OUTPUT ${_out}
+        COMMAND ${_chtbin} ${_out} ${PROJECT_SOURCE_DIR}/${_in}
+        DEPENDS ${PROJECT_SOURCE_DIR}/${_in}
+        COMMENT "Building chart ${_out}"
+    )
+endforeach()
+
+file(COPY ${_built_charts} DESTINATION ${PROJECT_BINARY_DIR}/assets)
+    
+add_executable(${PROJECT_NAME} ${MY_SRCS})
 
 if(PSP)
     target_link_libraries(${PROJECT_NAME} PRIVATE
@@ -55,6 +86,3 @@ else()
         m  
     )
 endif()
-
-#copy over the assets folder
-file(COPY ${PROJECT_SOURCE_DIR}/assets/ DESTINATION ${PROJECT_BINARY_DIR}/assets)
