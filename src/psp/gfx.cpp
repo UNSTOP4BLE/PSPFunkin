@@ -5,16 +5,16 @@
 #include "gfx.h"
 #include "../screen.h"
 
-#ifdef PSP
-#include <pspkernel.h>
-#include <pspdisplay.h>
-#include <pspgu.h>
-#include <png.h>
-#include <vram.h>
-#else
+//#ifdef PSP
+//#include <pspkernel.h>
+//#include <pspdisplay.h>
+//#include <pspgu.h>
+//#include <png.h>
+//#include <vram.h>
+//#else
 #include <SDL2/SDL_image.h>
-#define PCSCALE 3 // works by multiplying psp screen res by this number
-#endif
+#define PCSCALE 1 // works by multiplying psp screen res by this number
+//#endif
 
 #include "memory.h"
 
@@ -29,7 +29,7 @@ namespace GFX {
 #define SLICE_WIDTH             (64.f)
 #define M_180_PI                (57.29578f)
 #define M_PI_180                (0.017453292f)
-
+/*
 #ifdef PSP
 static int *dlist;
 static Texture disp_buffer = {
@@ -51,8 +51,9 @@ static Texture draw_buffer = {
 };
 static uint32_t *vram = reinterpret_cast<uint32_t *>(0x40000000 | 0x04000000);
 #endif
-
+*/
 void init(void) {
+    /*
 #ifdef PSP
     // Display list allocation
     dlist = (int*)Mem::pspf_malloc(DLIST_SIZE);
@@ -91,27 +92,28 @@ void init(void) {
     sceGuSync(0, 0);
     sceDisplayWaitVblankStart();
     sceGuDisplay(GU_TRUE);
-#else    
+#else    */
     app->window = SDL_CreateWindow("PSPFunkin", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH * PCSCALE, SCREEN_HEIGHT * PCSCALE, SDL_WINDOW_SHOWN);
     app->renderer = SDL_CreateRenderer(app->window, -1, SDL_RENDERER_ACCELERATED);
     app->screenSurface = SDL_GetWindowSurface(app->window);
 
-#endif
+//#endif
 }
 
 void clear(int color) {
-#ifdef PSP
-    sceKernelDcacheWritebackRange(dlist, DLIST_SIZE);
-    sceGuStart(GU_DIRECT, dlist);
-    sceGuClearColor(color);
-    sceGuClear(GU_COLOR_BUFFER_BIT | GU_FAST_CLEAR_BIT);
-#else
+//#ifdef PSP
+  //  sceKernelDcacheWritebackRange(dlist, DLIST_SIZE);
+   // sceGuStart(GU_DIRECT, dlist);
+   // sceGuClearColor(color);
+    //sceGuClear(GU_COLOR_BUFFER_BIT | GU_FAST_CLEAR_BIT);
+//#else
     SDL_SetRenderDrawColor(app->renderer, ((color >> 16) & 0xFF) / 255.0, ((color >> 8) & 0xFF) / 255.0, ((color) & 0xFF) / 255.0, 255);
     SDL_RenderClear(app->renderer);
-#endif
+//#endif
 }
 
 void flip(void) {
+/*
 #ifdef PSP
     sceGuScissor(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
@@ -124,9 +126,9 @@ void flip(void) {
     draw_buffer.texdata = static_cast<uint32_t *>(vabsptr(sceGuSwapBuffers()));
 
     vram += FRAMEBUFFER_SIZE / sizeof(uint32_t);
-#else
+#else*/
     SDL_RenderPresent(app->renderer);
-#endif
+//#endif
 }
 
 static int getNextPower2(int width){
@@ -141,6 +143,7 @@ static int getNextPower2(int width){
 }
 
 Texture *loadTex(const char *path) {
+    /*
 #ifdef PSP
     png_structp png_ptr;
     png_infop info_ptr;
@@ -242,19 +245,19 @@ Texture *loadTex(const char *path) {
     png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
     
     return img;
-#else
+#else*/
     Texture *psptex = NULL;
     psptex = IMG_LoadTexture(app->renderer, path);
     ASSERTFUNC(psptex, "texture is NULL");
     return psptex;
-#endif
+//#endif
 }
 
-void freeTex(Texture **tex) {
-#ifdef PSP
-#else
-    //SDL_DestroyTexture(**tex->texdata);
-#endif
+void freeTex(Texture *tex) {
+//#ifdef PSP
+//#else
+    SDL_DestroyTexture(tex);
+//#endif
 }
 
 template<typename T> void drawTex(Texture* tex, GFX::RECT<int> *Img, GFX::RECT<T> *Disp, bool linear, float angle, int alpha) {
@@ -262,17 +265,19 @@ template<typename T> void drawTex(Texture* tex, GFX::RECT<int> *Img, GFX::RECT<T
 
     if (Disp->x+Disp->w >= 0 && Disp->x <= SCREEN_WIDTH && Disp->y+Disp->h >= 0 && Disp->y <= SCREEN_HEIGHT)
     {
+        /*
 #ifdef PSP
         sceKernelDcacheWritebackInvalidateAll();
         sceGuStart(GU_DIRECT, dlist);
         sceGuCopyImage(GU_PSM_8888, Img->x, Img->y, Img->w, Img->h, tex->texW, tex->texdata, Disp->x, Disp->y, LINE_SIZE, vram);
         sceGuFinish();
         sceGuSync(0,0);
-    #else
+        */
+ //   #else
         SDL_Rect _img = {static_cast<int>(Img->x), static_cast<int>(Img->y), static_cast<int>(Img->w), static_cast<int>(Img->h)};
         SDL_Rect _disp = {static_cast<int>(Disp->x) * PCSCALE, static_cast<int>(Disp->y) * PCSCALE, static_cast<int>(Disp->w) * PCSCALE, static_cast<int>(Disp->h) * PCSCALE};
         ASSERTFUNC(SDL_RenderCopy(app->renderer, tex, &_img, &_disp) >= 0, "failed to display sprite");
-        #endif
+   //     #endif
     }
 }
 

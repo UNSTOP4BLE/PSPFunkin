@@ -34,5 +34,5 @@ void MainMenuScreen::draw(void)
 
 MainMenuScreen::~MainMenuScreen(void) 
 {
-    GFX::freeTex(&background);
+    GFX::freeTex(background);
 }

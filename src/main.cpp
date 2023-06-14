@@ -47,12 +47,12 @@ int main()
 
     app = new PSPFunkin(); //new pspfunkin every single time?? no need for a rewrite!
 
-#ifdef PSP
+//#ifdef PSP
     setupcallbacks();
-    SDL_Init(SDL_INIT_AUDIO);
-#else
+  //  SDL_Init(SDL_INIT_AUDIO);
+//#else
     ASSERTFUNC(SDL_Init(SDL_INIT_EVERYTHING) >= 0, "failed to init sdl");
-#endif
+//#endif
     Pad_Init();
     app->audioMixer = new Audio::Mixer();
     app->audioMixer->start();

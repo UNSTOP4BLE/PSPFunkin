@@ -131,5 +131,5 @@ void TitleScreen::draw(void)
 TitleScreen::~TitleScreen(void) 
 {
     delete freaky;
-    GFX::freeTex(&ng);
+    GFX::freeTex(ng);
 }

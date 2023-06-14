@@ -163,6 +163,7 @@ void PlayStateScreen::update(void)
 
 }
 
+std::string ratinglol = "";
 void PlayStateScreen::draw(void)
 {
     curstage.drawObjects(curstage.bgobjects, gamecam.zoom);
@@ -177,6 +178,7 @@ void PlayStateScreen::draw(void)
   // PrintFont(Left, 0, 40, "mgc %s\nspd%f\nbpm%f\nscnt%d\nncnt%d", app->parser.chartdata.magic, app->parser.chartdata.speed, app->parser.chartdata.bpm, app->parser.chartdata.sectioncount, app->parser.chartdata.notecount);
    // PrintFont(Left, 0, 40, "zoom %f opp %f plr %f", gamecam.zoom, opponent->camzoom, player->camzoom);
    //PrintFont(Left, 0, 40, "note %d, sec %d, data %d", sizeof(Note), sizeof(Section), sizeof(ChartData));
+  PrintFont(Left, 0, 40, "yur rating is:::: %s", ratinglol.c_str());
 
 
 }
@@ -186,7 +188,7 @@ void PlayStateScreen::freescr(void) {
     delete opponent;
     delete gf;
     curstage.free();
-    GFX::freeTex(&hud);
+    GFX::freeTex(hud);
     delete inst;
     delete vocals;
 }
@@ -197,16 +199,15 @@ PlayStateScreen::~PlayStateScreen(void)
 }
 
 void PlayStateScreen::increaseScore(int note) {
-    float noteDiff = fabs(app->parser.gamenotes[note].pos - app->parser.songTime);
-    Rating daRating = judgeNote(noteDiff);
+  //  float noteDiff = fabs(app->parser.gamenotes[note].pos - app->parser.songTime);
+//    Rating daRating = judgeNote(noteDiff);
 }
 
 Rating PlayStateScreen::judgeNote(float diff)
 {
     for (int i = 0; i < static_cast<int>(ratingData.size()-1); i++) //skips last window (Shit)
     {
-        if (diff <= ratingData[i].hitWindow)
-        {
+        if (diff <= ratingData[i].hitWindow) {
             return ratingData[i];
         }
     }
@@ -226,20 +227,18 @@ void PlayStateScreen::updateInput(void)
 
     //handle note hits here? why not lol
     for (int i = 0; i < static_cast<int>(app->parser.gamenotes.size()); i++) {
-        if (app->parser.gamenotes[i].flag & FLAG_NOTE_ISOPPONENT)
+        if (app->parser.gamenotes[i].flag & FLAG_NOTE_ISOPPONENT && !(app->parser.gamenotes[i].flag & FLAG_NOTE_HIT))
             continue;
-    //    int y = notePos.player[app->parser.gamenotes[i].type].y;
-  //      float curNotey = ((app->parser.gamenotes[i].pos - app->parser.songTime) * app->parser.chartdata.speed / 3.6f) + y;
 
-     //   if (checkPad[app->parser.gamenotes[i].type] && curNotey >= hitwindows[0][0] && curNotey <= hitwindows[3][1]) {
-      //      app->parser.gamenotes[i].flag |= FLAG_NOTE_HIT; //note has been hit
-        //    for (int j = 0; j < 4; j++) {
-          //      if (curNotey >= hitwindows[j][0] && curNotey <= hitwindows[j][1]) {
-            //        //j = rating;
-              //      break;
-           //     }
-            //}
-     //   }
-
+        if (checkPad[app->parser.gamenotes[i].type] && 
+            app->parser.gamenotes[i].pos-app->parser.songTime >= ratingData[ratingData.size()].hitWindow && 
+            app->parser.gamenotes[i].pos-app->parser.songTime <= ratingData[0].hitWindow) {
+            float noteDiff = fabs(app->parser.gamenotes[i].pos - app->parser.songTime);// + ClientPrefs.ratingOffset);
+            app->parser.gamenotes[i].flag |= FLAG_NOTE_HIT; //note has been hit
+        
+            Rating daRating = judgeNote(noteDiff);
+            ratinglol = daRating.name;
+        }
+        else continue;
     }
 }

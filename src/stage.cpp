@@ -40,7 +40,7 @@ void Stage::free(void) {
     for (int i = 0; i < static_cast<int>(textures.size()); i++) {
         if (textures.size() == 0)
             return;
-        GFX::freeTex(&textures[i].texture);
+        GFX::freeTex(textures[i].texture);
     }
     textures.clear();
     textures.shrink_to_fit();
