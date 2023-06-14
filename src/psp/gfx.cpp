@@ -1,3 +1,6 @@
+//
+// most of the psp graphics code is made by pyroesp https://github.com/pyroesp/PSP_Post_It_Editor
+//
 #include "../main.h"
 #include "gfx.h"
 #include "../screen.h"
@@ -27,10 +30,26 @@ namespace GFX {
 #define M_180_PI                (57.29578f)
 #define M_PI_180                (0.017453292f)
 
-static int *dlist;
 #ifdef PSP
-static Texture disp_buffer;
-static Texture draw_buffer;
+static int *dlist;
+static Texture disp_buffer = {
+    512, 512,
+    SCREEN_WIDTH, SCREEN_HEIGHT, 
+    0,
+    0,
+    0,
+    0
+};
+
+static Texture draw_buffer = {
+    512, 512,
+    SCREEN_WIDTH, SCREEN_HEIGHT,
+    0,
+    0,
+    0,
+    reinterpret_cast<uint32_t *>FRAMEBUFFER_SIZE
+};
+static uint32_t *vram = reinterpret_cast<uint32_t *>(0x40000000 | 0x04000000);
 #endif
 
 void init(void) {
@@ -47,8 +66,8 @@ void init(void) {
     sceGuOffset(2048-SCREEN_WIDTH/2, 2048-SCREEN_HEIGHT/2);
     sceGuViewport(2048, 2048, SCREEN_WIDTH, SCREEN_HEIGHT);
     
-    draw_buffer.texdata = (unsigned int*)vabsptr(draw_buffer.texdata);
-    disp_buffer.texdata = (unsigned int*)vabsptr(disp_buffer.texdata);
+    draw_buffer.texdata = static_cast<uint32_t *>(vabsptr(draw_buffer.texdata));
+    disp_buffer.texdata = static_cast<uint32_t *>(vabsptr(disp_buffer.texdata));
 
     sceGuDepthRange(65535, 0);
     sceGuClearDepth(65535);
@@ -102,24 +121,127 @@ void flip(void) {
     sceDisplayWaitVblankStart();
 
     disp_buffer.texdata = draw_buffer.texdata;
-    draw_buffer.texdata = (unsigned int*)vabsptr(sceGuSwapBuffers());
+    draw_buffer.texdata = static_cast<uint32_t *>(vabsptr(sceGuSwapBuffers()));
+
+    vram += FRAMEBUFFER_SIZE / sizeof(uint32_t);
 #else
     SDL_RenderPresent(app->renderer);
 #endif
 }
 
+static int getNextPower2(int width){
+    int b = width;
+    int n;
+    for (n = 0; b != 0; n++) 
+        b >>= 1;
+    b = 1 << n;
+    if (b == 2 * width) 
+        b >>= 1;
+    return b;
+}
+
 Texture *loadTex(const char *path) {
 #ifdef PSP
-    /*
-    Texture *texpsp;
-    SDL_Surface *tex = SDL_LoadPNG(path);
-    assert(tex);
-    texpsp.texdata = tex;
-    return 
-    FILE *fp = fopen(path, "rb");
-    ASSERTFUNC(fp, "failed to load png file");
-    fclose(fp);*/
-    return reinterpret_cast<Texture *>(1);
+    png_structp png_ptr;
+    png_infop info_ptr;
+    
+    FILE *fp = NULL;
+    fp = fopen(path, "rb");
+    if (!fp)
+        return NULL;
+    
+    Texture* img = NULL;
+    img = static_cast<Texture *>(Mem::pspf_malloc(sizeof(Texture)));
+    
+    if (!img)
+        return NULL;
+    
+    png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+    info_ptr = png_create_info_struct(png_ptr);
+    if (!info_ptr){
+        Mem::pspf_free(img);
+        fclose(fp);
+        png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+        return NULL;
+    }
+    
+    png_init_io(png_ptr, fp);
+    png_read_info(png_ptr, info_ptr);
+
+    // Determine the PNG image dimensions and format
+    png_uint_32 width = png_get_image_width(png_ptr, info_ptr);
+    png_uint_32 height = png_get_image_height(png_ptr, info_ptr);
+    int bit_depth = png_get_bit_depth(png_ptr, info_ptr);
+    int color_type = png_get_color_type(png_ptr, info_ptr);
+    
+    if (width > 512 || height > 512){
+        Mem::pspf_free(img);
+        fclose(fp);
+        png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+        return NULL;
+    }
+    
+    if (color_type == PNG_COLOR_TYPE_PALETTE)
+        png_set_palette_to_rgb(png_ptr);
+    if (color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8)
+        png_set_expand_gray_1_2_4_to_8(png_ptr);
+    if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
+        png_set_tRNS_to_alpha(png_ptr);
+    if (bit_depth == 16)
+        png_set_strip_16(png_ptr);
+    if (color_type == PNG_COLOR_TYPE_GRAY || color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
+        png_set_gray_to_rgb(png_ptr);
+
+    png_read_update_info(png_ptr, info_ptr);
+
+    img->bit_depth = bit_depth;
+    img->color_type = color_type;
+    img->imgW = width;
+    img->imgH = height;
+    img->texW = getNextPower2(width);
+    img->texH = height;
+        
+    // Allocate memory for the final image data
+    uint32_t *data = static_cast<uint32_t *>(Mem::pspf_malloc(sizeof(uint32_t) * img->texW * height));
+    
+    if (!data){
+        Mem::pspf_free(img);
+        fclose(fp);
+        png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+        return NULL;
+    }
+    
+    img->texdata = data;
+    img->rowbytes = png_get_rowbytes(png_ptr, info_ptr);
+
+    // Allocate memory for the PNG image
+    png_bytep *row_pointers = (png_bytep*)png_malloc(png_ptr, sizeof(png_bytep) * height);
+    for (int y = 0; y < height; y++)
+        row_pointers[y] = (png_byte*)Mem::pspf_malloc(png_get_rowbytes(png_ptr, info_ptr));
+    
+    // Read the PNG image data
+    png_read_image(png_ptr, row_pointers);
+
+    // Copy the PNG image data to the final image data
+    for (int y = 0; y < height; y++){
+        png_bytep row = row_pointers[y];
+        for (int x = 0; x < width; x++){
+            png_bytep pixel = &(row[x * 3]);
+            uint32_t agbr = (0xFF000000) | (static_cast<uint32_t>(pixel[2]) << 16) | (static_cast<uint32_t>(pixel[1] << 8)) | (static_cast<uint32_t>(pixel[0]));
+            data[y * img->texW + x] = agbr;
+        }
+    }
+
+    // Free memory allocated for the PNG image
+    for (int y = 0; y < height; y++)
+        Mem::pspf_free(row_pointers[y]);
+    Mem::pspf_free(row_pointers);
+    
+    // Close the PNG file and clean up memory and resources
+    fclose(fp);
+    png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+    
+    return img;
 #else
     Texture *psptex = NULL;
     psptex = IMG_LoadTexture(app->renderer, path);
@@ -140,8 +262,13 @@ template<typename T> void drawTex(Texture* tex, GFX::RECT<int> *Img, GFX::RECT<T
 
     if (Disp->x+Disp->w >= 0 && Disp->x <= SCREEN_WIDTH && Disp->y+Disp->h >= 0 && Disp->y <= SCREEN_HEIGHT)
     {
-        #ifdef PSP
-        #else
+#ifdef PSP
+        sceKernelDcacheWritebackInvalidateAll();
+        sceGuStart(GU_DIRECT, dlist);
+        sceGuCopyImage(GU_PSM_8888, Img->x, Img->y, Img->w, Img->h, tex->texW, tex->texdata, Disp->x, Disp->y, LINE_SIZE, vram);
+        sceGuFinish();
+        sceGuSync(0,0);
+    #else
         SDL_Rect _img = {static_cast<int>(Img->x), static_cast<int>(Img->y), static_cast<int>(Img->w), static_cast<int>(Img->h)};
         SDL_Rect _disp = {static_cast<int>(Disp->x) * PCSCALE, static_cast<int>(Disp->y) * PCSCALE, static_cast<int>(Disp->w) * PCSCALE, static_cast<int>(Disp->h) * PCSCALE};
         ASSERTFUNC(SDL_RenderCopy(app->renderer, tex, &_img, &_disp) >= 0, "failed to display sprite");

@@ -18,26 +18,26 @@ find_program(_chtbin
 file(COPY ${PROJECT_SOURCE_DIR}/assets/ DESTINATION ${PROJECT_BINARY_DIR}/assets)
 
 #build charts 
-file(
-    GLOB_RECURSE _charts
-    RELATIVE ${PROJECT_SOURCE_DIR}
-    assets/songs/*/*.json
-)
-list(
-    TRANSFORM _charts REPLACE "\.json$" ".bin"
-    OUTPUT_VARIABLE _built_charts
-)
+#file(
+#    GLOB_RECURSE _charts
+#    RELATIVE ${PROJECT_SOURCE_DIR}
+#    assets/songs/*/*.json
+#)
+#list(
+#    TRANSFORM _charts REPLACE "\.json$" ".bin"
+#    OUTPUT_VARIABLE _built_charts
+#)
 
-foreach(_in _out IN ZIP_LISTS _charts _built_charts)
-    add_custom_command(
-        OUTPUT ${_out}
-        COMMAND ${_chtbin} ${_out} ${PROJECT_SOURCE_DIR}/${_in}
-        DEPENDS ${PROJECT_SOURCE_DIR}/${_in}
-        COMMENT "Building chart ${_out}"
-    )
-endforeach()
+#foreach(_in _out IN ZIP_LISTS _charts _built_charts)
+#    add_custom_command(
+#        OUTPUT ${_out}
+#        COMMAND ${_chtbin} ${_out} ${PROJECT_SOURCE_DIR}/${_in}
+#        DEPENDS ${PROJECT_SOURCE_DIR}/${_in}
+#        COMMENT "Building chart ${_out}"
+#    )
+#endforeach()
 
-file(COPY ${_built_charts} DESTINATION ${PROJECT_BINARY_DIR}/assets)
+#file(COPY ${_built_charts} DESTINATION ${PROJECT_BINARY_DIR}/assets)
     
 add_executable(${PROJECT_NAME} ${MY_SRCS})
 

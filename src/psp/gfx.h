@@ -1,3 +1,7 @@
+//
+// most of the psp graphics code is made by pyroesp https://github.com/pyroesp/PSP_Post_It_Editor
+//
+
 #pragma once
 
 #ifndef PSP
@@ -16,7 +20,14 @@ public:
 
 #ifdef PSP
 struct Texture {
-    unsigned int *texdata;
+    int texW;  
+    int texH;  
+    int imgW;   
+    int imgH;  
+    int bit_depth;     
+    int color_type;    
+    int rowbytes;      
+    uint32_t* texdata;  
 };
 #else
 
