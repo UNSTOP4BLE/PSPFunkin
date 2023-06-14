@@ -85,6 +85,7 @@ private:
     void drawNotes(void);
     void increaseScore(int note);
     Rating judgeNote(float diff);
+    void missedNote();
     void updateInput(void);
     Character *player;
     Character *opponent;
@@ -100,6 +101,7 @@ private:
     bool checkPadHeld[4];
     NotePos notePos;
     int curStep;
+    int score;
 };
 
 void ErrMSG(const char *format, ...);

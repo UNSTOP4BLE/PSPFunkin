@@ -15,8 +15,10 @@ static void setRating(Rating &rating, std::string name, int score, bool splash, 
 
 void PlayStateScreen::initscr(void) {
     setScreenCol(0xFF00FF00);
-
+    //reset vars
+    score = 0;
     cursong = "bopeebo";
+    
     char _path[40];
     sprintf(_path, "assets/songs/%s/config.json", cursong.c_str());
     Json::Value _config;
@@ -178,7 +180,7 @@ void PlayStateScreen::draw(void)
   // PrintFont(Left, 0, 40, "mgc %s\nspd%f\nbpm%f\nscnt%d\nncnt%d", app->parser.chartdata.magic, app->parser.chartdata.speed, app->parser.chartdata.bpm, app->parser.chartdata.sectioncount, app->parser.chartdata.notecount);
    // PrintFont(Left, 0, 40, "zoom %f opp %f plr %f", gamecam.zoom, opponent->camzoom, player->camzoom);
    //PrintFont(Left, 0, 40, "note %d, sec %d, data %d", sizeof(Note), sizeof(Section), sizeof(ChartData));
-  PrintFont(Left, 0, 40, "yur rating is:::: %s", ratinglol.c_str());
+  PrintFont(Left, 0, 40, "yur rating is: %s  score: %d", ratinglol.c_str(), score);
 
 
 }
@@ -214,6 +216,11 @@ Rating PlayStateScreen::judgeNote(float diff)
     return ratingData[ratingData.size() - 1];
 }
 
+void PlayStateScreen::missedNote() {
+ //           vocals->volume = 0;
+    score -= 10;
+}
+
 void PlayStateScreen::updateInput(void)
 {
     checkPad[0] = Pad_Pressed(PSP_CTRL_LEFT | PSP_CTRL_SQUARE);
@@ -227,17 +234,28 @@ void PlayStateScreen::updateInput(void)
 
     //handle note hits here? why not lol
     for (int i = 0; i < static_cast<int>(app->parser.gamenotes.size()); i++) {
-        if (app->parser.gamenotes[i].flag & FLAG_NOTE_ISOPPONENT && !(app->parser.gamenotes[i].flag & FLAG_NOTE_HIT))
+        if (app->parser.gamenotes[i].flag & FLAG_NOTE_ISOPPONENT || !(app->parser.gamenotes[i].flag & FLAG_NOTE_HIT))
             continue;
 
+        //hit a note
         if (checkPad[app->parser.gamenotes[i].type] && 
-            app->parser.gamenotes[i].pos-app->parser.songTime >= ratingData[ratingData.size()].hitWindow && 
-            app->parser.gamenotes[i].pos-app->parser.songTime <= ratingData[0].hitWindow) {
+            app->parser.gamenotes[i].pos-app->parser.songTime >= ratingData[ratingData.size()].hitWindow && //shit hit window
+            app->parser.gamenotes[i].pos-app->parser.songTime <= ratingData[0].hitWindow) { //sick hit window
+
             float noteDiff = fabs(app->parser.gamenotes[i].pos - app->parser.songTime);// + ClientPrefs.ratingOffset);
             app->parser.gamenotes[i].flag |= FLAG_NOTE_HIT; //note has been hit
         
             Rating daRating = judgeNote(noteDiff);
+            score += daRating.score;
             ratinglol = daRating.name;
+
+        }
+        //missed a note
+        else if (checkPad[app->parser.gamenotes[i].type] || (((app->parser.gamenotes[i].pos - app->parser.songTime) * app->parser.chartdata.speed / 3.6f) + note.y < 0)) {
+            missedNote();
+            if (((app->parser.gamenotes[i].pos - app->parser.songTime) * app->parser.chartdata.speed / 3.6f) + note.y < 0)
+                app->parser.gamenotes[i].flag |= FLAG_NOTE_HIT; //note has been hit (lol no but im doing this to ignore the note)
+        
         }
         else continue;
     }
