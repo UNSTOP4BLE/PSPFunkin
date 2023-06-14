@@ -9,11 +9,11 @@ void PlayStateScreen::drawDummyNotes(void)
         GFX::RECT<int> img = {1 + (40*i), 1, 39, 39};
         for (int j = 0; j < 8; j++)
         {
-            GFX::RECT<float> disp = {static_cast<float>(notePos.player[i].x - hudcam.camx), static_cast<float>(notePos.player[i].y - hudcam.camy), 39, 39}; 
-            GFX::drawTexZoom<float>(hud, &img, &disp, true, 0, 200, hudcam.zoom);
+            GFX::RECT<float> disp = {static_cast<float>(notePos.player[i].x - hudcam.camx.getValue()), static_cast<float>(notePos.player[i].y - hudcam.camy.getValue()), 39, 39}; 
+            GFX::drawTexZoom<float>(hud, &img, &disp, true, 0, 200, hudcam.zoom.getValue());
 
-            disp = {static_cast<float>(notePos.opponent[i].x - hudcam.camx), static_cast<float>(notePos.opponent[i].y - hudcam.camy), 39, 39};  
-            GFX::drawTexZoom<float>(hud, &img, &disp, true, 0, 200, hudcam.zoom);
+            disp = {static_cast<float>(notePos.opponent[i].x - hudcam.camx.getValue()), static_cast<float>(notePos.opponent[i].y - hudcam.camy.getValue()), 39, 39};  
+            GFX::drawTexZoom<float>(hud, &img, &disp, true, 0, 200, hudcam.zoom.getValue());
         }
     }
 }
@@ -46,12 +46,12 @@ void PlayStateScreen::drawSustain(int note, float y, int type)
             img.h = 16;
         }
 
-        GFX::RECT<float> disp = {static_cast<float>(xpos - hudcam.camx), ypos + (i*clipheight) - hudcam.camy, static_cast<float>(img.w), static_cast<float>(img.h)};
+        GFX::RECT<float> disp = {static_cast<float>(xpos - hudcam.camx.getValue()), ypos + (i*clipheight) - hudcam.camy.getValue(), static_cast<float>(img.w), static_cast<float>(img.h)};
         if (app->parser.gamenotes[note].flag & FLAG_NOTE_ISOPPONENT && disp.y < sustain.y+img.h*2) {
           //  opponent->setAnim(app->parser.gamenotes[note].type+1);
             continue; //stop drawing opponents note if they were "hit"
         }
-        GFX::drawTexZoom<float>(hud, &img, &disp, false, 0, 200, hudcam.zoom);
+        GFX::drawTexZoom<float>(hud, &img, &disp, false, 0, 200, hudcam.zoom.getValue());
     }
 }
 
@@ -82,8 +82,8 @@ void PlayStateScreen::drawNotes(void)
         };
     
         GFX::RECT<float> disp = {
-            static_cast<float>(curNotex - hudcam.camx),
-            curNotey - hudcam.camy,
+            static_cast<float>(curNotex - hudcam.camx.getValue()),
+            curNotey - hudcam.camy.getValue(),
             static_cast<float>(img.w),
             static_cast<float>(img.h)
         };
@@ -95,6 +95,6 @@ void PlayStateScreen::drawNotes(void)
           //  opponent->setAnim(app->parser.gamenotes[i].type+1);
             continue; //stop drawing opponents note if they were "hit"
         }
-        GFX::drawTexZoom<float>(hud, &img, &disp, false, 0, 200, hudcam.zoom);
+        GFX::drawTexZoom<float>(hud, &img, &disp, false, 0, 200, hudcam.zoom.getValue());
     }
 }

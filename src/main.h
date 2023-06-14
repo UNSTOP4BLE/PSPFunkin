@@ -15,6 +15,7 @@ public:
     SDL_Renderer *renderer;
     SDL_Surface *screenSurface;
 //#endif
+    float time;
     Audio::Mixer *audioMixer;
     ChartParser parser;
     double deltatime;

@@ -64,6 +64,10 @@ int main()
     while(1)
     {
         auto last = std::chrono::high_resolution_clock::now();
+        app->time = std::chrono::duration_cast<std::chrono::duration<float, std::ratio<1>>>(
+            last.time_since_epoch()
+        ).count();
+        
 #ifndef PSP
         SDL_Event event;
         while(SDL_PollEvent(&event))

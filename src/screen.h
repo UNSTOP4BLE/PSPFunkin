@@ -57,12 +57,13 @@ struct NotePos
 class Rating
 {
 public:
+    Rating(std::string name, int score, bool splash, float ratingmod, int hitwindow);
     std::string name;
     GFX::RECT<int> img;
     int hitWindow; //ms
     float ratingMod;
     int score;
-    bool noteSplash = true;
+    bool noteSplash;
 };
 
 class PlayStateScreen : public Screen {
@@ -75,8 +76,8 @@ private:
     class Camera {
     public:
         void update(float ox, float oy, float oz, float px, float py, float pz);
-        float camx, camy;
-        float zoom;
+        Tween<float, QuadInEasing> camx, camy;
+        Tween<float, QuadInEasing> zoom;
     } gamecam, hudcam;
     void initscr(void);
     void freescr(void);

@@ -5,13 +5,12 @@
 #include "chartparser.h"
 #include "character.h"
 
-static void setRating(Rating &rating, std::string name, int score, bool splash, float ratingmod, int hitwindow) {
-    rating.name = name;
-    rating.score = score;
-    rating.noteSplash = splash;
-    rating.ratingMod = ratingmod;
-    rating.hitWindow = hitwindow;
-}
+Rating::Rating(std::string name, int score, bool splash, float ratingmod, int hitwindow)
+: name(name),
+score(score),
+noteSplash(splash),
+ratingMod(ratingmod),
+hitWindow(hitwindow) {}
 
 void PlayStateScreen::initscr(void) {
     setScreenCol(0xFF00FF00);
@@ -77,15 +76,10 @@ void PlayStateScreen::initscr(void) {
 
     //set up ratings and timings (kinda stolen off of psych engine lmao)
     //setRating(Rating &rating, std::string name, int score, bool splash, float ratingmod, int hitwindow)
-    Rating rating;
-    setRating(rating, "sick", 350, true,    1,  45);
-    ratingData.push_back(rating); //default rating
-    setRating(rating, "good", 200, false, 0.7,  90); 
-    ratingData.push_back(rating);
-    setRating(rating, "bad",  100, false, 0.4, 135); 
-    ratingData.push_back(rating);
-    setRating(rating, "shit",  50, false,   0,   0); 
-    ratingData.push_back(rating);
+    ratingData.emplace_back("sick", 350, true,    1,  45);
+    ratingData.emplace_back("good", 200, false, 0.7,  90);
+    ratingData.emplace_back("bad",  100, false, 0.4, 135);
+    ratingData.emplace_back("shit",  50, false,   0,   0);
 }
 
 PlayStateScreen::PlayStateScreen(void)
@@ -95,14 +89,14 @@ PlayStateScreen::PlayStateScreen(void)
 
 void PlayStateScreen::Camera::update(float ox, float oy, float oz, float px, float py, float pz) {
     if (app->parser.sections[app->parser.curStep / 16].flag & FLAG_SEC_MUSTHIT) { 
-        camx = lerp(camx, px, 0.2);
-        camy = lerp(camy, py, 0.2);
-        zoom = lerp(zoom, pz, 0.3);
+        camx.setValue(px, 0.2, app->time);
+        camy.setValue(py, 0.2, app->time);
+        zoom.setValue(pz, 0.3, app->time);
     }
     else {
-        camx = lerp(camx, ox, 0.2);
-        camy = lerp(camy, oy, 0.2);
-        zoom = lerp(zoom, oz, 0.3);
+        camx.setValue(ox, 0.2, app->time);
+        camy.setValue(oy, 0.2, app->time);
+        zoom.setValue(oz, 0.3, app->time);
     }
 }
 
@@ -121,13 +115,13 @@ void PlayStateScreen::update(void)
         gamecam.update(opponent->camx, opponent->camy, opponent->camzoom,
                       player->camx, player->camy, player->camzoom);
         //bump hud
-        hudcam.zoom = lerp(hudcam.zoom, 1.0, 0.2); 
+        hudcam.zoom.setValue(1.0, 0.2, app->time); 
         if (app->parser.justStep && !(app->parser.curStep % 16))
             hudcam.zoom = 1.1; 
         //bump game
-        hudcam.zoom = lerp(hudcam.zoom, 1.0, 0.2); 
+        gamecam.zoom.setValue(1.0, 0.2, app->time); 
         if (app->parser.justStep && !(app->parser.curStep % 16))
-            hudcam.zoom = 1.05;
+            gamecam.zoom = 1.05;
 
         updateInput();
     }
@@ -158,7 +152,7 @@ void PlayStateScreen::update(void)
             return;
         }
     }
-    curstage.tick(gamecam.camx, gamecam.camy);
+    curstage.tick(gamecam.camx.getValue(), gamecam.camy.getValue());
     //game.player->tick();
 //    opponent->tick();
   //  gf->tick();
@@ -168,12 +162,12 @@ void PlayStateScreen::update(void)
 std::string ratinglol = "";
 void PlayStateScreen::draw(void)
 {
-    curstage.drawObjects(curstage.bgobjects, gamecam.zoom);
+    curstage.drawObjects(curstage.bgobjects, gamecam.zoom.getValue());
 //    gf->draw(gamecam.camx, gamecam.camy, gamecam.zoom);
-    curstage.drawObjects(curstage.mdobjects, gamecam.zoom);
+    curstage.drawObjects(curstage.mdobjects, gamecam.zoom.getValue());
   //  opponent->draw(gamecam.camx, gamecam.camy, gamecam.zoom);
     //draw player
-    curstage.drawObjects(curstage.fgobjects, gamecam.zoom);
+    curstage.drawObjects(curstage.fgobjects, gamecam.zoom.getValue());
 
     drawDummyNotes();
     drawNotes();
@@ -236,11 +230,11 @@ void PlayStateScreen::updateInput(void)
             continue;
 
         //hit a note        
-        if (checkPad[app->parser.gamenotes[i].type] && 
-            app->parser.gamenotes[i].pos-app->parser.songTime >= ratingData[3].hitWindow && //shit hit window
-            app->parser.gamenotes[i].pos-app->parser.songTime <= ratingData[0].hitWindow) { //sick hit window
+        if (checkPadHeld[app->parser.gamenotes[i].type] && 
+            app->parser.gamenotes[i].pos-app->parser.songTime >= ratingData[3].hitWindow - 45 - 39 && //shit hit window
+            app->parser.gamenotes[i].pos-app->parser.songTime <= ratingData[0].hitWindow - 45 - 39) { //sick hit window
 
-            float noteDiff = fabs(app->parser.gamenotes[i].pos - app->parser.songTime);
+            float noteDiff = fabs(app->parser.gamenotes[i].pos - app->parser.songTime - 45 - 39);
             app->parser.gamenotes[i].flag |= FLAG_NOTE_HIT; //note has been hit
         
             Rating daRating = judgeNote(noteDiff);
