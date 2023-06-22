@@ -88,12 +88,12 @@ PlayStateScreen::PlayStateScreen(void)
 }
 
 void PlayStateScreen::Camera::update(float ox, float oy, float oz, float px, float py, float pz) {
-    if (app->parser.sections[app->parser.curStep / 16].flag & FLAG_SEC_MUSTHIT) { 
+    if (app->parser.sections[app->parser.curStep / 16].flag & FLAG_SEC_MUSTHIT && app->parser.justStep) { 
         camx.setValue(px, 0.2, app->time);
         camy.setValue(py, 0.2, app->time);
         zoom.setValue(pz, 0.3, app->time);
     }
-    else {
+    else if (app->parser.justStep) {
         camx.setValue(ox, 0.2, app->time);
         camy.setValue(oy, 0.2, app->time);
         zoom.setValue(oz, 0.3, app->time);
