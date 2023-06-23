@@ -10,8 +10,8 @@ file(GLOB MY_SRCS src/*.cpp src/*/*.cpp)
 
 #find the chart building program
 find_program(_chtbin
-	cht2bin REQUIRED
-	HINTS ${PROJECT_SOURCE_DIR}/cht2bin/build
+    cht2bin REQUIRED
+    HINTS ${PROJECT_SOURCE_DIR}/cht2bin/build
 )
 
 #copy over the assets folder
@@ -41,7 +41,7 @@ foreach(_in _out IN ZIP_LISTS _charts _built_charts)
 endforeach()
 
 #file(COPY ${_built_charts} DESTINATION ${PROJECT_BINARY_DIR}/assets)
-    
+
 add_executable(${PROJECT_NAME} ${MY_SRCS})
 
 if(PSP)
@@ -69,6 +69,7 @@ if(PSP)
         pspvfpu 
         psphprm 
         xmp 
+        pspprof
     )
     create_pbp_file(
         TARGET ${PROJECT_NAME}

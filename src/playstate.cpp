@@ -1,9 +1,12 @@
+#include "playstate.h"
 #include "main.h"
 #include "screen.h"
 #include "psp/font.h"
 #include "psp/pad.h"
 #include "chartparser.h"
 #include "character.h"
+
+#include "menu/mainmenu.h"
 
 Rating::Rating(std::string name, int score, bool splash, float ratingmod, int hitwindow)
 : name(name),
@@ -88,15 +91,18 @@ PlayStateScreen::PlayStateScreen(void)
 }
 
 void PlayStateScreen::Camera::update(float ox, float oy, float oz, float px, float py, float pz) {
-    if (app->parser.sections[app->parser.curStep / 16].flag & FLAG_SEC_MUSTHIT && app->parser.justStep) { 
-        camx.setValue(px, 0.2, app->time);
-        camy.setValue(py, 0.2, app->time);
-        zoom.setValue(pz, 0.3, app->time);
-    }
-    else if (app->parser.justStep) {
-        camx.setValue(ox, 0.2, app->time);
-        camy.setValue(oy, 0.2, app->time);
-        zoom.setValue(oz, 0.3, app->time);
+    if (app->parser.justStep && !(app->parser.curStep % 16))
+    {
+        if (app->parser.sections[app->parser.curStep / 16].flag & FLAG_SEC_MUSTHIT) { 
+            camx.setValue(px, 0.2);
+            camy.setValue(py, 0.2);
+            zoom.setValue(pz, 0.3);
+        }
+        else {
+            camx.setValue(ox, 0.2);
+            camy.setValue(oy, 0.2);
+            zoom.setValue(oz, 0.3);
+        }
     }
 }
 
@@ -115,13 +121,13 @@ void PlayStateScreen::update(void)
         gamecam.update(opponent->camx, opponent->camy, opponent->camzoom,
                       player->camx, player->camy, player->camzoom);
         //bump hud
-        hudcam.zoom.setValue(1.0, 0.2, app->time); 
-        if (app->parser.justStep && !(app->parser.curStep % 16))
-            hudcam.zoom = 1.1; 
+        if (app->parser.justStep && !(app->parser.curStep % 16)) {
+            hudcam.zoom.setValue(1.1, 1.0, 0.2); 
+        }
         //bump game
-        gamecam.zoom.setValue(1.0, 0.2, app->time); 
-        if (app->parser.justStep && !(app->parser.curStep % 16))
-            gamecam.zoom = 1.05;
+        if (app->parser.justStep && !(app->parser.curStep % 16)) {
+            gamecam.zoom.setValue(1.05, 1.0, 0.2); 
+        }
 
         updateInput();
     }

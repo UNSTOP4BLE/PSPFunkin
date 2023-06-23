@@ -2,6 +2,9 @@
 #include <string.h>
 #ifdef PSP
 #include <pspctrl.h>
+#else
+#include <SDL2/SDL.h>
+#include <map>
 #endif
 #include <stdbool.h>
 
@@ -35,8 +38,9 @@ bool Pad_Init (void)
     return 1;
 }
 
-bool Pad_Pressed (const unsigned long Button)
+bool Pad_Pressed (int Button)
 {
+#ifdef PSP
     if (((Pad.Pressed & Button) != 0))  // Pressed is TRUE
     {
         Pad.Pressed &= ~Button;         // so set it to FALSE
@@ -44,9 +48,12 @@ bool Pad_Pressed (const unsigned long Button)
     }
 
     return 0;
+#else
+    return keyboard[Button];
+#endif
 }
 
-bool Pad_Held (const unsigned long Button)
+bool Pad_Held (int Button)
 {
 #ifdef PSP
     return ((Pad.Held & Button) != 0);

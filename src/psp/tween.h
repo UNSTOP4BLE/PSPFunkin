@@ -1,4 +1,6 @@
 #pragma once
+#include "../chartparser.h"
+#include "../app.h"
 
 class LinearEasing {
 public:
@@ -12,18 +14,30 @@ public:
         return value * value;
     }
 };
-class QuadOutEasing {
-public:
-    static inline float apply(float value) {
-        return 1.0 - (1.0 - value) * (1.0 - value);
-    }
+
+enum TimeSources {
+    Step,
+    Chrono
 };
 
 /* ...other easing functions... */
-template<typename T, typename E> class Tween {
+class StepTimeSource {
+public:
+    static inline float getTweenTime(void) {
+        return getStep();
+    }
+};
+class ChronoTimeSource {
+public:
+    static inline float getTweenTime(void) {
+        return app->timer.elapsedMS() / 1000;
+    }
+};
+
+template<typename T, typename E, typename S> class Tween {
 private:
     T     _base, _delta;
-    float _endTime, _timeScale, _time;
+    float _endTime, _timeScale;
 
 public:
     inline Tween(void) {
@@ -34,26 +48,25 @@ public:
     }
 
     inline T getValue(void) {
-        float time = _endTime - _time;
+        float time = _endTime - S::getTweenTime();
         if (time <= 0)
             return _base + _delta;
-
         return _base + _delta * E::apply(1.0 - time * _timeScale);
     }
     inline bool isDone(void) {
-        return (_time <= _endTime);
+        return (S::getTweenTime() <= _endTime);
     }
 
-    inline void setValue(T start, T target, float duration, float time) {
+    inline void setValue(T start, T target, float duration) {
         _base  = start;
-        _time  = time;
         _delta = target - start;
 
-        _endTime   = _time + duration;
+        _endTime   = S::getTweenTime() + duration;
         _timeScale = 1.0 / duration;
     }
-    inline void setValue(T target, float duration, float time) {
-        setValue(getValue(), target, duration, time);
+    inline void setValue(T target, float duration) {
+        setValue(getValue(), target, duration);
+
     }
     inline void setValue(T target) {
         _base    = target;

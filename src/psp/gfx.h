@@ -1,7 +1,3 @@
-//
-// most of the psp graphics code is made by pyroesp https://github.com/pyroesp/PSP_Post_It_Editor
-//
-
 #pragma once
 
 //#ifndef PSP

@@ -1,4 +1,5 @@
 #include "main.h"
+#include "app.h"
 #include "screen.h"
 #include <cstdarg>
 #include <cstring>  

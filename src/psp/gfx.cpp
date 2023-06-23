@@ -1,8 +1,6 @@
-//
-// most of the psp graphics code is made by pyroesp https://github.com/pyroesp/PSP_Post_It_Editor
-//
-#include "../main.h"
 #include "gfx.h"
+#include "../main.h"
+#include "../app.h"
 #include "../screen.h"
 
 //#ifdef PSP

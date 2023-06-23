@@ -1,12 +1,15 @@
+#include "mainmenu.h"
 #include "../main.h"
 #include "../screen.h"
 #include "../psp/font.h"
 #include "../psp/pad.h"
 
+#include "../playstate.h"
+
 MainMenuScreen::MainMenuScreen(void) {
     setScreenCol(0xFF00FF00);
     background = GFX::loadTex("assets/menu/back.png");
-    //backgroundy.setValue(GFX::SCREEN_HEIGHT/2 - 331/2);
+    backgroundy.setValue(GFX::SCREEN_HEIGHT/2 - 331/2);
 }
 
 void MainMenuScreen::update(void) 
@@ -16,12 +19,12 @@ void MainMenuScreen::update(void)
     else if (Pad_Pressed(PSP_CTRL_UP))
     {
         selection -= 1;
-//        backgroundy.setValue(5 * selection, 10);
+        backgroundy.setValue(0, 1.0);
     }
     else if (Pad_Pressed(PSP_CTRL_DOWN))    
     {
         selection += 1;
-  //      backgroundy.setValue(5 * selection, 10);
+        backgroundy.setValue(400, 1.0);
     }
 }
 

@@ -55,3 +55,5 @@ private:
     double crochet;
     void readChartData(void);
 };
+
+int getStep(void);

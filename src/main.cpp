@@ -1,5 +1,6 @@
 #define SDL_MAIN_HANDLED
 #include "main.h"
+#include "app.h"
 #include "screen.h"
 #ifdef PSP
 #include <pspdebug.h>
@@ -18,6 +19,13 @@
 #include "psp/pad.h"
 #include "psp/tween.h"
 #include "psp/memory.h"
+
+#include "menu/title.h"
+
+//#define DEBUG //for profiling
+#ifdef DEBUG
+#include <pspprof.h>
+#endif
 
 #ifdef PSP
 PSP_MAIN_THREAD_ATTR(THREAD_ATTR_USER | THREAD_ATTR_VFPU);
@@ -47,8 +55,9 @@ int main()
 
     app = new PSPFunkin(); //new pspfunkin every single time?? no need for a rewrite!
 
-//#ifdef PSP
+#ifdef PSP
     setupcallbacks();
+#endif
   //  SDL_Init(SDL_INIT_AUDIO);
 //#else
     ASSERTFUNC(SDL_Init(SDL_INIT_EVERYTHING) >= 0, "failed to init sdl");
@@ -60,14 +69,14 @@ int main()
     FntInit();
     setScreenCol(0xFF00FF00);
     
+    app->timer.start();
     setScreen(new TitleScreen());
     while(1)
     {
         auto last = std::chrono::high_resolution_clock::now();
-        app->time = std::chrono::duration_cast<std::chrono::duration<float, std::ratio<1>>>(
-            last.time_since_epoch()
-        ).count();
-        
+
+        if (Pad_Held(PSP_CTRL_CROSS))
+            printf("press\n");
 #ifndef PSP
         SDL_Event event;
         while(SDL_PollEvent(&event))
@@ -94,6 +103,11 @@ int main()
             }
         }
 #endif
+        
+        #ifdef DEBUG
+        if (Pad_Pressed(PSP_CTRL_SELECT))
+            break;      
+        #endif
         GFX::clear(app->screenCol);
         Pad_Update();         
         ASSERTFUNC(app->currentScreen, "screen is NULL");                
@@ -106,7 +120,10 @@ int main()
         auto current = std::chrono::high_resolution_clock::now();
         app->deltatime = std::chrono::duration_cast<std::chrono::duration<double, std::ratio<1>>>(current - last).count();
         last = current;
-    }
 
+    }
+#ifdef DEBUG
+    gprof_cleanup();
+#endif
     return 0;
 }

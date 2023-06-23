@@ -1,11 +1,11 @@
-#include "../main.h"
 #include "font.h"
+#include "../main.h"
 #include <cstdarg>
 #include <string>  
 #include <cstring>  
 #include <cstdio>
 #include "gfx.h"
-#include "../main.h"
+#include "../app.h"
 
 struct Font
 {   // X pos  Y pos  width  height 

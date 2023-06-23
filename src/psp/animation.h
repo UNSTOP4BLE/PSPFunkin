@@ -1,7 +1,5 @@
 #pragma once
-#include "../main.h"
 #include "gfx.h"
-#include "tween.h"
 #include <vector>       
 #include <string>
 
@@ -18,8 +16,8 @@ public:
     int curanim;
     int curframe;
     int time;
-    Tween<float, LinearEasing> tweenstepframe;
-    Tween<float, LinearEasing> tweenframe;
+//    Tween<float, LinearEasing> tweenstepframe;
+  //  Tween<float, LinearEasing> tweenframe;
     int mustEnd;
     bool visible;
     bool flipped;

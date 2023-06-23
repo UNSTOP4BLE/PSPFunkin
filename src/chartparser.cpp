@@ -1,4 +1,5 @@
 #include "main.h"
+#include "app.h"
 #include "chartparser.h"
 
 void ChartParser::loadChart(const char *filename) 
@@ -41,3 +42,6 @@ void ChartParser::tickStep(Audio::StreamedFile *song)
     curBeat = curStep / 4;
 }   
 
+int getStep(void) {
+    return app->parser.curStep;
+}

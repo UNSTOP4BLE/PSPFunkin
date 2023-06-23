@@ -1,4 +1,5 @@
 #include "stage.h"
+#include "main.h"
 #include "psp/file.h"
 #include "psp/memory.h"
 

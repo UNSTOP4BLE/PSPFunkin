@@ -1,5 +1,4 @@
 #pragma once
-#include "../main.h"
 #include <json/json.h>
 #include "animation.h"
 

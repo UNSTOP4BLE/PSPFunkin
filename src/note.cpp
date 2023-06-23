@@ -1,3 +1,4 @@
+#include "playstate.h"
 #include "main.h"
 #include "screen.h"
 #include "chartparser.h"

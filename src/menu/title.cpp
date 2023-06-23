@@ -1,3 +1,5 @@
+#include "title.h"
+#include "../app.h"
 #include "../main.h"
 #include "../screen.h"
 #include "../psp/font.h"
@@ -6,6 +8,8 @@
 #include "../psp/audio_file_readers.h"
 #include "../psp/pad.h"
 #include <chrono>
+
+#include "mainmenu.h"
 
 enum TitleStates
 {
