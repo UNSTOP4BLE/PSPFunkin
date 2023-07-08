@@ -39,8 +39,8 @@ private:
     class Camera {
     public:
         void update(float ox, float oy, float oz, float px, float py, float pz);
-        Tween<float, QuadInEasing, ChronoTimeSource> camx, camy;
-        Tween<float, QuadInEasing, ChronoTimeSource> zoom;
+        Tween<float, QuadInOutEasing, ChronoTimeSource> camx, camy;
+        Tween<float, QuadInOutEasing, ChronoTimeSource> zoom;
     } gamecam, hudcam;
     void initscr(void);
     void freescr(void);

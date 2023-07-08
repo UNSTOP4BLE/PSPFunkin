@@ -13,6 +13,15 @@ public:
     static inline float apply(float value) {
         return value * value;
     }
+}; 
+class QuadInOutEasing {
+public:
+    static inline float apply(float value) {
+        if (value < 0.5)
+            return 2.0 * value * value;
+        else
+            return 1.0 - 2.0 * (value - 1.0) * (value - 1.0);
+    }
 };
 
 enum TimeSources {
