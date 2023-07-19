@@ -237,10 +237,10 @@ void PlayStateScreen::updateInput(void)
 
         //hit a note        
         if (checkPadHeld[app->parser.gamenotes[i].type] && 
-            app->parser.gamenotes[i].pos-app->parser.songTime >= ratingData[3].hitWindow - 45 - 39 && //shit hit window
-            app->parser.gamenotes[i].pos-app->parser.songTime <= ratingData[0].hitWindow - 45 - 39) { //sick hit window
+            app->parser.gamenotes[i].pos-app->parser.songTime >= ratingData[3].hitWindow && //shit hit window
+            app->parser.gamenotes[i].pos-app->parser.songTime <= ratingData[0].hitWindow) { //sick hit window
 
-            float noteDiff = fabs(app->parser.gamenotes[i].pos - app->parser.songTime - 45 - 39);
+            float noteDiff = app->parser.gamenotes[i].pos - app->parser.songTime;
             app->parser.gamenotes[i].flag |= FLAG_NOTE_HIT; //note has been hit
         
             Rating daRating = judgeNote(noteDiff);
