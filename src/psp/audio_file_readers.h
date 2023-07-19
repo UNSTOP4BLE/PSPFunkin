@@ -3,7 +3,6 @@
 #include <cstdint>
 #include <vorbis/vorbisfile.h>
 #include "../main.h"
-#include "audio_adpcm_decoder.h"
 #include "audio_buffer.h"
 
 namespace Audio {
@@ -63,23 +62,6 @@ public:
     int setPosition(int sampleOffset);
     int read(AudioBuffer &buf, int numSamples, int bufferOffset = 0);
     ~OGGFileReader(void);
-};
-
-class VAGFileReader : public FileReader {
-private:
-    FILE *_vagFile;
-    ADPCMDecoder _decoder;
-    int _dataOffset, _interleave;
-    int _bufferPosition, _sampleBufferLength;
-    uint8_t *_chunkBuffer;
-    int16_t *_sampleBuffer;
-
-public:
-    VAGFileReader(const char *path);
-    int getPosition(void);
-    int setPosition(int sampleOffset);
-    int read(AudioBuffer &buf, int numSamples, int bufferOffset = 0);
-    ~VAGFileReader(void);
 };
 
 FileReader *openFile(const char *path);

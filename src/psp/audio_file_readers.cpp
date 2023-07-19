@@ -164,116 +164,6 @@ OGGFileReader::~OGGFileReader(void) {
     ov_clear(&_oggFile);
 }
 
-VAGFileReader::VAGFileReader(const char *path) {
-    _vagFile = fopen(path, "rb");
-    ASSERTFUNC(_vagFile, "failed to open VAG file");
-
-    VAGHeader header;
-    _readValueInPlace(_vagFile, header);
-
-    switch (header.magic) {
-        case "VAGp"_m: // Mono
-            channels = 1;
-            bytesPerSample = sizeof(int16_t);
-            _interleave = 28;
-
-            _dataOffset = sizeof(VAGHeader);
-            break;
-
-        case "VAGi"_m: // Interleaved
-            channels = header.channels ? header.channels : 1;
-            bytesPerSample = sizeof(int16_t) * channels;
-            _interleave = _blocksToSamples(header.interleave);
-
-            _dataOffset = 2048; // VAGi header is always padded to 2048 bytes
-            fseek(_vagFile, 2048, SEEK_SET);
-            break;
-
-        default:
-            fclose(_vagFile);
-            ASSERTFUNC(false, "not a valid VAG file");
-    }
-
-    format = AUDIO_S16SYS;
-    sampleRate = _swapEndian(header.sampleRate);
-    totalNumSamples = _blocksToSamples(_swapEndian(header.size));
-
-    _bufferPosition = 0;
-    _sampleBufferLength = 0;
-    _chunkBuffer = new uint8_t[_interleave * channels];
-    _sampleBuffer = new int16_t[_blocksToSamples(_interleave) * channels];
-}
-
-int VAGFileReader::getPosition(void) {
-    return (_blocksToSamples(ftell(_vagFile) - _dataOffset) / channels) + _bufferPosition;
-}
-
-int VAGFileReader::setPosition(int sampleOffset) {
-    _bufferPosition = sampleOffset % _interleave;
-    _sampleBufferLength = 0; // Force chunk to be reloaded
-
-    int chunkOffset = sampleOffset - _bufferPosition;
-    fseek(_vagFile, _dataOffset + _samplesToBlocks(chunkOffset) * channels, SEEK_SET);
-    _decoder.reset();
-
-    return getPosition();
-}
-
-int VAGFileReader::read(AudioBuffer &buf, int numSamples, int bufferOffset) {
-    buf.data.resize((numSamples + bufferOffset) * bytesPerSample);
-    buf.channels = channels;
-    buf.sampleRate = sampleRate;
-    buf.format = format;
-
-    int interleaveSize = _samplesToBlocks(_interleave);
-    auto ptr = buf.data.data() + (bufferOffset * bytesPerSample);
-
-    for (int actualNumSamples = 0; actualNumSamples < numSamples;) {
-        //int remaining = std::min(numSamples - actualNumSamples, _interleave);
-
-        if (!_sampleBufferLength) {
-            int length = fread(_chunkBuffer, 1, interleaveSize * channels, _vagFile);
-            ASSERTFUNC(length >= 0, "VAG read error");
-
-            if (!length) { // End of file
-                buf.data.resize((actualNumSamples + bufferOffset) * bytesPerSample);
-                return actualNumSamples;
-            }
-
-            // Decode all channels and interleave them in the sample buffer
-            for (int ch = 0; ch < channels; ch++)
-                _sampleBufferLength = _decoder.decode(
-                    &_sampleBuffer[ch],
-                    &_chunkBuffer[interleaveSize * ch],
-                    interleaveSize,
-                    channels
-                );
-        }
-
-        int length = _sampleBufferLength * bytesPerSample;
-        memcpy(ptr, &_sampleBuffer[_bufferPosition], length);
-
-        actualNumSamples += _sampleBufferLength;
-        ptr += _sampleBufferLength * bytesPerSample;
-        _bufferPosition += _sampleBufferLength;
-
-        if (_bufferPosition >= _interleave) {
-            // If the full chunk has been read, schedule the next chunk for decoding
-            _bufferPosition -= _interleave;
-            _sampleBufferLength = 0;
-        }
-    }
-
-    return numSamples;
-}
-
-VAGFileReader::~VAGFileReader(void) {
-    fclose(_vagFile);
-
-    delete[] _chunkBuffer;
-    delete[] _sampleBuffer;
-}
-
 FileReader *openFile(const char *path) {
     const char *ext = &path[strlen(path) - 4];
 
@@ -281,9 +171,6 @@ FileReader *openFile(const char *path) {
         return (FileReader *) new WAVFileReader(path);
     if (!strcmp(ext, ".ogg"))
         return (FileReader *) new OGGFileReader(path);
-    // Sony engineer: "I swear it doesn't stand for what you think it stands for..."
-    if (!strcmp(ext, ".vag") || !strcmp(ext, ".vagi"))
-        return (FileReader *) new VAGFileReader(path);
 
     ASSERTFUNC(false, "unsupported audio file format");
     return nullptr;
