@@ -47,6 +47,7 @@ public:
     int songTime;
     bool justStep;
     double step_crochet;
+    double songspeed;
     ChartData chartdata;
     std::vector<Section> sections;
     std::vector<Note> gamenotes;

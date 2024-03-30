@@ -20,6 +20,7 @@ void ChartParser::loadChart(const char *filename)
     chart.read(reinterpret_cast<char *>(sections.data()), sections.size() * sizeof(Section));
     chart.read(reinterpret_cast<char *>(gamenotes.data()), gamenotes.size() * sizeof(Note));
     chart.close();
+    songspeed = chartdata.speed * 0.7;
 }
 
 void ChartParser::calcCrochet(void)

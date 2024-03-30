@@ -180,7 +180,7 @@ void PlayStateScreen::draw(void)
   // PrintFont(Left, 0, 40, "mgc %s\nspd%f\nbpm%f\nscnt%d\nncnt%d", app->parser.chartdata.magic, app->parser.chartdata.speed, app->parser.chartdata.bpm, app->parser.chartdata.sectioncount, app->parser.chartdata.notecount);
    // PrintFont(Left, 0, 40, "zoom %f opp %f plr %f", gamecam.zoom, opponent->camzoom, player->camzoom);
    //PrintFont(Left, 0, 40, "note %d, sec %d, data %d", sizeof(Note), sizeof(Section), sizeof(ChartData));
-  PrintFont(Left, 0, 40, "yur rating is: %s  score: %d note: %f", ratinglol.c_str(), score, (app->parser.gamenotes[3].pos - app->parser.songTime));
+  PrintFont(Left, 0, 40, "yur rating is: %s  score: %d note: %f, songspeed %f, scrollspeed %f", ratinglol.c_str(), score, (app->parser.gamenotes[3].pos - app->parser.songTime), app->parser.songspeed, app->parser.chartdata.speed);
 
 }
 void PlayStateScreen::freescr(void) {
