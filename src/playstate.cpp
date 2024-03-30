@@ -1,4 +1,5 @@
 #include "playstate.h"
+#include <unistd.h>
 #include "main.h"
 #include "screen.h"
 #include "psp/font.h"
@@ -15,11 +16,12 @@ noteSplash(splash),
 ratingMod(ratingmod),
 hitWindow(hitwindow) {}
 
-void PlayStateScreen::initscr(void) {
+void PlayStateScreen::initscr(std::string song) {
     setScreenCol(0xFF00FF00);
     //reset vars
     score = 0;
-    cursong = "bopeebo";
+    startnote = 0;
+    cursong = song;
     
     char _path[40];
     sprintf(_path, "assets/songs/%s/config.json", cursong.c_str());
@@ -54,11 +56,19 @@ void PlayStateScreen::initscr(void) {
     app->parser.loadChart(_path);
     app->parser.songTime = -3000;
 
-    sprintf(_path, "assets/songs/%s/Inst.ogg", cursong.c_str());
-    inst = new Audio::StreamedFile(*app->audioMixer, _path);
     sprintf(_path, "assets/songs/%s/Voices.ogg", cursong.c_str());
-    vocals = new Audio::StreamedFile(*app->audioMixer, _path);
-
+    if (access(_path, F_OK) == 0) //file exists
+    {
+        vocals = new Audio::StreamedFile(*app->audioMixer, _path);
+        sprintf(_path, "assets/songs/%s/Inst.ogg", cursong.c_str());
+        inst = new Audio::StreamedFile(*app->audioMixer, _path);
+    }
+    else 
+    {
+        inst = NULL;
+        sprintf(_path, "assets/songs/%s/Inst.ogg", cursong.c_str());
+        vocals = new Audio::StreamedFile(*app->audioMixer, _path);
+    }
     hud = GFX::loadTex("assets/hud.png");
     gamecam.camx = 0;
     gamecam.camy = 0;
@@ -85,9 +95,9 @@ void PlayStateScreen::initscr(void) {
     ratingData.emplace_back("shit",  50, false,   0,   0);
 }
 
-PlayStateScreen::PlayStateScreen(void)
+PlayStateScreen::PlayStateScreen(std::string song)
 {
-    initscr();
+    initscr(song);
 }
 
 void PlayStateScreen::Camera::update(float ox, float oy, float oz, float px, float py, float pz) {
@@ -109,12 +119,15 @@ void PlayStateScreen::Camera::update(float ox, float oy, float oz, float px, flo
 void PlayStateScreen::update(void)
 {
     //process audio streams
-    inst->process();
+    if (inst != NULL)
+        inst->process();
     vocals->process();
 
     app->parser.justStep = false;
     app->parser.tickStep(vocals);
-    bool isPlaying = (inst->isPlaying() || vocals->isPlaying());
+    
+    bool isPlaying = (vocals->isPlaying());
+
 
     if (isPlaying)
     {
@@ -133,14 +146,15 @@ void PlayStateScreen::update(void)
     }
     else
     {
-        app->parser.songTime += 16 + app->deltatime;
+        app->parser.songTime += 16 + app->deltatime; //hardcode to 60fps, should be able to change based on framerate (60fps = 16.666ms)
 
         //song start
         if (app->parser.curStep <= 0)
         {
             if (app->parser.songTime >= 0 && !isPlaying)
             {
-                inst->play();
+                if (inst != NULL)
+                    inst->play();
                 vocals->play();
             }
         }
@@ -150,10 +164,9 @@ void PlayStateScreen::update(void)
                 setScreen(new MainMenuScreen());
             }
             else {
-                cursong = nextsong;
                 //reload the screen
                 freescr();
-                initscr();
+                initscr(nextsong);
             }
             return;
         }
@@ -180,7 +193,7 @@ void PlayStateScreen::draw(void)
   // PrintFont(Left, 0, 40, "mgc %s\nspd%f\nbpm%f\nscnt%d\nncnt%d", app->parser.chartdata.magic, app->parser.chartdata.speed, app->parser.chartdata.bpm, app->parser.chartdata.sectioncount, app->parser.chartdata.notecount);
    // PrintFont(Left, 0, 40, "zoom %f opp %f plr %f", gamecam.zoom, opponent->camzoom, player->camzoom);
    //PrintFont(Left, 0, 40, "note %d, sec %d, data %d", sizeof(Note), sizeof(Section), sizeof(ChartData));
-  PrintFont(Left, 0, 40, "yur rating is: %s  score: %d note: %f, songspeed %f, scrollspeed %f", ratinglol.c_str(), score, (app->parser.gamenotes[3].pos - app->parser.songTime), app->parser.songspeed, app->parser.chartdata.speed);
+ // PrintFont(Left, 0, 40, "yur rating is: %s  score: %d note: %f, songspeed %f, startnote %d", ratinglol.c_str(), score, (app->parser.gamenotes[3].pos - app->parser.songTime), app->parser.chartdata.speed, startnote);
 
 }
 void PlayStateScreen::freescr(void) {

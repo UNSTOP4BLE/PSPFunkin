@@ -96,6 +96,10 @@ int main(int argc, char *argv[])
             if (!(sections[i].flag & FLAG_SEC_MUSTHIT) && newnote.type < 4)
                 newnote.flag |= FLAG_NOTE_ISOPPONENT;    
 
+
+            if (newnote.type > 3)
+                newnote.type -= 4;
+
             gamenotes.push_back(newnote);
         }
     }

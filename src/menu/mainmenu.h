@@ -12,5 +12,7 @@ public:
 private:
     GFX::Texture *background;
     int selection;
+    std::string selectedsong;
+    std::string songs[4];
     Tween<float, QuadInEasing, ChronoTimeSource> backgroundy;
 };
