@@ -44,10 +44,10 @@ private:
     } gamecam, hudcam;
     void initscr(std::string song);
     void freescr(void);
-    void deleteNote(int note);
+    void deleteNote(int note, bool opponent);
     void drawDummyNotes(void);
     void drawSustain(int note, float y, int type);
-    void drawNotes(void);
+    void drawNotes(bool isopponent);
     void increaseScore(int note);
     Rating judgeNote(float diff);
     void missedNote();
@@ -57,7 +57,7 @@ private:
     Character *gf;
     Stage curstage;
     GFX::Texture *hud;
-    int startnote;
+    int startnote[2];
     Audio::StreamedFile *inst; 
     Audio::StreamedFile *vocals; 
     std::vector<Rating> ratingData;

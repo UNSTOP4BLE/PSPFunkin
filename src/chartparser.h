@@ -33,7 +33,8 @@ struct [[gnu::packed]] ChartData
     float speed;
     double bpm;
     int32_t sectioncount;
-    int32_t notecount;
+    int32_t notecounto;
+    int32_t notecountp;
 };
 
 class ChartParser
@@ -49,7 +50,8 @@ public:
     double step_crochet;
     ChartData chartdata;
     std::vector<Section> sections;
-    std::vector<Note> gamenotes;
+    std::vector<Note> gamenotesopponent;
+    std::vector<Note> gamenotesplayer;
 private: 
     std::ifstream chart;
     double crochet;

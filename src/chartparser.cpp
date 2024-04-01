@@ -16,9 +16,11 @@ void ChartParser::loadChart(const char *filename)
     ASSERTFUNC(!strcmp(chartdata.magic, "PSPFCHTV1"), "invalid chart");
     calcCrochet();
     sections.resize(chartdata.sectioncount);
-    gamenotes.resize(chartdata.notecount);
+    gamenotesplayer.resize(chartdata.notecountp);
+    gamenotesopponent.resize(chartdata.notecounto);
     chart.read(reinterpret_cast<char *>(sections.data()), sections.size() * sizeof(Section));
-    chart.read(reinterpret_cast<char *>(gamenotes.data()), gamenotes.size() * sizeof(Note));
+    chart.read(reinterpret_cast<char *>(gamenotesplayer.data()), gamenotesplayer.size() * sizeof(Note));
+    chart.read(reinterpret_cast<char *>(gamenotesopponent.data()), gamenotesopponent.size() * sizeof(Note));
     chart.close();
 }
 

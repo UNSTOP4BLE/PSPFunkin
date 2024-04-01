@@ -34,7 +34,8 @@ struct [[gnu::packed]] ChartData
     float speed;
     double bpm;
     int32_t sectioncount;
-    int32_t notecount;
+    int32_t notecounto;
+    int32_t notecountp;
 };
 
 int main(int argc, char *argv[])
@@ -60,10 +61,12 @@ int main(int argc, char *argv[])
     
     //initialize vars
     strncpy(chartdata.magic, "PSPFCHTV1", sizeof(chartdata.magic)); // dont change this
-    chartdata.notecount = 0;
+    chartdata.notecounto = 0;
+    chartdata.notecountp = 0;
     int eventcount = 0;
     std::vector<Section> sections;
-    std::vector<Note> gamenotes;
+    std::vector<Note> gamenotesopponent;
+    std::vector<Note> gamenotesplayer;
     sections.resize(chart["song"]["notes"].size());
     chartdata.sectioncount = chart["song"]["notes"].size();
 
@@ -100,10 +103,14 @@ int main(int argc, char *argv[])
             if (newnote.type > 3)
                 newnote.type -= 4;
 
-            gamenotes.push_back(newnote);
+            if (newnote.flag & FLAG_NOTE_ISOPPONENT)
+                gamenotesopponent.push_back(newnote);
+            else
+                gamenotesplayer.push_back(newnote);
         }
     }
-    chartdata.notecount = gamenotes.size();
+    chartdata.notecountp = gamenotesplayer.size();
+    chartdata.notecounto = gamenotesopponent.size();
 
     //write a file  
     std::ofstream binFile(argv[2], std::ostream::binary);
@@ -113,7 +120,8 @@ int main(int argc, char *argv[])
     }
     binFile.write(reinterpret_cast<const char*>(&chartdata), sizeof(chartdata));
     binFile.write(reinterpret_cast<const char*>(sections.data()), sections.size() * sizeof(Section));
-    binFile.write(reinterpret_cast<const char*>(gamenotes.data()), gamenotes.size() * sizeof(Note));
+    binFile.write(reinterpret_cast<const char*>(gamenotesplayer.data()), gamenotesplayer.size() * sizeof(Note));
+    binFile.write(reinterpret_cast<const char*>(gamenotesopponent.data()), gamenotesopponent.size() * sizeof(Note));
     binFile.close();   
 
     std::cout << "found " << eventcount << " events" << std::endl;

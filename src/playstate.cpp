@@ -20,7 +20,8 @@ void PlayStateScreen::initscr(std::string song) {
     setScreenCol(0xFF00FF00);
     //reset vars
     score = 0;
-    startnote = 0;
+    startnote[0] = 0;
+    startnote[1] = 0;
     cursong = song;
     
     char _path[40];
@@ -189,7 +190,8 @@ void PlayStateScreen::draw(void)
     curstage.drawObjects(curstage.fgobjects, gamecam.zoom.getValue());
 
     drawDummyNotes();
-    drawNotes();
+    drawNotes(false);
+    drawNotes(true);
   // PrintFont(Left, 0, 40, "mgc %s\nspd%f\nbpm%f\nscnt%d\nncnt%d", app->parser.chartdata.magic, app->parser.chartdata.speed, app->parser.chartdata.bpm, app->parser.chartdata.sectioncount, app->parser.chartdata.notecount);
    // PrintFont(Left, 0, 40, "zoom %f opp %f plr %f", gamecam.zoom, opponent->camzoom, player->camzoom);
    //PrintFont(Left, 0, 40, "note %d, sec %d, data %d", sizeof(Note), sizeof(Section), sizeof(ChartData));
@@ -244,6 +246,7 @@ void PlayStateScreen::updateInput(void)
     checkPadHeld[3] = Pad_Held(PSP_CTRL_LEFT | PSP_CTRL_CIRCLE); 
 
     //handle note hits here? why not lol
+/*
     for (int i = 0; i < static_cast<int>(app->parser.gamenotes.size()); i++) {
         if (app->parser.gamenotes[i].flag & FLAG_NOTE_ISOPPONENT || app->parser.gamenotes[i].flag & FLAG_NOTE_HIT)
             continue;
@@ -269,5 +272,5 @@ void PlayStateScreen::updateInput(void)
         //
         //}
         else continue;
-    }
+    }*/
 }

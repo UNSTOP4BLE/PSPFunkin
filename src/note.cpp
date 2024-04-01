@@ -20,14 +20,15 @@ void PlayStateScreen::drawDummyNotes(void)
     }
 }
 
-void PlayStateScreen::deleteNote(int note) {
+void PlayStateScreen::deleteNote(int note, bool opponent) {
     PrintFont(Left, 0, 60, "deleting note");
-    if (startnote < note)
-        startnote = note;
+    if (startnote[opponent] < note)
+        startnote[opponent] = note;
 }
 
 void PlayStateScreen::drawSustain(int note, float y, int type) 
 {
+    /*
     int clipheight = 11;
     double length = app->parser.gamenotes[note].sus / app->parser.step_crochet;
     length = (length*3.6f) * (app->parser.chartdata.speed);
@@ -85,40 +86,44 @@ void PlayStateScreen::drawSustain(int note, float y, int type)
     }*/
 }
 
-void PlayStateScreen::drawNotes(void) 
+void PlayStateScreen::drawNotes(bool isopponent) 
 {
-    for (int i = startnote; i < static_cast<int>(app->parser.gamenotes.size()); i++)
+    for (int i = startnote[isopponent]; i < (isopponent ? static_cast<int>(app->parser.gamenotesopponent.size()) : static_cast<int>(app->parser.gamenotesplayer.size())); i++)
     {
-        if (app->parser.gamenotes[i].flag & FLAG_NOTE_HIT)
+        std::vector<Note> &notes = (isopponent ? app->parser.gamenotesopponent : app->parser.gamenotesplayer);
+
+
+        if (notes[i].flag & FLAG_NOTE_HIT)
         {
-            if (app->parser.gamenotes[i].sus == 0)
-                deleteNote(i);
+            if (notes[i].sus == 0)
+                deleteNote(i, isopponent);
             continue; //dont draw notes if they are hit
-            i = startnote;
+            i = startnote[isopponent];
         }
-        int type = app->parser.gamenotes[i].type;
+        int type = notes[i].type;
         int curNotex;
         float curNotey;
 
         Pos note;
-        if (app->parser.gamenotes[i].flag & FLAG_NOTE_ISOPPONENT)
+        if (isopponent)
             note = notePos.opponent[type];
         else
             note = notePos.player[type];
 
         curNotex = note.x;
-        curNotey = ((app->parser.gamenotes[i].pos - app->parser.songTime) * app->parser.chartdata.speed/3.7) + note.y;
+        curNotey = ((notes[i].pos - app->parser.songTime) * app->parser.chartdata.speed/3.7) + note.y;
+
         //delete note if offscreen
-        if (curNotey < 0 && app->parser.gamenotes[i].sus == 0)
+        if (curNotey < 0 && notes[i].sus == 0)
         {
-            deleteNote(i);
-            i = startnote;
+            deleteNote(i, isopponent);
+            i = startnote[isopponent];
         }
         //note is below the screen, so go back to index 0
         if (curNotey > GFX::SCREEN_HEIGHT)
         {
             continue;
-            i = startnote;
+            i = startnote[isopponent];
         }
 
         GFX::RECT<int> img = {
@@ -135,13 +140,13 @@ void PlayStateScreen::drawNotes(void)
             static_cast<float>(img.h)
         };
 
-        if (app->parser.gamenotes[i].sus != 0) //check if the note is a sustain
+        if (notes[i].sus != 0) //check if the note is a sustain
             drawSustain(i, curNotey, type);
-        if (app->parser.gamenotes[i].flag & FLAG_NOTE_ISOPPONENT && disp.y < note.y)
-        {
-          //  opponent->setAnim(app->parser.gamenotes[i].type+1);
-            continue; //stop drawing opponents note if they were "hit"
-        }
         GFX::drawTexZoom<float>(hud, &img, &disp, false, 0, 200, hudcam.zoom.getValue());
     }
 }
+//        if (app->parser.gamenotes[i].flag & FLAG_NOTE_ISOPPONENT && disp.y < note.y)
+  //      {
+    //      //  opponent->setAnim(app->parser.gamenotes[i].type+1);
+      //      continue; //stop drawing opponents note if they were "hit"
+        //}
