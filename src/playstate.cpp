@@ -93,7 +93,9 @@ void PlayStateScreen::initscr(std::string song) {
     ratingData.emplace_back("sick", 350, true,    1,  45);
     ratingData.emplace_back("good", 200, false, 0.7,  90);
     ratingData.emplace_back("bad",  100, false, 0.4, 135);
-    ratingData.emplace_back("shit",  50, false,   0,   0);
+    ratingData.emplace_back("shit",  50, false,   0, 165);
+
+    app->parser.chartdata.speed /= 5;
 }
 
 PlayStateScreen::PlayStateScreen(std::string song)
@@ -147,7 +149,7 @@ void PlayStateScreen::update(void)
     }
     else
     {
-        app->parser.songTime += 16 + app->deltatime; //hardcode to 60fps, should be able to change based on framerate (60fps = 16.666ms)
+        app->parser.songTime += 15 + app->deltatime; //hardcode to 60fps, should be able to change based on framerate (60fps = 16.666ms)
 
         //song start
         if (app->parser.curStep <= 0)
@@ -179,7 +181,6 @@ void PlayStateScreen::update(void)
 
 }
 
-std::string ratinglol = "";
 void PlayStateScreen::draw(void)
 {
     curstage.drawObjects(curstage.bgobjects, gamecam.zoom.getValue());
@@ -196,6 +197,7 @@ void PlayStateScreen::draw(void)
    // PrintFont(Left, 0, 40, "zoom %f opp %f plr %f", gamecam.zoom, opponent->camzoom, player->camzoom);
    //PrintFont(Left, 0, 40, "note %d, sec %d, data %d", sizeof(Note), sizeof(Section), sizeof(ChartData));
  // PrintFont(Left, 0, 40, "yur rating is: %s  score: %d note: %f, songspeed %f, startnote %d", ratinglol.c_str(), score, (app->parser.gamenotes[3].pos - app->parser.songTime), app->parser.chartdata.speed, startnote);
+    PrintFont(Left, 0, 40, "score: %d startnote o %d  p %d",  score, startnote[1], startnote[0]);
 
 }
 void PlayStateScreen::freescr(void) {
@@ -230,7 +232,9 @@ Rating PlayStateScreen::judgeNote(float diff)
 }
 
 void PlayStateScreen::missedNote() {
- //           vocals->volume = 0;
+
+    if (inst != NULL)
+        vocals->setVolume(0,0);
     score -= 10;
 }
 
@@ -246,6 +250,81 @@ void PlayStateScreen::updateInput(void)
     checkPadHeld[3] = Pad_Held(PSP_CTRL_LEFT | PSP_CTRL_CIRCLE); 
 
     //handle note hits here? why not lol
+    //opponent
+    for (int i = startnote[1]; i < static_cast<int>(app->parser.gamenotes[1].size()); i++)
+    {
+        std::vector<Note> &notes = app->parser.gamenotes[1];
+    
+        if (notes[i].flag & FLAG_NOTE_HIT)
+        {
+            deleteNote(i, 1);
+            continue;
+        }
+
+        int type = notes[i].type;
+        int curNotey = ((notes[i].pos - app->parser.songTime) * app->parser.chartdata.speed) + notePos.opponent[type].y;
+
+        //delete note if offscreen
+        if (curNotey < -50) {
+            if (inst != NULL)
+                vocals->setVolume(1,1);
+            notes[i].flag |= FLAG_NOTE_HIT;
+            deleteNote(i, 1);
+            continue;
+        }
+        else if (curNotey < notePos.opponent[type].y)
+        {
+            if (inst != NULL)
+                vocals->setVolume(1,1);
+            notes[i].flag |= FLAG_NOTE_HIT;
+        }
+
+        //note is below the screen, so go back to index 0
+        if (curNotey > GFX::SCREEN_HEIGHT)
+            break;
+    }    
+    //player
+    for (int i = startnote[0]; i < static_cast<int>(app->parser.gamenotes[0].size()); i++)
+    {
+        std::vector<Note> &notes = app->parser.gamenotes[0];
+    
+        if (notes[i].flag & FLAG_NOTE_HIT)
+        {
+            deleteNote(i, 0);
+            continue;
+        }
+        int type = notes[i].type;
+        int curNotey = ((notes[i].pos - app->parser.songTime) * app->parser.chartdata.speed) + notePos.player[type].y;
+
+        //delete note if offscreen
+        if (curNotey < -50) {
+            notes[i].flag |= FLAG_NOTE_HIT;
+            deleteNote(i, 0);
+            missedNote();
+            continue;
+        }
+
+        //note is below the screen, so go back to index 0
+        if (curNotey > GFX::SCREEN_HEIGHT)
+            break;
+
+
+        //check if its been hit
+        if (checkPad[type]) //has the note key been pressed?
+        {    
+            float notediff = fabs(notes[i].pos - app->parser.songTime);
+            if (notediff < static_cast<float>(ratingData[3].hitWindow)) { //shit hit window
+                
+                Rating rating = judgeNote(notediff);
+                if (inst != NULL)
+                    vocals->setVolume(1,1);
+                notes[i].flag |= FLAG_NOTE_HIT;
+                score += rating.score;
+            }
+        }
+    }
+
+
 /*
     for (int i = 0; i < static_cast<int>(app->parser.gamenotes.size()); i++) {
         if (app->parser.gamenotes[i].flag & FLAG_NOTE_ISOPPONENT || app->parser.gamenotes[i].flag & FLAG_NOTE_HIT)

@@ -50,8 +50,7 @@ public:
     double step_crochet;
     ChartData chartdata;
     std::vector<Section> sections;
-    std::vector<Note> gamenotesopponent;
-    std::vector<Note> gamenotesplayer;
+    std::vector<Note> gamenotes[2];
 private: 
     std::ifstream chart;
     double crochet;

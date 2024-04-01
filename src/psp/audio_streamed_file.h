@@ -33,6 +33,10 @@ public:
         return _playing;
     }
 
+    inline void setVolume(float left, float right) {
+        _channel->setVolume(left, right);
+    }
+
     void process(int maxFillLength = DEFAULT_MAX_FILL_LENGTH);
     void play(int loopOffset = -1);
     void pause(void);

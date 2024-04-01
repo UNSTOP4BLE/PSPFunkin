@@ -46,7 +46,7 @@ private:
     void freescr(void);
     void deleteNote(int note, bool opponent);
     void drawDummyNotes(void);
-    void drawSustain(int note, float y, int type);
+    void drawSustain(int note, float y, int type, bool isopponent);
     void drawNotes(bool isopponent);
     void increaseScore(int note);
     Rating judgeNote(float diff);
