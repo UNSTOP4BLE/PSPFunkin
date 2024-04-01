@@ -45,6 +45,8 @@ endforeach()
 add_executable(${PROJECT_NAME} ${MY_SRCS})
 
 if(PSP)
+target_include_directories(${PROJECT_NAME} PRIVATE lib/include)
+target_link_directories(${PROJECT_NAME} PRIVATE lib)
     target_link_libraries(${PROJECT_NAME} PRIVATE
         pspdebug
         pspdisplay
@@ -70,7 +72,9 @@ if(PSP)
         psphprm 
         xmp 
         pspprof
+        me
     )
+    target_include_directories(${PROJECT_NAME} PRIVATE include)
     create_pbp_file(
         TARGET ${PROJECT_NAME}
         ICON_PATH ${PROJECT_SOURCE_DIR}/ICON0.PNG
