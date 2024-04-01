@@ -73,6 +73,7 @@ private:
     bool checkPadHeld[4];
     int score;
     int misses;
+    bool ghosttap;
     //note animation
     int notetimer[4];
     int noteframe[4];

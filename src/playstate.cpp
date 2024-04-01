@@ -19,6 +19,7 @@ hitWindow(hitwindow) {}
 void PlayStateScreen::initscr(std::string song) {
     setScreenCol(0xFF00FF00);
     //reset vars
+    ghosttap = false;
     score = misses = 0;
     cursong = song;
     //init animation
@@ -306,24 +307,28 @@ void PlayStateScreen::updateInput(void)
             continue;
         }
 
+
+        float notediff = fabs(notes[i].pos - app->parser.songTime);
+
+        //check if its been hit
+        if (checkPad[type] && notediff < static_cast<float>(ratingData[3].hitWindow)) //shit hit window
+        {                    
+            notehit[type] = true;
+            Rating rating = judgeNote(notediff);
+            if (inst != NULL)
+                vocals->setVolume(1,1);
+            notes[i].flag |= FLAG_NOTE_HIT;
+            score += rating.score;
+            break;
+        }
+        else if (!ghosttap && (checkPad[0] || checkPad[1] || checkPad[2] || checkPad[3])) //miss note if ghosttapping is off
+        {
+            //play miss sound todo
+            missedNote();
+        }
         //note is below the screen, so go back to index 0
         if (curNotey > GFX::SCREEN_HEIGHT)
             break;
-
-
-        //check if its been hit
-        if (checkPad[type]) //has the note key been pressed?
-        {    
-            float notediff = fabs(notes[i].pos - app->parser.songTime);
-            if (notediff < static_cast<float>(ratingData[3].hitWindow)) { //shit hit window
-                notehit[type] = true;
-                Rating rating = judgeNote(notediff);
-                if (inst != NULL)
-                    vocals->setVolume(1,1);
-                notes[i].flag |= FLAG_NOTE_HIT;
-                score += rating.score;
-            }
-        }
     }
 
 
