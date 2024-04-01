@@ -19,11 +19,12 @@ hitWindow(hitwindow) {}
 void PlayStateScreen::initscr(std::string song) {
     setScreenCol(0xFF00FF00);
     //reset vars
-    score = 0;
-    startnote[0] = 0;
-    startnote[1] = 0;
+    score = misses = 0;
     cursong = song;
-    
+    //init animation
+    for (int i = 0; i < 4; i ++)
+        notetimer[i] = noteframe[i] = notehit[i] = 0;
+
     char _path[40];
     sprintf(_path, "assets/songs/%s/config.json", cursong.c_str());
     Json::Value _config;
@@ -197,7 +198,7 @@ void PlayStateScreen::draw(void)
    // PrintFont(Left, 0, 40, "zoom %f opp %f plr %f", gamecam.zoom, opponent->camzoom, player->camzoom);
    //PrintFont(Left, 0, 40, "note %d, sec %d, data %d", sizeof(Note), sizeof(Section), sizeof(ChartData));
  // PrintFont(Left, 0, 40, "yur rating is: %s  score: %d note: %f, songspeed %f, startnote %d", ratinglol.c_str(), score, (app->parser.gamenotes[3].pos - app->parser.songTime), app->parser.chartdata.speed, startnote);
-    PrintFont(Left, 0, 40, "score: %d startnote o %d  p %d",  score, startnote[1], startnote[0]);
+    PrintFont(Left, 0, 40, "score: %d misses: %d",  score, misses);
 
 }
 void PlayStateScreen::freescr(void) {
@@ -236,6 +237,7 @@ void PlayStateScreen::missedNote() {
     if (inst != NULL)
         vocals->setVolume(0,0);
     score -= 10;
+    misses += 1;
 }
 
 void PlayStateScreen::updateInput(void)
@@ -247,11 +249,11 @@ void PlayStateScreen::updateInput(void)
     checkPadHeld[0] = Pad_Held(PSP_CTRL_LEFT | PSP_CTRL_SQUARE);
     checkPadHeld[1] = Pad_Held(PSP_CTRL_DOWN | PSP_CTRL_CROSS | PSP_CTRL_LTRIGGER);
     checkPadHeld[2] = Pad_Held(PSP_CTRL_UP | PSP_CTRL_TRIANGLE | PSP_CTRL_RTRIGGER);
-    checkPadHeld[3] = Pad_Held(PSP_CTRL_LEFT | PSP_CTRL_CIRCLE); 
+    checkPadHeld[3] = Pad_Held(PSP_CTRL_RIGHT | PSP_CTRL_CIRCLE); 
 
     //handle note hits here? why not lol
     //opponent
-    for (int i = startnote[1]; i < static_cast<int>(app->parser.gamenotes[1].size()); i++)
+    for (int i = 0; i < static_cast<int>(app->parser.gamenotes[1].size()); i++)
     {
         std::vector<Note> &notes = app->parser.gamenotes[1];
     
@@ -284,7 +286,7 @@ void PlayStateScreen::updateInput(void)
             break;
     }    
     //player
-    for (int i = startnote[0]; i < static_cast<int>(app->parser.gamenotes[0].size()); i++)
+    for (int i = 0; i < static_cast<int>(app->parser.gamenotes[0].size()); i++)
     {
         std::vector<Note> &notes = app->parser.gamenotes[0];
     
@@ -314,7 +316,7 @@ void PlayStateScreen::updateInput(void)
         {    
             float notediff = fabs(notes[i].pos - app->parser.songTime);
             if (notediff < static_cast<float>(ratingData[3].hitWindow)) { //shit hit window
-                
+                notehit[type] = true;
                 Rating rating = judgeNote(notediff);
                 if (inst != NULL)
                     vocals->setVolume(1,1);

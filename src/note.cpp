@@ -9,26 +9,56 @@ void PlayStateScreen::drawDummyNotes(void)
     for (int i = 0; i < 4; i++)
     {
         GFX::RECT<int> img = {1 + (40*i), 1, 39, 39};
-        for (int j = 0; j < 8; j++)
-        {
-            GFX::RECT<float> disp = {notePos.player[i].x - hudcam.camx.getValue(), notePos.player[i].y - hudcam.camy.getValue(), static_cast<float>(img.w), static_cast<float>(img.h)}; 
-            GFX::drawTexZoom<float>(hud, &img, &disp, true, 0, 200, hudcam.zoom.getValue());
+        
+        //opponent
+        GFX::RECT<float> disp = {notePos.opponent[i].x - hudcam.camx.getValue(), notePos.opponent[i].y - hudcam.camy.getValue(), static_cast<float>(img.w), static_cast<float>(img.h)};  
+        GFX::drawTexZoom<float>(hud, &img, &disp, true, 0, 200, hudcam.zoom.getValue());
 
-            disp = {notePos.opponent[i].x - hudcam.camx.getValue(), notePos.opponent[i].y - hudcam.camy.getValue(), static_cast<float>(img.w), static_cast<float>(img.h)};  
-            GFX::drawTexZoom<float>(hud, &img, &disp, true, 0, 200, hudcam.zoom.getValue());
+        //player
+        if (checkPadHeld[i] && notehit[i])
+        {
+            notetimer[i] += 2 + app->deltatime;
+
+            noteframe[i] = notetimer[i]/40;
+            if (noteframe[i] > 3-1)
+                noteframe[i] = 3-1;
+            img.y = 1 + (40*noteframe[i]);
+
+            img.y += 40*4;
         }
+        else if (checkPadHeld[i] && !notehit[i])
+        {
+            notetimer[i] += 2 + app->deltatime;
+
+            noteframe[i] = notetimer[i]/40;
+            if (noteframe[i] > 2-1)
+                noteframe[i] = 2-1;
+            img.y = 1 + (40*noteframe[i]);
+
+            img.y += 40*1;
+        }
+        else
+        {
+            noteframe[i] = 0;
+            notetimer[i] = 0;
+            if (!checkPadHeld[i] && notehit[i]) //reset animation for notes
+                notehit[i] = false;
+        }
+
+
+        disp = {notePos.player[i].x - hudcam.camx.getValue(), notePos.player[i].y - hudcam.camy.getValue(), static_cast<float>(img.w), static_cast<float>(img.h)}; 
+        GFX::drawTexZoom<float>(hud, &img, &disp, true, 0, 200, hudcam.zoom.getValue());
     }
 }
 
 void PlayStateScreen::deleteNote(int note, bool opponent) {
-    if (startnote[opponent] < note)
-        startnote[opponent] = note;
-
-    PrintFont(Left, 0, 60, (opponent ? "deleting oppnote %d" : "\ndeleting pnote %d"), startnote[opponent]);
+    app->parser.gamenotes[opponent].erase(app->parser.gamenotes[opponent].begin() + note);
+    PrintFont(Left, 0, 60, (opponent ? "deleting oppnote %d" : "\ndeleting pnote %d"), 0);//[opponent]);
 }
 
 void PlayStateScreen::drawSustain(int note, float y, int type, bool isopponent) 
 {
+    /*
     int clipheight = 11;
 //    int length = static_cast<int>(app->parser.gamenotes[isopponent][note].sus / app->parser.step_crochet) * (app->parser.chartdata.speed * clipheight);
     int length = static_cast<int>(app->parser.gamenotes[isopponent][note].sus / app->parser.step_crochet) * app->parser.chartdata.speed;
@@ -60,12 +90,12 @@ void PlayStateScreen::drawSustain(int note, float y, int type, bool isopponent)
     if (y+length < 0-length*clipheight)
     {
         deleteNote(note, isopponent);
-    }
+    }*/
 }
 
 void PlayStateScreen::drawNotes(bool isopponent) 
 {
-    for (int i = startnote[isopponent]; i < static_cast<int>(app->parser.gamenotes[isopponent].size()); i++)
+    for (int i = 0; i < static_cast<int>(app->parser.gamenotes[isopponent].size()); i++)
     {
         std::vector<Note> &notes = app->parser.gamenotes[isopponent];
 

@@ -52,20 +52,29 @@ private:
     Rating judgeNote(float diff);
     void missedNote();
     void updateInput(void);
+    //characters
     Character *player;
     Character *opponent;
     Character *gf;
+    //stage
     Stage curstage;
+    //textures
     GFX::Texture *hud;
-    int startnote[2];
+    //audio
     Audio::StreamedFile *inst; 
     Audio::StreamedFile *vocals; 
+    //other variables
     std::vector<Rating> ratingData;
     std::string cursong;
     std::string nextsong;
+    NotePos notePos;
+    //gameplay
     bool checkPad[4];
     bool checkPadHeld[4];
-    NotePos notePos;
-    int curStep;
     int score;
+    int misses;
+    //note animation
+    int notetimer[4];
+    int noteframe[4];
+    bool notehit[4];
 };
