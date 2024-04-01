@@ -4,7 +4,6 @@
 #include "screen.h"
 #ifdef PSP
 #include <pspdebug.h>
-#include <melib.h>
 #include <pspkernel.h>
 #include <psputility.h>
 #include "psp/callbacks.h"
@@ -63,7 +62,6 @@ int main()
 //#else
     ASSERTFUNC(SDL_Init(SDL_INIT_EVERYTHING) >= 0, "failed to init sdl");
 //#endif
-    J_Init(false);
     Pad_Init();
     app->audioMixer = new Audio::Mixer();
     app->audioMixer->start();
@@ -128,7 +126,5 @@ int main()
     gprof_cleanup();
 #endif
 
-    J_Cleanup();
-    
     return 0;
 }

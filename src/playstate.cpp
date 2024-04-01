@@ -24,7 +24,8 @@ void PlayStateScreen::initscr(std::string song) {
     cursong = song;
     //init animation
     for (int i = 0; i < 4; i ++)
-        notetimer[i] = noteframe[i] = notehit[i] = 0;
+        notetimer[i] = noteframe[i] = notehit[i] =
+        checkPadHeld[i] = checkPad[i] = 0;
 
     char _path[40];
     sprintf(_path, "assets/songs/%s/config.json", cursong.c_str());
