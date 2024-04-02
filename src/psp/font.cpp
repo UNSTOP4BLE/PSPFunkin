@@ -100,6 +100,56 @@ static void PrintMSG(GFX::Texture *tex, Font *font, int x, int y, const char *st
 
 }
 
+static void PrintMSGZoom(GFX::Texture *tex, Font *font, int x, int y, const char *str, bool bold, Align all, float zoom)
+{   
+    //Draw string character by character
+    int c;
+    int xhold = x;
+    
+    switch (all)
+    {
+        case Center:
+            x -= Font_GetW(font, str) >> 1;
+            break;
+        case Left:
+            break;
+        case Right:
+            x -= Font_GetW(font, str);
+            break;
+    }
+
+
+    while ((c = *str++) != '\0')
+    {
+        if (c == '\n')
+        {
+            x = xhold;
+            if (all == Center)
+                x -= Font_GetW(font, str) >> 1;
+            if (bold)
+                y += 38;
+            else
+                y += 11;
+        }   
+        //Shift and validate character
+        if ((c -= 0x20) >= 0x60)
+            continue;
+        
+        //Draw character
+        GFX::RECT<int> font_Img = {font[c].charX, font[c].charY, font[c].charW, font[c].charH};
+        if (bold)
+        {
+            if (!boldAnim)
+                font_Img.y = font[c].charY;
+            else 
+                font_Img.y = font[c].charY + 138;
+        }
+        GFX::RECT<float> font_Disp = {static_cast<float>(x), static_cast<float>(y), static_cast<float>(font[c].charW), static_cast<float>(font[c].charH)};
+        GFX::drawTexZoom<float>(tex, &font_Img, &font_Disp, false, 0, 255, zoom);
+        x += font[c].charW - 1;
+    }
+
+}
 
 void PrintFont(Align all, int x, int y, const char *format, ...)
 {
@@ -113,6 +163,20 @@ void PrintFont(Align all, int x, int y, const char *format, ...)
     
     PrintMSG(tex.fonttex, fontmap, x, y, string, false, all);
 }
+
+void PrintFontZoom(Align all, int x, int y, float zoom, const char *format, ...)
+{
+    va_list list;
+    
+    char string[256] = "";
+
+    va_start(list, format);
+    std::vsprintf(string, format, list);
+    va_end(list);
+    
+    PrintMSGZoom(tex.fonttex, fontmap, x, y, string, false, all, zoom);
+}
+
 
 
 void Bold_Tick(void)

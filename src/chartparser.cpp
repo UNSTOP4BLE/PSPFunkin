@@ -16,11 +16,11 @@ void ChartParser::loadChart(const char *filename)
     ASSERTFUNC(!strcmp(chartdata.magic, "PSPFCHTV1"), "invalid chart");
     calcCrochet();
     sections.resize(chartdata.sectioncount);
-    gamenotes[0].resize(chartdata.notecountp);
-    gamenotes[1].resize(chartdata.notecounto);
+    gamenotes[0].resize(chartdata.notecountp); //player
+    gamenotes[1].resize(chartdata.notecounto); //opponent
     chart.read(reinterpret_cast<char *>(sections.data()), sections.size() * sizeof(Section));
-    chart.read(reinterpret_cast<char *>(gamenotes[0].data()), gamenotes[0].size() * sizeof(Note));
-    chart.read(reinterpret_cast<char *>(gamenotes[1].data()), gamenotes[1].size() * sizeof(Note));
+    chart.read(reinterpret_cast<char *>(gamenotes[0].data()), gamenotes[0].size() * sizeof(Note)); // player notes
+    chart.read(reinterpret_cast<char *>(gamenotes[1].data()), gamenotes[1].size() * sizeof(Note)); // opponent
     chart.close();
 }
 
@@ -38,10 +38,9 @@ void ChartParser::tickStep(Audio::StreamedFile *song)
     if (nextstep != curStep)
     {
         curStep = nextstep;  
+        curBeat = curStep / 4;
         justStep = true;
     }
-
-    curBeat = curStep / 4;
 }   
 
 int getStep(void) {

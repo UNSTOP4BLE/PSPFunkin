@@ -9,13 +9,17 @@ public:
     void setFocus(float x, float y, float zoom);
     void setAnim(int anim);
     void setIcon(int i);
+    int getAnim(void);
+    int getFrame(void);
     ~Character(void);
 
     void tick(void);
     void draw(float cx, float cy, float cz);
     float x, y, camx, camy, camzoom;
+    bool issinging;
+    int singendtime;
+    int icon;
 private:
     Anim_OBJECT *obj;
     std::string type;
-    int icon;
 };

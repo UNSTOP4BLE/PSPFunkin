@@ -44,11 +44,12 @@ private:
     } gamecam, hudcam;
     void initscr(std::string song);
     void freescr(void);
+    void drawHealthBar(void);
+    void drawIcons(void);
     void deleteNote(int note, bool opponent);
     void drawDummyNotes(void);
     void drawSustain(int note, float y, int type, bool isopponent);
     void drawNotes(bool isopponent);
-    void increaseScore(int note);
     Rating judgeNote(float diff);
     void missedNote();
     void updateInput(void);
@@ -60,6 +61,7 @@ private:
     Stage curstage;
     //textures
     GFX::Texture *hud;
+    GFX::Texture *icons;
     //audio
     Audio::StreamedFile *inst; 
     Audio::StreamedFile *vocals; 
@@ -72,6 +74,7 @@ private:
     bool checkPad[4];
     bool checkPadHeld[4];
     int score;
+    double health;
     int misses;
     bool ghosttap;
     //note animation

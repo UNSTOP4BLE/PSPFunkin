@@ -53,7 +53,7 @@ void PlayStateScreen::drawDummyNotes(void)
 
 void PlayStateScreen::deleteNote(int note, bool opponent) {
     app->parser.gamenotes[opponent].erase(app->parser.gamenotes[opponent].begin() + note);
-    PrintFont(Left, 0, 60, (opponent ? "deleting oppnote %d" : "\ndeleting pnote %d"), 0);//[opponent]);
+//    PrintFont(Left, 0, 60, (opponent ? "deleting oppnote %d" : "\ndeleting pnote %d"), 0);//[opponent]);
 }
 
 void PlayStateScreen::drawSustain(int note, float y, int type, bool isopponent) 

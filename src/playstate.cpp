@@ -19,9 +19,10 @@ hitWindow(hitwindow) {}
 void PlayStateScreen::initscr(std::string song) {
     setScreenCol(0xFF00FF00);
     //reset vars
-    ghosttap = false;
+    ghosttap = true;
     score = misses = 0;
     cursong = song;
+    health = 0.5;
     //init animation
     for (int i = 0; i < 4; i ++)
         notetimer[i] = noteframe[i] = notehit[i] =
@@ -38,8 +39,8 @@ void PlayStateScreen::initscr(std::string song) {
     //load characters
 
     //player
-    sprintf(_path, "assets/characters/%s/", _config["opponent"].asString().c_str());
-    player = new Character(_path, _config["opponent"].asString() + ".json", _config["playerpos"][0].asFloat(), _config["playerpos"][1].asFloat());
+    sprintf(_path, "assets/characters/%s/", _config["player"].asString().c_str());
+    player = new Character(_path, _config["player"].asString() + ".json", _config["playerpos"][0].asFloat(), _config["playerpos"][1].asFloat());
     player->setFocus(_config["playerpos"][2].asFloat(), _config["playerpos"][3].asFloat(),  _config["playerpos"][4].asFloat());
 
     //opponent
@@ -48,8 +49,8 @@ void PlayStateScreen::initscr(std::string song) {
     opponent->setFocus(_config["opponentpos"][2].asFloat(), _config["opponentpos"][3].asFloat(),  _config["opponentpos"][4].asFloat());
 
     //gf    
-    sprintf(_path, "assets/characters/%s/", _config["gf"].asString().c_str());
-    gf = new Character(_path, _config["gf"].asString() + ".json", _config["gfpos"][0].asFloat(), _config["gfpos"][1].asFloat());
+   // sprintf(_path, "assets/characters/%s/", _config["gf"].asString().c_str());
+ //   gf = new Character(_path, _config["gf"].asString() + ".json", _config["gfpos"][0].asFloat(), _config["gfpos"][1].asFloat());
 
     //stage
     sprintf(_path, "assets/stages/%s/%s.json", _config["back"].asString().c_str(), _config["back"].asString().c_str()); 
@@ -74,6 +75,7 @@ void PlayStateScreen::initscr(std::string song) {
         vocals = new Audio::StreamedFile(*app->audioMixer, _path);
     }
     hud = GFX::loadTex("assets/hud.png");
+    icons = GFX::loadTex("assets/icons.png");
     gamecam.camx = 0;
     gamecam.camy = 0;
     gamecam.zoom = 1;
@@ -134,7 +136,6 @@ void PlayStateScreen::update(void)
     
     bool isPlaying = (vocals->isPlaying());
 
-
     if (isPlaying)
     {
         gamecam.update(opponent->camx, opponent->camy, opponent->camzoom,
@@ -148,11 +149,16 @@ void PlayStateScreen::update(void)
             gamecam.zoom.setValue(1.05, 1.0, 0.2); 
         }
 
+        if (health <= 0)
+            setScreen(new MainMenuScreen());
+        else if (health > 1)
+            health = 1;
+
         updateInput();
     }
     else
     {
-        app->parser.songTime += 15 + app->deltatime; //hardcode to 60fps, should be able to change based on framerate (60fps = 16.666ms)
+        app->parser.songTime += 15; //hardcode to 60fps, should be able to change based on framerate (60fps = 16.666ms)
 
         //song start
         if (app->parser.curStep <= 0)
@@ -178,37 +184,81 @@ void PlayStateScreen::update(void)
         }
     }
     curstage.tick(gamecam.camx.getValue(), gamecam.camy.getValue());
-    //game.player->tick();
-//    opponent->tick();
+    player->tick();
+    opponent->tick();
   //  gf->tick();
 
+}
+
+void PlayStateScreen::drawHealthBar(void) {
+    GFX::RECT<int> img = {1, 501, 320, 10};
+    GFX::RECT<int> disp = {80, 235, img.w, 10};
+    //player
+    GFX::drawTexZoom<int>(icons, &img, &disp, false, 0, 255, hudcam.zoom.getValue());
+
+    //opponent
+    img.y = 490;
+    img.w = fabs(health - 1.0) * 320;
+    disp.w = img.w;
+    GFX::drawTexZoom<int>(icons, &img, &disp, false, 0, 255, hudcam.zoom.getValue());
+}
+
+#define ICON_ROWS 12
+#define ICON_SIZE 39
+void PlayStateScreen::drawIcons(void) {
+    //opponent
+    int dying = (health > 0.8 ? ICON_SIZE+1 : 0);
+    int i = opponent->icon;
+    GFX::RECT<int> img = {dying+1+((i % (ICON_ROWS/2))*((1+ICON_SIZE)*2)), 
+                          1+((i/(ICON_ROWS/2))*(1+ICON_SIZE)), 
+                          ICON_SIZE, 
+                          ICON_SIZE};
+
+    GFX::RECT<int> disp = {80+static_cast<int>(abs(health - 1.0)*320)-ICON_SIZE, 220, ICON_SIZE, ICON_SIZE};
+    GFX::drawTexZoom<int>(icons, &img, &disp, false, 0, 255, hudcam.zoom.getValue());
+
+    //player
+    dying = (health < 0.2 ? ICON_SIZE+1 : 0);
+    i = player->icon;
+    img = {dying+1+((i % (ICON_ROWS/2))*((1+ICON_SIZE)*2)), 
+           1+((i/(ICON_ROWS/2))*(1+ICON_SIZE)), 
+           ICON_SIZE, 
+           ICON_SIZE};
+
+    disp = {80+static_cast<int>(abs(health - 1.0)*320), 220, ICON_SIZE, ICON_SIZE};
+    GFX::drawTexZoom<int>(icons, &img, &disp, false, 0, 255, hudcam.zoom.getValue());
 }
 
 void PlayStateScreen::draw(void)
 {
     curstage.drawObjects(curstage.bgobjects, gamecam.zoom.getValue());
-//    gf->draw(gamecam.camx, gamecam.camy, gamecam.zoom);
+ //   gf->draw(gamecam.camx, gamecam.camy, gamecam.zoom);
     curstage.drawObjects(curstage.mdobjects, gamecam.zoom.getValue());
-  //  opponent->draw(gamecam.camx, gamecam.camy, gamecam.zoom);
-    //draw player
+
+    opponent->draw(gamecam.camx.getValue(), gamecam.camy.getValue(), gamecam.zoom.getValue());
+    player->draw(gamecam.camx.getValue(), gamecam.camy.getValue(), gamecam.zoom.getValue());
+
     curstage.drawObjects(curstage.fgobjects, gamecam.zoom.getValue());
 
     drawDummyNotes();
     drawNotes(false);
     drawNotes(true);
+
+    drawHealthBar();
+    drawIcons();
   // PrintFont(Left, 0, 40, "mgc %s\nspd%f\nbpm%f\nscnt%d\nncnt%d", app->parser.chartdata.magic, app->parser.chartdata.speed, app->parser.chartdata.bpm, app->parser.chartdata.sectioncount, app->parser.chartdata.notecount);
    // PrintFont(Left, 0, 40, "zoom %f opp %f plr %f", gamecam.zoom, opponent->camzoom, player->camzoom);
    //PrintFont(Left, 0, 40, "note %d, sec %d, data %d", sizeof(Note), sizeof(Section), sizeof(ChartData));
  // PrintFont(Left, 0, 40, "yur rating is: %s  score: %d note: %f, songspeed %f, startnote %d", ratinglol.c_str(), score, (app->parser.gamenotes[3].pos - app->parser.songTime), app->parser.chartdata.speed, startnote);
-    PrintFont(Left, 0, 40, "score: %d misses: %d",  score, misses);
-
+    PrintFontZoom(Center, GFX::SCREEN_WIDTH/2+11, GFX::SCREEN_HEIGHT/2+120, hudcam.zoom.getValue(), "Score: %d | Misses: %d",  score, misses);
 }
 void PlayStateScreen::freescr(void) {
-    delete player;
-    delete opponent;
-    delete gf;
+  //  delete player;
+//    delete opponent;
+   // delete gf;
     curstage.free();
     GFX::freeTex(hud);
+    GFX::freeTex(icons);
     delete inst;
     delete vocals;
 }
@@ -216,11 +266,6 @@ void PlayStateScreen::freescr(void) {
 PlayStateScreen::~PlayStateScreen(void)
 {
     freescr();
-}
-
-void PlayStateScreen::increaseScore(int note) {
-  //  float noteDiff = fabs(app->parser.gamenotes[note].pos - app->parser.songTime);
-//    Rating daRating = judgeNote(noteDiff);
 }
 
 Rating PlayStateScreen::judgeNote(float diff)
@@ -238,6 +283,7 @@ void PlayStateScreen::missedNote() {
 
     if (inst != NULL)
         vocals->setVolume(0,0);
+    health -= 0.05;
     score -= 10;
     misses += 1;
 }
@@ -252,7 +298,8 @@ void PlayStateScreen::updateInput(void)
     checkPadHeld[1] = Pad_Held(PSP_CTRL_DOWN | PSP_CTRL_CROSS | PSP_CTRL_LTRIGGER);
     checkPadHeld[2] = Pad_Held(PSP_CTRL_UP | PSP_CTRL_TRIANGLE | PSP_CTRL_RTRIGGER);
     checkPadHeld[3] = Pad_Held(PSP_CTRL_RIGHT | PSP_CTRL_CIRCLE); 
-
+/*
+*/
     //handle note hits here? why not lol
     //opponent
     for (int i = 0; i < static_cast<int>(app->parser.gamenotes[1].size()); i++)
@@ -281,6 +328,7 @@ void PlayStateScreen::updateInput(void)
             if (inst != NULL)
                 vocals->setVolume(1,1);
             notes[i].flag |= FLAG_NOTE_HIT;
+            opponent->setAnim(1+type); //set animation
         }
 
         //note is below the screen, so go back to index 0
@@ -319,19 +367,32 @@ void PlayStateScreen::updateInput(void)
             if (inst != NULL)
                 vocals->setVolume(1,1);
             notes[i].flag |= FLAG_NOTE_HIT;
-            score += rating.score;
+            player->setAnim(1+type); //play animation 
+            score += rating.score; 
+            health += 0.023;
             break;
         }
         else if (!ghosttap && (checkPad[0] || checkPad[1] || checkPad[2] || checkPad[3])) //miss note if ghosttapping is off
         {
             //play miss sound todo
             missedNote();
+            //miss animation
+            if (checkPad[0] || checkPad[1] || checkPad[2] || checkPad[3])
+            {
+                int anim = 0;
+                for (int i = 0; i < 4; i++)
+                    if (checkPadHeld[i]) {
+                        anim = i;
+                        break;
+                    }
+                player->setAnim(1+anim);
+                player->singendtime = app->parser.curStep-1;
+            }
         }
         //note is below the screen, so go back to index 0
         if (curNotey > GFX::SCREEN_HEIGHT)
             break;
     }
-
 
 /*
     for (int i = 0; i < static_cast<int>(app->parser.gamenotes.size()); i++) {
