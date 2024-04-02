@@ -19,7 +19,9 @@ hitWindow(hitwindow) {}
 void PlayStateScreen::initscr(std::string song) {
     setScreenCol(0xFF00FF00);
     //reset vars
+    combo.init();
     ghosttap = true;
+    botplay = false;
     score = misses = 0;
     cursong = song;
     health = 0.5;
@@ -153,7 +155,9 @@ void PlayStateScreen::update(void)
             setScreen(new MainMenuScreen());
         else if (health > 1)
             health = 1;
-
+        
+        combo.tick();
+        
         updateInput();
     }
     else
@@ -240,21 +244,19 @@ void PlayStateScreen::draw(void)
 
     curstage.drawObjects(curstage.fgobjects, gamecam.zoom.getValue());
 
+    combo.draw(hud, hudcam.zoom.getValue());
+       
     drawDummyNotes();
     drawNotes(false);
     drawNotes(true);
 
     drawHealthBar();
     drawIcons();
-  // PrintFont(Left, 0, 40, "mgc %s\nspd%f\nbpm%f\nscnt%d\nncnt%d", app->parser.chartdata.magic, app->parser.chartdata.speed, app->parser.chartdata.bpm, app->parser.chartdata.sectioncount, app->parser.chartdata.notecount);
-   // PrintFont(Left, 0, 40, "zoom %f opp %f plr %f", gamecam.zoom, opponent->camzoom, player->camzoom);
-   //PrintFont(Left, 0, 40, "note %d, sec %d, data %d", sizeof(Note), sizeof(Section), sizeof(ChartData));
- // PrintFont(Left, 0, 40, "yur rating is: %s  score: %d note: %f, songspeed %f, startnote %d", ratinglol.c_str(), score, (app->parser.gamenotes[3].pos - app->parser.songTime), app->parser.chartdata.speed, startnote);
-    PrintFontZoom(Center, GFX::SCREEN_WIDTH/2+11, GFX::SCREEN_HEIGHT/2+120, hudcam.zoom.getValue(), "Score: %d | Misses: %d",  score, misses);
+    PrintFontZoom(Center, GFX::SCREEN_WIDTH/2+11, GFX::SCREEN_HEIGHT/2+120, hudcam.zoom.getValue(), "Score: %d | Misses: %d   combo: %d",  score, misses, combo.combo);
 }
 void PlayStateScreen::freescr(void) {
-  //  delete player;
-//    delete opponent;
+    delete player;
+    delete opponent;
    // delete gf;
     curstage.free();
     GFX::freeTex(hud);
@@ -286,6 +288,7 @@ void PlayStateScreen::missedNote() {
     health -= 0.05;
     score -= 10;
     misses += 1;
+    combo.combo = 0;
 }
 
 void PlayStateScreen::updateInput(void)
@@ -359,6 +362,13 @@ void PlayStateScreen::updateInput(void)
 
         float notediff = fabs(notes[i].pos - app->parser.songTime);
 
+        if (botplay)
+        {
+            Rating rating = judgeNote(notediff);
+            if (rating.name == "sick")
+                checkPad[type] = true;
+
+        }
         //check if its been hit
         if (checkPad[type] && notediff < static_cast<float>(ratingData[3].hitWindow)) //shit hit window
         {                    
@@ -370,6 +380,8 @@ void PlayStateScreen::updateInput(void)
             player->setAnim(1+type); //play animation 
             score += rating.score; 
             health += 0.023;
+            combo.combo += 1;
+            combo.spawnNew(rating.name);
             break;
         }
         else if (!ghosttap && (checkPad[0] || checkPad[1] || checkPad[2] || checkPad[3])) //miss note if ghosttapping is off

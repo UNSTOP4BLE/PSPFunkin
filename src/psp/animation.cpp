@@ -5,6 +5,19 @@
 #include <stdio.h>
 #include "file.h"
 
+Anim_OBJECT::Anim_OBJECT(void)
+{   
+
+}
+
+Anim_OBJECT::~Anim_OBJECT(void)
+{
+    for (int i = 0; i < textures.size(); i++)
+    {
+        GFX::freeTex(textures[i]);
+    }
+}
+
 void AnimOBJECT_Init(Anim_OBJECT *obj, std::string path, std::string objname)
 {
     std::string _path;

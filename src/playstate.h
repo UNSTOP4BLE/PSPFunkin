@@ -5,6 +5,7 @@
 #include "stage.h"
 #include "psp/tween.h"
 #include "psp/audio_streamed_file.h"
+#include "combo.h"
 
 struct Pos 
 {
@@ -71,12 +72,14 @@ private:
     std::string nextsong;
     NotePos notePos;
     //gameplay
+    Combo combo;
     bool checkPad[4];
     bool checkPadHeld[4];
     int score;
     double health;
     int misses;
     bool ghosttap;
+    bool botplay;
     //note animation
     int notetimer[4];
     int noteframe[4];

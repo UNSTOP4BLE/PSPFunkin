@@ -25,6 +25,8 @@ struct Animation
 
 class Anim_OBJECT {
 public:
+    Anim_OBJECT(void);
+    ~Anim_OBJECT(void);
     Animation curanim;
     int curframe;
     double animtime;
