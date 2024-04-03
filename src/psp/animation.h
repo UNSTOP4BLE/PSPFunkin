@@ -2,6 +2,7 @@
 #include "gfx.h"
 #include <vector>       
 #include <string>
+#include "tween.h"
 
 enum AnimationModes
 { 
@@ -29,9 +30,9 @@ public:
     ~Anim_OBJECT(void);
     Animation curanim;
     int curframe;
-    double animtime;
     bool tick;
     bool cananimate;
+    Tween<float, LinearEasing, ChronoTimeSource> frame;
     AnimationModes mode;
     std::vector<AnimFrames> frames;
     std::vector<std::vector<int>> conf;

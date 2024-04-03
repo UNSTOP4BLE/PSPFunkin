@@ -1,6 +1,5 @@
 #pragma once
-#include "../chartparser.h"
-#include "../app.h"
+#include "../timer.h"
 
 class LinearEasing {
 public:
@@ -39,7 +38,7 @@ public:
 class ChronoTimeSource {
 public:
     static inline float getTweenTime(void) {
-        return app->timer.elapsedMS() / 1000;
+        return getTimeSeconds();
     }
 };
 

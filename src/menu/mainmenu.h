@@ -2,6 +2,7 @@
 
 #include "../screen.h"
 #include "../psp/tween.h"
+#include <string>            
 
 class MainMenuScreen : public Screen {
 public:

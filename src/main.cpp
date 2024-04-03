@@ -18,7 +18,6 @@
 #include "psp/font.h"
 #include "psp/pad.h"
 #include "psp/tween.h"
-#include "psp/memory.h"
 
 #include "menu/title.h"
 
@@ -112,8 +111,6 @@ int main()
         ASSERTFUNC(app->currentScreen, "screen is NULL");                
         app->currentScreen->update();  
         app->currentScreen->draw();  
-        PrintFont(Right, GFX::SCREEN_WIDTH, 0, "Memory usage %d/%d", Mem::curusage/1024/1024, 32);
-
         GFX::flip();
 
         auto current = std::chrono::high_resolution_clock::now();

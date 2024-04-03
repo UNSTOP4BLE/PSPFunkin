@@ -42,7 +42,3 @@ void ChartParser::tickStep(Audio::StreamedFile *song)
         justStep = true;
     }
 }   
-
-int getStep(void) {
-    return app->parser.curStep;
-}

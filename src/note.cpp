@@ -3,6 +3,7 @@
 #include "screen.h"
 #include "chartparser.h"
 #include "psp/font.h"
+#include "app.h"
 
 void PlayStateScreen::drawDummyNotes(void) 
 {
@@ -15,32 +16,24 @@ void PlayStateScreen::drawDummyNotes(void)
         GFX::drawTexZoom<float>(hud, &img, &disp, true, 0, 200, hudcam.zoom.getValue());
 
         //player
-        if (checkPadHeld[i] && notehit[i])
+        if (checkPadHeld[i] && notehit[i]) //hit
         {
-            notetimer[i] += 2 + app->deltatime;
+            if (checkPad[i])
+                noteframe[i].setValue(0, static_cast<float>(3-1), static_cast<float>(3-1)/static_cast<float>(24));
 
-            noteframe[i] = notetimer[i]/40;
-            if (noteframe[i] > 3-1)
-                noteframe[i] = 3-1;
-            img.y = 1 + (40*noteframe[i]);
-
+            img.y = 1 + (40*static_cast<int>(noteframe[i].getValue()));
             img.y += 40*4;
         }
-        else if (checkPadHeld[i] && !notehit[i])
+        else if (checkPadHeld[i] && !notehit[i]) //not hit
         {
-            notetimer[i] += 2 + app->deltatime;
-
-            noteframe[i] = notetimer[i]/40;
-            if (noteframe[i] > 2-1)
-                noteframe[i] = 2-1;
-            img.y = 1 + (40*noteframe[i]);
-
+            if (checkPad[i])
+                noteframe[i].setValue(0, static_cast<float>(2-1), static_cast<float>(2-1)/static_cast<float>(24));
+      
+            img.y = 1 + (40*static_cast<int>(noteframe[i].getValue()));
             img.y += 40*1;
         }
         else
         {
-            noteframe[i] = 0;
-            notetimer[i] = 0;
             if (!checkPadHeld[i] && notehit[i]) //reset animation for notes
                 notehit[i] = false;
         }

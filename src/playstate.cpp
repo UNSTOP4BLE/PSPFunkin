@@ -6,6 +6,7 @@
 #include "psp/pad.h"
 #include "chartparser.h"
 #include "character.h"
+#include "app.h"
 
 #include "menu/mainmenu.h"
 
@@ -27,8 +28,10 @@ void PlayStateScreen::initscr(std::string song) {
     health = 0.5;
     //init animation
     for (int i = 0; i < 4; i ++)
-        notetimer[i] = noteframe[i] = notehit[i] =
-        checkPadHeld[i] = checkPad[i] = 0;
+    {
+        noteframe[i].setValue(0);
+        notehit[i] = checkPadHeld[i] = checkPad[i] = 0;
+    }
 
     char _path[40];
     sprintf(_path, "assets/songs/%s/config.json", cursong.c_str());

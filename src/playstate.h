@@ -81,7 +81,6 @@ private:
     bool ghosttap;
     bool botplay;
     //note animation
-    int notetimer[4];
-    int noteframe[4];
+    Tween<float, QuadInOutEasing, ChronoTimeSource> noteframe[4];
     bool notehit[4];
 };

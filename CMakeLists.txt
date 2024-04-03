@@ -41,8 +41,8 @@ foreach(_in _out IN ZIP_LISTS _charts _built_charts)
 endforeach()
 
 #file(COPY ${_built_charts} DESTINATION ${PROJECT_BINARY_DIR}/assets)
-
 add_executable(${PROJECT_NAME} ${MY_SRCS})
+target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra)
 
 if(PSP)
     target_link_libraries(${PROJECT_NAME} PRIVATE

@@ -74,6 +74,9 @@ void AnimOBJECT_SetAnim(Anim_OBJECT *obj, int anim, AnimationModes mode)
     obj->curanim.tex = obj->frames[obj->curframe].tex;
     obj->curanim.framecount = obj->conf[anim].size();
     obj->tick = obj->cananimate = true;
+    if (obj->speed[obj->curanim.anim] == 0)
+        obj->speed[obj->curanim.anim] = 1;
+    obj->frame.setValue(0, static_cast<float>(obj->curanim.framecount-1), static_cast<float>(obj->curanim.framecount-1)/static_cast<float>(obj->speed[obj->curanim.anim]));
 }
 
 void AnimOBJECT_Tick(Anim_OBJECT *obj)
@@ -88,27 +91,20 @@ void AnimOBJECT_Tick(Anim_OBJECT *obj)
 //                obj->tweenframe.setValue(obj->framecount, obj->speed[obj->curanim], app->parser.curStep); // maybe dont make synced to step later on? i will see
                 break;
             case ModeNone:
-                obj->animtime += 1 + app->deltatime;
                 break;
             default: break;
         }
 
-        int frame = 0;
-
-        if (obj->speed[obj->curanim.anim] != 0)
-            frame = static_cast<int>(obj->animtime/obj->speed[obj->curanim.anim]);
-  
-        if (frame+1 > obj->curanim.framecount) {
+        if (static_cast<int>(obj->frame.getValue())+1 > obj->curanim.framecount) {
            obj->tick = false;
-           obj->animtime = 0;
            return;
         }
-        obj->curframe = obj->conf[obj->curanim.anim][frame];
+        obj->curframe = obj->conf[obj->curanim.anim][static_cast<int>(obj->frame.getValue())];
         obj->curanim.tex = obj->frames[obj->curframe].tex;
     }
     
 }
-
+#include "font.h"
 void AnimOBJECT_Draw(Anim_OBJECT *obj, float x, float y, bool linear, float angle, int alpha, float zoom)
 {
     ASSERTFUNC(obj, "object is null");   
@@ -126,9 +122,10 @@ void AnimOBJECT_Draw(Anim_OBJECT *obj, float x, float y, bool linear, float angl
   //      if (obj->flipped)
 //            disp.w = -disp.w;
 
-        ASSERTFUNC(obj->textures[obj->curanim.tex], "texture is null");   
+        ASSERTFUNC(obj->textures[obj->curanim.tex], "texture is NULL");   
 
 //        if (obj->visible)
         GFX::drawTexZoom<float>(obj->textures[obj->curanim.tex], &img, &disp, linear, angle, alpha, zoom);
+        PrintFont(Left, 0, 40, "asdasd %d", static_cast<int>(obj->frame.getValue()));
     }
 }
