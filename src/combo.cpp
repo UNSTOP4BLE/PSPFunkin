@@ -67,7 +67,8 @@ void Combo::tick(void)
         
         if (objects[i].falling) {
             objects[i].timer ++;
-            objects[i].alpha -= 2;
+            if (objects[i].timer > 0)
+                objects[i].alpha -= 4;
         }
         //destroy object
         if (objects[i].y > GFX::SCREEN_HEIGHT)

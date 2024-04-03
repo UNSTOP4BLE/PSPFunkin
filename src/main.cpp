@@ -37,9 +37,8 @@ PSPFunkin *app;
 //error handler
 void ErrMSG(const char *filename, const char *function, int line, const char *expr, const char *msg)
 {
-    char errstr[256];
-    sprintf(errstr, "error \nmessage: %s\nexpression: %s \nfile: %s \nfunction: %s \nline %d", msg, expr, filename, function, line);
-    printf(errstr);
+    char errstr[512];
+    sprintf(errstr, "error\nmessage: %s\nexpression: %s\nfile: %s\nfunction: %s\nline %d", msg, expr, filename, function, line);
     while(1)
     {
         GFX::clear(app->screenCol);
