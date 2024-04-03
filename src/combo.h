@@ -1,6 +1,7 @@
 #pragma once
 #include "psp/gfx.h"
-#include <string>           
+#include <string>   
+#include "psp/tween.h"        
 
 #define COMBO_OBJ_MAX 128
 
@@ -8,7 +9,8 @@ class ComboObject
 {
 public:
     bool tick, falling;
-    float x, y;
+    float x;
+    Tween<float, QuadInOutEasing, ChronoTimeSource> y;
     int ymin;
     GFX::RECT<int> img;
     GFX::RECT<int> disp;

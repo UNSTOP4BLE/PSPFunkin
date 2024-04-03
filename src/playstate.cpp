@@ -117,13 +117,13 @@ void PlayStateScreen::Camera::update(float ox, float oy, float oz, float px, flo
     if (app->parser.justStep && !(app->parser.curStep % 16))
     {
         if (app->parser.sections[app->parser.curStep / 16].flag & FLAG_SEC_MUSTHIT) { 
-            camx.setValue(px, 0.2);
-            camy.setValue(py, 0.2);
+            camx.setValue(px, 0.3);
+            camy.setValue(py, 0.3);
             zoom.setValue(pz, 0.3);
         }
         else {
-            camx.setValue(ox, 0.2);
-            camy.setValue(oy, 0.2);
+            camx.setValue(ox, 0.3);
+            camy.setValue(oy, 0.3);
             zoom.setValue(oz, 0.3);
         }
     }

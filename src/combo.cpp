@@ -10,7 +10,7 @@ void Combo::init(void)
         objects[i].tick = false;
         objects[i].alpha = 0;
         objects[i].x = 0;
-        objects[i].y = 0;
+        objects[i].y.setValue(0);
         objects[i].ymin = 0;
         objects[i].timer = 0;
         objects[i].falling = false;
@@ -26,13 +26,13 @@ void Combo::spawnNew(std::string name)
     objects[objectindex].alpha = 255;
     objects[objectindex].tick = true;
     objects[objectindex].x = 100;
-    objects[objectindex].y = 100;
+    objects[objectindex].y.setValue(100);
     objects[objectindex].falling = false;
     objects[objectindex].ymin = 150;
     objects[objectindex].timer = 0;
 
     objects[objectindex].img = {411, 1, 100, 50};
-    objects[objectindex].disp = {static_cast<int>(objects[objectindex].x), static_cast<int>(objects[objectindex].y), 100, 50};
+    objects[objectindex].disp = {static_cast<int>(objects[objectindex].x), static_cast<int>(objects[objectindex].y.getValue()), 100, 50};
     switch (Hash::FromString(name.c_str()))
     {
         case "sick"_h:
@@ -50,6 +50,7 @@ void Combo::spawnNew(std::string name)
         default: return; break;
     }
     objectindex ++;
+    objects[objectindex].y.setValue(static_cast<float>(60), 0.3);
 }
 
 void Combo::tick(void)
@@ -59,21 +60,20 @@ void Combo::tick(void)
         if (!objects[i].tick)
             continue;
 
-        objects[i].y += objects[i].timer/24;
         if (!objects[i].falling)
             objects[i].timer --;
-        if (objects[i].y < 100-10)
+        if (objects[i].y.getValue() < 100-10)
             objects[i].falling = true;
         
         if (objects[i].falling) {
-            objects[i].timer ++;
+            objects[objectindex].y.setValue(GFX::SCREEN_HEIGHT, 0.3);
             if (objects[i].timer > 0)
                 objects[i].alpha -= 4;
         }
         //destroy object
-        if (objects[i].y > GFX::SCREEN_HEIGHT)
+        if (objects[i].y.getValue() >= GFX::SCREEN_HEIGHT)
             objects[i].tick = false;
-        objects[i].disp = {static_cast<int>(objects[i].x), static_cast<int>(objects[i].y), 100, 50};
+        objects[i].disp = {static_cast<int>(objects[i].x), static_cast<int>(objects[i].y.getValue()), 100, 50};
     }
 }
 
