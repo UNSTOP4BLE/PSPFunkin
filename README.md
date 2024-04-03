@@ -1,4 +1,6 @@
 funkin on the playstation portable :D  
+pspfunkin server:
+https://discord.gg/84tG8Nj2Dd
 
 to play the game to the releases tab  
 
