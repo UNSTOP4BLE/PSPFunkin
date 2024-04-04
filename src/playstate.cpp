@@ -3,7 +3,7 @@
 #include "main.h"
 #include "screen.h"
 #include "psp/font.h"
-#include "psp/pad.h"
+#include "psp/input.h"
 #include "chartparser.h"
 #include "character.h"
 #include "app.h"
@@ -98,7 +98,7 @@ void PlayStateScreen::initscr(std::string song) {
     notePos.opponent[1] = { 67,  14};   
     notePos.opponent[2] = {107,  14};   
     notePos.opponent[3] = {147,  14};   
-
+    
     //set up ratings and timings (kinda stolen off of psych engine lmao)
     //setRating(Rating &rating, std::string name, int score, bool splash, float ratingmod, int hitwindow)
     ratingData.emplace_back("sick", 350, true,    1,  45);
@@ -298,15 +298,14 @@ void PlayStateScreen::missedNote() {
 
 void PlayStateScreen::updateInput(void)
 {
-    checkPad[0] = Pad_Pressed(PSP_CTRL_LEFT | PSP_CTRL_SQUARE);
-    checkPad[1] = Pad_Pressed(PSP_CTRL_DOWN | PSP_CTRL_CROSS | PSP_CTRL_LTRIGGER);
-    checkPad[2] = Pad_Pressed(PSP_CTRL_UP | PSP_CTRL_TRIANGLE | PSP_CTRL_RTRIGGER);
-    checkPad[3] = Pad_Pressed(PSP_CTRL_RIGHT | PSP_CTRL_CIRCLE);
-    checkPadHeld[0] = Pad_Held(PSP_CTRL_LEFT | PSP_CTRL_SQUARE);
-    checkPadHeld[1] = Pad_Held(PSP_CTRL_DOWN | PSP_CTRL_CROSS | PSP_CTRL_LTRIGGER);
-    checkPadHeld[2] = Pad_Held(PSP_CTRL_UP | PSP_CTRL_TRIANGLE | PSP_CTRL_RTRIGGER);
-    checkPadHeld[3] = Pad_Held(PSP_CTRL_RIGHT | PSP_CTRL_CIRCLE); 
-
+    checkPad[0] = app->event.isPressed(Input::GAME_LEFT);
+    checkPad[1] = app->event.isPressed(Input::GAME_DOWN);
+    checkPad[2] = app->event.isPressed(Input::GAME_UP);
+    checkPad[3] = app->event.isPressed(Input::GAME_RIGHT);
+    checkPadHeld[0] = app->event.isHeld(Input::GAME_LEFT);
+    checkPadHeld[1] = app->event.isHeld(Input::GAME_DOWN);
+    checkPadHeld[2] = app->event.isHeld(Input::GAME_UP);
+    checkPadHeld[3] = app->event.isHeld(Input::GAME_RIGHT);
 
     //handle note hits here? why not lol
     //opponent

@@ -3,15 +3,13 @@
 #include "../app.h"
 #include "../screen.h"
 #include <SDL2/SDL_image.h>
-#define PCSCALE 1 // works by multiplying psp screen res by this number
-
 
 #include "memory.h"
 
 namespace GFX {
 
 void init(void) {
-    app->window = SDL_CreateWindow("PSPFunkin", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH * PCSCALE, SCREEN_HEIGHT * PCSCALE, SDL_WINDOW_SHOWN);
+    app->window = SDL_CreateWindow("PSPFunkin", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
     app->renderer = SDL_CreateRenderer(app->window, -1, SDL_RENDERER_ACCELERATED);
     app->screenSurface = SDL_GetWindowSurface(app->window);
 }
@@ -43,6 +41,15 @@ template<typename T> void drawTex(Texture* tex, GFX::RECT<int> *Img, GFX::RECT<T
     {
         SDL_Rect _img = {static_cast<int>(Img->x), static_cast<int>(Img->y), static_cast<int>(Img->w), static_cast<int>(Img->h)};
         SDL_Rect _disp = {static_cast<int>(Disp->x), static_cast<int>(Disp->y), static_cast<int>(Disp->w), static_cast<int>(Disp->h)};
+#ifndef PSP
+        float factorw = (SCREEN_WIDTH/480);
+        float factorh = (SCREEN_HEIGHT/272);
+        _disp.x *= factorw;
+        _disp.y *= factorh;
+        _disp.w *= factorw;
+        _disp.h *= factorh;
+#endif
+
         SDL_SetTextureAlphaMod(tex, alpha);
         ASSERTFUNC(SDL_RenderCopyEx(app->renderer, tex, &_img, &_disp, static_cast<double>(angle), NULL, SDL_FLIP_NONE) >= 0, "failed to display sprite");
     }

@@ -16,7 +16,7 @@
 #include "psp/audio_streamed_file.h"
 #include "psp/font.h"
 #include "psp/font.h"
-#include "psp/pad.h"
+#include "psp/input.h"
 #include "psp/tween.h"
 
 #include "menu/title.h"
@@ -60,54 +60,33 @@ int main()
 //#else
     ASSERTFUNC(SDL_Init(SDL_INIT_EVERYTHING) >= 0, "failed to init sdl");
 //#endif
-    Pad_Init();
     app->audioMixer = new Audio::Mixer();
     app->audioMixer->start();
     GFX::init();
     FntInit();
     setScreenCol(0xFF00FF00);
     
+    Input::KeyboardDevice inputDevice;
+
     app->timer.start();
     setScreen(new TitleScreen());
     while(1)
     {
         auto last = std::chrono::high_resolution_clock::now();
-
-        if (Pad_Held(PSP_CTRL_CROSS))
-            printf("press\n");
-#ifndef PSP
-        SDL_Event event;
-        while(SDL_PollEvent(&event))
-        {
-            switch (event.type) {
-                case SDL_WINDOWEVENT:
-
-                    switch (event.window.event) {
-
-                        case SDL_WINDOWEVENT_CLOSE:   // exit game
-                            
-                            SDL_DestroyWindow(app->window);
-                            app->window = NULL;
-                            app->screenSurface = NULL;
-                            SDL_Quit();
-                            abort();
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-#endif
         
-        #ifdef DEBUG
-        if (Pad_Pressed(PSP_CTRL_SELECT))
-            break;      
-        #endif
         GFX::clear(app->screenCol);
-        Pad_Update();         
+        SDL_PumpEvents();
+    
+        if (Input::windowClosed()) {
+            // all this should probably be moved to app->quit() or a similar function
+            SDL_DestroyWindow(app->window);
+            app->window = NULL;
+            app->screenSurface = NULL;
+            SDL_Quit();
+            abort();
+        }
+
+        inputDevice.getEvent(app->event);
         ASSERTFUNC(app->currentScreen, "screen is NULL");                
         app->currentScreen->update();  
         app->currentScreen->draw();  

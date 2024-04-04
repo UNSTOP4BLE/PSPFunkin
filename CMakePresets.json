@@ -1,8 +1,8 @@
 {
-    "version": 6,
+    "version": 2,
     "cmakeMinimumRequired": {
         "major": 3,
-        "minor": 25,
+        "minor": 20,
         "patch": 0
     },
     "configurePresets": [
@@ -10,6 +10,7 @@
             "name": "pc-debug",
             "displayName": "Debug (PC)",
             "binaryDir": "${sourceDir}/build",
+            "generator": "Ninja",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug"
             }
@@ -18,6 +19,7 @@
             "name": "pc-release",
             "displayName": "Release (PC)",
             "binaryDir": "${sourceDir}/build",
+            "generator": "Ninja",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release"
             }
@@ -26,8 +28,9 @@
             "name": "psp-debug",
             "displayName": "Debug (PSP)",
             "binaryDir": "${sourceDir}/build",
-            "toolchainFile": "$env{PSPDEV}/psp/share/pspdev.cmake",
+            "generator": "Unix Makefiles",
             "cacheVariables": {
+                "CMAKE_TOOLCHAIN_FILE": "$env{PSPDEV}/psp/share/pspdev.cmake",
                 "CMAKE_BUILD_TYPE": "Debug"
             }
         },
@@ -35,8 +38,9 @@
             "name": "psp-release",
             "displayName": "Release (PSP)",
             "binaryDir": "${sourceDir}/build",
-            "toolchainFile": "$env{PSPDEV}/psp/share/pspdev.cmake",
+            "generator": "Unix Makefiles",
             "cacheVariables": {
+                "CMAKE_TOOLCHAIN_FILE": "$env{PSPDEV}/psp/share/pspdev.cmake",
                 "CMAKE_BUILD_TYPE": "Release"
             }
         }

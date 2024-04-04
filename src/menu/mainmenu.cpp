@@ -2,7 +2,7 @@
 #include "../main.h"
 #include "../screen.h"
 #include "../psp/font.h"
-#include "../psp/pad.h"
+#include "../app.h"
 
 #include "../playstate.h"
 
@@ -20,14 +20,14 @@ MainMenuScreen::MainMenuScreen(void) {
 
 void MainMenuScreen::update(void) 
 {
-    if (Pad_Pressed(PSP_CTRL_DOWN))
+    if (app->event.isPressed(Input::MENU_DOWN))
     {
         selection -= 1;
         if (selection < 0)
             selection = 0;
         backgroundy.setValue(0, 1.0);
     }
-    else if (Pad_Pressed(PSP_CTRL_UP))    
+    else if (app->event.isPressed(Input::MENU_UP))    
     {
         selection += 1;
         if (selection > static_cast<int>(COUNT_OF(songs)-1))
@@ -36,7 +36,7 @@ void MainMenuScreen::update(void)
     }
     selectedsong = songs[selection];
 
-    if (Pad_Pressed(PSP_CTRL_CROSS | PSP_CTRL_START))
+    if (app->event.isPressed(Input::MENU_ENTER))
         setScreen(new PlayStateScreen(selectedsong));
 }
 

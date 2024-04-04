@@ -6,7 +6,7 @@
 #include "../chartparser.h"
 #include "../psp/animation.h"
 #include "../psp/audio_file_readers.h"
-#include "../psp/pad.h"
+#include "../psp/input.h"
 #include <chrono>
 
 #include "mainmenu.h"
@@ -64,7 +64,7 @@ void TitleScreen::update(void)
       //      AnimOBJECT_SetAnim(&titleGF, 1, -1);
     }
 //    AnimOBJECT_Tick(&titleGF);
-    if (Pad_Pressed(PSP_CTRL_CROSS | PSP_CTRL_START))
+    if (app->event.isPressed(Input::MENU_ENTER))
     {
         if (state != Title)
             state = Title;
