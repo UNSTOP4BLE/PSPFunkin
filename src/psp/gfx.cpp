@@ -33,7 +33,14 @@ Texture *loadTex(const char *path) {
 void freeTex(Texture *tex) {
     SDL_DestroyTexture(tex);
 }
-
+/*
+typedef enum
+{
+    SDL_ScaleModeNearest, < nearest pixel sampling 
+    SDL_ScaleModeLinear,  < linear filtering 
+    SDL_ScaleModeBest     < anisotropic filtering 
+} SDL_ScaleMode;
+*/
 template<typename T> void drawTex(Texture* tex, GFX::RECT<int> *Img, GFX::RECT<T> *Disp, float angle, int alpha) {
     ASSERTFUNC(tex, "texture is NULL");
 
@@ -43,6 +50,7 @@ template<typename T> void drawTex(Texture* tex, GFX::RECT<int> *Img, GFX::RECT<T
         SDL_Rect _disp = {static_cast<int>(Disp->x), static_cast<int>(Disp->y), static_cast<int>(Disp->w), static_cast<int>(Disp->h)};
 
         SDL_SetTextureAlphaMod(tex, alpha);
+        SDL_SetTextureScaleMode(tex, SDL_ScaleModeBest);
         ASSERTFUNC(SDL_RenderCopyEx(app->renderer, tex, &_img, &_disp, static_cast<double>(angle), NULL, SDL_FLIP_NONE) >= 0, "failed to display sprite");
     }
 }

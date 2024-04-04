@@ -80,17 +80,15 @@ int main()
         GFX::clear(app->screenCol);
 #ifndef PSP
         SDL_PumpEvents();
-#endif
-    /*
+
         if (Input::windowClosed()) {
-            // all this should probably be moved to app->quit() or a similar function
             SDL_DestroyWindow(app->window);
             app->window = NULL;
             app->screenSurface = NULL;
             SDL_Quit();
             abort();
         }
-*/
+#endif
         inputDevice.getEvent(app->event);
         ASSERTFUNC(app->currentScreen, "screen is NULL");                
         app->currentScreen->update();  

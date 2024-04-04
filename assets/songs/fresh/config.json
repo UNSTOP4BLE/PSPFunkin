@@ -1,12 +1,12 @@
 {   
     "player": "bf",
-    "playerpos": [100, 100,
-                  100.0, 100.0, 1.0],
+    "playerpos": [400, 260,
+                  80.0, 40.0, 1.0],
     "opponent": "dad",
-    "opponentpos": [180, 200,
-                    0, 0, 1.0],
+    "opponentpos": [240, 260,
+                    0, 20, 1.0],
     "gf": "gf",
-    "gfpos": [100, 100],
+    "gfpos": [320, 160],
 
     "back": "stage",
     

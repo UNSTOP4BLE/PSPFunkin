@@ -42,6 +42,7 @@ private:
         void update(float ox, float oy, float oz, float px, float py, float pz);
         Tween<float, QuadInOutEasing, Chrono> camx, camy;
         Tween<float, QuadInOutEasing, Chrono> zoom;
+        float basezoom;
     } gamecam, hudcam;
     void initscr(std::string song);
     void freescr(void);

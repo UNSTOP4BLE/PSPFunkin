@@ -12,7 +12,7 @@ MainMenuScreen::MainMenuScreen(void) {
     backgroundy.setValue(GFX::SCREEN_HEIGHT/2 - 331/2);
     selection = 0;
     songs[0] = "bopeebo";
-    songs[1] = "fresh (currently not implemented)";
+    songs[1] = "frostbite";
     songs[2] = "test";
     songs[3] = "no-more-woah";
     selectedsong = songs[0];

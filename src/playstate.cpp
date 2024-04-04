@@ -10,6 +10,7 @@
 
 #include "menu/mainmenu.h"
 
+#define CAMERA_ZOOM_OFFSET 0.5
 Rating::Rating(std::string name, int hitwindow, float ratingmod, int score, bool splash)
 : name(name),
 hitWindow(hitwindow),
@@ -84,7 +85,8 @@ void PlayStateScreen::initscr(std::string song) {
     icons = GFX::loadTex("assets/icons.png");
     gamecam.camx = 0;
     gamecam.camy = 0;
-    gamecam.zoom = 1;
+    gamecam.basezoom = 1+CAMERA_ZOOM_OFFSET;
+    gamecam.zoom = gamecam.basezoom;
     hudcam.camx = 0;
     hudcam.camy = 0;
     hudcam.zoom = 1;
@@ -115,18 +117,17 @@ PlayStateScreen::PlayStateScreen(std::string song)
 }
 
 void PlayStateScreen::Camera::update(float ox, float oy, float oz, float px, float py, float pz) {
-    if (app->parser.justStep && !(app->parser.curStep % 16))
-    {
-        if (app->parser.sections[app->parser.curStep / 16].flag & FLAG_SEC_MUSTHIT) { 
-            camx.setValue(px, 0.3);
-            camy.setValue(py, 0.3);
-            zoom.setValue(pz, 0.3);
-        }
-        else {
-            camx.setValue(ox, 0.3);
-            camy.setValue(oy, 0.3);
-            zoom.setValue(oz, 0.3);
-        }
+    if (app->parser.sections[app->parser.curStep / 16].flag & FLAG_SEC_MUSTHIT) { 
+        camx.setValue(px, 0.2);
+        camy.setValue(py, 0.2);
+        basezoom = pz+CAMERA_ZOOM_OFFSET;
+        zoom.setValue(basezoom, 0.3);
+    }
+    else {
+        camx.setValue(ox, 0.2);
+        camy.setValue(oy, 0.2);
+        basezoom = oz+CAMERA_ZOOM_OFFSET;
+        zoom.setValue(basezoom, 0.3);
     }
 }
 
@@ -144,15 +145,17 @@ void PlayStateScreen::update(void)
 
     if (isPlaying)
     {
-        gamecam.update(opponent->camx, opponent->camy, opponent->camzoom,
-                      player->camx, player->camy, player->camzoom);
+        if (app->parser.justStep && !(app->parser.curStep % 16))
+            gamecam.update(opponent->camx, opponent->camy, opponent->camzoom,
+                           player->camx, player->camy, player->camzoom);
+
         //bump hud
         if (app->parser.justStep && !(app->parser.curStep % 16)) {
             hudcam.zoom.setValue(1.1, 1.0, 0.2); 
         }
         //bump game
         if (app->parser.justStep && !(app->parser.curStep % 16)) {
-            gamecam.zoom.setValue(1.05, 1.0, 0.2); 
+            gamecam.zoom.setValue(gamecam.basezoom+0.05, gamecam.basezoom, 0.2); 
         }
 
         //limit health
@@ -173,7 +176,12 @@ void PlayStateScreen::update(void)
         if (app->parser.curStep <= 0)
         {
             if (app->parser.songTime >= 0 && !isPlaying)
-            {
+            {            
+                gamecam.update(opponent->camx, opponent->camy, opponent->camzoom,
+                               player->camx, player->camy, player->camzoom);
+                hudcam.zoom.setValue(1.1, 1.0, 0.2); 
+                gamecam.zoom.setValue(gamecam.basezoom+0.05, gamecam.basezoom, 0.2); 
+
                 if (inst != NULL)
                     inst->play();
                 vocals->play();
