@@ -67,4 +67,7 @@ public:
     bool getEvent(Event &output);
 };
 
+#ifndef PSP
+bool windowClosed(void);
+#endif
 }

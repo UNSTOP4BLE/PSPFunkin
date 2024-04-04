@@ -154,5 +154,16 @@ bool ControllerDevice::getEvent(Event &output) {
     return valid;
 #endif
 }
+#ifndef PSP
+bool windowClosed(void) {
+    SDL_Event event;
 
+    while (SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_WINDOWEVENT, SDL_WINDOWEVENT) > 0) {
+        if (event.window.event == SDL_WINDOWEVENT_CLOSE)
+            return true;
+    }
+
+    return false;
+}
+#endif
 }
