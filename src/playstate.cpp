@@ -100,11 +100,11 @@ void PlayStateScreen::initscr(std::string song) {
     notePos.opponent[3] = {147,  14};   
     
     //set up ratings and timings (kinda stolen off of psych engine lmao)
-    //setRating(Rating &rating, std::string name, int score, bool splash, float ratingmod, int hitwindow)
-    ratingData.emplace_back("sick", 350, true,    1,  45);
-    ratingData.emplace_back("good", 200, false, 0.7,  90);
-    ratingData.emplace_back("bad",  100, false, 0.4, 135);
-    ratingData.emplace_back("shit",  50, false,   0, 165);
+    //Rating(std::string name, int hitwindow, float ratingmod, int score, bool splash);
+    ratingData.emplace_back("sick", 45,  1,   350, true);
+    ratingData.emplace_back("good", 90,  0.7, 200, false);
+    ratingData.emplace_back("bad",  135, 0.4, 100, false);
+    ratingData.emplace_back("shit", 165, 0,    50, false);
 
     app->parser.chartdata.speed /= 5;
 }
@@ -167,7 +167,7 @@ void PlayStateScreen::update(void)
     }
     else
     {
-        app->parser.songTime += app->timer.elapsedS()*1000; 
+        app->parser.songTime += app->timer.elapsedS(); 
 
         //song start
         if (app->parser.curStep <= 0)

@@ -1,3 +1,4 @@
+#!/bin/bash
 cht2bin/build/cht2bin assets/songs/bopeebo/bopeebo.json build/assets/songs/bopeebo/bopeebo.bin
 cht2bin/build/cht2bin assets/songs/fresh/fresh.json build/assets/songs/fresh/fresh.bin
 cht2bin/build/cht2bin assets/songs/frostbite/frostbite.json build/assets/songs/frostbite/frostbite.bin

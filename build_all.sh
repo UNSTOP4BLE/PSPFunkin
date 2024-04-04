@@ -1,5 +1,6 @@
-export PSPDEV=/usr/local/pspdev
-export PATH=$PATH:$PSPDEV/bin
-cmake -S . -B ./build -DCMAKE_TOOLCHAIN_FILE="${PSPDEV}/psp/share/pspdev.cmake"
+#!/bin/bash
+cmake -S ./cht2bin -B ./cht2bin/build
+cmake --build ./cht2bin/build
+cmake --preset "psp-release"
 cmake --build ./build
 ./build_chart.sh

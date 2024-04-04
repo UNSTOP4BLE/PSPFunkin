@@ -78,7 +78,9 @@ int main()
         auto last = std::chrono::high_resolution_clock::now();
         
         GFX::clear(app->screenCol);
+#ifndef PSP
         SDL_PumpEvents();
+#endif
     /*
         if (Input::windowClosed()) {
             // all this should probably be moved to app->quit() or a similar function
