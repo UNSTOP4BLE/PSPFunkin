@@ -15,7 +15,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@main
       - name: Install Dependencies And Compile
-        run: apk add cmake gmp mpc1 mpfr4 gcc g++ --quiet && cd cht2bin && cmake -S . -B ./build && cmake --build ./build && cd .. && psp-cmake -S . -B ./build && cmake --build ./build && mkdir export && cht2bin/build/cht2bin assets/songs/bopeebo/bopeebo.json build/assets/songs/bopeebo/bopeebo.bin && cp -R build export
+        run: apk add cmake gmp mpc1 mpfr4 gcc g++ --quiet && cd cht2bin && cmake -S . -B ./build && cmake --build ./build && cd .. && cmake --preset psp-release && cmake --build ./build && mkdir export && cht2bin/build/cht2bin assets/songs/bopeebo/bopeebo.json build/assets/songs/bopeebo/bopeebo.bin && cp -R build export
       - name: Publish Artifact
         uses: actions/upload-artifact@main
         with:

@@ -10,22 +10,6 @@
 
 namespace Input {
 
-static const SDL_Scancode keyboardMapping[NUM_BUTTONS]{
-    SDL_SCANCODE_UP,     // GAME_UP
-    SDL_SCANCODE_DOWN,   // GAME_DOWN
-    SDL_SCANCODE_LEFT,   // GAME_LEFT
-    SDL_SCANCODE_RIGHT,  // GAME_RIGHT
-    SDL_SCANCODE_ESCAPE, // GAME_PAUSE
-
-    SDL_SCANCODE_UP,     // MENU_UP
-    SDL_SCANCODE_DOWN,   // MENU_DOWN
-    SDL_SCANCODE_LEFT,   // MENU_LEFT
-    SDL_SCANCODE_RIGHT,  // MENU_RIGHT
-    SDL_SCANCODE_RETURN, // MENU_ENTER
-    SDL_SCANCODE_ESCAPE, // MENU_ESCAPE
-    SDL_SCANCODE_TAB     // MENU_OPTION
-};
-
 #ifdef PSP
 static const uint32_t pspMapping[NUM_BUTTONS]{
     PSP_CTRL_UP    | PSP_CTRL_TRIANGLE, // GAME_UP
@@ -58,10 +42,27 @@ static const int controllerMapping[NUM_BUTTONS][2]{
     { SDL_CONTROLLER_BUTTON_B,          -1 },                          // MENU_ESCAPE
     { SDL_CONTROLLER_BUTTON_X           -1 }                           // MENU_OPTION
 };
+
+static const SDL_Scancode keyboardMapping[NUM_BUTTONS]{
+    SDL_SCANCODE_UP,     // GAME_UP
+    SDL_SCANCODE_DOWN,   // GAME_DOWN
+    SDL_SCANCODE_LEFT,   // GAME_LEFT
+    SDL_SCANCODE_RIGHT,  // GAME_RIGHT
+    SDL_SCANCODE_ESCAPE, // GAME_PAUSE
+
+    SDL_SCANCODE_UP,     // MENU_UP
+    SDL_SCANCODE_DOWN,   // MENU_DOWN
+    SDL_SCANCODE_LEFT,   // MENU_LEFT
+    SDL_SCANCODE_RIGHT,  // MENU_RIGHT
+    SDL_SCANCODE_RETURN, // MENU_ENTER
+    SDL_SCANCODE_ESCAPE, // MENU_ESCAPE
+    SDL_SCANCODE_TAB     // MENU_OPTION
+};
 #endif
 
 bool KeyboardDevice::getEvent(Event &output) {
     output.reset();
+    output.buttonsHeld = _buttonsHeld;
 
 #ifdef PSP
     // PSP has no keyboard
@@ -76,8 +77,8 @@ bool KeyboardDevice::getEvent(Event &output) {
 
             if (event.key.keysym.scancode != keyboardMapping[i])
                 continue;
-            //if (event.key.repeat)
-                //continue;
+            if (event.key.repeat)
+                continue;
 
             if (event.type == SDL_KEYDOWN) {
                 output.buttonsPressed |= bits;
@@ -90,7 +91,6 @@ bool KeyboardDevice::getEvent(Event &output) {
             output.timestamp = event.key.timestamp;
             output.buttonsHeld = _buttonsHeld;
             valid = true;
-            printf("%d %d\n", i, output.buttonsHeld);
         }
     }
 
@@ -99,32 +99,29 @@ bool KeyboardDevice::getEvent(Event &output) {
 }
 
 bool ControllerDevice::getEvent(Event &output) {
-    output.reset();
-
 #ifdef PSP
+    auto lastHeld = _buttonsHeld;
+    _buttonsHeld = 0;
+
     SceCtrlData state;
-    SceCtrlLatch events;
-
-    if (sceCtrlReadBufferPositive(&state) <= 0)
-        return false;
-    if (sceCtrlReadLatch(&events) <= 0)
-        return false;
-
-    output.timestamp = state.TimeStamp;
+    sceCtrlReadBufferPositive(&state, 1);
 
     for (int i = 0; i < NUM_BUTTONS; i++) {
-        uint32_t bits = 1 << i;
-
-        if (events.uiMake & pspMapping[i])
-            output.buttonsPressed |= bits;
-        if (events.uiBreak & pspMapping[i])
-            output.buttonsReleased |= bits;
-        if (events.uiPress & pspMapping[i])
-            output.buttonsHeld |= bits;
+        if (state.Buttons & pspMapping[i])
+            _buttonsHeld |= 1 << i;
     }
 
+    auto changed = _buttonsHeld ^ lastHeld;
+
+    output.timestamp = state.TimeStamp;
+    output.buttonsPressed = changed & _buttonsHeld;
+    output.buttonsReleased = changed & lastHeld;
+    output.buttonsHeld = _buttonsHeld;
     return true;
 #else
+    output.reset();
+    output.buttonsHeld = _buttonsHeld;
+
     SDL_Event event;
     bool valid = false;
 
@@ -156,17 +153,6 @@ bool ControllerDevice::getEvent(Event &output) {
 
     return valid;
 #endif
-}
-
-bool windowClosed(void) {
-    SDL_Event event;
-
-    while (SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_WINDOWEVENT, SDL_WINDOWEVENT) > 0) {
-        if (event.window.event == SDL_WINDOWEVENT_CLOSE)
-            return true;
-    }
-
-    return false;
 }
 
 }

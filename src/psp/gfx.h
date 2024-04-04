@@ -4,13 +4,13 @@
 
 namespace GFX {
 
-#ifdef PSP
+//#ifdef PSP
 constexpr int SCREEN_WIDTH  = 480;
 constexpr int SCREEN_HEIGHT = 272;
-#else
-constexpr int SCREEN_WIDTH  = 1280;
-constexpr int SCREEN_HEIGHT = 720;
-#endif
+//#else
+//constexpr int SCREEN_WIDTH  = 1280;
+//constexpr int SCREEN_HEIGHT = 720;
+//#endif
 
 template<typename T> struct RECT {
 public:

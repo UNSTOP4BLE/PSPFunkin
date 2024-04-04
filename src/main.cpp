@@ -66,8 +66,11 @@ int main()
     FntInit();
     setScreenCol(0xFF00FF00);
     
+#ifdef PSP
+    Input::ControllerDevice inputDevice;
+#else
     Input::KeyboardDevice inputDevice;
-
+#endif
     app->timer.start();
     setScreen(new TitleScreen());
     while(1)
@@ -76,7 +79,7 @@ int main()
         
         GFX::clear(app->screenCol);
         SDL_PumpEvents();
-    
+    /*
         if (Input::windowClosed()) {
             // all this should probably be moved to app->quit() or a similar function
             SDL_DestroyWindow(app->window);
@@ -85,7 +88,7 @@ int main()
             SDL_Quit();
             abort();
         }
-
+*/
         inputDevice.getEvent(app->event);
         ASSERTFUNC(app->currentScreen, "screen is NULL");                
         app->currentScreen->update();  
@@ -97,7 +100,7 @@ int main()
         last = current;
 
     }
-#ifdef DEBUG
+#if defined(DEBUG) && defined(PSP)
     gprof_cleanup();
 #endif
 

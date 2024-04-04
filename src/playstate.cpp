@@ -167,7 +167,7 @@ void PlayStateScreen::update(void)
     }
     else
     {
-        app->parser.songTime += app->timer.elapsedS(); 
+        app->parser.songTime += app->timer.elapsedS()*1000; 
 
         //song start
         if (app->parser.curStep <= 0)
@@ -262,7 +262,7 @@ void PlayStateScreen::draw(void)
 void PlayStateScreen::freescr(void) {
     delete player;
     delete opponent;
-   // delete gf;
+    delete gf;
     curstage.free();
     GFX::freeTex(hud);
     GFX::freeTex(icons);

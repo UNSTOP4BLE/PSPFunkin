@@ -1,5 +1,5 @@
 #pragma once
-#include <cstdio> 
+
 #include <cstdint>
 
 namespace Input {
@@ -23,6 +23,7 @@ enum Button {
     MENU_ESCAPE,
     MENU_OPTION
 };
+
 struct Event {
 public:
     uint32_t timestamp;
@@ -41,38 +42,29 @@ public:
         return (buttonsReleased >> button) & 1;
     }
     inline bool isHeld(Button button) {
-    printf("isHeld %d\n",buttonsHeld);
         return (buttonsHeld >> button) & 1;
     }
 };
 
 class Device {
+protected:
+    uint32_t _buttonsHeld;
+
 public:
+    inline Device(void)
+    : _buttonsHeld(0) {}
+
     virtual bool getEvent(Event &output) { (void)output; return false; }
 };
 
 class KeyboardDevice : public Device {
-private:
-    uint32_t _buttonsHeld;
-
 public:
-    inline KeyboardDevice(void)
-    : _buttonsHeld(0) {}
-
     bool getEvent(Event &output);
 };
 
 class ControllerDevice : public Device {
-private:
-    uint32_t _buttonsHeld;
-
 public:
-    inline ControllerDevice(void)
-    : _buttonsHeld(0) {}
-
     bool getEvent(Event &output);
 };
 
-
-bool windowClosed(void);
 }

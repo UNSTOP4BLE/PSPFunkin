@@ -41,14 +41,6 @@ template<typename T> void drawTex(Texture* tex, GFX::RECT<int> *Img, GFX::RECT<T
     {
         SDL_Rect _img = {static_cast<int>(Img->x), static_cast<int>(Img->y), static_cast<int>(Img->w), static_cast<int>(Img->h)};
         SDL_Rect _disp = {static_cast<int>(Disp->x), static_cast<int>(Disp->y), static_cast<int>(Disp->w), static_cast<int>(Disp->h)};
-#ifndef PSP
-        float factorw = (SCREEN_WIDTH/480);
-        float factorh = (SCREEN_HEIGHT/272);
-        _disp.x *= factorw;
-        _disp.y *= factorh;
-        _disp.w *= factorw;
-        _disp.h *= factorh;
-#endif
 
         SDL_SetTextureAlphaMod(tex, alpha);
         ASSERTFUNC(SDL_RenderCopyEx(app->renderer, tex, &_img, &_disp, static_cast<double>(angle), NULL, SDL_FLIP_NONE) >= 0, "failed to display sprite");
