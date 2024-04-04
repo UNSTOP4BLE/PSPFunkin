@@ -7,7 +7,7 @@ public:
     Character(std::string path, std::string objstr, float _x, float _y);
     void setPos(float _x, float _y);
     void setFocus(float x, float y, float zoom);
-    void setAnim(int anim);
+    void setAnim(int anim, AnimationModes mode);
     void setIcon(int i);
     int getAnim(void);
     int getFrame(void);
@@ -21,5 +21,6 @@ public:
     int icon;
 private:
     Anim_OBJECT *obj;
+    Anim_OBJECT *obj_speaker;
     std::string type;
 };

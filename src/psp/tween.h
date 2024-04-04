@@ -42,34 +42,50 @@ public:
     }
 };
 
-template<typename T, typename E, typename S> class Tween {
+template<typename T, typename E, TimeSources src> class Tween {
 private:
     T     _base, _delta;
     float _endTime, _timeScale;
+    StepTimeSource SStep;
+    ChronoTimeSource SChrono;
+
+    inline float getTweenTime(void) {
+        switch(timesource) {
+            case Step:
+                return SStep.getTweenTime();
+                break; 
+            case Chrono:
+                return SChrono.getTweenTime();
+                break; 
+        }
+    }
 
 public:
+    TimeSources timesource;
     inline Tween(void) {
         setValue(static_cast<T>(0));
+        timesource = src;
     }
     inline Tween(T start) {
         setValue(start);
+        timesource = src;
     }
 
     inline T getValue(void) {
-        float time = _endTime - S::getTweenTime();
+        float time = _endTime - getTweenTime();
         if (time <= 0)
             return _base + _delta;
         return _base + _delta * E::apply(1.0 - time * _timeScale);
     }
     inline bool isDone(void) {
-        return (S::getTweenTime() <= _endTime);
+        return (getTweenTime() <= _endTime);
     }
 
     inline void setValue(T start, T target, float duration) {
         _base  = start;
         _delta = target - start;
 
-        _endTime   = S::getTweenTime() + duration;
+        _endTime   = getTweenTime() + duration;
         _timeScale = 1.0 / duration;
     }
     inline void setValue(T target, float duration) {

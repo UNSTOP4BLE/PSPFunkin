@@ -10,7 +10,7 @@ class ComboObject
 public:
     bool tick, falling;
     float x;
-    Tween<float, QuadInOutEasing, ChronoTimeSource> y;
+    Tween<float, QuadInOutEasing, Chrono> y;
     int ymin;
     GFX::RECT<int> img;
     GFX::RECT<int> disp;

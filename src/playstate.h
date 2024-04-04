@@ -40,8 +40,8 @@ private:
     class Camera {
     public:
         void update(float ox, float oy, float oz, float px, float py, float pz);
-        Tween<float, QuadInOutEasing, ChronoTimeSource> camx, camy;
-        Tween<float, QuadInOutEasing, ChronoTimeSource> zoom;
+        Tween<float, QuadInOutEasing, Chrono> camx, camy;
+        Tween<float, QuadInOutEasing, Chrono> zoom;
     } gamecam, hudcam;
     void initscr(std::string song);
     void freescr(void);
@@ -81,6 +81,6 @@ private:
     bool ghosttap;
     bool botplay;
     //note animation
-    Tween<float, QuadInOutEasing, ChronoTimeSource> noteframe[4];
+    Tween<float, QuadInOutEasing, Chrono> noteframe[4];
     bool notehit[4];
 };

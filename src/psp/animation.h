@@ -21,7 +21,7 @@ struct Animation
     int anim;
     int tex;
     int framecount;
-    int endtime;
+    float endtime;
 };
 
 class Anim_OBJECT {
@@ -32,7 +32,7 @@ public:
     int curframe;
     bool tick;
     bool cananimate;
-    Tween<float, LinearEasing, ChronoTimeSource> frame;
+    Tween<float, LinearEasing, Chrono> frame;
     AnimationModes mode;
     std::vector<AnimFrames> frames;
     std::vector<std::vector<int>> conf;

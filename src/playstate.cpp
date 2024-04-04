@@ -54,8 +54,8 @@ void PlayStateScreen::initscr(std::string song) {
     opponent->setFocus(_config["opponentpos"][2].asFloat(), _config["opponentpos"][3].asFloat(),  _config["opponentpos"][4].asFloat());
 
     //gf    
-   // sprintf(_path, "assets/characters/%s/", _config["gf"].asString().c_str());
- //   gf = new Character(_path, _config["gf"].asString() + ".json", _config["gfpos"][0].asFloat(), _config["gfpos"][1].asFloat());
+    sprintf(_path, "assets/characters/%s/", _config["gf"].asString().c_str());
+    gf = new Character(_path, _config["gf"].asString() + ".json", _config["gfpos"][0].asFloat(), _config["gfpos"][1].asFloat());
 
     //stage
     sprintf(_path, "assets/stages/%s/%s.json", _config["back"].asString().c_str(), _config["back"].asString().c_str()); 
@@ -193,7 +193,7 @@ void PlayStateScreen::update(void)
     curstage.tick(gamecam.camx.getValue(), gamecam.camy.getValue());
     player->tick();
     opponent->tick();
-  //  gf->tick();
+    gf->tick();
 
 }
 
@@ -239,7 +239,7 @@ void PlayStateScreen::drawIcons(void) {
 void PlayStateScreen::draw(void)
 {
     curstage.drawObjects(curstage.bgobjects, gamecam.zoom.getValue());
- //   gf->draw(gamecam.camx, gamecam.camy, gamecam.zoom);
+    gf->draw(gamecam.camx.getValue(), gamecam.camy.getValue(), gamecam.zoom.getValue());
     curstage.drawObjects(curstage.mdobjects, gamecam.zoom.getValue());
 
     opponent->draw(gamecam.camx.getValue(), gamecam.camy.getValue(), gamecam.zoom.getValue());
@@ -304,8 +304,8 @@ void PlayStateScreen::updateInput(void)
     checkPadHeld[1] = Pad_Held(PSP_CTRL_DOWN | PSP_CTRL_CROSS | PSP_CTRL_LTRIGGER);
     checkPadHeld[2] = Pad_Held(PSP_CTRL_UP | PSP_CTRL_TRIANGLE | PSP_CTRL_RTRIGGER);
     checkPadHeld[3] = Pad_Held(PSP_CTRL_RIGHT | PSP_CTRL_CIRCLE); 
-/*
-*/
+
+
     //handle note hits here? why not lol
     //opponent
     for (int i = 0; i < static_cast<int>(app->parser.gamenotes[1].size()); i++)
@@ -334,7 +334,7 @@ void PlayStateScreen::updateInput(void)
             if (inst != NULL)
                 vocals->setVolume(1,1);
             notes[i].flag |= FLAG_NOTE_HIT;
-            opponent->setAnim(1+type); //set animation
+            opponent->setAnim(1+type, ModeNone); //set animation
         }
 
         //note is below the screen, so go back to index 0
@@ -370,7 +370,6 @@ void PlayStateScreen::updateInput(void)
             Rating rating = judgeNote(notediff);
             if (rating.name == "sick")
                 checkPad[type] = true;
-
         }
         //check if its been hit
         if (checkPad[type] && notediff < static_cast<float>(ratingData[3].hitWindow)) //shit hit window
@@ -380,7 +379,7 @@ void PlayStateScreen::updateInput(void)
             if (inst != NULL)
                 vocals->setVolume(1,1);
             notes[i].flag |= FLAG_NOTE_HIT;
-            player->setAnim(1+type); //play animation 
+            player->setAnim(1+type, ModeNone); //play animation 
             score += rating.score; 
             health += 0.023;
             combo.combo += 1;
@@ -400,7 +399,7 @@ void PlayStateScreen::updateInput(void)
                         anim = i;
                         break;
                     }
-                player->setAnim(1+anim);
+                player->setAnim(1+anim, ModeNone);
                 player->singendtime = app->parser.curStep-1;
             }
         }

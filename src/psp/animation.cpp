@@ -58,16 +58,6 @@ void AnimOBJECT_SetAnim(Anim_OBJECT *obj, int anim, AnimationModes mode)
     ASSERTFUNC(obj, "object is null");   
 
     obj->mode = mode;
-    switch(mode)
-    {
-        case ModeStep:
-            obj->curanim.endtime = app->parser.curStep + 4; //end 4 steps later
-            break;
-        case ModeNone:
-            obj->curanim.endtime = 0;
-            break;
-        default: break;
-    }
 
     obj->curanim.anim = anim;
     obj->curframe = obj->conf[obj->curanim.anim][0];
@@ -76,7 +66,20 @@ void AnimOBJECT_SetAnim(Anim_OBJECT *obj, int anim, AnimationModes mode)
     obj->tick = obj->cananimate = true;
     if (obj->speed[obj->curanim.anim] == 0)
         obj->speed[obj->curanim.anim] = 1;
-    obj->frame.setValue(0, static_cast<float>(obj->curanim.framecount-1), static_cast<float>(obj->curanim.framecount-1)/static_cast<float>(obj->speed[obj->curanim.anim]));
+
+    switch(mode)
+    {
+        case ModeStep:
+            obj->curanim.endtime = 4; //end 4 steps later
+            obj->frame.timesource = Step;
+            break;
+        case ModeNone:
+            obj->curanim.endtime = static_cast<float>(obj->curanim.framecount-1)/static_cast<float>(obj->speed[obj->curanim.anim]);
+            obj->frame.timesource = Chrono;
+            break;
+        default: break;
+    }
+    obj->frame.setValue(0, static_cast<float>(obj->curanim.framecount-1), obj->curanim.endtime);
 }
 
 void AnimOBJECT_Tick(Anim_OBJECT *obj)
@@ -85,26 +88,18 @@ void AnimOBJECT_Tick(Anim_OBJECT *obj)
 
     if (obj->tick && obj->cananimate)
     {
-        switch (obj->mode)
-        {
-            case ModeStep:
-//                obj->tweenframe.setValue(obj->framecount, obj->speed[obj->curanim], app->parser.curStep); // maybe dont make synced to step later on? i will see
-                break;
-            case ModeNone:
-                break;
-            default: break;
-        }
-
         if (static_cast<int>(obj->frame.getValue())+1 > obj->curanim.framecount) {
            obj->tick = false;
            return;
         }
+        if (static_cast<int>(obj->frame.getValue()) < 0)
+            return;
         obj->curframe = obj->conf[obj->curanim.anim][static_cast<int>(obj->frame.getValue())];
         obj->curanim.tex = obj->frames[obj->curframe].tex;
     }
     
 }
-#include "font.h"
+
 void AnimOBJECT_Draw(Anim_OBJECT *obj, float x, float y, bool linear, float angle, int alpha, float zoom)
 {
     ASSERTFUNC(obj, "object is null");   
@@ -119,13 +114,8 @@ void AnimOBJECT_Draw(Anim_OBJECT *obj, float x, float y, bool linear, float angl
                                  static_cast<float>(y - obj->frames[obj->curframe].offsety),
                                  static_cast<float>(obj->frames[obj->curframe].w),
                                  static_cast<float>(obj->frames[obj->curframe].h)};
-  //      if (obj->flipped)
-//            disp.w = -disp.w;
 
         ASSERTFUNC(obj->textures[obj->curanim.tex], "texture is NULL");   
-
-//        if (obj->visible)
         GFX::drawTexZoom<float>(obj->textures[obj->curanim.tex], &img, &disp, linear, angle, alpha, zoom);
-        PrintFont(Left, 0, 40, "asdasd %d", static_cast<int>(obj->frame.getValue()));
     }
 }

@@ -48,11 +48,11 @@ public:
     int songTime;
     bool justStep;
     double step_crochet;
+    double crochet;
     ChartData chartdata;
     std::vector<Section> sections;
     std::vector<Note> gamenotes[2];
 private: 
     std::ifstream chart;
-    double crochet;
     void readChartData(void);
 };
