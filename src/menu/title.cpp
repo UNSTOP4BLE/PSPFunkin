@@ -87,7 +87,9 @@ void TitleScreen::draw(void)
             {
                 case 3:
                     PrintBOLD(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2 + 76, "PRESENT");
+                        [[fallthrough]];
                 case 2:
+                        [[fallthrough]];
                 case 1:
                     PrintBOLD(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2 - 114, "UNSTOPABLE");
                     PrintBOLD(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2 - 76,  "IGORSOU");
@@ -97,8 +99,10 @@ void TitleScreen::draw(void)
                     break;
                 case 7:
                     PrintBOLD(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2 - 20, "NEWGROUNDS");
-                    GFX::drawTex<int>(ng, &NG_img, &NG_disp, false, 0, 255);
+                    GFX::drawTex<int>(ng, &NG_img, &NG_disp, 0, 255);
+                        [[fallthrough]];
                 case 6:
+                        [[fallthrough]];
                 case 5:
                     PrintBOLD(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2 - 96, "IN ASSOCIATION");
                     PrintBOLD(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2 - 58, "WITH");
@@ -106,14 +110,18 @@ void TitleScreen::draw(void)
 
                 case 11:
                     PrintBOLD(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2, funnymessage[1].c_str());
+                        [[fallthrough]];
                 case 10:
+                        [[fallthrough]];
                 case 9:
                     PrintBOLD(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2 - 38, funnymessage[0].c_str());
                     break;
                 case 15:
                     PrintBOLD(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2 + 18, "FUNKIN");
+                        [[fallthrough]];
                 case 14:
                     PrintBOLD(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2 - 20, "NIGHT");
+                        [[fallthrough]];
                 case 13:
                     PrintBOLD(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2 - 58, "FRIDAY");
                     break;
@@ -127,7 +135,7 @@ void TitleScreen::draw(void)
             state = Title;
             break;
         case Title:
-          //  AnimOBJECT_Draw(&titleGF, 200, 200, false, 0, 255, 1.0f);
+          //  AnimOBJECT_Draw(&titleGF, 200, 200, 0, 255, 1.0f);
             break;
     }
 }

@@ -10,15 +10,16 @@
 
 #include "menu/mainmenu.h"
 
-Rating::Rating(std::string name, int score, bool splash, float ratingmod, int hitwindow)
+Rating::Rating(std::string name, int hitwindow, float ratingmod, int score, bool splash)
 : name(name),
-score(score),
-noteSplash(splash),
+hitWindow(hitwindow),
 ratingMod(ratingmod),
-hitWindow(hitwindow) {}
+score(score),
+noteSplash(splash) {}
 
 void PlayStateScreen::initscr(std::string song) {
     setScreenCol(0xFF00FF00);
+    app->timer.start();
     //reset vars
     combo.init();
     ghosttap = true;
@@ -154,6 +155,7 @@ void PlayStateScreen::update(void)
             gamecam.zoom.setValue(1.05, 1.0, 0.2); 
         }
 
+        //limit health
         if (health <= 0)
             setScreen(new MainMenuScreen());
         else if (health > 1)
@@ -165,7 +167,7 @@ void PlayStateScreen::update(void)
     }
     else
     {
-        app->parser.songTime += 15; //hardcode to 60fps, should be able to change based on framerate (60fps = 16.666ms)
+        app->parser.songTime += app->timer.elapsedS(); 
 
         //song start
         if (app->parser.curStep <= 0)
@@ -201,13 +203,13 @@ void PlayStateScreen::drawHealthBar(void) {
     GFX::RECT<int> img = {1, 501, 320, 10};
     GFX::RECT<int> disp = {80, 235, img.w, 10};
     //player
-    GFX::drawTexZoom<int>(icons, &img, &disp, false, 0, 255, hudcam.zoom.getValue());
+    GFX::drawTexZoom<int>(icons, &img, &disp, 0, 255, hudcam.zoom.getValue());
 
     //opponent
     img.y = 490;
     img.w = fabs(health - 1.0) * 320;
     disp.w = img.w;
-    GFX::drawTexZoom<int>(icons, &img, &disp, false, 0, 255, hudcam.zoom.getValue());
+    GFX::drawTexZoom<int>(icons, &img, &disp, 0, 255, hudcam.zoom.getValue());
 }
 
 #define ICON_ROWS 12
@@ -222,7 +224,7 @@ void PlayStateScreen::drawIcons(void) {
                           ICON_SIZE};
 
     GFX::RECT<int> disp = {80+static_cast<int>(abs(health - 1.0)*320)-ICON_SIZE, 220, ICON_SIZE, ICON_SIZE};
-    GFX::drawTexZoom<int>(icons, &img, &disp, false, 0, 255, hudcam.zoom.getValue());
+    GFX::drawTexZoom<int>(icons, &img, &disp, 0, 255, hudcam.zoom.getValue());
 
     //player
     dying = (health < 0.2 ? ICON_SIZE+1 : 0);
@@ -233,7 +235,7 @@ void PlayStateScreen::drawIcons(void) {
            ICON_SIZE};
 
     disp = {80+static_cast<int>(abs(health - 1.0)*320), 220, ICON_SIZE, ICON_SIZE};
-    GFX::drawTexZoom<int>(icons, &img, &disp, false, 0, 255, hudcam.zoom.getValue());
+    GFX::drawTexZoom<int>(icons, &img, &disp, 0, 255, hudcam.zoom.getValue());
 }
 
 void PlayStateScreen::draw(void)

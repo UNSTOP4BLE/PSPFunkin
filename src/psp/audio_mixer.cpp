@@ -223,19 +223,20 @@ void Mixer::start(int sampleRate, int bufferSize) {
     ASSERTFUNC(bufferSize <= MIXER_BUFFER_SIZE, "unsupported buffer size");
 
     SDL_AudioSpec actualSpec;
-    SDL_AudioSpec spec{
-        .freq     = sampleRate,
-        .format   = AUDIO_S16SYS,
-        .channels = 2,
-        .samples  = static_cast<uint16_t>(bufferSize),
-        .callback = [](void *userdata, uint8_t *buffer, int size) {
-            auto mixer = reinterpret_cast<Mixer *>(userdata);
-            auto output = reinterpret_cast<int16_t *>(buffer);
+    SDL_AudioSpec spec;
 
-            mixer->_process(output, size / (2 * sizeof(int16_t)));
-        },
-        .userdata = this
+    spec.freq = sampleRate;
+    spec.format = AUDIO_S16SYS;
+    spec.channels = 2;
+    spec.samples = static_cast<uint16_t>(bufferSize);
+
+    spec.callback = [](void *userdata, uint8_t *buffer, int size) {
+        auto mixer = reinterpret_cast<Mixer *>(userdata);
+        auto output = reinterpret_cast<int16_t *>(buffer);
+
+        mixer->_process(output, size / (2 * sizeof(int16_t)));
     };
+    spec.userdata = this;
 
     _outputStream = SDL_OpenAudioDevice(
         nullptr, false, &spec, &actualSpec,

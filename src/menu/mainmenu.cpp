@@ -30,8 +30,8 @@ void MainMenuScreen::update(void)
     else if (Pad_Pressed(PSP_CTRL_UP))    
     {
         selection += 1;
-        if (selection > COUNT_OF(songs)-1)
-            selection = COUNT_OF(songs)-1;
+        if (selection > static_cast<int>(COUNT_OF(songs)-1))
+            selection = static_cast<int>(COUNT_OF(songs)-1);
         backgroundy.setValue(400, 1.0);
     }
     selectedsong = songs[selection];
@@ -44,7 +44,7 @@ void MainMenuScreen::draw(void)
 {
     GFX::RECT<int> background_img = {0, 0, 512, 331};
     GFX::RECT<float> background_disp = {GFX::SCREEN_WIDTH/2 - 583/2, backgroundy.getValue(), 583, 331};
-    GFX::drawTex<float>(background, &background_img, &background_disp, true, 0, 255);
+    GFX::drawTex<float>(background, &background_img, &background_disp, 0, 255);
     PrintFont(Left, 0, 20, "press up and down to switch song, song: %s", selectedsong.c_str());
 }
 

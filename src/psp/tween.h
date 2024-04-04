@@ -58,6 +58,7 @@ private:
                 return SChrono.getTweenTime();
                 break; 
         }
+        return 0;
     }
 
 public:

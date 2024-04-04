@@ -5,117 +5,113 @@
 #include <stdio.h>
 #include "file.h"
 
-Anim_OBJECT::Anim_OBJECT(void)
+Anim_OBJECT::Anim_OBJECT(void) {   
+}
+
+Anim_OBJECT::Anim_OBJECT(std::string path, std::string objname)
 {   
-
-}
-
-Anim_OBJECT::~Anim_OBJECT(void)
-{
-    for (int i = 0; i < textures.size(); i++)
-    {
-        GFX::freeTex(textures[i]);
-    }
-}
-
-void AnimOBJECT_Init(Anim_OBJECT *obj, std::string path, std::string objname)
-{
     std::string _path;
 
     _path = path + objname;
     Json::Value data;
     loadJson(_path.c_str(), &data);
 
-    obj->conf.resize(data["config"].size());
+    conf.resize(data["config"].size());
     for (int i = 0; i < static_cast<int>(data["config"].size()); i++)
     {
-        obj->speed.push_back(data["config"][i][0].asInt()); //speed
+        speed.push_back(data["config"][i][0].asInt()); //speed
         for (int j = 1; j < static_cast<int>(data["config"][i].size()); j++) //frames per animation
-            obj->conf[i].push_back(data["config"][i][j].asInt());
+            conf[i].push_back(data["config"][i][j].asInt());
     }
-    obj->frames = readFramesFromJson(_path.c_str());
-    obj->textures.resize(data["textures"].size());
+    frames = readFramesFromJson(_path.c_str());
+    textures.resize(data["textures"].size());
     for (int i = 0; i < static_cast<int>(data["textures"].size()); i++)
     {
         _path = path + data["textures"][i].asString();     
-        obj->textures[i] = GFX::loadTex(_path.c_str());  
+        textures[i] = GFX::loadTex(_path.c_str());  
     }
 
     //reset vars
 
-    obj->tick = obj->cananimate = false;
-    obj->curframe = 0;
-    obj->mode = ModeNone;
+    cantick = cananimate = false;
+    curframe = 0;
+    mode = ModeNone;
 
-    obj->curanim.anim = 0;
-    obj->curanim.tex = 0;
-    obj->curanim.framecount = 0;
-    obj->curanim.endtime = 0;
+    curanim.anim = 0;
+    curanim.tex = 0;
+    curanim.framecount = 0;
+    curanim.endtime = 0;
+    frame.setValue(0);
 }
 
-void AnimOBJECT_SetAnim(Anim_OBJECT *obj, int anim, AnimationModes mode)
+Anim_OBJECT::~Anim_OBJECT(void)
 {
-    ASSERTFUNC(obj, "object is null");   
+    for (int i = 0; i < static_cast<int>(textures.size()); i++)
+    {
+        GFX::freeTex(textures[i]);
+    }
+}
 
-    obj->mode = mode;
+void Anim_OBJECT::setAnim(int anim, AnimationModes mode)
+{
+    mode = mode;
 
-    obj->curanim.anim = anim;
-    obj->curframe = obj->conf[obj->curanim.anim][0];
-    obj->curanim.tex = obj->frames[obj->curframe].tex;
-    obj->curanim.framecount = obj->conf[anim].size();
-    obj->tick = obj->cananimate = true;
-    if (obj->speed[obj->curanim.anim] == 0)
-        obj->speed[obj->curanim.anim] = 1;
-
+    curanim.anim = anim;
+    curframe = conf[curanim.anim][0];
+    curanim.tex = frames[curframe].tex;
+    curanim.framecount = conf[anim].size();
+    cantick = cananimate = true;
+    if (speed[curanim.anim] == 0)
+        speed[curanim.anim] = 1;
+    float maxduration, minduration = 0;
     switch(mode)
     {
         case ModeStep:
-            obj->curanim.endtime = 4; //end 4 steps later
-            obj->frame.timesource = Step;
+            maxduration = 4 * (15/app->parser.chartdata.bpm); //endime * steps per second
+            minduration = static_cast<float>(curanim.framecount-1)/static_cast<float>(speed[curanim.anim]);
+            curanim.endtime = std::min(maxduration, minduration); //end 4 steps later
+            frame.timesource = Chrono;
             break;
         case ModeNone:
-            obj->curanim.endtime = static_cast<float>(obj->curanim.framecount-1)/static_cast<float>(obj->speed[obj->curanim.anim]);
-            obj->frame.timesource = Chrono;
+            curanim.endtime = static_cast<float>(curanim.framecount-1)/static_cast<float>(speed[curanim.anim]);
+            frame.timesource = Chrono;
             break;
         default: break;
     }
-    obj->frame.setValue(0, static_cast<float>(obj->curanim.framecount-1), obj->curanim.endtime);
+    frame.setValue(0, static_cast<float>(curanim.framecount-1), curanim.endtime);
 }
 
-void AnimOBJECT_Tick(Anim_OBJECT *obj)
+void Anim_OBJECT::tick(void)
 {
-    ASSERTFUNC(obj, "object is null");   
-
-    if (obj->tick && obj->cananimate)
+    if (cantick && cananimate)
     {
-        if (static_cast<int>(obj->frame.getValue())+1 > obj->curanim.framecount) {
-           obj->tick = false;
+        if (static_cast<int>(frame.getValue())+1 > curanim.framecount) {
+           cantick = false;
            return;
         }
-        if (static_cast<int>(obj->frame.getValue()) < 0)
+        if (static_cast<int>(frame.getValue()) < 0)
             return;
-        obj->curframe = obj->conf[obj->curanim.anim][static_cast<int>(obj->frame.getValue())];
-        obj->curanim.tex = obj->frames[obj->curframe].tex;
+        curframe = conf[curanim.anim][static_cast<int>(frame.getValue())];
+        curanim.tex = frames[curframe].tex;
     }
     
 }
 
-void AnimOBJECT_Draw(Anim_OBJECT *obj, float x, float y, bool linear, float angle, int alpha, float zoom)
+void Anim_OBJECT::draw(float x, float y, float angle, int alpha, float zoom)
 {
-    ASSERTFUNC(obj, "object is null");   
-    if (obj->cananimate)
+    if (cananimate)
     {
-        GFX::RECT<int> img = {obj->frames[obj->curframe].x,
-                            obj->frames[obj->curframe].y,
-                            obj->frames[obj->curframe].w,
-                            obj->frames[obj->curframe].h};
+        GFX::RECT<int> img = {frames[curframe].x,
+                            frames[curframe].y,
+                            frames[curframe].w,
+                            frames[curframe].h};
 
-        GFX::RECT<float> disp = {static_cast<float>(x - obj->frames[obj->curframe].offsetx),
-                                 static_cast<float>(y - obj->frames[obj->curframe].offsety),
-                                 static_cast<float>(obj->frames[obj->curframe].w),
-                                 static_cast<float>(obj->frames[obj->curframe].h)};
+        GFX::RECT<float> disp = {static_cast<float>(x - frames[curframe].offsetx),
+                                 static_cast<float>(y - frames[curframe].offsety),
+                                 static_cast<float>(frames[curframe].w),
+                                 static_cast<float>(frames[curframe].h)};
 
-        ASSERTFUNC(obj->textures[obj->curanim.tex], "texture is NULL");   
-        GFX::drawTexZoom<float>(obj->textures[obj->curanim.tex], &img, &disp, linear, angle, alpha, zoom);
+        ASSERTFUNC(textures[curanim.tex], "texture is NULL");   
+        GFX::drawTexZoom<float>(textures[curanim.tex], &img, &disp, angle, alpha, zoom);
     }
 }

@@ -13,7 +13,7 @@ void PlayStateScreen::drawDummyNotes(void)
         
         //opponent
         GFX::RECT<float> disp = {notePos.opponent[i].x - hudcam.camx.getValue(), notePos.opponent[i].y - hudcam.camy.getValue(), static_cast<float>(img.w), static_cast<float>(img.h)};  
-        GFX::drawTexZoom<float>(hud, &img, &disp, true, 0, 200, hudcam.zoom.getValue());
+        GFX::drawTexZoom<float>(hud, &img, &disp, 0, 200, hudcam.zoom.getValue());
 
         //player
         if (checkPadHeld[i] && notehit[i]) //hit
@@ -40,7 +40,7 @@ void PlayStateScreen::drawDummyNotes(void)
 
 
         disp = {notePos.player[i].x - hudcam.camx.getValue(), notePos.player[i].y - hudcam.camy.getValue(), static_cast<float>(img.w), static_cast<float>(img.h)}; 
-        GFX::drawTexZoom<float>(hud, &img, &disp, true, 0, 200, hudcam.zoom.getValue());
+        GFX::drawTexZoom<float>(hud, &img, &disp, 0, 200, hudcam.zoom.getValue());
     }
 }
 
@@ -51,6 +51,10 @@ void PlayStateScreen::deleteNote(int note, bool opponent) {
 
 void PlayStateScreen::drawSustain(int note, float y, int type, bool isopponent) 
 {
+    (void)note;
+    (void)y;
+    (void)type;
+    (void)isopponent;
     /*
     int clipheight = 11;
 //    int length = static_cast<int>(app->parser.gamenotes[isopponent][note].sus / app->parser.step_crochet) * (app->parser.chartdata.speed * clipheight);
@@ -78,7 +82,7 @@ void PlayStateScreen::drawSustain(int note, float y, int type, bool isopponent)
         }
 
         GFX::RECT<float> disp = {static_cast<float>(xpos - hudcam.camx.getValue()), ypos + (i*clipheight) - hudcam.camy.getValue(), static_cast<float>(img.w), static_cast<float>(img.h)};
-        GFX::drawTexZoom<float>(hud, &img, &disp, false, 0, 200, hudcam.zoom.getValue());
+        GFX::drawTexZoom<float>(hud, &img, &disp, 0, 200, hudcam.zoom.getValue());
     }
     if (y+length < 0-length*clipheight)
     {
@@ -122,6 +126,6 @@ void PlayStateScreen::drawNotes(bool isopponent)
 
         //if (notes[i].sus != 0) //check if the note is a sustain
       //      drawSustain(i, curNotey, type, isopponent);
-        GFX::drawTexZoom<float>(hud, &img, &disp, false, 0, 200, hudcam.zoom.getValue());
+        GFX::drawTexZoom<float>(hud, &img, &disp, 0, 200, hudcam.zoom.getValue());
     }
 }

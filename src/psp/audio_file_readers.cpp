@@ -12,6 +12,7 @@
 #define _samplesToBlocks(x) (((x) / 28) * 16)
 
 constexpr static inline uint32_t operator"" _m(const char *const str, size_t length) {
+    (void)length;
     return str[0] | (str[1] << 8) | (str[2] << 16) | (str[3] << 24);
 }
 

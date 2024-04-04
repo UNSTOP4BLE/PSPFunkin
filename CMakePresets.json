@@ -1,0 +1,44 @@
+{
+    "version": 6,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 25,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "pc-debug",
+            "displayName": "Debug (PC)",
+            "binaryDir": "${sourceDir}/build",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "pc-release",
+            "displayName": "Release (PC)",
+            "binaryDir": "${sourceDir}/build",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "psp-debug",
+            "displayName": "Debug (PSP)",
+            "binaryDir": "${sourceDir}/build",
+            "toolchainFile": "$env{PSPDEV}/psp/share/pspdev.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "psp-release",
+            "displayName": "Release (PSP)",
+            "binaryDir": "${sourceDir}/build",
+            "toolchainFile": "$env{PSPDEV}/psp/share/pspdev.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        }
+    ]
+}

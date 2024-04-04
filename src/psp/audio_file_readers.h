@@ -33,8 +33,8 @@ public:
     SDL_AudioFormat format;
 
     virtual int getPosition(void) { return 0; }
-    virtual int setPosition(int sampleOffset) { return 0; }
-    virtual int read(AudioBuffer &buf, int numSamples, int bufferOffset = 0) { return 0; }
+    virtual int setPosition(int sampleOffset) { (void) sampleOffset; return 0; }
+    virtual int read(AudioBuffer &buf, int numSamples, int bufferOffset = 0) { (void) buf; (void) numSamples; (void) bufferOffset; return 0; }
     virtual ~FileReader(void) {}
 };
 

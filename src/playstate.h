@@ -21,13 +21,13 @@ struct NotePos
 class Rating
 {
 public:
-    Rating(std::string name, int score, bool splash, float ratingmod, int hitwindow);
+    Rating(std::string name, int hitwindow, float ratingmod, int score, bool splash);
     std::string name;
-    GFX::RECT<int> img;
     int hitWindow; //ms
     float ratingMod;
     int score;
     bool noteSplash;
+    GFX::RECT<int> img;
 };
 
 class PlayStateScreen : public Screen {

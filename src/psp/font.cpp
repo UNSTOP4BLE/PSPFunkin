@@ -94,7 +94,7 @@ static void PrintMSG(GFX::Texture *tex, Font *font, int x, int y, const char *st
                 font_Img.y = font[c].charY + 138;
         }
         GFX::RECT<int> font_Disp = {x, y, font[c].charW, font[c].charH};
-        GFX::drawTex<int>(tex, &font_Img, &font_Disp, false, 0, 255);
+        GFX::drawTex<int>(tex, &font_Img, &font_Disp, 0, 255);
         x += font[c].charW - 1;
     }
 
@@ -145,7 +145,7 @@ static void PrintMSGZoom(GFX::Texture *tex, Font *font, int x, int y, const char
                 font_Img.y = font[c].charY + 138;
         }
         GFX::RECT<float> font_Disp = {static_cast<float>(x), static_cast<float>(y), static_cast<float>(font[c].charW), static_cast<float>(font[c].charH)};
-        GFX::drawTexZoom<float>(tex, &font_Img, &font_Disp, false, 0, 255, zoom);
+        GFX::drawTexZoom<float>(tex, &font_Img, &font_Disp, 0, 255, zoom);
         x += font[c].charW - 1;
     }
 
@@ -176,8 +176,6 @@ void PrintFontZoom(Align all, int x, int y, float zoom, const char *format, ...)
     
     PrintMSGZoom(tex.fonttex, fontmap, x, y, string, false, all, zoom);
 }
-
-
 
 void Bold_Tick(void)
 {

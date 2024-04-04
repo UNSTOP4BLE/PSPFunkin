@@ -59,7 +59,7 @@ void Stage::drawObjects(std::vector<StageObject> &objs, float camzoom) {
             }
         }
         ASSERTFUNC(tex != -1, "invalid background texture def, is it defined?");
-        GFX::drawTexZoom<float>(textures[tex].texture, &objs[i].img, &objs[i].disp, false, objs[i].angle, objs[i].alpha, camzoom);
+        GFX::drawTexZoom<float>(textures[tex].texture, &objs[i].img, &objs[i].disp, objs[i].angle, objs[i].alpha, camzoom);
     }
 }
 
