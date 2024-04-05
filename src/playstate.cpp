@@ -328,7 +328,11 @@ void PlayStateScreen::updateInput(void)
         }
 
         int type = notes[i].type;
-        int curNotey = ((notes[i].pos - app->parser.songTime) * app->parser.chartdata.speed) + notePos.opponent[type].y;
+        int curNotey = static_cast<int>(((notes[i].pos - app->parser.songTime) * app->parser.chartdata.speed) + notePos.opponent[type].y);
+
+        //note is below the screen, so go back to index 0
+        if (curNotey > GFX::SCREEN_HEIGHT)
+            break;
 
         //delete note if offscreen
         if (curNotey < -50) {
@@ -346,9 +350,6 @@ void PlayStateScreen::updateInput(void)
             opponent->setAnim(1+type, ModeNone); //set animation
         }
 
-        //note is below the screen, so go back to index 0
-        if (curNotey > GFX::SCREEN_HEIGHT)
-            break;
     }    
     //player
     for (int i = 0; i < static_cast<int>(app->parser.gamenotes[0].size()); i++)
@@ -360,8 +361,13 @@ void PlayStateScreen::updateInput(void)
             deleteNote(i, 0);
             continue;
         }
+
         int type = notes[i].type;
-        int curNotey = ((notes[i].pos - app->parser.songTime) * app->parser.chartdata.speed) + notePos.player[type].y;
+        int curNotey = static_cast<int>(((notes[i].pos - app->parser.songTime) * app->parser.chartdata.speed) + notePos.player[type].y);
+      
+        //note is below the screen, so go back to index 0
+        if (curNotey > GFX::SCREEN_HEIGHT)
+            break;
 
         //delete note if offscreen
         if (curNotey < -50) {
@@ -370,7 +376,6 @@ void PlayStateScreen::updateInput(void)
             missedNote();
             continue;
         }
-
 
         float notediff = fabs(notes[i].pos - app->parser.songTime);
 
@@ -412,9 +417,6 @@ void PlayStateScreen::updateInput(void)
                 player->singendtime = app->parser.curStep-1;
             }
         }
-        //note is below the screen, so go back to index 0
-        if (curNotey > GFX::SCREEN_HEIGHT)
-            break;
     }
 
 /*

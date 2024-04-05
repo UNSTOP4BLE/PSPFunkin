@@ -38,6 +38,10 @@ struct [[gnu::packed]] ChartData
     int32_t notecountp;
 };
 
+bool compareByPos(const Note &a, const Note &b) {
+    return a.pos < b.pos;
+}
+
 int main(int argc, char *argv[])
 {
     if (argc != 3)
@@ -90,15 +94,14 @@ int main(int argc, char *argv[])
                 eventcount += 1;
                 continue;
             }
-            newnote.pos = chart["song"]["notes"][i]["sectionNotes"][j][0]; //note position in ms
-            newnote.type = chart["song"]["notes"][i]["sectionNotes"][j][1]; //type
-            newnote.sus = chart["song"]["notes"][i]["sectionNotes"][j][2]; //sustain length in ms
+            newnote.pos = static_cast<float>(chart["song"]["notes"][i]["sectionNotes"][j][0]); //note position in ms
+            newnote.type = static_cast<int32_t>(chart["song"]["notes"][i]["sectionNotes"][j][1]); //type
+            newnote.sus = static_cast<float>(chart["song"]["notes"][i]["sectionNotes"][j][2]); //sustain length in ms
             //is note opponent's
             if (sections[i].flag & FLAG_SEC_MUSTHIT && newnote.type > 3)
                 newnote.flag |= FLAG_NOTE_ISOPPONENT;    
-            if (!(sections[i].flag & FLAG_SEC_MUSTHIT) && newnote.type < 4)
+            else if (!(sections[i].flag & FLAG_SEC_MUSTHIT) && newnote.type < 4)
                 newnote.flag |= FLAG_NOTE_ISOPPONENT;    
-
 
             if (newnote.type > 3)
                 newnote.type -= 4;
@@ -109,7 +112,12 @@ int main(int argc, char *argv[])
                 gamenotesplayer.push_back(newnote);
         }
     }
-    chartdata.notecountp = gamenotesplayer.size();
+
+    //sort notes
+    std::sort(gamenotesplayer.begin(), gamenotesplayer.end(), compareByPos); 
+    std::sort(gamenotesopponent.begin(), gamenotesopponent.end(), compareByPos); 
+
+    chartdata.notecountp = gamenotesplayer.size();   
     chartdata.notecounto = gamenotesopponent.size();
 
     //write a file  
@@ -126,7 +134,17 @@ int main(int argc, char *argv[])
 
     std::cout << "found " << eventcount << " events" << std::endl;
     std::cout << "wrote file " << argv[2] << std::endl;
-    std::cout << "note " << sizeof(Note) << ", sec " << sizeof(Section) << ", header " << sizeof(ChartData) << std::endl;
+
+    //print
+    std::cout << "data:" << std::endl;
+    for (int i = 0; i < static_cast<int>(chartdata.notecountp); i++) {
+        std::cout << "note " << i << std::endl;
+        std::cout << "pos " << gamenotesplayer[i].pos << std::endl;
+        std::cout << "type " << gamenotesplayer[i].type << std::endl;
+        std::cout << "sus " << gamenotesplayer[i].sus << std::endl;
+        std::cout << "" << std::endl;
+    }
+
 
     return 0;
 }

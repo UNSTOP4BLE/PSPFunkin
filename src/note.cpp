@@ -104,12 +104,10 @@ void PlayStateScreen::drawNotes(bool isopponent)
         int type = notes[i].type;
         Pos note = (isopponent ? notePos.opponent[type] : notePos.player[type]);
         int curNotex = note.x;
-        int curNotey = ((notes[i].pos - app->parser.songTime) * app->parser.chartdata.speed) + note.y;
-
-        //note is below the screen, so go back to index 0
+        int curNotey = static_cast<int>(((notes[i].pos - app->parser.songTime) * app->parser.chartdata.speed) + note.y);
         if (curNotey > GFX::SCREEN_HEIGHT)
             break;
-
+        
         GFX::RECT<int> img = {
             1 + (40*type),
             121,
@@ -127,5 +125,7 @@ void PlayStateScreen::drawNotes(bool isopponent)
         //if (notes[i].sus != 0) //check if the note is a sustain
       //      drawSustain(i, curNotey, type, isopponent);
         GFX::drawTexZoom<float>(hud, &img, &disp, 0, 200, hudcam.zoom.getValue());
+        //note is below the screen, so go back to index 0
+
     }
 }
