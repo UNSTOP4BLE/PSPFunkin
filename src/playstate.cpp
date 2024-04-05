@@ -297,7 +297,6 @@ Rating PlayStateScreen::judgeNote(float diff)
 }
 
 void PlayStateScreen::missedNote() {
-
     if (inst != NULL)
         vocals->setVolume(0,0);
     health -= 0.05;
