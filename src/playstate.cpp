@@ -159,8 +159,10 @@ void PlayStateScreen::update(void)
         }
 
         //limit health
-        if (health <= 0)
+        if (health <= 0){
+            while (1) {}
             setScreen(new MainMenuScreen());
+        }
         else if (health > 1)
             health = 1;
         
@@ -379,7 +381,7 @@ void PlayStateScreen::updateInput(void)
 
         float notediff = fabs(notes[i].pos - app->parser.songTime);
 
-        if (botplay)
+        if (botplay && (notes[i].pos - app->parser.songTime) <= 0)
         {
             Rating rating = judgeNote(notediff);
             if (rating.name == "sick")
@@ -396,6 +398,8 @@ void PlayStateScreen::updateInput(void)
             player->setAnim(1+type, ModeNone); //play animation 
             score += rating.score; 
             health += 0.023;
+            if (health > 1)
+                health = 1;
             combo.combo += 1;
             combo.spawnNew(rating.name);
             break;
@@ -403,7 +407,8 @@ void PlayStateScreen::updateInput(void)
         else if (!ghosttap && (checkPad[0] || checkPad[1] || checkPad[2] || checkPad[3])) //miss note if ghosttapping is off
         {
             //play miss sound todo
-            missedNote();
+//            missedNote();
+
             //miss animation
             if (checkPad[0] || checkPad[1] || checkPad[2] || checkPad[3])
             {

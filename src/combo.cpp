@@ -20,6 +20,7 @@ void Combo::init(void)
 }
 void Combo::spawnNew(std::string name)
 {
+    /*
     if (objectindex > COMBO_OBJ_MAX)
         objectindex = 0;
 
@@ -51,10 +52,12 @@ void Combo::spawnNew(std::string name)
     }
     objectindex ++;
     objects[objectindex].y.setValue(static_cast<float>(60), 0.3);
+*/
 }
 
 void Combo::tick(void)
 {
+    /*
     for (int i = 0; i < COMBO_OBJ_MAX; i++)
     {
         if (!objects[i].tick)
@@ -74,18 +77,19 @@ void Combo::tick(void)
         if (objects[i].y.getValue() >= GFX::SCREEN_HEIGHT)
             objects[i].tick = false;
         objects[i].disp = {static_cast<int>(objects[i].x), static_cast<int>(objects[i].y.getValue()), 100, 50};
-    }
+    }*/
 }
 
 void Combo::draw(GFX::Texture *tex, float zoom)
 {
+    /*
     for (int i = 0; i < COMBO_OBJ_MAX; i++)
     {
         if (!objects[i].tick)
             continue;
         if (objects[i].alpha < 0)
             objects[i].alpha = 0;
-        GFX::drawTexZoom<int>(tex, &objects[i].img, &objects[i].disp, 0, static_cast<int>(objects[i].alpha), zoom);
-    }
+//        GFX::drawTexZoom<int>(tex, &objects[i].img, &objects[i].disp, 0, static_cast<int>(objects[i].alpha), zoom);
+    }*/
     
 }
