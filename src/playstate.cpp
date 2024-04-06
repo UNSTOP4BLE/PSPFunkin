@@ -316,10 +316,10 @@ void PlayStateScreen::updateInput(void)
     checkPadHeld[2] = app->event.isHeld(Input::GAME_UP);
     checkPadHeld[3] = app->event.isHeld(Input::GAME_RIGHT);
 
-//    for (int i = 0; i < 4; i ++)
-  //  {
-    //    notehit[i] = 0;
-    //}
+    for (int i = 0; i < 4; i ++)
+        if (!checkPadHeld[i] && notehit[i]) //reset hits
+            notehit[i] = false;
+  
 
     //handle note hits here? why not lol
     //opponent
@@ -373,33 +373,32 @@ void PlayStateScreen::updateInput(void)
             continue;
         }
 
-        float notediff = fabs(notes[i].pos - app->parser.songTime);
+        float notediff = notes[i].pos - app->parser.songTime;
 
-        if (botplay && (notes[i].pos - app->parser.songTime) <= 0)
+        if (botplay && notediff <= 0)
         {
-            Rating rating = judgeNote(notediff);
+            Rating rating = judgeNote(fabs(notediff));
             if (rating.name == "sick")
                 checkPad[type] = true;
         }
-/*
-        if (checkPad[type] && notes[i].sus != 0) //sustain hits
+
+        if (checkPadHeld[type] && notes[i].sus != 0 && notes[i].flag & FLAG_NOTE_HIT) //sustain hits
         {                    
             notehit[type] = true;
             if (inst != NULL)
                 vocals->setVolume(1,1);
-//            notes[i].flag |= FLAG_NOTE_HIT;
             player->setAnim(1+type, ModeNone); //play animation 
-            //score += rating.score; 
-            health += 0.023;
+         //   score += ;//rating.score; 
+            health += 0.023/16;
             if (health > 1)
                 health = 1;
-        }*/
+        }
 
         //check if its been hit
-        if (checkPad[type] && notediff < static_cast<float>(ratingData[3].hitWindow))// && !(notes[i].flag & FLAG_NOTE_HIT)) //shit hit window
+        if (checkPad[type] && fabs(notediff) < static_cast<float>(ratingData[ratingData.size()-1].hitWindow) && !(notes[i].flag & FLAG_NOTE_HIT)) //shit hit window
         {                    
             notehit[type] = true;
-            Rating rating = judgeNote(notediff);
+            Rating rating = judgeNote(fabs(notediff));
             if (inst != NULL)
                 vocals->setVolume(1,1);
             notes[i].flag |= FLAG_NOTE_HIT;

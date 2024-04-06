@@ -32,12 +32,6 @@ void PlayStateScreen::drawDummyNotes(void)
             img.y = 1 + (40*static_cast<int>(noteframe[i].getValue()));
             img.y += 40*1;
         }
-        else
-        {
-            if (!checkPadHeld[i] && notehit[i]) //reset animation for notes
-                notehit[i] = false;
-        }
-
 
         disp = {notePos.player[i].x - hudcam.camx.getValue(), notePos.player[i].y - hudcam.camy.getValue(), static_cast<float>(img.w), static_cast<float>(img.h)}; 
         GFX::drawTexZoom<float>(hud, &img, &disp, 0, 200, hudcam.zoom.getValue());
@@ -56,10 +50,7 @@ void PlayStateScreen::drawSustain(int note, float y, int type, bool isopponent)
     }
 
     int length = ((app->parser.gamenotes[isopponent][note].sus * app->parser.chartdata.speed) / CLIPHEIGHT) - 1; //maybe right
-//    int length = static_cast<int>(app->parser.gamenotes[isopponent][note].pos + app->parser.gamenotes[isopponent][note].sus - app->parser.songTime) * (app->parser.chartdata.speed);
-  //  int length = (app->parser.gamenotes[isopponent][note].sus * app->parser.chartdata.speed);
-//        int curNotey = static_cast<int>(((notes[i].pos - app->parser.songTime) * app->parser.chartdata.speed) + notePos.opponent[type].y);
-//((note_position + data[2] - time) * song_speed) - sustain_end_texture_height
+
     GFX::RECT<int> img = {
         161 + (14*type),
         18,
@@ -78,7 +69,7 @@ void PlayStateScreen::drawSustain(int note, float y, int type, bool isopponent)
 
         GFX::RECT<float> disp = {static_cast<float>(xpos - hudcam.camx.getValue()), ypos + (i*CLIPHEIGHT) - hudcam.camy.getValue(), static_cast<float>(img.w), static_cast<float>(img.h)};
   
-        if ((isopponent && disp.y < sustain.y+img.h) || (!isopponent && notehit[i] && disp.y < sustain.y+img.h)) {
+        if ((isopponent || (!isopponent && notehit[type])) && disp.y < sustain.y+img.h) {
             continue; //stop drawing note if they were hit
         }
 
