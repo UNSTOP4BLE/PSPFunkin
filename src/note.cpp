@@ -51,6 +51,10 @@ void PlayStateScreen::deleteNote(int note, bool opponent) {
 #define CLIPHEIGHT 16
 void PlayStateScreen::drawSustain(int note, float y, int type, bool isopponent) 
 {
+    if (y+(app->parser.gamenotes[isopponent][note].sus * app->parser.chartdata.speed) < 0) {
+        deleteNote(note, isopponent);
+    }
+
     int length = ((app->parser.gamenotes[isopponent][note].sus * app->parser.chartdata.speed) / CLIPHEIGHT) - 1; //maybe right
 //    int length = static_cast<int>(app->parser.gamenotes[isopponent][note].pos + app->parser.gamenotes[isopponent][note].sus - app->parser.songTime) * (app->parser.chartdata.speed);
   //  int length = (app->parser.gamenotes[isopponent][note].sus * app->parser.chartdata.speed);
@@ -73,6 +77,11 @@ void PlayStateScreen::drawSustain(int note, float y, int type, bool isopponent)
             img.y = 1;
 
         GFX::RECT<float> disp = {static_cast<float>(xpos - hudcam.camx.getValue()), ypos + (i*CLIPHEIGHT) - hudcam.camy.getValue(), static_cast<float>(img.w), static_cast<float>(img.h)};
+  
+        if ((isopponent && disp.y < sustain.y+img.h) || (!isopponent && notehit[i] && disp.y < sustain.y+img.h)) {
+            continue; //stop drawing note if they were hit
+        }
+
         GFX::drawTexZoom<float>(hud, &img, &disp, 0, 200, hudcam.zoom.getValue());
     }
 }

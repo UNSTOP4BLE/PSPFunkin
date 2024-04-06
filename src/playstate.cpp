@@ -316,17 +316,19 @@ void PlayStateScreen::updateInput(void)
     checkPadHeld[2] = app->event.isHeld(Input::GAME_UP);
     checkPadHeld[3] = app->event.isHeld(Input::GAME_RIGHT);
 
+//    for (int i = 0; i < 4; i ++)
+  //  {
+    //    notehit[i] = 0;
+    //}
+
     //handle note hits here? why not lol
     //opponent
     for (int i = 0; i < static_cast<int>(app->parser.gamenotes[1].size()); i++)
     {
         std::vector<Note> &notes = app->parser.gamenotes[1];
     
-        if (notes[i].flag & FLAG_NOTE_HIT)
-        {
-            deleteNote(i, 1);
-            continue;
-        }
+        if (notes[i].flag & FLAG_NOTE_HIT && notes[i].sus == 0)
+            continue; //dont draw if notes are hit 
 
         int type = notes[i].type;
         int curNotey = static_cast<int>(((notes[i].pos - app->parser.songTime) * app->parser.chartdata.speed) + notePos.opponent[type].y);
@@ -335,20 +337,14 @@ void PlayStateScreen::updateInput(void)
         if (curNotey > GFX::SCREEN_HEIGHT)
             break;
 
-        //delete note if offscreen
-        if (curNotey < -50) {
-            if (inst != NULL)
-                vocals->setVolume(1,1);
-            notes[i].flag |= FLAG_NOTE_HIT;
-            deleteNote(i, 1);
-            continue;
-        }
-        else if (curNotey < notePos.opponent[type].y)
+        //delete note if hit
+        if (curNotey < notePos.opponent[type].y)
         {
             if (inst != NULL)
                 vocals->setVolume(1,1);
+            if (!(notes[i].flag & FLAG_NOTE_HIT) || (notes[i].sus != 0 && curNotey+(notes[i].sus * app->parser.chartdata.speed) > notePos.opponent[type].y))
+                opponent->setAnim(1+type, ModeNone); //set animation
             notes[i].flag |= FLAG_NOTE_HIT;
-            opponent->setAnim(1+type, ModeNone); //set animation
         }
 
     }    
@@ -357,11 +353,8 @@ void PlayStateScreen::updateInput(void)
     {
         std::vector<Note> &notes = app->parser.gamenotes[0];
     
-        if (notes[i].flag & FLAG_NOTE_HIT)
-        {
-            deleteNote(i, 0);
-            continue;
-        }
+        if (notes[i].flag & FLAG_NOTE_HIT && notes[i].sus == 0)
+            continue; //dont draw if notes are hit 
 
         int type = notes[i].type;
         int curNotey = static_cast<int>(((notes[i].pos - app->parser.songTime) * app->parser.chartdata.speed) + notePos.player[type].y);
@@ -372,9 +365,11 @@ void PlayStateScreen::updateInput(void)
 
         //delete note if offscreen
         if (curNotey < -50) {
+            if (notes[i].sus == 0)
+                deleteNote(i, 0);
+            if (!(notes[i].flag & FLAG_NOTE_HIT))
+                missedNote();
             notes[i].flag |= FLAG_NOTE_HIT;
-            deleteNote(i, 0);
-            missedNote();
             continue;
         }
 
@@ -386,8 +381,22 @@ void PlayStateScreen::updateInput(void)
             if (rating.name == "sick")
                 checkPad[type] = true;
         }
+/*
+        if (checkPad[type] && notes[i].sus != 0) //sustain hits
+        {                    
+            notehit[type] = true;
+            if (inst != NULL)
+                vocals->setVolume(1,1);
+//            notes[i].flag |= FLAG_NOTE_HIT;
+            player->setAnim(1+type, ModeNone); //play animation 
+            //score += rating.score; 
+            health += 0.023;
+            if (health > 1)
+                health = 1;
+        }*/
+
         //check if its been hit
-        if (checkPad[type] && notediff < static_cast<float>(ratingData[3].hitWindow)) //shit hit window
+        if (checkPad[type] && notediff < static_cast<float>(ratingData[3].hitWindow))// && !(notes[i].flag & FLAG_NOTE_HIT)) //shit hit window
         {                    
             notehit[type] = true;
             Rating rating = judgeNote(notediff);
@@ -418,7 +427,7 @@ void PlayStateScreen::updateInput(void)
                         break;
                     }
                 player->setAnim(1+anim, ModeNone);
-                player->singendtime = app->parser.curStep-1;
+//                player->singendtime = app->parser.curStep-1;
             }
         }
     }
