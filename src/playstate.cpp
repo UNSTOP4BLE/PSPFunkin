@@ -83,9 +83,10 @@ void PlayStateScreen::initscr(std::string song) {
     }
     hud = GFX::loadTex("assets/hud.png");
     icons = GFX::loadTex("assets/icons.png");
-    gamecam.camx = 0;
-    gamecam.camy = 0;
-    gamecam.basezoom = 1+CAMERA_ZOOM_OFFSET;
+    gamecam.camx = opponent->camx;
+    gamecam.camy = opponent->camy;
+    gamecam.basezoom = opponent->camzoom+CAMERA_ZOOM_OFFSET;
+
     gamecam.zoom = gamecam.basezoom;
     hudcam.camx = 0;
     hudcam.camy = 0;
@@ -388,23 +389,22 @@ void PlayStateScreen::updateInput(void)
                 checkPad[type] = true;
         }
 
-        if (checkPadHeld[type] && notes[i].sus != 0 && notediff < static_cast<float>(ratingData[ratingData.size()-1].hitWindow)) //sustain hits
+        if (checkPadHeld[type] && notes[i].sus != 0 && notediff <= static_cast<float>(ratingData[ratingData.size()-1].hitWindow)) //sustain hits
         {                    
             notehit[type] = true;
             if (inst != NULL)
                 vocals->setVolume(1,1);
             player->setAnim(1+type, ModeNone); //play animation 
-         //   score += ;//rating.score; 
             health += 0.023/SUSTAIN_CLIPHEIGHT;
             if (health > 1)
                 health = 1;
         }
-        if (!checkPadHeld[type] && notes[i].sus != 0 && notediff < static_cast<float>(-ratingData[ratingData.size()-1].hitWindow)) {
+        if (!checkPadHeld[type] && notes[i].sus != 0 && notediff <= static_cast<float>(-ratingData[ratingData.size()-1].hitWindow) && !botplay) {
             missedNote(true);
         }
 
         //check if its been hit
-        if (checkPad[type] && fabs(notediff) < static_cast<float>(ratingData[ratingData.size()-1].hitWindow) && !(notes[i].flag & FLAG_NOTE_HIT)) //shit hit window
+        if (checkPad[type] && fabs(notediff) <= static_cast<float>(ratingData[ratingData.size()-1].hitWindow) && !(notes[i].flag & FLAG_NOTE_HIT)) //shit hit window
         {                    
             notehit[type] = true;
             Rating rating = judgeNote(fabs(notediff));
