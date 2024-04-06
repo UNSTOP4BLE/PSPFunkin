@@ -42,20 +42,20 @@ void PlayStateScreen::deleteNote(int note, bool opponent) {
     app->parser.gamenotes[opponent].erase(app->parser.gamenotes[opponent].begin() + note);
 //    PrintFont(Left, 0, 60, (opponent ? "deleting oppnote %d" : "\ndeleting pnote %d"), 0);//[opponent]);
 }
-#define CLIPHEIGHT 16
+
 void PlayStateScreen::drawSustain(int note, float y, int type, bool isopponent) 
 {
     if (y+(app->parser.gamenotes[isopponent][note].sus * app->parser.chartdata.speed) < 0) {
         deleteNote(note, isopponent);
     }
 
-    int length = ((app->parser.gamenotes[isopponent][note].sus * app->parser.chartdata.speed) / CLIPHEIGHT) - 1; //maybe right
+    int length = ((app->parser.gamenotes[isopponent][note].sus * app->parser.chartdata.speed) / SUSTAIN_CLIPHEIGHT) - 1; //maybe right
 
     GFX::RECT<int> img = {
         161 + (14*type),
         18,
         13,
-        CLIPHEIGHT
+        SUSTAIN_CLIPHEIGHT
     };
     Pos sustain = (isopponent ? notePos.opponent[type] : notePos.player[type]);;
 
@@ -67,7 +67,7 @@ void PlayStateScreen::drawSustain(int note, float y, int type, bool isopponent)
         if (i == length-1) //draw sustain ends
             img.y = 1;
 
-        GFX::RECT<float> disp = {static_cast<float>(xpos - hudcam.camx.getValue()), ypos + (i*CLIPHEIGHT) - hudcam.camy.getValue(), static_cast<float>(img.w), static_cast<float>(img.h)};
+        GFX::RECT<float> disp = {static_cast<float>(xpos - hudcam.camx.getValue()), ypos + (i*SUSTAIN_CLIPHEIGHT) - hudcam.camy.getValue(), static_cast<float>(img.w), static_cast<float>(img.h)};
   
         if ((isopponent || (!isopponent && notehit[type])) && disp.y < sustain.y+img.h) {
             continue; //stop drawing note if they were hit

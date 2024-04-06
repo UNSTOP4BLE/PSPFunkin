@@ -30,6 +30,8 @@ public:
     GFX::RECT<int> img;
 };
 
+#define SUSTAIN_CLIPHEIGHT 16
+
 class PlayStateScreen : public Screen {
 public:
     PlayStateScreen(std::string song);
@@ -53,7 +55,7 @@ private:
     void drawSustain(int note, float y, int type, bool isopponent);
     void drawNotes(bool isopponent);
     Rating judgeNote(float diff);
-    void missedNote();
+    void missedNote(bool sustain);
     void updateInput(void);
     //characters
     Character *player;

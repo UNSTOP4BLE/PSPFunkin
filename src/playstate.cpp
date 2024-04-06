@@ -160,7 +160,6 @@ void PlayStateScreen::update(void)
 
         //limit health
         if (health <= 0){
-            while (1) {}
             setScreen(new MainMenuScreen());
         }
         else if (health > 1)
@@ -296,12 +295,20 @@ Rating PlayStateScreen::judgeNote(float diff)
     return ratingData[ratingData.size() - 1];
 }
 
-void PlayStateScreen::missedNote() {
+void PlayStateScreen::missedNote(bool sustain) {
     if (inst != NULL)
         vocals->setVolume(0,0);
-    health -= 0.05;
-    score -= 10;
-    misses += 1;
+
+    if (sustain) {
+        health -= 0.05/SUSTAIN_CLIPHEIGHT;
+        score -= 10/SUSTAIN_CLIPHEIGHT;
+        misses += 1/SUSTAIN_CLIPHEIGHT;
+    }
+    else {
+        health -= 0.05;
+        score -= 10;
+        misses += 1;
+    }
     combo.combo = 0;
 }
 
@@ -320,7 +327,6 @@ void PlayStateScreen::updateInput(void)
         if (!checkPadHeld[i] && notehit[i]) //reset hits
             notehit[i] = false;
   
-
     //handle note hits here? why not lol
     //opponent
     for (int i = 0; i < static_cast<int>(app->parser.gamenotes[1].size()); i++)
@@ -368,9 +374,12 @@ void PlayStateScreen::updateInput(void)
             if (notes[i].sus == 0)
                 deleteNote(i, 0);
             if (!(notes[i].flag & FLAG_NOTE_HIT))
-                missedNote();
-            notes[i].flag |= FLAG_NOTE_HIT;
-            continue;
+            {
+                missedNote(false);
+                notes[i].flag |= FLAG_NOTE_HIT;
+            }
+            if (notes[i].sus == 0)
+                continue;
         }
 
         float notediff = notes[i].pos - app->parser.songTime;
@@ -382,16 +391,19 @@ void PlayStateScreen::updateInput(void)
                 checkPad[type] = true;
         }
 
-        if (checkPadHeld[type] && notes[i].sus != 0 && notes[i].flag & FLAG_NOTE_HIT) //sustain hits
+        if (checkPadHeld[type] && notes[i].sus != 0 && notediff < static_cast<float>(ratingData[ratingData.size()-1].hitWindow)) //sustain hits
         {                    
             notehit[type] = true;
             if (inst != NULL)
                 vocals->setVolume(1,1);
             player->setAnim(1+type, ModeNone); //play animation 
          //   score += ;//rating.score; 
-            health += 0.023/16;
+            health += 0.023/SUSTAIN_CLIPHEIGHT;
             if (health > 1)
                 health = 1;
+        }
+        if (!checkPadHeld[type] && notes[i].sus != 0 && notediff < static_cast<float>(-ratingData[ratingData.size()-1].hitWindow)) {
+            missedNote(true);
         }
 
         //check if its been hit
@@ -430,32 +442,4 @@ void PlayStateScreen::updateInput(void)
             }
         }
     }
-
-/*
-    for (int i = 0; i < static_cast<int>(app->parser.gamenotes.size()); i++) {
-        if (app->parser.gamenotes[i].flag & FLAG_NOTE_ISOPPONENT || app->parser.gamenotes[i].flag & FLAG_NOTE_HIT)
-            continue;
-
-        //hit a note        
-        if (checkPadHeld[app->parser.gamenotes[i].type] && 
-            app->parser.gamenotes[i].pos-app->parser.songTime >= ratingData[3].hitWindow && //shit hit window
-            app->parser.gamenotes[i].pos-app->parser.songTime <= ratingData[0].hitWindow) { //sick hit window
-
-            float noteDiff = app->parser.gamenotes[i].pos - app->parser.songTime;
-            app->parser.gamenotes[i].flag |= FLAG_NOTE_HIT; //note has been hit
-        
-            Rating daRating = judgeNote(noteDiff);
-            score += daRating.score;
-            ratinglol = daRating.name;
-
-        }
-        //missed a note
-        //else if (checkPad[app->parser.gamenotes[i].type] || ((app->parser.gamenotes[i].pos - app->parser.songTime) <= 0)) {
-        //    missedNote();
-        //    if ((app->parser.gamenotes[i].pos - app->parser.songTime) <= 0)
-        //        app->parser.gamenotes[i].flag |= FLAG_NOTE_HIT; //note has been hit (lol no but im doing this to ignore the note)
-        //
-        //}
-        else continue;
-    }*/
 }
