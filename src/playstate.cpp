@@ -24,7 +24,7 @@ void PlayStateScreen::initscr(std::string song) {
     //reset vars
     combo.init();
     ghosttap = true;
-    botplay = false;
+    botplay = true;
     score = misses = 0;
     cursong = song;
     health = 0.5;
@@ -103,7 +103,7 @@ void PlayStateScreen::initscr(std::string song) {
     
     //set up ratings and timings (kinda stolen off of psych engine lmao)
     //Rating(std::string name, int hitwindow, float ratingmod, int score, bool splash);
-    ratingData.emplace_back("sick", 45,  1,   350, true);
+    ratingData.emplace_back("sick", 45,  1,   350,  true);
     ratingData.emplace_back("good", 90,  0.7, 200, false);
     ratingData.emplace_back("bad",  135, 0.4, 100, false);
     ratingData.emplace_back("shit", 165, 0,    50, false);
@@ -301,15 +301,12 @@ void PlayStateScreen::missedNote(bool sustain) {
 
     if (sustain) {
         health -= 0.05/SUSTAIN_CLIPHEIGHT;
-        score -= 10/SUSTAIN_CLIPHEIGHT;
-        misses += 1/SUSTAIN_CLIPHEIGHT;
     }
     else {
         health -= 0.05;
-        score -= 10;
         misses += 1;
+        combo.combo = 0;
     }
-    combo.combo = 0;
 }
 
 void PlayStateScreen::updateInput(void)

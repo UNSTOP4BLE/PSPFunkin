@@ -18,18 +18,25 @@ void PlayStateScreen::drawDummyNotes(void)
         //player
         if (checkPadHeld[i] && notehit[i]) //hit
         {
+            int maxframe = 3-1;
             if (checkPad[i])
-                noteframe[i].setValue(0, static_cast<float>(3-1), static_cast<float>(3-1)/static_cast<float>(24));
-
+                noteframe[i].setValue(0, static_cast<float>(maxframe), static_cast<float>(maxframe)/static_cast<float>(24));
+            if (static_cast<int>(noteframe[i].getValue()) > maxframe)
+                noteframe[i].setValue(maxframe);
+        
             img.y = 1 + (40*static_cast<int>(noteframe[i].getValue()));
             img.y += 40*4;
         }
         else if (checkPadHeld[i] && !notehit[i]) //not hit
         {
+            int maxframe = 2-1;
             if (checkPad[i])
-                noteframe[i].setValue(0, static_cast<float>(2-1), static_cast<float>(2-1)/static_cast<float>(24));
-      
-            img.y = 1 + (40*static_cast<int>(noteframe[i].getValue()));
+                noteframe[i].setValue(0, static_cast<float>(maxframe), static_cast<float>(maxframe)/static_cast<float>(24));
+    
+            if (static_cast<int>(noteframe[i].getValue()) > maxframe)
+                noteframe[i].setValue(maxframe);
+
+            img.y = 1 + (40*static_cast<int>(noteframe[i].getValue()));            
             img.y += 40*1;
         }
 
