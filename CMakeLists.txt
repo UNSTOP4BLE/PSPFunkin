@@ -80,6 +80,9 @@ if(PSP)
         TITLE ${PROJECT_NAME}
     )
 else()
+    find_package(SDL2) 
+    find_package(jsoncpp) 
+    
     target_link_libraries(${PROJECT_NAME} PRIVATE
         jsoncpp 
         stdc++ 

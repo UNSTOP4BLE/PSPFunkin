@@ -3,6 +3,7 @@
 #include "../screen.h"
 #include "../psp/tween.h"
 #include <string>            
+#include <vector>  
 
 class MainMenuScreen : public Screen {
 public:
@@ -14,6 +15,6 @@ private:
     GFX::Texture *background;
     int selection;
     std::string selectedsong;
-    std::string songs[4];
+    std::vector<std::string> songs;
     Tween<float, QuadInEasing, Chrono> backgroundy;
 };

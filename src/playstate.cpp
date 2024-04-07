@@ -10,7 +10,7 @@
 
 #include "menu/mainmenu.h"
 
-#define CAMERA_ZOOM_OFFSET 0.5
+#define CAMERA_ZOOM_OFFSET 0.3
 Rating::Rating(std::string name, int hitwindow, float ratingmod, int score, bool splash)
 : name(name),
 hitWindow(hitwindow),
@@ -24,7 +24,7 @@ void PlayStateScreen::initscr(std::string song) {
     //reset vars
     combo.init();
     ghosttap = true;
-    botplay = true;
+    botplay = false;
     score = misses = 0;
     cursong = song;
     health = 0.5;
@@ -267,7 +267,7 @@ void PlayStateScreen::draw(void)
 
     drawHealthBar();
     drawIcons();
-    PrintFontZoom(Center, GFX::SCREEN_WIDTH/2+11, GFX::SCREEN_HEIGHT/2+120, hudcam.zoom.getValue(), "Score: %d | Misses: %d   combo: %d",  score, misses, combo.combo);
+    PrintFontZoom(Center, GFX::SCREEN_WIDTH/2+11, GFX::SCREEN_HEIGHT/2+120, hudcam.zoom.getValue(), "Score: %d | Misses: %d   combo: %d, %d %d",  score, misses, combo.combo, app->parser.curStep, app->parser.absoluteCurStep);
 }
 void PlayStateScreen::freescr(void) {
     delete player;
@@ -369,25 +369,25 @@ void PlayStateScreen::updateInput(void)
 
         //delete note if offscreen
         if (curNotey < -50) {
-            if (notes[i].sus == 0)
-                deleteNote(i, 0);
             if (!(notes[i].flag & FLAG_NOTE_HIT))
             {
                 missedNote(false);
                 notes[i].flag |= FLAG_NOTE_HIT;
             }
-            if (notes[i].sus == 0)
+            if (notes[i].sus == 0) {   
+                deleteNote(i, 0);
                 continue;
+            }
         }
 
         float notediff = notes[i].pos - app->parser.songTime;
-
+/*
         if (botplay && notediff <= 0)
         {
             Rating rating = judgeNote(fabs(notediff));
             if (rating.name == "sick")
                 checkPad[type] = true;
-        }
+        }*/
 
         if (checkPadHeld[type] && notes[i].sus != 0 && notediff <= static_cast<float>(ratingData[ratingData.size()-1].hitWindow)) //sustain hits
         {                    
@@ -399,7 +399,7 @@ void PlayStateScreen::updateInput(void)
             if (health > 1)
                 health = 1;
         }
-        if (!checkPadHeld[type] && notes[i].sus != 0 && notediff <= static_cast<float>(-ratingData[ratingData.size()-1].hitWindow) && !botplay) {
+        if (!checkPadHeld[type] && notes[i].sus != 0 && notediff <= static_cast<float>(-ratingData[ratingData.size()-1].hitWindow)) {
             missedNote(true);
         }
 

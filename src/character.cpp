@@ -22,6 +22,7 @@ Character::Character(std::string path, std::string objstr, float _x, float _y) {
         obj_speaker->setAnim(0, ModeNone);
     }
     obj->setAnim(0, ModeNone);
+    singendtime = 0;
 }
 
 void Character::setPos(float _x, float _y) {
@@ -36,17 +37,9 @@ void Character::setFocus(float x, float y, float zoom) {
 }
 
 void Character::setAnim(int anim, AnimationModes mode) {
-    obj->setAnim(anim, mode);   
-    switch (Hash::FromString(type.c_str()))
-    {
-        case "gf"_h:
-                obj_speaker->setAnim(0, ModeStep);   
-                singendtime = abs(app->parser.curStep) + 3;
-            break;
-        default:
-                singendtime = abs(app->parser.curStep) + 7;
-            break;
-    }
+    obj->setAnim(anim, mode);  
+    singendtime = app->parser.absoluteCurStep + 3;
+
     issinging = true;
 }
 
@@ -67,7 +60,7 @@ void Character::tick(void) {
         obj_speaker->tick();  
     obj->tick();  
 
-    if (singendtime < abs(app->parser.curStep))
+    if (singendtime < app->parser.absoluteCurStep)
         issinging = false;
     //set animations
     if (!issinging)
@@ -75,7 +68,7 @@ void Character::tick(void) {
         switch (Hash::FromString(type.c_str()))
         {
             case "gf"_h:
-                if (app->parser.justStep && !(abs(app->parser.curStep) % 4))
+                if (app->parser.justStep && !(app->parser.absoluteCurStep % 4))
                 {
                     if (obj->curanim.anim == 1)
                         setAnim(0, ModeStep);
@@ -84,7 +77,7 @@ void Character::tick(void) {
                 }
                 break;
             default:
-                if (app->parser.justStep && !(abs(app->parser.curStep) % 8))
+                if (app->parser.justStep && !(app->parser.absoluteCurStep % 4))
                     setAnim(0, ModeStep);
                 break;
         }

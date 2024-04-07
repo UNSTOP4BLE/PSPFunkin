@@ -34,9 +34,8 @@ TitleScreen::TitleScreen(void)
     //load and play music
     app->parser.chartdata.bpm = titleJson["menuSongBPM"].asDouble();   
     app->parser.calcCrochet();
-    freaky = new Audio::StreamedFile(*app->audioMixer, "assets/songs/freaky/freaky.ogg");
+    freaky = new Audio::StreamedFile(*app->audioMixer, "assets/music/freaky/freaky.ogg");
     freaky->play(true);
-    // confirm = Audio::loadFile("assets/songs/stream.vag");
    // app->audioMixer->playBuffer(*confirm);
     //load textures
 //    AnimOBJECT_Init(&titleGF, "assets/menu/title/gf/", "frames.json");

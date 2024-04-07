@@ -45,17 +45,15 @@ void PlayStateScreen::drawDummyNotes(void)
     }
 }
 
-void PlayStateScreen::deleteNote(int note, bool opponent) {
+void PlayStateScreen::deleteNote(int &note, bool opponent) {
     app->parser.gamenotes[opponent].erase(app->parser.gamenotes[opponent].begin() + note);
-//    PrintFont(Left, 0, 60, (opponent ? "deleting oppnote %d" : "\ndeleting pnote %d"), 0);//[opponent]);
+    printf((opponent ? "deleting oppnote %d\n" : "deleting pnote %d\n"), note);
+    printf((app->parser.gamenotes[opponent][note].sus != 0 ? "that is a sustain\n" : "\n"));
+    note = -1;
 }
 
 void PlayStateScreen::drawSustain(int note, float y, int type, bool isopponent) 
 {
-    if (y+(app->parser.gamenotes[isopponent][note].sus * app->parser.chartdata.speed) < 0) {
-        deleteNote(note, isopponent);
-    }
-
     int length = ((app->parser.gamenotes[isopponent][note].sus * app->parser.chartdata.speed) / SUSTAIN_CLIPHEIGHT) - 1; //maybe right
 
     GFX::RECT<int> img = {
@@ -76,7 +74,10 @@ void PlayStateScreen::drawSustain(int note, float y, int type, bool isopponent)
 
         GFX::RECT<float> disp = {static_cast<float>(xpos - hudcam.camx.getValue()), ypos + (i*SUSTAIN_CLIPHEIGHT) - hudcam.camy.getValue(), static_cast<float>(img.w), static_cast<float>(img.h)};
   
-        if ((isopponent || (!isopponent && notehit[type])) && disp.y < sustain.y+img.h) {
+        if (disp.y+SUSTAIN_CLIPHEIGHT < 0) {
+            continue;
+        }
+        if ((isopponent || (!isopponent && notehit[type])) && disp.y < sustain.y+SUSTAIN_CLIPHEIGHT) {
             continue; //stop drawing note if they were hit
         }
 
@@ -102,6 +103,10 @@ void PlayStateScreen::drawNotes(bool isopponent)
         //note is below the screen, so go back to index 0
         if (curNotey > GFX::SCREEN_HEIGHT)
             break;
+        if (curNotey+(notes[i].sus * app->parser.chartdata.speed) < 0 && notes[i].sus != 0) {
+            deleteNote(i, isopponent);
+            continue;
+        }
 
         if (notes[i].sus != 0) //check if the note is a sustain
             drawSustain(i, curNotey, type, isopponent);

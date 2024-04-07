@@ -4,6 +4,9 @@
 #include "../psp/font.h"
 #include "../app.h"
 
+#include <dirent.h>
+#include <stdio.h>
+
 #include "../playstate.h"
 
 MainMenuScreen::MainMenuScreen(void) {
@@ -11,10 +14,24 @@ MainMenuScreen::MainMenuScreen(void) {
     background = GFX::loadTex("assets/menu/back.png");
     backgroundy.setValue(GFX::SCREEN_HEIGHT/2 - 331/2);
     selection = 0;
-    songs[0] = "bopeebo";
-    songs[1] = "frostbite";
-    songs[2] = "test";
-    songs[3] = "no-more-woah";
+
+    const char* PATH = "assets/songs";
+
+    DIR *dir = opendir(PATH);
+
+    struct dirent *entry = readdir(dir);
+
+    while (entry != NULL)
+    {
+        std::string name(entry->d_name);
+        printf("song(%s)\n", name.c_str());
+        songs.push_back(name);
+
+        entry = readdir(dir);
+    }
+
+    closedir(dir);
+
     selectedsong = songs[0];
 }
 
@@ -30,8 +47,8 @@ void MainMenuScreen::update(void)
     else if (app->event.isPressed(Input::MENU_UP))    
     {
         selection += 1;
-        if (selection > static_cast<int>(COUNT_OF(songs)-1))
-            selection = static_cast<int>(COUNT_OF(songs)-1);
+        if (selection > static_cast<int>(songs.size()-1))
+            selection = static_cast<int>(songs.size()-1);
         backgroundy.setValue(400, 1.0);
     }
     selectedsong = songs[selection];

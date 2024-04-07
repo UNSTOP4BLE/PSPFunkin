@@ -45,6 +45,7 @@ public:
     void tickStep(Audio::StreamedFile *song);
     int curBeat;
     int curStep;
+    int absoluteCurStep;
     int songTime;
     bool justStep;
     double step_crochet;

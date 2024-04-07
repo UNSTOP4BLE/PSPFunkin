@@ -50,7 +50,7 @@ private:
     void freescr(void);
     void drawHealthBar(void);
     void drawIcons(void);
-    void deleteNote(int note, bool opponent);
+    void deleteNote(int &note, bool opponent);
     void drawDummyNotes(void);
     void drawSustain(int note, float y, int type, bool isopponent);
     void drawNotes(bool isopponent);
