@@ -26,7 +26,8 @@ void flip(void) {
 Texture *loadTex(const char *path) {
     Texture *psptex = NULL;
     psptex = IMG_LoadTexture(app->renderer, path);
-    ASSERTFUNC(psptex, "texture is NULL");
+    std::string errmsg = "loading texture " + static_cast<std::string>(path) + " is NULL";
+    ASSERTFUNC(psptex, errmsg.c_str());
     return psptex;
 }
 

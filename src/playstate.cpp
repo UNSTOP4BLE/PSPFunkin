@@ -28,6 +28,10 @@ void PlayStateScreen::initscr(std::string song) {
     score = misses = 0;
     cursong = song;
     health = 0.5;
+    countdown_alpha.setValue(0);
+    countdown_img = {311, 205, 200, 90};
+    countdown_disp = {(GFX::SCREEN_WIDTH/2) - (countdown_img.w/2), (GFX::SCREEN_HEIGHT/2) - (countdown_img.h/2), countdown_img.w, countdown_img.h};
+
     //init animation
     for (int i = 0; i < 4; i ++)
     {
@@ -64,9 +68,16 @@ void PlayStateScreen::initscr(std::string song) {
     curstage.load(_path, _config["back"].asString());
 
     //load game assets
+
+    //load sound effects
+    sfx_3 = Audio::loadFile("assets/sounds/intro3.wav");
+    sfx_2 = Audio::loadFile("assets/sounds/intro2.wav");
+    sfx_1 = Audio::loadFile("assets/sounds/intro1.wav");
+    sfx_go = Audio::loadFile("assets/sounds/introGo.wav");
+
     sprintf(_path, "assets/songs/%s/%s.bin", cursong.c_str(), cursong.c_str()); //todo implement difficulty
     app->parser.loadChart(_path);
-    app->parser.songTime = -3000;
+    app->parser.songTime = -25 * app->parser.step_crochet; //always start at step -25
 
     sprintf(_path, "assets/songs/%s/Voices.ogg", cursong.c_str());
     if (access(_path, F_OK) == 0) //file exists
@@ -173,6 +184,35 @@ void PlayStateScreen::update(void)
     else
     {
         app->parser.songTime += app->deltatime * 1000; 
+        
+        app->parser.tickStep(vocals);
+        if (app->parser.justStep) {
+            switch (app->parser.curStep)
+            {
+                case -16:
+                //3
+                    app->audioMixer->playBuffer(*sfx_3);
+                    break;
+                case -12:
+                //2
+                    countdown_alpha.setValue(255, 0, 4 * app->parser.stepsPerSecond);
+                    app->audioMixer->playBuffer(*sfx_2);
+                    break;
+                case -8:
+                //1
+                    countdown_alpha.setValue(255, 0, 4 * app->parser.stepsPerSecond);
+                    app->audioMixer->playBuffer(*sfx_1);
+                    countdown_img.y += 91;
+                    break;
+                case -4:
+                //go
+                    countdown_alpha.setValue(255, 0, 4 * app->parser.stepsPerSecond);
+                    app->audioMixer->playBuffer(*sfx_go);
+                    countdown_img.y += 91;
+                    break;
+            }
+
+        }
 
         //song start
         if (app->parser.curStep <= 0)
@@ -260,7 +300,10 @@ void PlayStateScreen::draw(void)
     curstage.drawObjects(curstage.fgobjects, gamecam.zoom.getValue());
 
     combo.draw(hud, hudcam.zoom.getValue());
-       
+    
+    if (app->parser.curStep < 0)
+        GFX::drawTexZoom<int>(hud, &countdown_img, &countdown_disp, 0, static_cast<int>(countdown_alpha.getValue()), hudcam.zoom.getValue());
+
     drawDummyNotes();
     drawNotes(false);
     drawNotes(true);
@@ -278,6 +321,10 @@ void PlayStateScreen::freescr(void) {
     GFX::freeTex(icons);
     delete inst;
     delete vocals;
+    delete sfx_3;
+    delete sfx_2;
+    delete sfx_1;
+    delete sfx_go;
 }
 
 PlayStateScreen::~PlayStateScreen(void)

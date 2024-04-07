@@ -10,6 +10,7 @@ void ChartParser::loadChart(const char *filename)
     songTime = 0;
     crochet = 0;
     step_crochet = 0;
+    stepsPerSecond = 0;
 
     //read initial data from the chart
     chart.read(reinterpret_cast<char *>(&chartdata), sizeof(chartdata));
@@ -28,6 +29,7 @@ void ChartParser::calcCrochet(void)
 {
     crochet = (60 / chartdata.bpm) * 1000;
     step_crochet = crochet / 4;
+    stepsPerSecond = 15/app->parser.chartdata.bpm;
 }
 
 void ChartParser::tickStep(Audio::StreamedFile *song)
@@ -40,7 +42,7 @@ void ChartParser::tickStep(Audio::StreamedFile *song)
             songTime = 0;
     }
     int nextstep = (songTime / step_crochet);
-    
+
     if (nextstep != curStep)
     {
         curStep = nextstep;  

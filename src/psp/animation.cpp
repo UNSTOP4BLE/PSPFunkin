@@ -67,7 +67,7 @@ void Anim_OBJECT::setAnim(int anim, AnimationModes mode)
     switch(mode)
     {
         case ModeStep:
-            maxduration = 4 * (15/app->parser.chartdata.bpm); //endime * steps per second
+            maxduration = 4 * app->parser.stepsPerSecond; //endime * steps per second
             minduration = static_cast<float>(curanim.framecount-1)/static_cast<float>(speed[curanim.anim]);
             curanim.endtime = std::min(maxduration, minduration); //end 4 steps later
             frame.timesource = Chrono;

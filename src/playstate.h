@@ -75,6 +75,13 @@ private:
     std::string nextsong;
     NotePos notePos;
     //gameplay
+    Audio::AudioBuffer *sfx_3;
+    Audio::AudioBuffer *sfx_2;
+    Audio::AudioBuffer *sfx_1;
+    Audio::AudioBuffer *sfx_go;
+    GFX::RECT<int> countdown_img;
+    GFX::RECT<int> countdown_disp;
+    Tween<float, QuadInOutEasing, Chrono> countdown_alpha;
     Combo combo;
     bool checkPad[4];
     bool checkPadHeld[4];
