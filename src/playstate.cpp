@@ -172,7 +172,7 @@ void PlayStateScreen::update(void)
     }
     else
     {
-        app->parser.songTime += app->timer.elapsedS(); 
+        app->parser.songTime += app->deltatime * 1000; 
 
         //song start
         if (app->parser.curStep <= 0)
@@ -267,7 +267,7 @@ void PlayStateScreen::draw(void)
 
     drawHealthBar();
     drawIcons();
-    PrintFontZoom(Center, GFX::SCREEN_WIDTH/2+11, GFX::SCREEN_HEIGHT/2+120, hudcam.zoom.getValue(), "Score: %d | Misses: %d   combo: %d, %d %d",  score, misses, combo.combo, app->parser.curStep, app->parser.absoluteCurStep);
+    PrintFontZoom(Center, GFX::SCREEN_WIDTH/2+11, GFX::SCREEN_HEIGHT/2+120, hudcam.zoom.getValue(), "Score: %d | Misses: %d   combo: %d",  score, misses, combo.combo);
 }
 void PlayStateScreen::freescr(void) {
     delete player;

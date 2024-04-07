@@ -40,12 +40,7 @@ void ChartParser::tickStep(Audio::StreamedFile *song)
             songTime = 0;
     }
     int nextstep = (songTime / step_crochet);
-
-    if (songTime < 0)
-       absoluteCurStep = (abs(1.0 - songTime) / step_crochet);
-    else 
-       absoluteCurStep = (abs(songTime) / step_crochet);
-
+    
     if (nextstep != curStep)
     {
         curStep = nextstep;  

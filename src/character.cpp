@@ -38,7 +38,13 @@ void Character::setFocus(float x, float y, float zoom) {
 
 void Character::setAnim(int anim, AnimationModes mode) {
     obj->setAnim(anim, mode);  
-    singendtime = app->parser.absoluteCurStep + 3;
+    if (Hash::FromString(type.c_str()) == "gf"_h)
+        obj_speaker->setAnim(0, ModeNone);
+    
+    if (app->parser.curStep < 0)
+        singendtime = app->parser.curStep - 3;
+    else
+        singendtime = app->parser.curStep + 3;
 
     issinging = true;
 }
@@ -60,7 +66,7 @@ void Character::tick(void) {
         obj_speaker->tick();  
     obj->tick();  
 
-    if (singendtime < app->parser.absoluteCurStep)
+    if (singendtime < app->parser.curStep)
         issinging = false;
     //set animations
     if (!issinging)
@@ -68,7 +74,7 @@ void Character::tick(void) {
         switch (Hash::FromString(type.c_str()))
         {
             case "gf"_h:
-                if (app->parser.justStep && !(app->parser.absoluteCurStep % 4))
+                if (app->parser.justStep && !(app->parser.curStep % 4))
                 {
                     if (obj->curanim.anim == 1)
                         setAnim(0, ModeStep);
@@ -77,7 +83,7 @@ void Character::tick(void) {
                 }
                 break;
             default:
-                if (app->parser.justStep && !(app->parser.absoluteCurStep % 4))
+                if (app->parser.justStep && !(app->parser.curStep % 4))
                     setAnim(0, ModeStep);
                 break;
         }
