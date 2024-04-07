@@ -36,6 +36,7 @@ TitleScreen::TitleScreen(void)
     app->parser.calcCrochet();
     freaky = new Audio::StreamedFile(*app->audioMixer, "assets/music/freaky/freaky.ogg");
     freaky->play(true);
+    confirm = Audio::loadFile("assets/sounds/confirmMenu.wav");
    // app->audioMixer->playBuffer(*confirm);
     //load textures
 //    AnimOBJECT_Init(&titleGF, "assets/menu/title/gf/", "frames.json");
@@ -142,6 +143,6 @@ void TitleScreen::draw(void)
 TitleScreen::~TitleScreen(void) 
 {
     delete freaky;
-//    delete confirm;
+    delete confirm;
     GFX::freeTex(ng);
 }

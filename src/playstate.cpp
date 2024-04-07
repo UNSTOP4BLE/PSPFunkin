@@ -185,7 +185,6 @@ void PlayStateScreen::update(void)
     {
         app->parser.songTime += app->deltatime * 1000; 
         
-        app->parser.tickStep(vocals);
         if (app->parser.justStep) {
             switch (app->parser.curStep)
             {
