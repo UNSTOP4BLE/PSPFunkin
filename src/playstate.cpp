@@ -77,7 +77,7 @@ void PlayStateScreen::initscr(std::string song) {
 
     sprintf(_path, "assets/songs/%s/%s.bin", cursong.c_str(), cursong.c_str()); //todo implement difficulty
     app->parser.loadChart(_path);
-    app->parser.songTime = -25 * app->parser.step_crochet; //always start at step -25
+    app->parser.songTime = -30 * app->parser.step_crochet; //always start at step -30
 
     sprintf(_path, "assets/songs/%s/Voices.ogg", cursong.c_str());
     if (access(_path, F_OK) == 0) //file exists
@@ -315,11 +315,13 @@ void PlayStateScreen::draw(void)
 void PlayStateScreen::freescr(void) {
     delete player;
     delete opponent;
-    delete gf;
+    if (gf != NULL)
+        delete gf;
     curstage.free();
     GFX::freeTex(hud);
     GFX::freeTex(icons);
-    delete inst;
+    if (inst != NULL)
+        delete inst;
     delete vocals;
     delete sfx_3;
     delete sfx_2;
