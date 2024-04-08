@@ -32,7 +32,8 @@ Texture *loadTex(const char *path) {
 }
 
 void freeTex(Texture *tex) {
-    SDL_DestroyTexture(tex);
+    if (tex != NULL)
+        SDL_DestroyTexture(tex);
 }
 /*
 typedef enum

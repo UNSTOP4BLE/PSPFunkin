@@ -7,20 +7,32 @@ public:
     Character(std::string path, std::string objstr, float _x, float _y);
     void setPos(float _x, float _y);
     void setFocus(float x, float y, float zoom);
-    void setAnim(int anim, AnimationModes mode);
+    virtual void setAnim(int anim, AnimationModes mode);
     void setIcon(int i);
     int getAnim(void);
     int getFrame(void);
-    ~Character(void);
+    virtual ~Character(void);
 
-    void tick(void);
-    void draw(float cx, float cy, float cz);
+    virtual void tick(void);
+    virtual void draw(float cx, float cy, float cz);
     float x, y, camx, camy, camzoom;
     bool issinging;
     int singendtime;
     int icon;
-private:
+protected:
     Anim_OBJECT *obj;
-    Anim_OBJECT *obj_speaker;
     std::string type;
+};
+
+class GFCharacter : public Character
+{
+public:
+    GFCharacter(std::string path, std::string objstr, float _x, float _y);
+    void setAnim(int anim, AnimationModes mode);
+    ~GFCharacter(void);
+
+    void tick(void);
+    void draw(float cx, float cy, float cz);
+private:
+    Anim_OBJECT *obj_speaker;
 };

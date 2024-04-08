@@ -73,6 +73,10 @@ int main()
 #endif
     app->timer.start();
     setScreen(new TitleScreen());
+
+    Timer fpsTimer;
+    fpsTimer.start();
+    float fps = 0;
     while(1)
     {
         auto last = std::chrono::high_resolution_clock::now();
@@ -93,12 +97,18 @@ int main()
         ASSERTFUNC(app->currentScreen, "screen is NULL");                
         app->currentScreen->update();  
         app->currentScreen->draw();  
+        PrintFont(Left, 0, 0, "FPS: %d", static_cast<int>(fps));
         GFX::flip();
 
         auto current = std::chrono::high_resolution_clock::now();
-        app->deltatime = std::chrono::duration_cast<std::chrono::duration<double, std::ratio<1>>>(current - last).count();
-        last = current;
+        app->deltatime = std::chrono::duration_cast<std::chrono::milliseconds>(current - last).count();
 
+        if (fpsTimer.elapsedMS()/1000 > 0.5){
+            fps = 1 / (app->deltatime / 1000);
+            fpsTimer.stop();
+            fpsTimer.start();
+        }
+        last = current;
     }
 #if defined(DEBUG) && defined(PSP)
     gprof_cleanup();

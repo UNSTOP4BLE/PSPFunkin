@@ -42,8 +42,6 @@ void Stage::free(void) {
             return;
         GFX::freeTex(textures[i].texture);
     }
-    textures.clear();
-    textures.shrink_to_fit();
 }
 
 void Stage::drawObjects(std::vector<StageObject> &objs, float camzoom) {

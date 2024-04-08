@@ -9,7 +9,7 @@
         {
             "name": "pc-debug",
             "displayName": "Debug (PC)",
-            "binaryDir": "${sourceDir}/build",
+            "binaryDir": "${sourceDir}/build-debug",
             "generator": "Ninja",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug"
@@ -21,7 +21,7 @@
             "binaryDir": "${sourceDir}/build",
             "generator": "Ninja",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release"
+                "CMAKE_BUILD_TYPE": "RelWithDebInfo"
             }
         },
         {
@@ -37,11 +37,11 @@
         {
             "name": "psp-release",
             "displayName": "Release (PSP)",
-            "binaryDir": "${sourceDir}/build",
+            "binaryDir": "${sourceDir}/build-debug",
             "generator": "Unix Makefiles",
             "cacheVariables": {
                 "CMAKE_TOOLCHAIN_FILE": "$env{PSPDEV}/psp/share/pspdev.cmake",
-                "CMAKE_BUILD_TYPE": "Release"
+                "CMAKE_BUILD_TYPE": "RelWithDebInfo"
             }
         }
     ]

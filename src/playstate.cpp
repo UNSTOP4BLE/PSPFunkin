@@ -23,7 +23,7 @@ void PlayStateScreen::initscr(std::string song) {
     app->timer.start();
     //reset vars
     combo.init();
-    ghosttap = true;
+    ghosttap = false;
     botplay = false;
     score = misses = 0;
     cursong = song;
@@ -61,7 +61,7 @@ void PlayStateScreen::initscr(std::string song) {
 
     //gf    
     sprintf(_path, "assets/characters/%s/", _config["gf"].asString().c_str());
-    gf = new Character(_path, _config["gf"].asString() + ".json", _config["gfpos"][0].asFloat(), _config["gfpos"][1].asFloat());
+    gf = new GFCharacter(_path, _config["gf"].asString() + ".json", _config["gfpos"][0].asFloat(), _config["gfpos"][1].asFloat());
 
     //stage
     sprintf(_path, "assets/stages/%s/%s.json", _config["back"].asString().c_str(), _config["back"].asString().c_str()); 
@@ -74,6 +74,10 @@ void PlayStateScreen::initscr(std::string song) {
     sfx_2 = Audio::loadFile("assets/sounds/intro2.wav");
     sfx_1 = Audio::loadFile("assets/sounds/intro1.wav");
     sfx_go = Audio::loadFile("assets/sounds/introGo.wav");
+
+    sfx_misses[0] = Audio::loadFile("assets/sounds/missnote1.wav");
+    sfx_misses[1] = Audio::loadFile("assets/sounds/missnote2.wav");
+    sfx_misses[2] = Audio::loadFile("assets/sounds/missnote3.wav");
 
     sprintf(_path, "assets/songs/%s/%s.bin", cursong.c_str(), cursong.c_str()); //todo implement difficulty
     app->parser.loadChart(_path);
@@ -173,6 +177,7 @@ void PlayStateScreen::update(void)
         //limit health
         if (health <= 0){
             setScreen(new MainMenuScreen());
+            return;
         }
         else if (health > 1)
             health = 1;
@@ -183,7 +188,7 @@ void PlayStateScreen::update(void)
     }
     else
     {
-        app->parser.songTime += app->deltatime * 1000; 
+        app->parser.songTime += app->deltatime; 
         
         if (app->parser.justStep) {
             switch (app->parser.curStep)
@@ -235,8 +240,7 @@ void PlayStateScreen::update(void)
             }
             else {
                 //reload the screen
-                freescr();
-                initscr(nextsong);
+                setScreen(new PlayStateScreen(nextsong));
             }
             return;
         }
@@ -245,7 +249,6 @@ void PlayStateScreen::update(void)
     player->tick();
     opponent->tick();
     gf->tick();
-
 }
 
 void PlayStateScreen::drawHealthBar(void) {
@@ -311,9 +314,13 @@ void PlayStateScreen::draw(void)
     drawIcons();
     PrintFontZoom(Center, GFX::SCREEN_WIDTH/2+11, GFX::SCREEN_HEIGHT/2+120, hudcam.zoom.getValue(), "Score: %d | Misses: %d   combo: %d",  score, misses, combo.combo);
 }
-void PlayStateScreen::freescr(void) {
-    delete player;
-    delete opponent;
+
+PlayStateScreen::~PlayStateScreen(void)
+{
+    if (player != NULL)
+        delete player;
+    if (opponent != NULL)
+        delete opponent;
     if (gf != NULL)
         delete gf;
     curstage.free();
@@ -321,16 +328,17 @@ void PlayStateScreen::freescr(void) {
     GFX::freeTex(icons);
     if (inst != NULL)
         delete inst;
-    delete vocals;
+    if (vocals != NULL)
+        delete vocals;
+
     delete sfx_3;
     delete sfx_2;
     delete sfx_1;
     delete sfx_go;
-}
 
-PlayStateScreen::~PlayStateScreen(void)
-{
-    freescr();
+    delete sfx_misses[0];
+    delete sfx_misses[1];
+    delete sfx_misses[2];
 }
 
 Rating PlayStateScreen::judgeNote(float diff)
@@ -401,6 +409,7 @@ void PlayStateScreen::updateInput(void)
 
     }    
     //player
+    bool justhitnote = false;
     for (int i = 0; i < static_cast<int>(app->parser.gamenotes[0].size()); i++)
     {
         std::vector<Note> &notes = app->parser.gamenotes[0];
@@ -439,6 +448,7 @@ void PlayStateScreen::updateInput(void)
 
         if (checkPadHeld[type] && notes[i].sus != 0 && notediff <= static_cast<float>(ratingData[ratingData.size()-1].hitWindow)) //sustain hits
         {                    
+            justhitnote = true;
             notehit[type] = true;
             if (inst != NULL)
                 vocals->setVolume(1,1);
@@ -453,7 +463,8 @@ void PlayStateScreen::updateInput(void)
 
         //check if its been hit
         if (checkPad[type] && fabs(notediff) <= static_cast<float>(ratingData[ratingData.size()-1].hitWindow) && !(notes[i].flag & FLAG_NOTE_HIT)) //shit hit window
-        {                    
+        {                 
+            justhitnote = true;   
             notehit[type] = true;
             Rating rating = judgeNote(fabs(notediff));
             if (inst != NULL)
@@ -466,25 +477,24 @@ void PlayStateScreen::updateInput(void)
                 health = 1;
             combo.combo += 1;
             combo.spawnNew(rating.name);
-            break;
         }
-        else if (!ghosttap && (checkPad[0] || checkPad[1] || checkPad[2] || checkPad[3])) //miss note if ghosttapping is off
-        {
-            //play miss sound todo
-//            missedNote();
+    }        
 
-            //miss animation
-            if (checkPad[0] || checkPad[1] || checkPad[2] || checkPad[3])
-            {
-                int anim = 0;
-                for (int i = 0; i < 4; i++)
-                    if (checkPadHeld[i]) {
-                        anim = i;
-                        break;
-                    }
-                player->setAnim(1+anim, ModeNone);
-//                player->singendtime = app->parser.curStep-1;
-            }
+    if (!ghosttap && (checkPad[0] || checkPad[1] || checkPad[2] || checkPad[3]) && !justhitnote) //miss note if ghosttapping is off
+    {
+        missedNote(false);
+        app->audioMixer->playBuffer(*sfx_misses[rand() % (COUNT_OF(sfx_misses))]);
+
+        //miss animation
+        if (checkPad[0] || checkPad[1] || checkPad[2] || checkPad[3])
+        {
+            int anim = 0;
+            for (int i = 0; i < 4; i++)
+                if (checkPadHeld[i]) {
+                    anim = i;
+                    break;
+                }
+            player->setAnim(1+anim, ModeNone);
         }
     }
 }

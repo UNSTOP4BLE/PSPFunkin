@@ -6,6 +6,7 @@
 #include "file.h"
 
 Anim_OBJECT::Anim_OBJECT(void) {   
+
 }
 
 Anim_OBJECT::Anim_OBJECT(std::string path, std::string objname)
@@ -27,6 +28,8 @@ Anim_OBJECT::Anim_OBJECT(std::string path, std::string objname)
     textures.resize(data["textures"].size());
     for (int i = 0; i < static_cast<int>(data["textures"].size()); i++)
     {
+        if (data["textures"].size() == 0)
+            return;
         _path = path + data["textures"][i].asString();     
         textures[i] = GFX::loadTex(_path.c_str());  
     }
@@ -48,6 +51,8 @@ Anim_OBJECT::~Anim_OBJECT(void)
 {
     for (int i = 0; i < static_cast<int>(textures.size()); i++)
     {
+        if (textures.size() == 0)
+            return;
         GFX::freeTex(textures[i]);
     }
 }

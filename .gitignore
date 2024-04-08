@@ -9,4 +9,7 @@
 *.bin
 cht2bin/build
 build
+build-debug
+buildpc
+buildpc-debug
 .DS_Store

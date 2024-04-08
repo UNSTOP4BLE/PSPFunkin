@@ -27,7 +27,7 @@ TitleScreen::TitleScreen(void)
     Json::Value titleJson;
     loadJson("assets/menu/title/title.json", &titleJson);
     
-    int curmsg = rand() % (titleJson["messages"].size()-1); //get a random message
+    int curmsg = rand() % (titleJson["messages"].size()); //get a random message
     funnymessage[0] = titleJson["messages"][curmsg][0].asString();
     funnymessage[1] = titleJson["messages"][curmsg][1].asString();
 

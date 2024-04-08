@@ -47,7 +47,6 @@ private:
         float basezoom;
     } gamecam, hudcam;
     void initscr(std::string song);
-    void freescr(void);
     void drawHealthBar(void);
     void drawIcons(void);
     void deleteNote(int &note, bool opponent);
@@ -79,6 +78,7 @@ private:
     Audio::AudioBuffer *sfx_2;
     Audio::AudioBuffer *sfx_1;
     Audio::AudioBuffer *sfx_go;
+    Audio::AudioBuffer *sfx_misses[3];
     GFX::RECT<int> countdown_img;
     GFX::RECT<int> countdown_disp;
     Tween<float, QuadInOutEasing, Chrono> countdown_alpha;
