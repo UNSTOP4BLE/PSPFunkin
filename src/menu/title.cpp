@@ -40,7 +40,8 @@ TitleScreen::TitleScreen(void)
    // app->audioMixer->playBuffer(*confirm);
     //load textures
 //    AnimOBJECT_Init(&titleGF, "assets/menu/title/gf/", "frames.json");
-    ng = GFX::loadTex("assets/menu/title/ng.png");
+    ng = new GFX::Texture();
+    ng->load("assets/menu/title/ng.png");
 
     //begin with a flash if you went back to title from menu
     if (state != Intro)
@@ -144,5 +145,5 @@ TitleScreen::~TitleScreen(void)
 {
     delete freaky;
     delete confirm;
-    GFX::freeTex(ng);
+    delete ng;
 }

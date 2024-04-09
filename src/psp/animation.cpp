@@ -26,16 +26,17 @@ Anim_OBJECT::Anim_OBJECT(std::string path, std::string objname)
     }
     frames = readFramesFromJson(_path.c_str());
     textures.resize(data["textures"].size());
+
     for (int i = 0; i < static_cast<int>(data["textures"].size()); i++)
     {
         if (data["textures"].size() == 0)
             return;
         _path = path + data["textures"][i].asString();     
-        textures[i] = GFX::loadTex(_path.c_str());  
+        textures[i] = new GFX::Texture();
+        textures[i]->load(_path.c_str());  
     }
 
     //reset vars
-
     cantick = cananimate = false;
     curframe = 0;
     mode = ModeNone;
@@ -53,7 +54,7 @@ Anim_OBJECT::~Anim_OBJECT(void)
     {
         if (textures.size() == 0)
             return;
-        GFX::freeTex(textures[i]);
+        delete textures[i];
     }
 }
 

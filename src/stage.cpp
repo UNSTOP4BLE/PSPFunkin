@@ -19,9 +19,8 @@ void Stage::load(const char *jpath, std::string stage) {
         textures[i].def = "";
         textures[i].def = data["textures"][i]["def"].asString();
         std::string texpath = "assets/stages/" + stage + "/" + data["textures"][i]["path"].asString();
-        textures[i].texture = nullptr;
-        textures[i].texture = NULL;
-        textures[i].texture = GFX::loadTex(texpath.c_str()); 
+        textures[i].texture = new GFX::Texture();
+        textures[i].texture->load(texpath.c_str()); 
     }
 
     //stage data
@@ -40,7 +39,7 @@ void Stage::free(void) {
     for (int i = 0; i < static_cast<int>(textures.size()); i++) {
         if (textures.size() == 0)
             return;
-        GFX::freeTex(textures[i].texture);
+        delete textures[i].texture;
     }
 }
 

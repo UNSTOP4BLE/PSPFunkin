@@ -26,8 +26,10 @@ Tex tex;
 
 void FntInit()
 {   
-    tex.fonttex = GFX::loadTex("assets/font/font.png");
-    tex.boldtex = GFX::loadTex("assets/font/boldfont.png");
+    tex.fonttex = new GFX::Texture();
+    tex.boldtex = new GFX::Texture();
+    tex.fonttex->load("assets/font/font.png");
+    tex.boldtex->load("assets/font/boldfont.png");
 }
 
 static int Font_GetW(Font *font, const char *str)

@@ -11,7 +11,8 @@
 
 MainMenuScreen::MainMenuScreen(void) {
     setScreenCol(0xFF00FF00);
-    background = GFX::loadTex("assets/menu/back.png");
+    background = new GFX::Texture();
+    background->load("assets/menu/back.png");
     backgroundy.setValue(GFX::SCREEN_HEIGHT/2 - 331/2);
     selection = 0;
 
@@ -67,5 +68,5 @@ void MainMenuScreen::draw(void)
 
 MainMenuScreen::~MainMenuScreen(void) 
 {
-    GFX::freeTex(background);
+    delete background;
 }

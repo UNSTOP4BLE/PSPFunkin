@@ -96,8 +96,10 @@ void PlayStateScreen::initscr(std::string song) {
         sprintf(_path, "assets/songs/%s/Inst.ogg", cursong.c_str());
         vocals = new Audio::StreamedFile(*app->audioMixer, _path);
     }
-    hud = GFX::loadTex("assets/hud.png");
-    icons = GFX::loadTex("assets/icons.png");
+    hud = new GFX::Texture();
+    hud->load("assets/hud.png");
+    icons = new GFX::Texture();
+    icons->load("assets/icons.png");
     gamecam.camx = opponent->camx;
     gamecam.camy = opponent->camy;
     gamecam.basezoom = opponent->camzoom+CAMERA_ZOOM_OFFSET;
@@ -324,8 +326,8 @@ PlayStateScreen::~PlayStateScreen(void)
     if (gf != NULL)
         delete gf;
     curstage.free();
-    GFX::freeTex(hud);
-    GFX::freeTex(icons);
+    delete hud;
+    delete icons;
     if (inst != NULL)
         delete inst;
     if (vocals != NULL)

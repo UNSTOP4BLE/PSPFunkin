@@ -1,6 +1,8 @@
 #pragma once
 
 #include <SDL2/SDL.h>
+#include <string>   
+#include <vector>   
 
 namespace GFX {
 
@@ -12,13 +14,23 @@ public:
     T x, y, w, h;
 };
 
-typedef SDL_Texture Texture;
+class Texture {
+private:
+    SDL_Texture *handle;
+public:
+    inline Texture(void)
+    : handle(nullptr) {}
+    inline SDL_Texture *getHandle(void) {
+        return handle;
+    }
+
+    ~Texture(void);
+    bool load(const char *path);
+};
 
 void init(void);
 void clear(int color);
 void flip(void);
-Texture *loadTex(const char *path);
-void freeTex(Texture *tex);
 template<typename T> void drawTex(Texture* tex, GFX::RECT<int> *Img, GFX::RECT<T> *Disp, float angle, int alpha);
 template<typename T> void drawTexZoom(Texture* tex, GFX::RECT<int> *Img, GFX::RECT<T> *Disp, float angle, int alpha, float zoom);
 };

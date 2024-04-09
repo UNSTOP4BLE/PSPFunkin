@@ -3,8 +3,7 @@
 #include "../app.h"
 #include "../screen.h"
 #include <SDL2/SDL_image.h>
-
-#include "memory.h"
+#include "hash.h"
 
 namespace GFX {
 
@@ -23,18 +22,23 @@ void flip(void) {
     SDL_RenderPresent(app->renderer);
 }
 
-Texture *loadTex(const char *path) {
-    Texture *psptex = NULL;
-    psptex = IMG_LoadTexture(app->renderer, path);
-    std::string errmsg = "loading texture " + static_cast<std::string>(path) + " is NULL";
-    ASSERTFUNC(psptex, errmsg.c_str());
-    return psptex;
+
+Texture::~Texture(void) {
+    if (handle) {
+        SDL_DestroyTexture(handle);
+    }
 }
 
-void freeTex(Texture *tex) {
-    if (tex != NULL)
-        SDL_DestroyTexture(tex);
+bool Texture::load(const char *path) {
+    if (handle)
+        return true; // already loaded
+
+    handle = IMG_LoadTexture(app->renderer, path);
+    std::string errmsg = "loading texture " + static_cast<std::string>(path) + " is NULL";
+    ASSERTFUNC(handle, errmsg.c_str());
+    return true;
 }
+
 /*
 typedef enum
 {
@@ -44,16 +48,16 @@ typedef enum
 } SDL_ScaleMode;
 */
 template<typename T> void drawTex(Texture* tex, GFX::RECT<int> *Img, GFX::RECT<T> *Disp, float angle, int alpha) {
-    ASSERTFUNC(tex, "texture is NULL");
+    ASSERTFUNC(tex->getHandle(), "texture is NULL");
 
     if (Disp->x+Disp->w >= 0 && Disp->x <= SCREEN_WIDTH && Disp->y+Disp->h >= 0 && Disp->y <= SCREEN_HEIGHT)
     {
         SDL_Rect _img = {static_cast<int>(Img->x), static_cast<int>(Img->y), static_cast<int>(Img->w), static_cast<int>(Img->h)};
         SDL_Rect _disp = {static_cast<int>(Disp->x), static_cast<int>(Disp->y), static_cast<int>(Disp->w), static_cast<int>(Disp->h)};
 
-        SDL_SetTextureAlphaMod(tex, alpha);
-        SDL_SetTextureScaleMode(tex, SDL_ScaleModeBest);
-        ASSERTFUNC(SDL_RenderCopyEx(app->renderer, tex, &_img, &_disp, static_cast<double>(angle), NULL, SDL_FLIP_NONE) >= 0, "failed to display sprite");
+        SDL_SetTextureAlphaMod(tex->getHandle(), alpha);
+        SDL_SetTextureScaleMode(tex->getHandle(), SDL_ScaleModeBest);
+        ASSERTFUNC(SDL_RenderCopyEx(app->renderer, tex->getHandle(), &_img, &_disp, static_cast<double>(angle), NULL, SDL_FLIP_NONE) >= 0, "failed to display sprite");
     }
 }
 
