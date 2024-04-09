@@ -27,7 +27,7 @@
         {
             "name": "psp-debug",
             "displayName": "Debug (PSP)",
-            "binaryDir": "${sourceDir}/build",
+            "binaryDir": "${sourceDir}/build-debug",
             "generator": "Unix Makefiles",
             "cacheVariables": {
                 "CMAKE_TOOLCHAIN_FILE": "$env{PSPDEV}/psp/share/pspdev.cmake",
@@ -37,7 +37,7 @@
         {
             "name": "psp-release",
             "displayName": "Release (PSP)",
-            "binaryDir": "${sourceDir}/build-debug",
+            "binaryDir": "${sourceDir}/build",
             "generator": "Unix Makefiles",
             "cacheVariables": {
                 "CMAKE_TOOLCHAIN_FILE": "$env{PSPDEV}/psp/share/pspdev.cmake",
