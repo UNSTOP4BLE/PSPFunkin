@@ -2,6 +2,7 @@
 
 #include "../screen.h"
 #include "../psp/tween.h"
+#include "../psp/animation.h"
 #include <string>            
 #include <vector>  
 
@@ -13,7 +14,9 @@ public:
     ~MainMenuScreen(void); 
 private:
     GFX::Texture *background;
+    //selections
     int selection;
+    Anim_OBJECT *menu_selections[4];
     std::string selectedsong;
     std::vector<std::string> songs;
     Tween<float, QuadInEasing, Chrono> backgroundy;

@@ -6,7 +6,16 @@
 #include "file.h"
 
 Anim_OBJECT::Anim_OBJECT(void) {   
+    //reset vars
+    cantick = cananimate = false;
+    curframe = 0;
+    mode = ModeNone;
 
+    curanim.anim = 0;
+    curanim.tex = 0;
+    curanim.framecount = 0;
+    curanim.endtime = 0;
+    frame.setValue(0);
 }
 
 Anim_OBJECT::Anim_OBJECT(std::string path, std::string objname)
@@ -91,9 +100,9 @@ void Anim_OBJECT::tick(void)
 {
     if (cantick && cananimate)
     {
-        if (static_cast<int>(frame.getValue())+1 > curanim.framecount) {
-           cantick = false;
-           return;
+        if (static_cast<int>(frame.getValue())+1 > curanim.framecount-1) {
+            cantick = false;
+            return;
         }
         if (static_cast<int>(frame.getValue()) < 0)
             return;
