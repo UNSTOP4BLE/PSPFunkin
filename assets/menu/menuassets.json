@@ -39,13 +39,13 @@
     ],
 
     "config": [
-        [24,  0,  1,  2], //donate
-        [24,  3,  4,  5], //donate white
-        [24,  6,  7,  8], //freeplay
-        [24,  9, 10, 11], //freeplay white
-        [24, 12, 13, 14], //options
-        [24, 15, 16, 17], //options white
         [24, 18, 19, 20], //story mode
-        [24, 21, 22, 23] //story mode white
+        [24,  6,  7,  8], //freeplay
+        [24, 12, 13, 14], //options
+        [24,  0,  1,  2], //donate
+        [24, 21, 22, 23],  //story mode white
+        [24,  9, 10, 11], //freeplay white
+        [24, 15, 16, 17], //options white
+        [24,  3,  4,  5] //donate white
     ]
 }

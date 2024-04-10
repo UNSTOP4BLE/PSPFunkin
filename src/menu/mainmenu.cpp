@@ -1,37 +1,20 @@
 #include "mainmenu.h"
 #include "../main.h"
-#include "../screen.h"
-#include "../psp/font.h"
 #include "../app.h"
 
-#include <dirent.h>
-#include <stdio.h>
+#include "storymode.h"
+#include "freeplay.h"
+#include "options.h"
+#include "donate.h"
 
-#include "../playstate.h"
+#define MENU_SPACING 50
+#define BACKGROUND_SPEED 0.2
 
 MainMenuScreen::MainMenuScreen(void) {
-    setScreenCol(0xFF00FF00);
     background = new GFX::Texture();
     background->load("assets/menu/back.png");
-    backgroundy.setValue(GFX::SCREEN_HEIGHT/2 - 331/2);
     selection = 0;
-
-    const char* PATH = "assets/songs";
-
-    DIR *dir = opendir(PATH);
-
-    struct dirent *entry = readdir(dir);
-
-    while (entry != NULL)
-    {
-        std::string name(entry->d_name);
-        printf("song(%s)\n", name.c_str());
-        songs.push_back(name);
-
-        entry = readdir(dir);
-    }
-
-    closedir(dir);
+    backgroundy.setValue(-(static_cast<int>(COUNT_OF(menu_selections))/2)*10*selection);
 
     //initialize menu select sprites
     for (int i = 0; i < static_cast<int>(COUNT_OF(menu_selections)); i++)
@@ -39,63 +22,76 @@ MainMenuScreen::MainMenuScreen(void) {
         menu_selections[i] = new Anim_OBJECT("assets/menu/", "menuassets.json");
         menu_selections[i]->setAnim(0, ModeNone);
     }
-
-
-//    selectedsong = songs[0];
 }
 
 void MainMenuScreen::update(void) 
 {
-
     for (int i = 0; i < static_cast<int>(COUNT_OF(menu_selections)); i++)
     {
         menu_selections[i]->tick();
         int frame = i;
-        if (i != 0)
-            frame = 0;
+        if (selection == i)
+            frame += static_cast<int>(COUNT_OF(menu_selections));
 
         if (!menu_selections[i]->cantick)
             menu_selections[i]->setAnim(frame, ModeNone);
     }
-    
-/*
-    if (app->event.isPressed(Input::MENU_DOWN))
+   
+    if (app->event.isPressed(Input::MENU_UP))
     {
         selection -= 1;
         if (selection < 0)
             selection = 0;
-        backgroundy.setValue(0, 1.0);
+
+        backgroundy.setValue(-(static_cast<int>(COUNT_OF(menu_selections))/2)*10*selection, BACKGROUND_SPEED);
     }
-    else if (app->event.isPressed(Input::MENU_UP))    
+    else if (app->event.isPressed(Input::MENU_DOWN))    
     {
         selection += 1;
-        if (selection > static_cast<int>(songs.size()-1))
-            selection = static_cast<int>(songs.size()-1);
-        backgroundy.setValue(400, 1.0);
+        if (selection > static_cast<int>(COUNT_OF(menu_selections)-1))
+            selection = static_cast<int>(COUNT_OF(menu_selections)-1);
+        backgroundy.setValue(-(static_cast<int>(COUNT_OF(menu_selections))/2)*10*selection, BACKGROUND_SPEED);
     }
-    selectedsong = songs[selection];
-
     if (app->event.isPressed(Input::MENU_ENTER))
-        setScreen(new PlayStateScreen(selectedsong)); */
+    {
+        switch (selection)
+        {
+            case 0: //story mode
+                setScreen(new StoryModeScreen()); 
+                break;
+            case 1: //freeplay
+                setScreen(new FreeplayScreen()); 
+                break;
+            case 2: //options
+                setScreen(new OptionsScreen()); 
+                break;
+            case 3: //donate
+                setScreen(new DonateScreen()); 
+                break;
+        }
+    }
 }
 
 void MainMenuScreen::draw(void) 
 {
     GFX::RECT<int> background_img = {0, 0, 512, 331};
-    GFX::RECT<float> background_disp = {GFX::SCREEN_WIDTH/2 - 583/2, backgroundy.getValue(), 583, 331};
+    GFX::RECT<float> background_disp = {GFX::SCREEN_WIDTH/2 - 700/2, backgroundy.getValue(), 700, 397};
     GFX::drawTex<float>(background, &background_img, &background_disp, 0, 255);
 
     int y = 0;
     for (int i = 0; i < static_cast<int>(COUNT_OF(menu_selections)); i++)
     {
-        menu_selections[i]->draw(GFX::SCREEN_WIDTH/2 - menu_selections[i]->frames[menu_selections[i]->curframe].w/2, y + (GFX::SCREEN_HEIGHT/2 - menu_selections[i]->frames[menu_selections[i]->curframe].h/2), 0, 255, 1);
-        y += 50;
+        menu_selections[i]->draw(GFX::SCREEN_WIDTH/2 - menu_selections[i]->frames[menu_selections[i]->curframe].w/2, y + (25 + menu_selections[i]->frames[menu_selections[i]->curframe].h/2), 0, 255, 1);
+        y += MENU_SPACING;
     }
-
-    PrintFont(Left, 0, 20, "press up and down to switch song, song: %s", selectedsong.c_str());
 }
 
 MainMenuScreen::~MainMenuScreen(void) 
 {
     delete background;
+
+    for (int i = 0; i < static_cast<int>(COUNT_OF(menu_selections)); i++)
+    {
+        delete menu_selections[i];
+    }
 }

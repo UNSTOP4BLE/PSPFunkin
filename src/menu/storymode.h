@@ -2,20 +2,19 @@
 
 #include "../screen.h"
 #include "../psp/tween.h"
-#include "../psp/animation.h"
 #include <string>            
 #include <vector>  
 
-class MainMenuScreen : public Screen {
+class StoryModeScreen : public Screen {
 public:
-    MainMenuScreen(void);
+    StoryModeScreen(void);
     void update(void);
     void draw(void);
-    ~MainMenuScreen(void); 
+    ~StoryModeScreen(void); 
 private:
     GFX::Texture *background;
     //selections
     int selection;
-    Anim_OBJECT *menu_selections[4];
+    std::vector<std::string> songs;
     Tween<float, QuadInOutEasing, Chrono> backgroundy;
 };

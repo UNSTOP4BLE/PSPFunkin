@@ -51,7 +51,7 @@ static int Font_GetW(Font *font, const char *str)
 bool boldAnim;
 int animtimer;
 
-static void PrintMSG(GFX::Texture *tex, Font *font, int x, int y, const char *str, bool bold, Align all)
+static void PrintMSG(GFX::Texture *tex, Font *font, int x, int y, const char *str, Align all)
 {   
     //Draw string character by character
     int c;
@@ -77,9 +77,9 @@ static void PrintMSG(GFX::Texture *tex, Font *font, int x, int y, const char *st
             x = xhold;
             if (all == Center)
                 x -= Font_GetW(font, str) >> 1;
-            if (bold)
-                y += 38;
-            else
+   //         if (bold)
+       //         y += 38;
+     //       else
                 y += 11;
         }   
         //Shift and validate character
@@ -88,13 +88,13 @@ static void PrintMSG(GFX::Texture *tex, Font *font, int x, int y, const char *st
         
         //Draw character
         GFX::RECT<int> font_Img = {font[c].charX, font[c].charY, font[c].charW, font[c].charH};
-        if (bold)
-        {
-            if (!boldAnim)
-                font_Img.y = font[c].charY;
-            else 
-                font_Img.y = font[c].charY + 138;
-        }
+      //  if (bold)
+       // {
+        //    if (!boldAnim)
+         //       font_Img.y = font[c].charY;
+          //  else 
+          //      font_Img.y = font[c].charY + 138;
+        //}
         GFX::RECT<int> font_Disp = {x, y, font[c].charW, font[c].charH};
         GFX::drawTex<int>(tex, &font_Img, &font_Disp, 0, 255);
         x += font[c].charW - 1;
@@ -102,7 +102,7 @@ static void PrintMSG(GFX::Texture *tex, Font *font, int x, int y, const char *st
 
 }
 
-static void PrintMSGZoom(GFX::Texture *tex, Font *font, int x, int y, const char *str, bool bold, Align all, float zoom)
+static void PrintMSGZoom(GFX::Texture *tex, Font *font, int x, int y, const char *str, Align all, float zoom)
 {   
     //Draw string character by character
     int c;
@@ -128,9 +128,9 @@ static void PrintMSGZoom(GFX::Texture *tex, Font *font, int x, int y, const char
             x = xhold;
             if (all == Center)
                 x -= Font_GetW(font, str) >> 1;
-            if (bold)
-                y += 38;
-            else
+       //     if (bold)
+        //        y += 38;
+         //   else
                 y += 11;
         }   
         //Shift and validate character
@@ -139,13 +139,13 @@ static void PrintMSGZoom(GFX::Texture *tex, Font *font, int x, int y, const char
         
         //Draw character
         GFX::RECT<int> font_Img = {font[c].charX, font[c].charY, font[c].charW, font[c].charH};
-        if (bold)
-        {
-            if (!boldAnim)
-                font_Img.y = font[c].charY;
-            else 
-                font_Img.y = font[c].charY + 138;
-        }
+      //  if (bold)
+       // {
+        //    if (!boldAnim)
+         //       font_Img.y = font[c].charY;
+          //  else 
+        //        font_Img.y = font[c].charY + 138;
+      //  }
         GFX::RECT<float> font_Disp = {static_cast<float>(x), static_cast<float>(y), static_cast<float>(font[c].charW), static_cast<float>(font[c].charH)};
         GFX::drawTexZoom<float>(tex, &font_Img, &font_Disp, 0, 255, zoom);
         x += font[c].charW - 1;
@@ -163,7 +163,7 @@ void PrintFont(Align all, int x, int y, const char *format, ...)
     std::vsprintf(string, format, list);
     va_end(list);
     
-    PrintMSG(tex.fonttex, fontmap, x, y, string, false, all);
+    PrintMSG(tex.fonttex, fontmap, x, y, string, all);
 }
 
 void PrintFontZoom(Align all, int x, int y, float zoom, const char *format, ...)
@@ -176,7 +176,7 @@ void PrintFontZoom(Align all, int x, int y, float zoom, const char *format, ...)
     std::vsprintf(string, format, list);
     va_end(list);
     
-    PrintMSGZoom(tex.fonttex, fontmap, x, y, string, false, all, zoom);
+    PrintMSGZoom(tex.fonttex, fontmap, x, y, string, all, zoom);
 }
 
 void Bold_Tick(void)
@@ -200,5 +200,5 @@ void PrintBOLD(Align all, int x, int y, const char *format, ...)
     std::vsprintf(string, format, list);
     va_end(list);
     
-    PrintMSG(tex.boldtex, boldmap, x, y, string, true, all);
+    PrintMSG(tex.boldtex, boldmap, x, y, string, all);
 }
