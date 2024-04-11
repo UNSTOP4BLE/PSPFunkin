@@ -2,33 +2,33 @@
 #include "../app.h"
 #include <dirent.h>
 #include <stdio.h>
+#include <algorithm>
 #include "../psp/font.h"
 
 #include "mainmenu.h"
+#include "../playstate.h"
 
 FreeplayScreen::FreeplayScreen(void) {
     background = new GFX::Texture();
     background->load("assets/menu/back.png");
     selection = 0;
+    texty.setValue(((selection)*20));
 
     const char* songsPath = "assets/songs";
 
     DIR *dir = opendir(songsPath);
 
-    struct dirent *entry = readdir(dir);
-
-    while (entry != NULL)
+    for (dirent *entry = readdir(dir); entry != NULL; entry = readdir(dir))
     {
+        //todo filter out . and .. 
         std::string name(entry->d_name);
-
-//        for (auto& x : name) { 
-  //          x = tolower(x); 
-    //    } 
+        if (name == "." || name == "..") 
+            continue;
+        for (auto& x : name)
+            x = std::toupper(x); 
 
         printf("song found(%s)\n", name.c_str());
         songs.push_back(name);
-
-        entry = readdir(dir);
     }
 
     closedir(dir);
@@ -53,15 +53,19 @@ void FreeplayScreen::update(void)
         selection -= 1;
         if (selection < 0)
             selection = 0;
+        texty.setValue(((selection)*20), 0.2);
     }
     else if (app->event.isPressed(Input::MENU_DOWN))    
     {
         selection += 1;
         if (selection > static_cast<int>(songs.size()-1))
             selection = static_cast<int>(songs.size()-1);
+        texty.setValue(((selection)*20), 0.2);
     }
     if (app->event.isPressed(Input::MENU_ENTER))
-    {}
+    {
+        setScreen(new PlayStateScreen(songs[selection]));
+    }
 
     if (app->event.isPressed(Input::MENU_ESCAPE))
     {
@@ -77,8 +81,19 @@ void FreeplayScreen::draw(void)
 
     for (int i = 0; i < static_cast<int>(songs.size()); i++)
     {
-        PrintBOLD(Center, GFX::SCREEN_WIDTH/2, 25+(i*15), "%s", songs[i].c_str());
+        app->boldFont->setZoom(1.5);
+        int alpha = 128;
+        if (selection == i) //set alpha to full if song is selected
+            alpha = 255;
+        app->boldFont->setAlpha(alpha);
+
+        //replace - with space when drawing song
+        std::string cursong = songs[i];
+        std::replace(cursong.begin(), cursong.end(), '-', ' '); 
+
+        app->boldFont->Print(Left, static_cast<int>((50+((i-selection)*2)) * 1.5), static_cast<int>((60 + -texty.getValue() + (i*20)) * 1.5), "%s", cursong.c_str());
     }
+    app->normalFont->Print(Left, 0, 20, "%s", songs[selection].c_str());
 }
 
 FreeplayScreen::~FreeplayScreen(void) 

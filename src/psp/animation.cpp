@@ -100,13 +100,13 @@ void Anim_OBJECT::tick(void)
 {
     if (cantick && cananimate)
     {
-        if (static_cast<int>(frame.getValue())+1 > curanim.framecount-1) {
-            cantick = false;
-            return;
-        }
         if (static_cast<int>(frame.getValue()) < 0)
             return;
         curframe = conf[curanim.anim][static_cast<int>(frame.getValue())];
+        if (static_cast<int>(frame.getValue()+1) > curanim.framecount-1) {
+            cantick = false;
+            return;
+        }
         curanim.tex = frames[curframe].tex;
     }
     

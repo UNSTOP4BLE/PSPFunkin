@@ -41,7 +41,7 @@ void ErrMSG(const char *filename, const char *function, int line, const char *ex
     while(1)
     {
         GFX::clear(app->screenCol);
-        PrintFont(Left, 0, 0, errstr);
+        app->normalFont->Print(Left, 0, 0, errstr);
         GFX::flip();
     }
 }
@@ -63,7 +63,8 @@ int main()
     app->audioMixer = new Audio::Mixer();
     app->audioMixer->start();
     GFX::init();
-    FntInit();
+    app->normalFont = new FontManager(Font_Font, "assets/font/font.png");
+    app->boldFont = new FontManager(Font_Bold, "assets/font/boldfont.png");
     setScreenCol(0xFF00FF00);
     
 #ifdef PSP
@@ -97,7 +98,7 @@ int main()
         ASSERTFUNC(app->currentScreen, "screen is NULL");                
         app->currentScreen->update();  
         app->currentScreen->draw();  
-        PrintFont(Left, 0, 0, "FPS: %d", static_cast<int>(fps));
+        app->normalFont->Print(Left, 0, 0, "FPS: %d", static_cast<int>(fps));
         GFX::flip();
 
         auto current = std::chrono::high_resolution_clock::now();

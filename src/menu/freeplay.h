@@ -16,5 +16,5 @@ private:
     //selections
     int selection;
     std::vector<std::string> songs;
-    Tween<float, QuadInOutEasing, Chrono> backgroundy;
+    Tween<float, QuadInOutEasing, Chrono> texty;
 };

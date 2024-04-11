@@ -5,6 +5,8 @@
 #include "timer.h"
 #include "screen.h"
 #include "psp/input.h"
+#include "psp/font.h"
+
 
 //#ifndef PSP
 #include <SDL2/SDL.h>
@@ -18,6 +20,8 @@ public:
     SDL_Renderer *renderer;
     SDL_Surface *screenSurface;
     Input::Event event;
+    FontManager *boldFont;
+    FontManager *normalFont;
 //#endif
     Timer timer;
     Audio::Mixer *audioMixer;

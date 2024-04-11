@@ -1,38 +1,33 @@
 #include "font.h"
-#include "../main.h"
+#include "../app.h"
 #include <cstdarg>
 #include <string>  
 #include <cstring>  
 #include <cstdio>
-#include "gfx.h"
-#include "../app.h"
-
-struct Font
-{   // X pos  Y pos  width  height 
-    int charX, charY, charW, charH;
-};
-
-struct Tex
-{
-    GFX::Texture* fonttex; 
-    GFX::Texture* boldtex; 
-};
-
-Tex tex;
 
 //include the fontmaps
 #include "fonts/font_font.h"
 #include "fonts/font_bold.h"
 
-void FntInit()
+FontManager::FontManager(Fonts dafont, const char *path)
 {   
-    tex.fonttex = new GFX::Texture();
-    tex.boldtex = new GFX::Texture();
-    tex.fonttex->load("assets/font/font.png");
-    tex.boldtex->load("assets/font/boldfont.png");
+    zoom = 1;
+    alpha = 255;
+    tex = new GFX::Texture();
+    font = dafont;
+    tex->load(path);
+    switch (dafont)
+    {
+        case Font_Font:
+            fontmap = font_fontmap;
+            break;
+        case Font_Bold:
+            fontmap = font_boldmap;
+            break;
+    }
 }
 
-static int Font_GetW(Font *font, const char *str)
+int FontManager::GetW(const char *str)
 {
     int c;
     int width = 0;
@@ -43,15 +38,17 @@ static int Font_GetW(Font *font, const char *str)
             continue;
             
         //Add width
-        width += font[c].charW;
+        width += fontmap[c].charW;
     }
     return width;
 }
-    
-bool boldAnim;
-int animtimer;
 
-static void PrintMSG(GFX::Texture *tex, Font *font, int x, int y, const char *str, Align all)
+int FontManager::GetH()
+{
+    return fontmap[33].charH;
+}
+    
+void FontManager::PrintMSG(int x, int y, const char *str, Align all)
 {   
     //Draw string character by character
     int c;
@@ -60,15 +57,16 @@ static void PrintMSG(GFX::Texture *tex, Font *font, int x, int y, const char *st
     switch (all)
     {
         case Center:
-            x -= Font_GetW(font, str) >> 1;
+            x -= GetW(str) >> 1;
             break;
         case Left:
             break;
         case Right:
-            x -= Font_GetW(font, str);
+            x -= GetW(str);
             break;
     }
-
+    x*=zoom;
+    y*=zoom;
 
     while ((c = *str++) != '\0')
     {
@@ -76,84 +74,31 @@ static void PrintMSG(GFX::Texture *tex, Font *font, int x, int y, const char *st
         {
             x = xhold;
             if (all == Center)
-                x -= Font_GetW(font, str) >> 1;
-   //         if (bold)
-       //         y += 38;
-     //       else
-                y += 11;
+                x -= GetW(str) >> 1;
+            y += GetH();
+            y += 3;
         }   
         //Shift and validate character
         if ((c -= 0x20) >= 0x60)
             continue;
         
         //Draw character
-        GFX::RECT<int> font_Img = {font[c].charX, font[c].charY, font[c].charW, font[c].charH};
-      //  if (bold)
-       // {
-        //    if (!boldAnim)
-         //       font_Img.y = font[c].charY;
-          //  else 
-          //      font_Img.y = font[c].charY + 138;
-        //}
-        GFX::RECT<int> font_Disp = {x, y, font[c].charW, font[c].charH};
-        GFX::drawTex<int>(tex, &font_Img, &font_Disp, 0, 255);
-        x += font[c].charW - 1;
-    }
-
-}
-
-static void PrintMSGZoom(GFX::Texture *tex, Font *font, int x, int y, const char *str, Align all, float zoom)
-{   
-    //Draw string character by character
-    int c;
-    int xhold = x;
-    
-    switch (all)
-    {
-        case Center:
-            x -= Font_GetW(font, str) >> 1;
-            break;
-        case Left:
-            break;
-        case Right:
-            x -= Font_GetW(font, str);
-            break;
-    }
-
-
-    while ((c = *str++) != '\0')
-    {
-        if (c == '\n')
+        GFX::RECT<int> font_Img = {fontmap[c].charX, fontmap[c].charY, fontmap[c].charW, fontmap[c].charH};
+        if (font == Font_Bold)
         {
-            x = xhold;
-            if (all == Center)
-                x -= Font_GetW(font, str) >> 1;
-       //     if (bold)
-        //        y += 38;
-         //   else
-                y += 11;
-        }   
-        //Shift and validate character
-        if ((c -= 0x20) >= 0x60)
-            continue;
-        
-        //Draw character
-        GFX::RECT<int> font_Img = {font[c].charX, font[c].charY, font[c].charW, font[c].charH};
-      //  if (bold)
-       // {
-        //    if (!boldAnim)
-         //       font_Img.y = font[c].charY;
-          //  else 
-        //        font_Img.y = font[c].charY + 138;
-      //  }
-        GFX::RECT<float> font_Disp = {static_cast<float>(x), static_cast<float>(y), static_cast<float>(font[c].charW), static_cast<float>(font[c].charH)};
-        GFX::drawTexZoom<float>(tex, &font_Img, &font_Disp, 0, 255, zoom);
-        x += font[c].charW - 1;
+            if (!(static_cast<int>(app->timer.elapsedMS()/10) % 2))
+                font_Img.y = fontmap[c].charY;
+            else 
+                font_Img.y = fontmap[c].charY + 69;
+        }
+        GFX::RECT<int> font_Disp = {x, y, fontmap[c].charW, fontmap[c].charH};
+        GFX::drawTexZoom<int>(tex, &font_Img, &font_Disp, 0, alpha, zoom);
+        x += fontmap[c].charW - 1;
     }
 
 }
 
-void PrintFont(Align all, int x, int y, const char *format, ...)
+void FontManager::Print(Align all, int x, int y, const char *format, ...)
 {
     va_list list;
     
@@ -163,42 +108,17 @@ void PrintFont(Align all, int x, int y, const char *format, ...)
     std::vsprintf(string, format, list);
     va_end(list);
     
-    PrintMSG(tex.fonttex, fontmap, x, y, string, all);
+    PrintMSG(x, y, string, all);
+    setZoom(1);
+    setAlpha(255);
 }
 
-void PrintFontZoom(Align all, int x, int y, float zoom, const char *format, ...)
+void FontManager::setZoom(float _zoom)
 {
-    va_list list;
-    
-    char string[256] = "";
-
-    va_start(list, format);
-    std::vsprintf(string, format, list);
-    va_end(list);
-    
-    PrintMSGZoom(tex.fonttex, fontmap, x, y, string, all, zoom);
+    zoom = _zoom;
 }
 
-void Bold_Tick(void)
+void FontManager::setAlpha(int _alpha)
 {
-    animtimer += 1 + app->deltatime;
-
-    if (animtimer > 3)
-    {
-        boldAnim = !boldAnim;
-        animtimer = 0;
-    }
-}
-
-void PrintBOLD(Align all, int x, int y, const char *format, ...)
-{   
-    va_list list;
-    
-    char string[256] = "";
-
-    va_start(list, format);
-    std::vsprintf(string, format, list);
-    va_end(list);
-    
-    PrintMSG(tex.boldtex, boldmap, x, y, string, all);
+    alpha = _alpha;
 }

@@ -1,4 +1,4 @@
-Font fontmap[0x60] = {
+Font font_fontmap[0x60] = {
     {128, 30, 4, 9},  //space
     {80, 20, 3, 9}, //!
     {104, 30, 5, 9}, //"

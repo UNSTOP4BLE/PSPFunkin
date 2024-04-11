@@ -314,7 +314,8 @@ void PlayStateScreen::draw(void)
 
     drawHealthBar();
     drawIcons();
-    PrintFontZoom(Center, GFX::SCREEN_WIDTH/2+11, GFX::SCREEN_HEIGHT/2+120, hudcam.zoom.getValue(), "Score: %d | Misses: %d   combo: %d",  score, misses, combo.combo);
+    app->normalFont->setZoom(hudcam.zoom.getValue());
+    app->normalFont->Print(Center, GFX::SCREEN_WIDTH/2+11, GFX::SCREEN_HEIGHT/2+120, "Score: %d | Misses: %d   combo: %d",  score, misses, combo.combo);
 }
 
 PlayStateScreen::~PlayStateScreen(void)

@@ -55,7 +55,6 @@ void TitleScreen::update(void)
 
     app->parser.justStep = false;
     app->parser.tickStep(freaky);
-    Bold_Tick(); //animate bold font
 
     if (app->parser.justStep && !(app->parser.curStep % 4))
     {
@@ -76,8 +75,6 @@ void TitleScreen::update(void)
 
 void TitleScreen::draw(void) 
 {
-    if (freaky->isPlaying())
-    PrintFont(Left, 0, 0, "time %d", app->parser.songTime);
     //NG logo 
     GFX::RECT<int> NG_img = {0, 0, 90, 88};
     GFX::RECT<int> NG_disp = {GFX::SCREEN_WIDTH / 2 - 90/2, (GFX::SCREEN_HEIGHT / 2 + 88/2) - 20, 90, 88};
@@ -87,44 +84,44 @@ void TitleScreen::draw(void)
             switch (app->parser.curBeat) 
             {
                 case 3:
-                    PrintBOLD(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2 + 76, "PRESENT");
+                    app->boldFont->Print(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2 + 38, "PRESENT");
                         [[fallthrough]];
                 case 2:
                         [[fallthrough]];
                 case 1:
-                    PrintBOLD(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2 - 114, "UNSTOPABLE");
-                    PrintBOLD(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2 - 76,  "IGORSOU");
-                    PrintBOLD(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2 - 38,  "MAXDEV");
-                    PrintBOLD(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2,       "SPICYJPEG");
-                    PrintBOLD(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2 + 38,  "BILIOUS");
+                    app->boldFont->Print(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2 - 57, "UNSTOPABLE");
+                    app->boldFont->Print(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2 - 38,  "IGORSOU");
+                    app->boldFont->Print(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2 - 19,  "MAXDEV");
+                    app->boldFont->Print(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2,       "SPICYJPEG");
+                    app->boldFont->Print(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2 + 19,  "BILIOUS");
                     break;
                 case 7:
-                    PrintBOLD(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2 - 20, "NEWGROUNDS");
+                    app->boldFont->Print(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2 - 10, "NEWGROUNDS");
                     GFX::drawTex<int>(ng, &NG_img, &NG_disp, 0, 255);
                         [[fallthrough]];
                 case 6:
                         [[fallthrough]];
                 case 5:
-                    PrintBOLD(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2 - 96, "IN ASSOCIATION");
-                    PrintBOLD(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2 - 58, "WITH");
+                    app->boldFont->Print(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2 - 48, "IN ASSOCIATION");
+                    app->boldFont->Print(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2 - 29, "WITH");
                     break;
 
                 case 11:
-                    PrintBOLD(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2, funnymessage[1].c_str());
+                    app->boldFont->Print(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2, funnymessage[1].c_str());
                         [[fallthrough]];
                 case 10:
                         [[fallthrough]];
                 case 9:
-                    PrintBOLD(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2 - 38, funnymessage[0].c_str());
+                    app->boldFont->Print(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2 - 19, funnymessage[0].c_str());
                     break;
                 case 15:
-                    PrintBOLD(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2 + 18, "FUNKIN");
+                    app->boldFont->Print(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2 + 9, "FUNKIN");
                         [[fallthrough]];
                 case 14:
-                    PrintBOLD(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2 - 20, "NIGHT");
+                    app->boldFont->Print(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2 - 10, "NIGHT");
                         [[fallthrough]];
                 case 13:
-                    PrintBOLD(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2 - 58, "FRIDAY");
+                    app->boldFont->Print(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2 - 29, "FRIDAY");
                     break;
                 case 16:
                     state = Flash;
