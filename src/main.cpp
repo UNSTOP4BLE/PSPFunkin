@@ -80,7 +80,7 @@ int main()
     float fps = 0;
     while(1)
     {
-        auto last = std::chrono::high_resolution_clock::now();
+        std::chrono::time_point<std::chrono::system_clock> last = std::chrono::high_resolution_clock::now();
         
         GFX::clear(app->screenCol);
 #ifndef PSP
@@ -101,9 +101,8 @@ int main()
         app->normalFont->Print(Left, 0, 0, "FPS: %d", static_cast<int>(fps));
         GFX::flip();
 
-        auto current = std::chrono::high_resolution_clock::now();
-        app->deltatime = std::chrono::duration_cast<std::chrono::milliseconds>(current - last).count();
-
+        std::chrono::time_point<std::chrono::system_clock> current = std::chrono::high_resolution_clock::now();
+        app->deltatime = static_cast<double>(std::chrono::duration_cast<std::chrono::milliseconds>(current - last).count());
         if (fpsTimer.elapsedMS()/1000 > 0.5){
             fps = 1 / (app->deltatime / 1000);
             fpsTimer.stop();
