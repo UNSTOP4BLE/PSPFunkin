@@ -190,7 +190,7 @@ void PlayStateScreen::update(void)
     }
     else
     {
-        app->parser.songTime += app->deltatime; 
+        app->parser.songTime += 25;//app->deltatime; 
         
         if (app->parser.justStep) {
             switch (app->parser.curStep)

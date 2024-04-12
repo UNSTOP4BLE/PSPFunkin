@@ -107,9 +107,10 @@ void GFCharacter::draw(float cx, float cy, float cz) {
 
 Character::~Character(void) {
     delete obj;
+    printf("deletingobj %s \n", type.c_str());
 }
 
 GFCharacter::~GFCharacter(void) {
-    Character::~Character();
-//    delete obj_speaker;
+    delete obj_speaker;
+    printf("deletingobj speaker\n");
 }
