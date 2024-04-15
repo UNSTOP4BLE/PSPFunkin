@@ -5,6 +5,17 @@ set(CMAKE_CXX_STANDARD         17)
 
 project(PSPFunkin LANGUAGES C CXX)
 
+if (VITA)
+include("${VITASDK}/share/vita.cmake" REQUIRED)
+find_package(SDL2 REQUIRED)
+set(VITA_APP_NAME "PSPFunkin Vita")
+# Unique ID must be exactly 9 characters. Recommended: XXXXYYYYY where X =
+# unique string of developer and Y = a unique number for this app
+set(VITA_TITLEID  "VSDK00007")
+# Optional version string to show in LiveArea's more info screen
+set(VITA_VERSION  "01.00")
+endif()
+
 #glob all files
 file(GLOB MY_SRCS src/*.cpp src/*/*.cpp)
 
@@ -32,15 +43,16 @@ foreach(_in _out IN ZIP_LISTS _charts _built_charts)
     if(${_in} MATCHES "config\.json$")
         continue()
     endif()
+    message("BUILT CHART ${_out}")
     add_custom_command(
         OUTPUT ${_out}
-        COMMAND ${_chtbin} ${_out} ${PROJECT_SOURCE_DIR}/${_in}
+        COMMAND ${_chtbin} ${PROJECT_SOURCE_DIR}/${_in} ${_out}
         DEPENDS ${PROJECT_SOURCE_DIR}/${_in}
         COMMENT "Building chart ${_out}"
     )
 endforeach()
+add_custom_target(charts ALL DEPENDS ${_out})
 
-#file(COPY ${_built_charts} DESTINATION ${PROJECT_BINARY_DIR}/assets)
 add_executable(${PROJECT_NAME} ${MY_SRCS})
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra)
 
@@ -80,6 +92,19 @@ if(PSP)
         TITLE ${PROJECT_NAME}
     )
 else()
+
+    if (VITA)
+        set(JSON_INCLUDE_DIR "$ENV{VITASDK}/arm-vita-eabi/include/jsoncpp")
+
+        # Add any additional include paths here
+        include_directories(
+          ${JSON_INCLUDE_DIR}
+        )
+        target_link_libraries(${PROJECT_NAME} PRIVATE
+            SDL2::SDL2
+        )
+    endif()
+
     find_package(SDL2) 
     find_package(jsoncpp) 
     
@@ -95,4 +120,16 @@ else()
         z 
         m  
     )
+endif()
+
+if (VITA)
+## Create Vita files
+vita_create_self(${PROJECT_NAME}.self ${PROJECT_NAME})
+# The FILE directive lets you add additional files to the VPK, the syntax is
+# FILE src_path dst_path_in_vpk. In this case, we add the LiveArea paths.
+vita_create_vpk(${PROJECT_NAME}.vpk ${VITA_TITLEID} ${PROJECT_NAME}.self
+  VERSION ${VITA_VERSION}
+  NAME ${VITA_APP_NAME}
+  FILE assets assets
+)
 endif()

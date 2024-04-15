@@ -5,7 +5,27 @@
         "minor": 20,
         "patch": 0
     },
-    "configurePresets": [
+    "configurePresets": [        
+        {
+            "name": "3ds-test",
+            "displayName": "Release (3DS)",
+            "binaryDir": "${sourceDir}/build-debug",
+            "generator": "Unix Makefiles",
+            "cacheVariables": {
+                "CMAKE_TOOLCHAIN_FILE": "$env{DEVKITPRO}/cmake/3DS.cmake",
+                "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+            }
+        },    
+        {
+            "name": "vita-test",
+            "displayName": "Release (VITA)",
+            "binaryDir": "${sourceDir}/build",
+            "generator": "Unix Makefiles",
+            "cacheVariables": {
+                "CMAKE_TOOLCHAIN_FILE": "$env{VITASDK}/share/vita.toolchain.cmake",
+                "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+            }
+        },
         {
             "name": "pc-debug",
             "displayName": "Debug (PC)",

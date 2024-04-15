@@ -8,7 +8,8 @@
 #include "character.h"
 #include "app.h"
 
-#include "menu/mainmenu.h"
+#include "menu/freeplay.h"
+#include "menu/storymode.h"
 
 #define CAMERA_ZOOM_OFFSET 0.3
 Rating::Rating(std::string name, int hitwindow, float ratingmod, int score, bool splash)
@@ -18,10 +19,11 @@ ratingMod(ratingmod),
 score(score),
 noteSplash(splash) {}
 
-void PlayStateScreen::initscr(std::string song) {
+void PlayStateScreen::initscr(std::string song, bool _freeplay) {
     setScreenCol(0xFF00FF00);
     app->timer.start();
     //reset vars
+    isfreeplay = _freeplay;
     combo.init();
     ghosttap = false;
     botplay = false;
@@ -42,7 +44,7 @@ void PlayStateScreen::initscr(std::string song) {
     char _path[40];
     sprintf(_path, "assets/songs/%s/config.json", cursong.c_str());
     Json::Value _config;
-    loadJson(_path, &_config);
+    loadJson(getPath(_path).c_str(), &_config);
 
     //next song info
     nextsong = _config["next"].asString();
@@ -51,55 +53,55 @@ void PlayStateScreen::initscr(std::string song) {
 
     //player
     sprintf(_path, "assets/characters/%s/", _config["player"].asString().c_str());
-    player = new Character(_path, _config["player"].asString() + ".json", _config["playerpos"][0].asFloat(), _config["playerpos"][1].asFloat());
+    player = new Character(getPath(_path).c_str(), _config["player"].asString() + ".json", _config["playerpos"][0].asFloat(), _config["playerpos"][1].asFloat());
     player->setFocus(_config["playerpos"][2].asFloat(), _config["playerpos"][3].asFloat(),  _config["playerpos"][4].asFloat());
 
     //opponent
     sprintf(_path, "assets/characters/%s/", _config["opponent"].asString().c_str());
-    opponent = new Character(_path, _config["opponent"].asString() + ".json", _config["opponentpos"][0].asFloat(), _config["opponentpos"][1].asFloat());
+    opponent = new Character(getPath(_path).c_str(), _config["opponent"].asString() + ".json", _config["opponentpos"][0].asFloat(), _config["opponentpos"][1].asFloat());
     opponent->setFocus(_config["opponentpos"][2].asFloat(), _config["opponentpos"][3].asFloat(),  _config["opponentpos"][4].asFloat());
 
     //gf    
     sprintf(_path, "assets/characters/%s/", _config["gf"].asString().c_str());
-    gf = new GFCharacter(_path, _config["gf"].asString() + ".json", _config["gfpos"][0].asFloat(), _config["gfpos"][1].asFloat());
+    gf = new GFCharacter(getPath(_path).c_str(), _config["gf"].asString() + ".json", _config["gfpos"][0].asFloat(), _config["gfpos"][1].asFloat());
 
     //stage
     sprintf(_path, "assets/stages/%s/%s.json", _config["back"].asString().c_str(), _config["back"].asString().c_str()); 
-    curstage.load(_path, _config["back"].asString());
+    curstage.load(getPath(_path).c_str(), _config["back"].asString());
 
     //load game assets
 
     //load sound effects
-    sfx_3 = Audio::loadFile("assets/sounds/intro3.wav");
-    sfx_2 = Audio::loadFile("assets/sounds/intro2.wav");
-    sfx_1 = Audio::loadFile("assets/sounds/intro1.wav");
-    sfx_go = Audio::loadFile("assets/sounds/introGo.wav");
+    sfx_3 = Audio::loadFile(getPath("assets/sounds/intro3.wav").c_str());
+    sfx_2 = Audio::loadFile(getPath("assets/sounds/intro2.wav").c_str());
+    sfx_1 = Audio::loadFile(getPath("assets/sounds/intro1.wav").c_str());
+    sfx_go = Audio::loadFile(getPath("assets/sounds/introGo.wav").c_str());
 
-    sfx_misses[0] = Audio::loadFile("assets/sounds/missnote1.wav");
-    sfx_misses[1] = Audio::loadFile("assets/sounds/missnote2.wav");
-    sfx_misses[2] = Audio::loadFile("assets/sounds/missnote3.wav");
+    sfx_misses[0] = Audio::loadFile(getPath("assets/sounds/missnote1.wav").c_str());
+    sfx_misses[1] = Audio::loadFile(getPath("assets/sounds/missnote2.wav").c_str());
+    sfx_misses[2] = Audio::loadFile(getPath("assets/sounds/missnote3.wav").c_str());
 
     sprintf(_path, "assets/songs/%s/%s.bin", cursong.c_str(), cursong.c_str()); //todo implement difficulty
-    app->parser.loadChart(_path);
+    app->parser.loadChart(getPath(_path).c_str());
     app->parser.songTime = -30 * app->parser.step_crochet; //always start at step -30
 
     sprintf(_path, "assets/songs/%s/Voices.ogg", cursong.c_str());
     if (access(_path, F_OK) == 0) //file exists
     {
-        vocals = new Audio::StreamedFile(*app->audioMixer, _path);
+        vocals = new Audio::StreamedFile(*app->audioMixer, getPath(_path).c_str());
         sprintf(_path, "assets/songs/%s/Inst.ogg", cursong.c_str());
-        inst = new Audio::StreamedFile(*app->audioMixer, _path);
+        inst = new Audio::StreamedFile(*app->audioMixer, getPath(_path).c_str());
     }
     else 
     {
         inst = NULL;
         sprintf(_path, "assets/songs/%s/Inst.ogg", cursong.c_str());
-        vocals = new Audio::StreamedFile(*app->audioMixer, _path);
+        vocals = new Audio::StreamedFile(*app->audioMixer, getPath(_path).c_str());
     }
     hud = new GFX::Texture();
-    hud->load("assets/hud.png");
+    hud->load(getPath("assets/hud.png").c_str());
     icons = new GFX::Texture();
-    icons->load("assets/icons.png");
+    icons->load(getPath("assets/icons.png").c_str());
     gamecam.camx = opponent->camx;
     gamecam.camy = opponent->camy;
     gamecam.basezoom = opponent->camzoom+CAMERA_ZOOM_OFFSET;
@@ -129,9 +131,9 @@ void PlayStateScreen::initscr(std::string song) {
     app->parser.chartdata.speed /= 5;
 }
 
-PlayStateScreen::PlayStateScreen(std::string song)
+PlayStateScreen::PlayStateScreen(std::string song, bool _freeplay)
 {
-    initscr(song);
+    initscr(song, _freeplay);
 }
 
 void PlayStateScreen::Camera::update(float ox, float oy, float oz, float px, float py, float pz) {
@@ -178,7 +180,7 @@ void PlayStateScreen::update(void)
 
         //limit health
         if (health <= 0){
-            setScreen(new MainMenuScreen());
+            setScreen(new FreeplayScreen());
             return;
         }
         else if (health > 1)
@@ -237,12 +239,16 @@ void PlayStateScreen::update(void)
         }
         else
         {
-            if (nextsong == "NULL" || nextsong == "null") {
-                setScreen(new MainMenuScreen());
+            if ((nextsong == "NULL" || nextsong == "null") || isfreeplay) {
+                setScreen(new FreeplayScreen());
             }
             else {
                 //reload the screen
-                setScreen(new PlayStateScreen(nextsong));
+
+                if ((nextsong == "NULL" || nextsong == "null"))
+                    setScreen(new StoryModeScreen());
+                else
+                    setScreen(new PlayStateScreen(nextsong, false));
             }
             return;
         }

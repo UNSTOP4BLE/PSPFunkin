@@ -12,14 +12,14 @@
 
 MainMenuScreen::MainMenuScreen(void) {
     background = new GFX::Texture();
-    background->load("assets/menu/back.png");
+    background->load(getPath("assets/menu/back.png").c_str());
     selection = 0;
     backgroundy.setValue(-(static_cast<int>(COUNT_OF(menu_selections))/2)*10*selection);
 
     //initialize menu select sprites
     for (int i = 0; i < static_cast<int>(COUNT_OF(menu_selections)); i++)
     {
-        menu_selections[i] = new Anim_OBJECT("assets/menu/", "menuassets.json");
+        menu_selections[i] = new Anim_OBJECT(getPath("assets/menu/").c_str(), "menuassets.json");
         menu_selections[i]->setAnim(0, ModeNone);
     }
 }

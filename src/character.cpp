@@ -111,6 +111,7 @@ Character::~Character(void) {
 }
 
 GFCharacter::~GFCharacter(void) {
+  //  Character::~Character();
     delete obj_speaker;
     printf("deletingobj speaker\n");
 }

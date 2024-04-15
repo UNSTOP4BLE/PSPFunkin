@@ -10,11 +10,11 @@
 
 FreeplayScreen::FreeplayScreen(void) {
     background = new GFX::Texture();
-    background->load("assets/menu/back.png");
+    background->load(getPath("assets/menu/back.png").c_str());
     selection = 0;
     texty.setValue(((selection)*20));
 
-    const char* songsPath = "assets/songs";
+    const char* songsPath = getPath("assets/songs").c_str();
 
     DIR *dir = opendir(songsPath);
 
@@ -64,7 +64,7 @@ void FreeplayScreen::update(void)
     }
     if (app->event.isPressed(Input::MENU_ENTER))
     {
-        setScreen(new PlayStateScreen(songs[selection]));
+        setScreen(new PlayStateScreen(songs[selection], true));
     }
 
     if (app->event.isPressed(Input::MENU_ESCAPE))

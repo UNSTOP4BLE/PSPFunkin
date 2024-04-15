@@ -34,7 +34,7 @@ public:
 
 class PlayStateScreen : public Screen {
 public:
-    PlayStateScreen(std::string song);
+    PlayStateScreen(std::string song, bool _freeplay);
     void update(void);
     void draw(void);
     ~PlayStateScreen(void);
@@ -46,7 +46,7 @@ private:
         Tween<float, QuadInOutEasing, Chrono> zoom;
         float basezoom;
     } gamecam, hudcam;
-    void initscr(std::string song);
+    void initscr(std::string song, bool _freeplay);
     void drawHealthBar(void);
     void drawIcons(void);
     void deleteNote(int &note, bool opponent);
@@ -59,7 +59,7 @@ private:
     //characters
     Character *player;
     Character *opponent;
-    Character *gf;
+    GFCharacter *gf;
     //stage
     Stage curstage;
     //textures
@@ -71,6 +71,7 @@ private:
     //other variables
     std::vector<Rating> ratingData;
     std::string cursong;
+    bool isfreeplay;
     std::string nextsong;
     NotePos notePos;
     //gameplay

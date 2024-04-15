@@ -5,7 +5,7 @@
 
 OptionsScreen::OptionsScreen(void) {
     background = new GFX::Texture();
-    background->load("assets/menu/back.png");
+    background->load(getPath("assets/menu/back.png").c_str());
     selection = 0;
 }
 

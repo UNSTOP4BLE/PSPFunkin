@@ -4,3 +4,4 @@
 
 void loadJson(const char *filename, Json::Value *data);
 std::vector<AnimFrames> readFramesFromJson(const char *filename);
+std::string getPath(std::string path);

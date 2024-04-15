@@ -63,11 +63,11 @@ int main()
     app->audioMixer = new Audio::Mixer();
     app->audioMixer->start();
     GFX::init();
-    app->normalFont = new FontManager(Font_Font, "assets/font/font.png");
-    app->boldFont = new FontManager(Font_Bold, "assets/font/boldfont.png");
+    app->normalFont = new FontManager(Font_Font, getPath("assets/font/font.png").c_str());
+    app->boldFont = new FontManager(Font_Bold, getPath("assets/font/boldfont.png").c_str());
     setScreenCol(0xFF00FF00);
-    
-#ifdef PSP
+
+#if defined(PSP) || defined(__vita__)
     Input::ControllerDevice inputDevice;
 #else
     Input::KeyboardDevice inputDevice;

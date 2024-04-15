@@ -34,3 +34,11 @@ std::vector<AnimFrames> readFramesFromJson(const char *filename)
     }
     return frames;
 }
+
+std::string getPath(std::string path) {
+    #ifdef __vita__ 
+        return "app0:/" + path;
+    #else
+        return path;
+    #endif
+}

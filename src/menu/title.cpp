@@ -25,7 +25,7 @@ TitleScreen::TitleScreen(void)
 
     //load menu jsons
     Json::Value titleJson;
-    loadJson("assets/menu/title/title.json", &titleJson);
+    loadJson(getPath("assets/menu/title/title.json").c_str(), &titleJson);
     
     int curmsg = rand() % (titleJson["messages"].size()); //get a random message
     funnymessage[0] = titleJson["messages"][curmsg][0].asString();
@@ -34,14 +34,14 @@ TitleScreen::TitleScreen(void)
     //load and play music
     app->parser.chartdata.bpm = titleJson["menuSongBPM"].asDouble();   
     app->parser.calcCrochet();
-    freaky = new Audio::StreamedFile(*app->audioMixer, "assets/music/freaky/freaky.ogg");
+    freaky = new Audio::StreamedFile(*app->audioMixer, getPath("assets/music/freaky/freaky.ogg").c_str());
     freaky->play(true);
-    confirm = Audio::loadFile("assets/sounds/confirmMenu.wav");
+    confirm = Audio::loadFile(getPath("assets/sounds/confirmMenu.wav").c_str());
    // app->audioMixer->playBuffer(*confirm);
     //load textures
 //    AnimOBJECT_Init(&titleGF, "assets/menu/title/gf/", "frames.json");
     ng = new GFX::Texture();
-    ng->load("assets/menu/title/ng.png");
+    ng->load(getPath("assets/menu/title/ng.png").c_str());
 
     //begin with a flash if you went back to title from menu
     if (state != Intro)
