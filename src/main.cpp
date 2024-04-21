@@ -56,10 +56,7 @@ int main()
 #ifdef PSP
     setupcallbacks();
 #endif
-  //  SDL_Init(SDL_INIT_AUDIO);
-//#else
     ASSERTFUNC(SDL_Init(SDL_INIT_EVERYTHING) >= 0, "failed to init sdl");
-//#endif
     app->audioMixer = new Audio::Mixer();
     app->audioMixer->start();
     GFX::init();

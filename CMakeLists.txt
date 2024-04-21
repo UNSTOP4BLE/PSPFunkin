@@ -1,135 +1,162 @@
 cmake_minimum_required(VERSION 3.20)
 
-set(CMAKE_C_STANDARD           11)
-set(CMAKE_CXX_STANDARD         17)
+project(
+    PSPFunkin
+    VERSION      "1.0.0"
+    DESCRIPTION  "pspfunki"
+    LANGUAGES    C CXX
+    HOMEPAGE_URL "https://github.com/UNSTOP4BLE/PSPFunkin"
+)
 
-project(PSPFunkin LANGUAGES C CXX)
-
-if (VITA)
-include("${VITASDK}/share/vita.cmake" REQUIRED)
-find_package(SDL2 REQUIRED)
-set(VITA_APP_NAME "PSPFunkin Vita")
-# Unique ID must be exactly 9 characters. Recommended: XXXXYYYYY where X =
-# unique string of developer and Y = a unique number for this app
-set(VITA_TITLEID  "VSDK00007")
-# Optional version string to show in LiveArea's more info screen
-set(VITA_VERSION  "01.00")
+if(DEFINED VITA)
+    include("${VITASDK}/share/vita.cmake" REQUIRED)
 endif()
 
-#glob all files
-file(GLOB MY_SRCS src/*.cpp src/*/*.cpp)
+## Settings
 
-#find the chart building program
-find_program(_chtbin
-    cht2bin REQUIRED
-    HINTS ${PROJECT_SOURCE_DIR}/cht2bin/build
+set(
+    PSPFUNKIN_DISPLAY_NAME "PSPFunkin"
+    CACHE STRING           "Game display name"
+)
+set(
+    PSPFUNKIN_GAME_ID "PSPF69420"
+    CACHE STRING      "Game ID in XXXXnnnnn format (currently only used in Vita build)"
 )
 
-#copy over the assets folder
-file(COPY ${PROJECT_SOURCE_DIR}/assets/ DESTINATION ${PROJECT_BINARY_DIR}/assets)
+## Chart and asset conversion
 
-#build charts 
+find_program(
+    PSPFUNKIN_CHT2BIN "cht2bin" REQUIRED
+    DOC   "Path to compiled cht2bin executable (from cht2bin subdirectory)"
+    HINTS "${PROJECT_SOURCE_DIR}/cht2bin/build"
+)
+
 file(
-    GLOB_RECURSE _charts
-    RELATIVE ${PROJECT_SOURCE_DIR}
-    assets/songs/*.json  
+    COPY        "${PROJECT_SOURCE_DIR}/assets/"
+    DESTINATION "${PROJECT_BINARY_DIR}/assets" NO_SOURCE_PERMISSIONS
+    PATTERN     "SOURCE_FILES" EXCLUDE
+    PATTERN     "pbp" EXCLUDE
+    PATTERN     "vpk" EXCLUDE
 )
-list(
-    TRANSFORM _charts REPLACE "\.json$" ".bin"
-    OUTPUT_VARIABLE _built_charts
+file(
+    GLOB_RECURSE charts
+    RELATIVE     "${PROJECT_SOURCE_DIR}"
+    "assets/songs/*.json"
 )
 
-foreach(_in _out IN ZIP_LISTS _charts _built_charts)
-    if(${_in} MATCHES "config\.json$")
+add_custom_target(charts ALL)
+
+foreach(input IN LISTS charts)
+    cmake_path(GET input PARENT_PATH parent)
+    cmake_path(GET input STEM LAST_ONLY name)
+
+    if("${name}" STREQUAL "config") # ignore config.json
         continue()
     endif()
-    message("BUILT CHART ${_out}")
+
+    set(output "${PROJECT_BINARY_DIR}/${parent}/${name}.bin")
     add_custom_command(
-        OUTPUT ${_out}
-        COMMAND ${_chtbin} ${PROJECT_SOURCE_DIR}/${_in} ${_out}
-        DEPENDS ${PROJECT_SOURCE_DIR}/${_in}
-        COMMENT "Building chart ${_out}"
+        OUTPUT  "${output}"
+        COMMAND "${PSPFUNKIN_CHT2BIN}" "${PROJECT_SOURCE_DIR}/${input}" "${output}"
+        DEPENDS "${PROJECT_SOURCE_DIR}/${input}"
+        COMMENT "Building chart ${output}"
     )
+    add_dependencies(charts "${output}")
 endforeach()
-add_custom_target(charts ALL DEPENDS ${_out})
 
-add_executable(${PROJECT_NAME} ${MY_SRCS})
-target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra)
+## Libraries
 
-if(PSP)
-    target_link_libraries(${PROJECT_NAME} PRIVATE
+find_library(libm m REQUIRED)
+find_package(SDL2 REQUIRED)
+
+set(
+    libraries
+    jsoncpp
+    ogg
+    vorbis
+    vorbisfile
+)
+set(
+    sdl_libraries
+    SDL2::SDL2
+    SDL2::SDL2_image
+)
+
+# HACK: PSPSDK pkg-config seems to be broken (but isn't needed)
+if(NOT DEFINED PSP)
+    foreach(library IN LISTS libraries)
+        pkg_check_modules(${library} ${library} REQUIRED IMPORTED_TARGET GLOBAL)
+    endforeach()
+endif()
+
+## Main executable
+
+file(
+    GLOB_RECURSE sources
+    RELATIVE     "${PROJECT_SOURCE_DIR}"
+    "src/*.cpp"
+)
+
+add_executable(main ${sources})
+target_include_directories(main PRIVATE "include")
+target_compile_features(main PRIVATE c_std_11 cxx_std_11)
+target_compile_options(main PRIVATE -Wall -Wextra)
+target_link_libraries(main PRIVATE ${libm} ${libraries} ${sdl_libraries})
+
+# HACK: make sure charts are built before main executable
+# (and thus before PSP/Vita packages)
+add_dependencies(main charts)
+
+## PSP build
+
+if(DEFINED PSP)
+    target_link_libraries(
+        main PRIVATE
+        GL
+        pspaudio
+        pspctrl
         pspdebug
         pspdisplay
         pspge
-        pspctrl
-        jsoncpp 
-        stdc++ 
-        pspaudio 
-        vorbisfile 
-        vorbis 
-        ogg 
-        SDL2 
-        SDL2_image #remove
-        jpeg #remove
-        png 
-        z 
-        pspgum 
-        pspgu 
-        m 
-        pspvram 
-        GL 
-        pspvfpu 
-        psphprm 
-        xmp 
+        pspgu
+        pspgum
+        psphprm
         pspprof
+        pspvfpu
+        pspvram
+        xmp
     )
-    target_include_directories(${PROJECT_NAME} PRIVATE include)
+
     create_pbp_file(
-        TARGET ${PROJECT_NAME}
-        ICON_PATH ${PROJECT_SOURCE_DIR}/ICON0.PNG
-        BACKGROUND_PATH ${PROJECT_SOURCE_DIR}/PIC1.PNG  
-        PREVIEW_PATH NULL
-        TITLE ${PROJECT_NAME}
-    )
-else()
-
-    if (VITA)
-        set(JSON_INCLUDE_DIR "$ENV{VITASDK}/arm-vita-eabi/include/jsoncpp")
-
-        # Add any additional include paths here
-        include_directories(
-          ${JSON_INCLUDE_DIR}
-        )
-        target_link_libraries(${PROJECT_NAME} PRIVATE
-            SDL2::SDL2
-        )
-    endif()
-
-    find_package(SDL2) 
-    find_package(jsoncpp) 
-    
-    target_link_libraries(${PROJECT_NAME} PRIVATE
-        jsoncpp 
-        stdc++ 
-        vorbisfile 
-        vorbis 
-        ogg 
-        SDL2 
-        SDL2_image
-        png 
-        z 
-        m  
+        TARGET          main
+        ICON_PATH       "${PROJECT_SOURCE_DIR}/assets/pbp/icon0.png"
+        BACKGROUND_PATH "${PROJECT_SOURCE_DIR}/assets/pbp/pic1.png"
+        PREVIEW_PATH    NULL
+        TITLE           "${PSPFUNKIN_DISPLAY_NAME}"
     )
 endif()
 
-if (VITA)
-## Create Vita files
-vita_create_self(${PROJECT_NAME}.self ${PROJECT_NAME})
-# The FILE directive lets you add additional files to the VPK, the syntax is
-# FILE src_path dst_path_in_vpk. In this case, we add the LiveArea paths.
-vita_create_vpk(${PROJECT_NAME}.vpk ${VITA_TITLEID} ${PROJECT_NAME}.self
-  VERSION ${VITA_VERSION}
-  NAME ${VITA_APP_NAME}
-  FILE assets assets
-)
+## Vita build
+
+if(DEFINED VITA)
+    # is this even needed?
+    #if (VITA)
+    #   target_include_directories(
+    #       main PRIVATE
+    #       "$ENV{VITASDK}/arm-vita-eabi/include/jsoncpp"
+    #   )
+    #endif()
+
+    vita_create_self(${PROJECT_NAME}.self main)
+
+    vita_create_vpk(
+        ${PROJECT_NAME}.vpk "${PSPFUNKIN_GAME_ID}" ${PROJECT_NAME}.self
+        VERSION "01.00" # dummy
+        NAME    "${PSPFUNKIN_DISPLAY_NAME}"
+        #FILE    "${PROJECT_SOURCE_DIR}/assets/vpk/icon0.png"    "sce_sys/icon0.png"
+        #FILE    "${PROJECT_SOURCE_DIR}/assets/vpk/bg.png"       "sce_sys/livearea/contents/bg.png"
+        #FILE    "${PROJECT_SOURCE_DIR}/assets/vpk/startup.png"  "sce_sys/livearea/contents/startup.png"
+        #FILE    "${PROJECT_SOURCE_DIR}/assets/vpk/template.xml" "sce_sys/livearea/contents/template.xml"
+        FILE    "${PROJECT_BINARY_DIR}/assets"                  "assets"
+    )
 endif()

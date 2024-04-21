@@ -263,13 +263,13 @@ void PlayStateScreen::drawHealthBar(void) {
     GFX::RECT<int> img = {1, 501, 320, 10};
     GFX::RECT<int> disp = {80, 235, img.w, 10};
     //player
-    GFX::drawTexZoom<int>(icons, &img, &disp, 0, 255, hudcam.zoom.getValue());
+    GFX::drawTex<int>(icons, &img, &disp, 0, 255, hudcam.zoom.getValue());
 
     //opponent
     img.y = 490;
     img.w = fabs(health - 1.0) * 320;
     disp.w = img.w;
-    GFX::drawTexZoom<int>(icons, &img, &disp, 0, 255, hudcam.zoom.getValue());
+    GFX::drawTex<int>(icons, &img, &disp, 0, 255, hudcam.zoom.getValue());
 }
 
 #define ICON_ROWS 12
@@ -284,7 +284,7 @@ void PlayStateScreen::drawIcons(void) {
                           ICON_SIZE};
 
     GFX::RECT<int> disp = {80+static_cast<int>(abs(health - 1.0)*320)-ICON_SIZE, 220, ICON_SIZE, ICON_SIZE};
-    GFX::drawTexZoom<int>(icons, &img, &disp, 0, 255, hudcam.zoom.getValue());
+    GFX::drawTex<int>(icons, &img, &disp, 0, 255, hudcam.zoom.getValue());
 
     //player
     dying = (health < 0.2 ? ICON_SIZE+1 : 0);
@@ -295,7 +295,7 @@ void PlayStateScreen::drawIcons(void) {
            ICON_SIZE};
 
     disp = {80+static_cast<int>(abs(health - 1.0)*320), 220, ICON_SIZE, ICON_SIZE};
-    GFX::drawTexZoom<int>(icons, &img, &disp, 0, 255, hudcam.zoom.getValue());
+    GFX::drawTex<int>(icons, &img, &disp, 0, 255, hudcam.zoom.getValue());
 }
 
 void PlayStateScreen::draw(void)
@@ -312,7 +312,7 @@ void PlayStateScreen::draw(void)
     combo.draw(hud, hudcam.zoom.getValue());
     
     if (app->parser.curStep < 0)
-        GFX::drawTexZoom<int>(hud, &countdown_img, &countdown_disp, 0, static_cast<int>(countdown_alpha.getValue()), hudcam.zoom.getValue());
+        GFX::drawTex<int>(hud, &countdown_img, &countdown_disp, 0, static_cast<int>(countdown_alpha.getValue()), hudcam.zoom.getValue());
 
     drawDummyNotes();
     drawNotes(false);

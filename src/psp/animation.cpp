@@ -127,6 +127,6 @@ void Anim_OBJECT::draw(float x, float y, float angle, int alpha, float zoom)
                                  static_cast<float>(frames[curframe].h)};
 
         ASSERTFUNC(textures[curanim.tex], "texture is NULL");   
-        GFX::drawTexZoom<float>(textures[curanim.tex], &img, &disp, angle, alpha, zoom);
+        GFX::drawTex<float>(textures[curanim.tex], &img, &disp, angle, alpha, zoom);
     }
 }

@@ -47,13 +47,20 @@ typedef enum
     SDL_ScaleModeBest     < anisotropic filtering 
 } SDL_ScaleMode;
 */
-template<typename T> void drawTex(Texture* tex, GFX::RECT<int> *Img, GFX::RECT<T> *Disp, float angle, int alpha) {
+
+template<typename T> void drawTex(Texture* tex, GFX::RECT<int> *Img, GFX::RECT<T> *Disp, float angle, int alpha, float zoom) {
+    //no need to check if the texture is null cus drawTex() does it
+    RECT<T> zoomDisp = {static_cast<T>((Disp->x * zoom) + (SCREEN_WIDTH * (1 - zoom) / 2)), static_cast<T>((Disp->y * zoom) + (SCREEN_HEIGHT * (1 - zoom) / 2)), static_cast<T>(Disp->w * zoom), static_cast<T>(Disp->h * zoom)};
+    zoomDisp.x *= SCALEFACTOR_X;
+    zoomDisp.y *= SCALEFACTOR_Y;
+    zoomDisp.w *= SCALEFACTOR_X;
+    zoomDisp.h *= SCALEFACTOR_Y;
     ASSERTFUNC(tex->getHandle(), "texture is NULL");
 
     if (Disp->x+Disp->w >= 0 && Disp->x <= SCREEN_WIDTH && Disp->y+Disp->h >= 0 && Disp->y <= SCREEN_HEIGHT)
     {
         SDL_Rect _img = {static_cast<int>(Img->x), static_cast<int>(Img->y), static_cast<int>(Img->w), static_cast<int>(Img->h)};
-        SDL_Rect _disp = {static_cast<int>(Disp->x), static_cast<int>(Disp->y), static_cast<int>(Disp->w), static_cast<int>(Disp->h)};
+        SDL_Rect _disp = {static_cast<int>(zoomDisp.x), static_cast<int>(zoomDisp.y), static_cast<int>(zoomDisp.w), static_cast<int>(zoomDisp.h)};
 
         SDL_SetTextureAlphaMod(tex->getHandle(), alpha);
         SDL_SetTextureScaleMode(tex->getHandle(), SDL_ScaleModeBest);
@@ -61,15 +68,6 @@ template<typename T> void drawTex(Texture* tex, GFX::RECT<int> *Img, GFX::RECT<T
     }
 }
 
-template void drawTex<int>(Texture* tex, GFX::RECT<int> *Img, GFX::RECT<int> *Disp, float angle, int alpha);
-template void drawTex<float>(Texture* tex, GFX::RECT<int> *Img, GFX::RECT<float> *Disp, float angle, int alpha);
-
-template<typename T> void drawTexZoom(Texture* tex, GFX::RECT<int> *Img, GFX::RECT<T> *Disp, float angle, int alpha, float zoom) {
-    //no need to check if the texture is null cus drawTex() does it
-    RECT<T> zoomDisp = {static_cast<T>((Disp->x - SCREEN_WIDTH/2) * zoom + SCREEN_WIDTH/2), static_cast<T>((Disp->y - SCREEN_HEIGHT/2) * zoom + SCREEN_HEIGHT/2), static_cast<T>(Disp->w * zoom), static_cast<T>(Disp->h * zoom)};
-    drawTex(tex, Img, &zoomDisp, angle, alpha);
-}
-
-template void drawTexZoom<int>(Texture* tex, GFX::RECT<int> *Img, GFX::RECT<int> *Disp, float angle, int alpha, float zoom);
-template void drawTexZoom<float>(Texture* tex, GFX::RECT<int> *Img, GFX::RECT<float> *Disp, float angle, int alpha, float zoom);
+template void drawTex<int>(Texture* tex, GFX::RECT<int> *Img, GFX::RECT<int> *Disp, float angle, int alpha, float zoom);
+template void drawTex<float>(Texture* tex, GFX::RECT<int> *Img, GFX::RECT<float> *Disp, float angle, int alpha, float zoom);
 };

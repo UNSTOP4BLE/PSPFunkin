@@ -13,7 +13,7 @@ void PlayStateScreen::drawDummyNotes(void)
         
         //opponent
         GFX::RECT<float> disp = {notePos.opponent[i].x - hudcam.camx.getValue(), notePos.opponent[i].y - hudcam.camy.getValue(), static_cast<float>(img.w), static_cast<float>(img.h)};  
-        GFX::drawTexZoom<float>(hud, &img, &disp, 0, 200, hudcam.zoom.getValue());
+        GFX::drawTex<float>(hud, &img, &disp, 0, 200, hudcam.zoom.getValue());
 
         //player
         if (checkPadHeld[i] && notehit[i]) //hit
@@ -41,7 +41,7 @@ void PlayStateScreen::drawDummyNotes(void)
         }
 
         disp = {notePos.player[i].x - hudcam.camx.getValue(), notePos.player[i].y - hudcam.camy.getValue(), static_cast<float>(img.w), static_cast<float>(img.h)}; 
-        GFX::drawTexZoom<float>(hud, &img, &disp, 0, 200, hudcam.zoom.getValue());
+        GFX::drawTex<float>(hud, &img, &disp, 0, 200, hudcam.zoom.getValue());
     }
 }
 
@@ -81,7 +81,7 @@ void PlayStateScreen::drawSustain(int note, float y, int type, bool isopponent)
             continue; //stop drawing note if they were hit
         }
 
-        GFX::drawTexZoom<float>(hud, &img, &disp, 0, 200, hudcam.zoom.getValue());
+        GFX::drawTex<float>(hud, &img, &disp, 0, 200, hudcam.zoom.getValue());
     }
 }
 
@@ -126,7 +126,7 @@ void PlayStateScreen::drawNotes(bool isopponent)
                 static_cast<float>(img.h)
             };
 
-            GFX::drawTexZoom<float>(hud, &img, &disp, 0, 200, hudcam.zoom.getValue());
+            GFX::drawTex<float>(hud, &img, &disp, 0, 200, hudcam.zoom.getValue());
         }
 
     }

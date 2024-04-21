@@ -89,7 +89,7 @@ void Combo::draw(GFX::Texture *tex, float zoom)
             continue;
         if (objects[i].alpha < 0)
             objects[i].alpha = 0;
-//        GFX::drawTexZoom<int>(tex, &objects[i].img, &objects[i].disp, 0, static_cast<int>(objects[i].alpha), zoom);
+//        GFX::drawTex<int>(tex, &objects[i].img, &objects[i].disp, 0, static_cast<int>(objects[i].alpha), zoom);
     }*/
     
 }

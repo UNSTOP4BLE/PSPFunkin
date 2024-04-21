@@ -97,7 +97,7 @@ void TitleScreen::draw(void)
                     break;
                 case 7:
                     app->boldFont->Print(Center, GFX::SCREEN_WIDTH / 2, GFX::SCREEN_HEIGHT / 2 - 10, "NEWGROUNDS");
-                    GFX::drawTex<int>(ng, &NG_img, &NG_disp, 0, 255);
+                    GFX::drawTex<int>(ng, &NG_img, &NG_disp, 0, 255, 1);
                         [[fallthrough]];
                 case 6:
                         [[fallthrough]];
