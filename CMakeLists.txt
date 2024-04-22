@@ -44,8 +44,6 @@ file(
     "assets/songs/*.json"
 )
 
-add_custom_target(charts ALL)
-
 foreach(input IN LISTS charts)
     cmake_path(GET input PARENT_PATH parent)
     cmake_path(GET input STEM LAST_ONLY name)
@@ -55,37 +53,52 @@ foreach(input IN LISTS charts)
     endif()
 
     set(output "${PROJECT_BINARY_DIR}/${parent}/${name}.bin")
+    list(APPEND builtCharts "${output}")
+
     add_custom_command(
         OUTPUT  "${output}"
         COMMAND "${PSPFUNKIN_CHT2BIN}" "${PROJECT_SOURCE_DIR}/${input}" "${output}"
         DEPENDS "${PROJECT_SOURCE_DIR}/${input}"
         COMMENT "Building chart ${output}"
     )
-    add_dependencies(charts "${output}")
 endforeach()
 
-## Libraries
+add_custom_target(charts ALL DEPENDS ${builtCharts})
 
-find_library(libm m REQUIRED)
-find_package(SDL2 REQUIRED)
+## Libraries
 
 set(
     libraries
     jsoncpp
-    ogg
     vorbis
     vorbisfile
+    ogg
 )
 set(
-    sdl_libraries
-    SDL2::SDL2
-    SDL2::SDL2_image
+    sdlLibraries
+    SDL2
+    SDL2_image
+)
+set(
+    libraryDependencies
+    jpeg  # SDL2_image dependency
+    png   # SDL2_image dependency
+    z     # libpng dependency
 )
 
-# HACK: PSPSDK pkg-config seems to be broken (but isn't needed)
-if(NOT DEFINED PSP)
+foreach(library IN LISTS sdlLibraries)
+    find_package(${library} CONFIG REQUIRED)
+endforeach()
+
+# HACK: PSPSDK's pkg-config and SDL2 CMake scripts are broken, but the toolchain
+# already has all include paths set up
+if(DEFINED PSP)
+    list(APPEND libraries ${libraryDependencies})
+else()
+    find_package(PkgConfig REQUIRED)
+
     foreach(library IN LISTS libraries)
-        pkg_check_modules(${library} ${library} REQUIRED IMPORTED_TARGET GLOBAL)
+        pkg_check_modules(${library} REQUIRED IMPORTED_TARGET GLOBAL)
     endforeach()
 endif()
 
@@ -99,9 +112,9 @@ file(
 
 add_executable(main ${sources})
 target_include_directories(main PRIVATE "include")
-target_compile_features(main PRIVATE c_std_11 cxx_std_11)
+target_compile_features(main PRIVATE c_std_11 cxx_std_17)
 target_compile_options(main PRIVATE -Wall -Wextra)
-target_link_libraries(main PRIVATE ${libm} ${libraries} ${sdl_libraries})
+target_link_libraries(main PRIVATE m ${libraries} ${sdlLibraries})
 
 # HACK: make sure charts are built before main executable
 # (and thus before PSP/Vita packages)
@@ -129,8 +142,8 @@ if(DEFINED PSP)
 
     create_pbp_file(
         TARGET          main
-        ICON_PATH       "${PROJECT_SOURCE_DIR}/assets/pbp/icon0.png"
-        BACKGROUND_PATH "${PROJECT_SOURCE_DIR}/assets/pbp/pic1.png"
+        ICON_PATH       "${PROJECT_SOURCE_DIR}/ICON0.png"
+        BACKGROUND_PATH "${PROJECT_SOURCE_DIR}/PIC1.png"
         PREVIEW_PATH    NULL
         TITLE           "${PSPFUNKIN_DISPLAY_NAME}"
     )

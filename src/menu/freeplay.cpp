@@ -20,7 +20,6 @@ FreeplayScreen::FreeplayScreen(void) {
 
     for (dirent *entry = readdir(dir); entry != NULL; entry = readdir(dir))
     {
-        //todo filter out . and .. 
         std::string name(entry->d_name);
         if (name == "." || name == "..") 
             continue;
@@ -36,17 +35,6 @@ FreeplayScreen::FreeplayScreen(void) {
 
 void FreeplayScreen::update(void) 
 {
-    /*
-    for (int i = 0; i < static_cast<int>(COUNT_OF(menu_selections)); i++)
-    {
-        menu_selections[i]->tick();
-        int frame = i;
-        if (selection == i)
-            frame += static_cast<int>(COUNT_OF(menu_selections));
-
-        if (!menu_selections[i]->cantick)
-            menu_selections[i]->setAnim(frame, ModeNone);
-    }*/
    
     if (app->event.isPressed(Input::MENU_UP))
     {

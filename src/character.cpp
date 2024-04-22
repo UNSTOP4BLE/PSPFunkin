@@ -72,7 +72,7 @@ void Character::tick(void) {
     //set animations
     if (!issinging)
     {
-        if (app->parser.justStep && !(app->parser.curStep % 4))
+        if (app->parser.justStep && !(app->parser.curStep % 8))
             setAnim(0, ModeStep);
     }
 }

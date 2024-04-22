@@ -45,7 +45,7 @@ private:
         Tween<float, QuadInOutEasing, Chrono> camx, camy;
         Tween<float, QuadInOutEasing, Chrono> zoom;
         float basezoom;
-    } gamecam, hudcam;
+    } gamecam, hudcam, iconcam;
     void initscr(std::string song, bool _freeplay);
     void drawHealthBar(void);
     void drawIcons(void);

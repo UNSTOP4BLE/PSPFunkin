@@ -177,6 +177,10 @@ void PlayStateScreen::update(void)
         if (app->parser.justStep && !(app->parser.curStep % 16)) {
             gamecam.zoom.setValue(gamecam.basezoom+0.05, gamecam.basezoom, 0.2); 
         }
+        //bump icons
+        if (app->parser.justStep && !(app->parser.curStep % 4)) {
+            iconcam.zoom.setValue(0.04, 0, 0.2); 
+        }
 
         //limit health
         if (health <= 0){
@@ -244,7 +248,6 @@ void PlayStateScreen::update(void)
             }
             else {
                 //reload the screen
-
                 if ((nextsong == "NULL" || nextsong == "null"))
                     setScreen(new StoryModeScreen());
                 else
@@ -272,8 +275,8 @@ void PlayStateScreen::drawHealthBar(void) {
     GFX::drawTex<int>(icons, &img, &disp, 0, 255, hudcam.zoom.getValue());
 }
 
-#define ICON_ROWS 12
-#define ICON_SIZE 39
+#define ICON_ROWS 10
+#define ICON_SIZE 50
 void PlayStateScreen::drawIcons(void) {
     //opponent
     int dying = (health > 0.8 ? ICON_SIZE+1 : 0);
@@ -284,7 +287,7 @@ void PlayStateScreen::drawIcons(void) {
                           ICON_SIZE};
 
     GFX::RECT<int> disp = {80+static_cast<int>(abs(health - 1.0)*320)-ICON_SIZE, 220, ICON_SIZE, ICON_SIZE};
-    GFX::drawTex<int>(icons, &img, &disp, 0, 255, hudcam.zoom.getValue());
+    GFX::drawTex<int>(icons, &img, &disp, 0, 255, hudcam.zoom.getValue() + iconcam.zoom.getValue());
 
     //player
     dying = (health < 0.2 ? ICON_SIZE+1 : 0);
@@ -295,7 +298,7 @@ void PlayStateScreen::drawIcons(void) {
            ICON_SIZE};
 
     disp = {80+static_cast<int>(abs(health - 1.0)*320), 220, ICON_SIZE, ICON_SIZE};
-    GFX::drawTex<int>(icons, &img, &disp, 0, 255, hudcam.zoom.getValue());
+    GFX::drawTex<int>(icons, &img, &disp, 0, 255, hudcam.zoom.getValue() + iconcam.zoom.getValue());
 }
 
 void PlayStateScreen::draw(void)

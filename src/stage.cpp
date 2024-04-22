@@ -40,6 +40,7 @@ void Stage::free(void) {
         if (textures.size() == 0)
             return;
         delete textures[i].texture;
+        textures[i].texture = nullptr;
     }
 }
 

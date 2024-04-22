@@ -4,6 +4,7 @@
 #include <stdio.h>
 
 #include "mainmenu.h"
+#include "../playstate.h"
 
 StoryModeScreen::StoryModeScreen(void) {
     background = new GFX::Texture();
@@ -13,18 +14,6 @@ StoryModeScreen::StoryModeScreen(void) {
 
 void StoryModeScreen::update(void) 
 {
-    /*
-    for (int i = 0; i < static_cast<int>(COUNT_OF(menu_selections)); i++)
-    {
-        menu_selections[i]->tick();
-        int frame = i;
-        if (selection == i)
-            frame += static_cast<int>(COUNT_OF(menu_selections));
-
-        if (!menu_selections[i]->cantick)
-            menu_selections[i]->setAnim(frame, ModeNone);
-    }*/
-   
     if (app->event.isPressed(Input::MENU_UP))
     {
         selection -= 1;
@@ -38,7 +27,9 @@ void StoryModeScreen::update(void)
   //          selection = static_cast<int>(songs.size()-1);
     }
     if (app->event.isPressed(Input::MENU_ENTER))
-    {}
+    {
+        setScreen(new PlayStateScreen("bopeebo", false));
+    }
 
     if (app->event.isPressed(Input::MENU_ESCAPE))
     {
@@ -51,6 +42,8 @@ void StoryModeScreen::draw(void)
     GFX::RECT<int> background_img = {0, 0, 512, 331};
     GFX::RECT<float> background_disp = {GFX::SCREEN_WIDTH/2 - 700/2, GFX::SCREEN_HEIGHT/2 - 397/2, 700, 397};
     GFX::drawTex<float>(background, &background_img, &background_disp, 0, 255, 1);
+
+    app->normalFont->Print(Left, 50, 50, "only week 1 currently available \n(press x to start)");
 }
 
 StoryModeScreen::~StoryModeScreen(void) 

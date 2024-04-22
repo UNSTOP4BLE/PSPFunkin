@@ -64,6 +64,7 @@ Anim_OBJECT::~Anim_OBJECT(void)
         if (textures.size() == 0)
             return;
         delete textures[i];
+        textures[i] = nullptr;
     }
 }
 

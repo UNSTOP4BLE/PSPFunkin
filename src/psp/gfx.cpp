@@ -27,6 +27,7 @@ Texture::~Texture(void) {
     if (handle) {
         SDL_DestroyTexture(handle);
     }
+    handle = nullptr;
 }
 
 bool Texture::load(const char *path) {
