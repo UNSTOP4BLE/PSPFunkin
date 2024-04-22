@@ -142,8 +142,8 @@ if(DEFINED PSP)
 
     create_pbp_file(
         TARGET          main
-        ICON_PATH       "${PROJECT_SOURCE_DIR}/ICON0.png"
-        BACKGROUND_PATH "${PROJECT_SOURCE_DIR}/PIC1.png"
+        ICON_PATH       "${PROJECT_SOURCE_DIR}/ICON0.PNG"
+        BACKGROUND_PATH "${PROJECT_SOURCE_DIR}/PIC1.PNG"
         PREVIEW_PATH    NULL
         TITLE           "${PSPFUNKIN_DISPLAY_NAME}"
     )
