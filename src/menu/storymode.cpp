@@ -6,7 +6,10 @@
 #include "mainmenu.h"
 #include "../playstate.h"
 
-StoryModeScreen::StoryModeScreen(void) {
+StoryModeScreen::StoryModeScreen(int songpos) {
+    freaky = new Audio::StreamedFile(*app->audioMixer, getPath("assets/music/freaky/freaky.ogg").c_str());
+    freaky->play(true);
+    freaky->setPosition(songpos);
     background = new GFX::Texture();
     background->load(getPath("assets/menu/back.png").c_str());
     selection = 0;
@@ -14,6 +17,7 @@ StoryModeScreen::StoryModeScreen(void) {
 
 void StoryModeScreen::update(void) 
 {
+    freaky->process();
     if (app->event.isPressed(Input::MENU_UP))
     {
         selection -= 1;
@@ -33,7 +37,7 @@ void StoryModeScreen::update(void)
 
     if (app->event.isPressed(Input::MENU_ESCAPE))
     {
-        setScreen(new MainMenuScreen());
+        setScreen(new MainMenuScreen(freaky->getPosition()));
     }
 }
 
@@ -49,4 +53,5 @@ void StoryModeScreen::draw(void)
 StoryModeScreen::~StoryModeScreen(void) 
 {
     delete background;
+    delete freaky;
 }

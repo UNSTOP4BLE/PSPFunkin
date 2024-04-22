@@ -3,7 +3,10 @@
 
 #include "mainmenu.h"
 
-OptionsScreen::OptionsScreen(void) {
+OptionsScreen::OptionsScreen(int songpos) {
+    freaky = new Audio::StreamedFile(*app->audioMixer, getPath("assets/music/freaky/freaky.ogg").c_str());
+    freaky->play(true);
+    freaky->setPosition(songpos);
     background = new GFX::Texture();
     background->load(getPath("assets/menu/back.png").c_str());
     selection = 0;
@@ -11,6 +14,7 @@ OptionsScreen::OptionsScreen(void) {
 
 void OptionsScreen::update(void) 
 {
+    freaky->process();
     /*
     for (int i = 0; i < static_cast<int>(COUNT_OF(menu_selections)); i++)
     {
@@ -40,7 +44,7 @@ void OptionsScreen::update(void)
 
     if (app->event.isPressed(Input::MENU_ESCAPE))
     {
-        setScreen(new MainMenuScreen());
+        setScreen(new MainMenuScreen(freaky->getPosition()));
     }
 }
 
@@ -54,4 +58,5 @@ void OptionsScreen::draw(void)
 OptionsScreen::~OptionsScreen(void) 
 {
     delete background;
+    delete freaky;
 }

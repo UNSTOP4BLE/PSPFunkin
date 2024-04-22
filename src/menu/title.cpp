@@ -69,7 +69,7 @@ void TitleScreen::update(void)
         if (state != Title)
             state = Title;
         else
-            setScreen(new MainMenuScreen());
+            setScreen(new MainMenuScreen(freaky->getPosition()));
     }
 }
 

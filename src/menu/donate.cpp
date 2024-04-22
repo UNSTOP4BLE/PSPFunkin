@@ -3,16 +3,21 @@
 
 #include "mainmenu.h"
 
-DonateScreen::DonateScreen(void) {
+DonateScreen::DonateScreen(int songpos) {
+    freaky = new Audio::StreamedFile(*app->audioMixer, getPath("assets/music/freaky/freaky.ogg").c_str());
+    freaky->play(true);
+    freaky->setPosition(songpos);
     background = new GFX::Texture();
     background->load(getPath("assets/menu/back.png").c_str());
 }
 
 void DonateScreen::update(void) 
 {
+    freaky->process();
+
     if (app->event.isPressed(Input::MENU_ESCAPE))
     {
-        setScreen(new MainMenuScreen());
+        setScreen(new MainMenuScreen(freaky->getPosition()));
     }
 }
 
@@ -26,4 +31,5 @@ void DonateScreen::draw(void)
 DonateScreen::~DonateScreen(void) 
 {
     delete background;
+    delete freaky;
 }

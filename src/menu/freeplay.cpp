@@ -8,7 +8,10 @@
 #include "mainmenu.h"
 #include "../playstate.h"
 
-FreeplayScreen::FreeplayScreen(void) {
+FreeplayScreen::FreeplayScreen(int songpos) {
+    freaky = new Audio::StreamedFile(*app->audioMixer, getPath("assets/music/freaky/freaky.ogg").c_str());
+    freaky->play(true);
+    freaky->setPosition(songpos);
     background = new GFX::Texture();
     background->load(getPath("assets/menu/back.png").c_str());
     selection = 0;
@@ -35,6 +38,7 @@ FreeplayScreen::FreeplayScreen(void) {
 
 void FreeplayScreen::update(void) 
 {
+    freaky->process();
    
     if (app->event.isPressed(Input::MENU_UP))
     {
@@ -57,7 +61,7 @@ void FreeplayScreen::update(void)
 
     if (app->event.isPressed(Input::MENU_ESCAPE))
     {
-        setScreen(new MainMenuScreen());
+        setScreen(new MainMenuScreen(freaky->getPosition()));
     }
 }
 
@@ -87,4 +91,5 @@ void FreeplayScreen::draw(void)
 FreeplayScreen::~FreeplayScreen(void) 
 {
     delete background;
+    delete freaky;
 }

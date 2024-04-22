@@ -184,7 +184,7 @@ void PlayStateScreen::update(void)
 
         //limit health
         if (health <= 0){
-            setScreen(new FreeplayScreen());
+            setScreen(new FreeplayScreen(0));
             return;
         }
         else if (health > 1)
@@ -244,12 +244,12 @@ void PlayStateScreen::update(void)
         else
         {
             if ((nextsong == "NULL" || nextsong == "null") || isfreeplay) {
-                setScreen(new FreeplayScreen());
+                setScreen(new FreeplayScreen(0));
             }
             else {
                 //reload the screen
                 if ((nextsong == "NULL" || nextsong == "null"))
-                    setScreen(new StoryModeScreen());
+                    setScreen(new StoryModeScreen(0));
                 else
                     setScreen(new PlayStateScreen(nextsong, false));
             }

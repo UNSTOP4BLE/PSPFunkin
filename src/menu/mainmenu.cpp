@@ -10,7 +10,10 @@
 #define MENU_SPACING 50
 #define BACKGROUND_SPEED 0.2
 
-MainMenuScreen::MainMenuScreen(void) {
+MainMenuScreen::MainMenuScreen(int songpos) {
+    freaky = new Audio::StreamedFile(*app->audioMixer, getPath("assets/music/freaky/freaky.ogg").c_str());
+    freaky->play(true);
+    freaky->setPosition(songpos);
     background = new GFX::Texture();
     background->load(getPath("assets/menu/back.png").c_str());
     selection = 0;
@@ -26,6 +29,7 @@ MainMenuScreen::MainMenuScreen(void) {
 
 void MainMenuScreen::update(void) 
 {
+    freaky->process();
     for (int i = 0; i < static_cast<int>(COUNT_OF(menu_selections)); i++)
     {
         menu_selections[i]->tick();
@@ -57,16 +61,16 @@ void MainMenuScreen::update(void)
         switch (selection)
         {
             case 0: //story mode
-                setScreen(new StoryModeScreen()); 
+                setScreen(new StoryModeScreen(freaky->getPosition())); 
                 break;
             case 1: //freeplay
-                setScreen(new FreeplayScreen()); 
+                setScreen(new FreeplayScreen(freaky->getPosition())); 
                 break;
             case 2: //options
-                setScreen(new OptionsScreen()); 
+                setScreen(new OptionsScreen(freaky->getPosition())); 
                 break;
             case 3: //donate
-                setScreen(new DonateScreen()); 
+                setScreen(new DonateScreen(freaky->getPosition())); 
                 break;
         }
     }
@@ -94,4 +98,5 @@ MainMenuScreen::~MainMenuScreen(void)
     {
         delete menu_selections[i];
     }
+    delete freaky;
 }
