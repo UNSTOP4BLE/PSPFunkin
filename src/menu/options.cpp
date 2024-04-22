@@ -47,7 +47,7 @@ void OptionsScreen::update(void)
 void OptionsScreen::draw(void) 
 {
     GFX::RECT<int> background_img = {0, 0, 512, 331};
-    GFX::RECT<float> background_disp = {GFX::SCREEN_WIDTH/2 - 700/2, GFX::SCREEN_HEIGHT/2 - 397/2, 700, 397};
+    GFX::RECT<float> background_disp = {app->screenwidth/2 - 700/2, app->screenheight/2 - 397/2, 700, 397};
     GFX::drawTex<float>(background, &background_img, &background_disp, 0, 255, 1);
 }
 

@@ -70,8 +70,8 @@ add_custom_target(charts ALL DEPENDS ${builtCharts})
 set(
     libraries
     jsoncpp
-    vorbis
     vorbisfile
+    vorbis
     ogg
 )
 set(
@@ -80,25 +80,46 @@ set(
     SDL2_image
 )
 set(
+    pspLibraries
+    GL
+    pspaudio
+    pspctrl
+    pspdebug
+    pspdisplay
+    pspgu
+    pspge
+    pspgum
+    psphprm
+    pspprof
+    pspvfpu
+    pspvram
+    xmp
+)
+set(
     libraryDependencies
     jpeg  # SDL2_image dependency
     png   # SDL2_image dependency
     z     # libpng dependency
 )
 
-foreach(library IN LISTS sdlLibraries)
-    find_package(${library} CONFIG REQUIRED)
-endforeach()
-
-# HACK: PSPSDK's pkg-config and SDL2 CMake scripts are broken, but the toolchain
-# already has all include paths set up
 if(DEFINED PSP)
-    list(APPEND libraries ${libraryDependencies})
+    # HACK: PSPSDK's pkg-config and SDL2 CMake scripts are broken, but the
+    # toolchain already has all include paths set up
+    list(APPEND libraries ${libraryDependencies} ${pspLibraries})
 else()
     find_package(PkgConfig REQUIRED)
 
     foreach(library IN LISTS libraries)
-        pkg_check_modules(${library} REQUIRED IMPORTED_TARGET GLOBAL)
+        pkg_check_modules(${library} REQUIRED IMPORTED_TARGET GLOBAL ${library})
+    endforeach()
+
+    foreach(library IN LISTS sdlLibraries)
+        find_package(${library} CONFIG)
+
+        # HACK: because *of course* CMake's package search doesn't always work
+        if(NOT ${library}_FOUND)
+            pkg_check_modules(${library} REQUIRED IMPORTED_TARGET GLOBAL ${library})
+        endif()
     endforeach()
 endif()
 
@@ -123,23 +144,6 @@ add_dependencies(main charts)
 ## PSP build
 
 if(DEFINED PSP)
-    target_link_libraries(
-        main PRIVATE
-        GL
-        pspaudio
-        pspctrl
-        pspdebug
-        pspdisplay
-        pspge
-        pspgu
-        pspgum
-        psphprm
-        pspprof
-        pspvfpu
-        pspvram
-        xmp
-    )
-
     create_pbp_file(
         TARGET          main
         ICON_PATH       "${PROJECT_SOURCE_DIR}/ICON0.PNG"
@@ -152,13 +156,13 @@ endif()
 ## Vita build
 
 if(DEFINED VITA)
-    # is this even needed?
-    #if (VITA)
-    #   target_include_directories(
-    #       main PRIVATE
-    #       "$ENV{VITASDK}/arm-vita-eabi/include/jsoncpp"
-    #   )
-    #endif()
+    target_link_libraries(main PRIVATE
+        SDL2::SDL2
+    )
+    target_include_directories(
+        main PRIVATE
+         "$ENV{VITASDK}/arm-vita-eabi/include/jsoncpp"
+    )
 
     vita_create_self(${PROJECT_NAME}.self main)
 

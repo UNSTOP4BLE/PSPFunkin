@@ -69,12 +69,12 @@ void Combo::tick(void)
             objects[i].falling = true;
         
         if (objects[i].falling) {
-            objects[objectindex].y.setValue(GFX::SCREEN_HEIGHT, 0.3);
+            objects[objectindex].y.setValue(app->screenheight, 0.3);
             if (objects[i].timer > 0)
                 objects[i].alpha -= 4;
         }
         //destroy object
-        if (objects[i].y.getValue() >= GFX::SCREEN_HEIGHT)
+        if (objects[i].y.getValue() >= app->screenheight)
             objects[i].tick = false;
         objects[i].disp = {static_cast<int>(objects[i].x), static_cast<int>(objects[i].y.getValue()), 100, 50};
     }*/

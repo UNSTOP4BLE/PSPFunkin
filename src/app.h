@@ -15,6 +15,8 @@
 class PSPFunkin
 {
 public:
+    int screenwidth;
+    int screenheight;
 //#ifndef PSP
     SDL_Window *window;
     SDL_Renderer *renderer;

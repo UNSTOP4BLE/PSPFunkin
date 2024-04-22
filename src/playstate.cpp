@@ -32,7 +32,7 @@ void PlayStateScreen::initscr(std::string song, bool _freeplay) {
     health = 0.5;
     countdown_alpha.setValue(0);
     countdown_img = {311, 205, 200, 90};
-    countdown_disp = {(GFX::SCREEN_WIDTH/2) - (countdown_img.w/2), (GFX::SCREEN_HEIGHT/2) - (countdown_img.h/2), countdown_img.w, countdown_img.h};
+    countdown_disp = {(app->screenwidth/2) - (countdown_img.w/2), (app->screenheight/2) - (countdown_img.h/2), countdown_img.w, countdown_img.h};
 
     //init animation
     for (int i = 0; i < 4; i ++)
@@ -324,7 +324,7 @@ void PlayStateScreen::draw(void)
     drawHealthBar();
     drawIcons();
     app->normalFont->setZoom(hudcam.zoom.getValue());
-    app->normalFont->Print(Center, GFX::SCREEN_WIDTH/2+11, GFX::SCREEN_HEIGHT/2+120, "Score: %d | Misses: %d   combo: %d",  score, misses, combo.combo);
+    app->normalFont->Print(Center, app->screenwidth/2+11, app->screenheight/2+120, "Score: %d | Misses: %d   combo: %d",  score, misses, combo.combo);
 }
 
 PlayStateScreen::~PlayStateScreen(void)
@@ -406,7 +406,7 @@ void PlayStateScreen::updateInput(void)
         int curNotey = static_cast<int>(((notes[i].pos - app->parser.songTime) * app->parser.chartdata.speed) + notePos.opponent[type].y);
 
         //note is below the screen, so go back to index 0
-        if (curNotey > GFX::SCREEN_HEIGHT)
+        if (curNotey > app->screenheight)
             break;
 
         //delete note if hit
@@ -433,7 +433,7 @@ void PlayStateScreen::updateInput(void)
         int curNotey = static_cast<int>(((notes[i].pos - app->parser.songTime) * app->parser.chartdata.speed) + notePos.player[type].y);
       
         //note is below the screen, so go back to index 0
-        if (curNotey > GFX::SCREEN_HEIGHT)
+        if (curNotey > app->screenheight)
             break;
 
         //delete note if offscreen

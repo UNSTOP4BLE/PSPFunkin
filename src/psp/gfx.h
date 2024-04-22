@@ -6,19 +6,6 @@
 
 namespace GFX {
 
-#if defined(__vita__)
-constexpr int SCREEN_WIDTH  = 960;
-constexpr int SCREEN_HEIGHT = 544;
-#elif defined(PSP)
-constexpr int SCREEN_WIDTH  = 480;
-constexpr int SCREEN_HEIGHT = 272;
-#else
-constexpr int SCREEN_WIDTH  = 1280;
-constexpr int SCREEN_HEIGHT = 720;
-#endif
-constexpr float SCALEFACTOR_X = SCREEN_WIDTH/480;
-constexpr float SCALEFACTOR_Y = SCREEN_HEIGHT/272;
-
 template<typename T> struct RECT {
 public:
     T x, y, w, h;

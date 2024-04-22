@@ -75,13 +75,13 @@ void MainMenuScreen::update(void)
 void MainMenuScreen::draw(void) 
 {
     GFX::RECT<int> background_img = {0, 0, 512, 331};
-    GFX::RECT<float> background_disp = {GFX::SCREEN_WIDTH/2 - 700/2, backgroundy.getValue(), 700, 397};
+    GFX::RECT<float> background_disp = {app->screenwidth/2 - 700/2, backgroundy.getValue(), 700, 397};
     GFX::drawTex<float>(background, &background_img, &background_disp, 0, 255, 1);
 
     int y = 0;
     for (int i = 0; i < static_cast<int>(COUNT_OF(menu_selections)); i++)
     {
-        menu_selections[i]->draw(GFX::SCREEN_WIDTH/2 - menu_selections[i]->frames[menu_selections[i]->curframe].w/2, y + (25 + menu_selections[i]->frames[menu_selections[i]->curframe].h/2), 0, 255, 1);
+        menu_selections[i]->draw(app->screenwidth/2 - menu_selections[i]->frames[menu_selections[i]->curframe].w/2, y + (25 + menu_selections[i]->frames[menu_selections[i]->curframe].h/2), 0, 255, 1);
         y += MENU_SPACING;
     }
 }

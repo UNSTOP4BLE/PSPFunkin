@@ -101,7 +101,7 @@ void PlayStateScreen::drawNotes(bool isopponent)
         int curNotex = note.x;
         int curNotey = static_cast<int>(((notes[i].pos - app->parser.songTime) * app->parser.chartdata.speed) + note.y);
         //note is below the screen, so go back to index 0
-        if (curNotey > GFX::SCREEN_HEIGHT)
+        if (curNotey > app->screenheight)
             break;
         if (curNotey+(notes[i].sus * app->parser.chartdata.speed) < 0 && notes[i].sus != 0) {
             deleteNote(i, isopponent);
