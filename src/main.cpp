@@ -70,7 +70,7 @@ int main()
     Input::KeyboardDevice inputDevice;
 #endif
     app->timer.start();
-    setScreen(new TitleScreen());
+    setScreen(new TitleScreen(0, Intro));
 
     Timer fpsTimer;
     fpsTimer.start();

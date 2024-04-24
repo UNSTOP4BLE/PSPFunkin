@@ -11,15 +11,7 @@
 
 #include "mainmenu.h"
 
-enum TitleStates
-{
-    Intro,
-    Flash,
-    Title
-};
-TitleStates state;
-
-TitleScreen::TitleScreen(void) 
+TitleScreen::TitleScreen(int songpos, TitleStates _state) 
 {
     setScreenCol(0xFF000000);
 
@@ -36,6 +28,7 @@ TitleScreen::TitleScreen(void)
     app->parser.calcCrochet();
     freaky = new Audio::StreamedFile(*app->audioMixer, getPath("assets/music/freaky/freaky.ogg").c_str());
     freaky->play(true);
+    freaky->setPosition(songpos);
     confirm = Audio::loadFile(getPath("assets/sounds/confirmMenu.wav").c_str());
    // app->audioMixer->playBuffer(*confirm);
     //load textures
@@ -43,6 +36,7 @@ TitleScreen::TitleScreen(void)
     ng = new GFX::Texture();
     ng->load(getPath("assets/menu/title/ng.png").c_str());
 
+    state = _state;
     //begin with a flash if you went back to title from menu
     if (state != Intro)
         state = Flash;

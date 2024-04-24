@@ -2,6 +2,7 @@
 #include "../main.h"
 #include "../app.h"
 
+#include "title.h"
 #include "storymode.h"
 #include "freeplay.h"
 #include "options.h"
@@ -74,13 +75,18 @@ void MainMenuScreen::update(void)
                 break;
         }
     }
+    if (app->event.isPressed(Input::MENU_ESCAPE))
+    {
+        setScreen(new TitleScreen(freaky->getPosition(), Flash)); 
+    }
 }
 
 void MainMenuScreen::draw(void) 
 {
     GFX::RECT<int> background_img = {0, 0, 512, 331};
     GFX::RECT<float> background_disp = {app->screenwidth/2 - 700/2, backgroundy.getValue(), 700, 397};
-    GFX::drawTex<float>(background, &background_img, &background_disp, 0, 255, 1);
+    GFX::drawColTex<float>(background, &background_img, &background_disp, 0, 255, 1, 
+                            253, 232, 113);
 
     int y = 0;
     for (int i = 0; i < static_cast<int>(COUNT_OF(menu_selections)); i++)

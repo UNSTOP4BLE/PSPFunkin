@@ -69,8 +69,8 @@ void FreeplayScreen::draw(void)
 {
     GFX::RECT<int> background_img = {0, 0, 512, 331};
     GFX::RECT<float> background_disp = {app->screenwidth/2 - 700/2, app->screenheight/2 - 397/2, 700, 397};
-    GFX::drawTex<float>(background, &background_img, &background_disp, 0, 255, 1);
-
+    GFX::drawColTex<float>(background, &background_img, &background_disp, 0, 255, 1,
+                            146, 113, 253);
     for (int i = 0; i < static_cast<int>(songs.size()); i++)
     {
         app->boldFont->setZoom(1.5);
