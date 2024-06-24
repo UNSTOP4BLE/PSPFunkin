@@ -364,12 +364,22 @@ Rating PlayStateScreen::judgeNote(float diff)
     return ratingData[ratingData.size() - 1];
 }
 
-void PlayStateScreen::missedNote(bool sustain) {
+void PlayStateScreen::missedNote(float y, int sustainlength) {
     if (inst != NULL)
         vocals->setVolume(0,0);
 
-    if (sustain) {
-        health -= 0.05/SUSTAIN_CLIPHEIGHT;
+    if (sustainlength != 0) {
+        for (int i = 0; i < sustainlength; i++)
+        {
+            float ypos = y+(SUSTAIN_CLIPHEIGHT*2) + (i*SUSTAIN_CLIPHEIGHT) - hudcam.camy.getValue();
+            
+//            if (ypos < sustain.y+SUSTAIN_CLIPHEIGHT) {
+  //              health -= 0.05;
+    //        }
+//            if ((isopponent || (!isopponent && notehit[type])) && disp.y < sustain.y+SUSTAIN_CLIPHEIGHT) {
+  //              continue; //stop drawing note if they were hit
+    //        }
+        }
     }
     else {
         health -= 0.05;
@@ -440,7 +450,7 @@ void PlayStateScreen::updateInput(void)
         if (curNotey < -50) {
             if (!(notes[i].flag & FLAG_NOTE_HIT))
             {
-                missedNote(false);
+                missedNote(false, 0);
                 notes[i].flag |= FLAG_NOTE_HIT;
             }
             if (notes[i].sus == 0) {   
@@ -469,8 +479,9 @@ void PlayStateScreen::updateInput(void)
             if (health > 1)
                 health = 1;
         }
+        
         if (!checkPadHeld[type] && notes[i].sus != 0 && notediff <= static_cast<float>(-ratingData[ratingData.size()-1].hitWindow)) {
-            missedNote(true);
+            missedNote(curNotey, ((app->parser.gamenotes[0][i].sus * app->parser.chartdata.speed) / SUSTAIN_CLIPHEIGHT) - 1);
         }
 
         //check if its been hit
@@ -494,7 +505,7 @@ void PlayStateScreen::updateInput(void)
 
     if (!ghosttap && (checkPad[0] || checkPad[1] || checkPad[2] || checkPad[3]) && !justhitnote) //miss note if ghosttapping is off
     {
-        missedNote(false);
+        missedNote(false, 0);
         app->audioMixer->playBuffer(*sfx_misses[rand() % (COUNT_OF(sfx_misses))]);
 
         //miss animation

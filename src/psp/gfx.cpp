@@ -35,7 +35,7 @@ Texture::~Texture(void) {
 }
 
 void Texture::setCol(uint8_t r, uint8_t g, uint8_t b) {
-    ASSERTFUNC(SDL_SetTextureColorMod(handle, r, g, b), SDL_GetError());
+//    ASSERTFUNC(SDL_SetTextureColorMod(handle, r, g, b), SDL_GetError());
 } 
 
 bool Texture::load(const char *path) {

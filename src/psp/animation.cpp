@@ -51,7 +51,7 @@ Anim_OBJECT::Anim_OBJECT(std::string path, std::string objname)
     mode = ModeNone;
 
     curanim.anim = 0;
-    curanim.tex = 0;
+    curanim.tex = frames[0].tex;
     curanim.framecount = 0;
     curanim.endtime = 0;
     frame.setValue(0);
@@ -110,7 +110,6 @@ void Anim_OBJECT::tick(void)
         }
         curanim.tex = frames[curframe].tex;
     }
-    
 }
 
 void Anim_OBJECT::draw(float x, float y, float angle, int alpha, float zoom)

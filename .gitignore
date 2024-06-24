@@ -13,3 +13,4 @@ build-debug
 buildpc
 buildpc-debug
 .DS_Store
+.vscode/settings.json

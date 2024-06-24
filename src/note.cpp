@@ -128,6 +128,5 @@ void PlayStateScreen::drawNotes(bool isopponent)
 
             GFX::drawTex<float>(hud, &img, &disp, 0, 200, hudcam.zoom.getValue());
         }
-
     }
 }

@@ -54,7 +54,7 @@ private:
     void drawSustain(int note, float y, int type, bool isopponent);
     void drawNotes(bool isopponent);
     Rating judgeNote(float diff);
-    void missedNote(bool sustain);
+    void missedNote(float y, int sustainlength);
     void updateInput(void);
     //characters
     Character *player;
