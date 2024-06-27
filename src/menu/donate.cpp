@@ -1,5 +1,6 @@
 #include "donate.h"
 #include "../app.h"
+#include "../psp/font.h"
 
 #include "mainmenu.h"
 
@@ -26,6 +27,9 @@ void DonateScreen::draw(void)
     GFX::RECT<int> background_img = {0, 0, 512, 331};
     GFX::RECT<float> background_disp = {app->screenwidth/2 - 700/2, app->screenheight/2 - 397/2, 700, 397};
     GFX::drawTex<float>(background, &background_img, &background_disp, 0, 255, 1);
+
+    app->normalFont->Print(Center, app->screenwidth/2, app->screenheight/2, "DONATE TO ME IF YOU LIKE MY WORKS!!");
+    app->normalFont->Print(Center, app->screenwidth/2, app->screenheight/2+11, "paypal.me/johnathanthepork16th");
 }
 
 DonateScreen::~DonateScreen(void) 
