@@ -20,3 +20,4 @@ TODO:
 - combo window
 - pause menu
 - debug message terminal
+- fix crash on story mode song switch
