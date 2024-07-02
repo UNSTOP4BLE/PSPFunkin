@@ -19,5 +19,7 @@ TODO:
 - week 6 hud and effects
 - combo window
 - pause menu
-- debug message terminal
+- debug message terminal # mostly done!!! just gotta refine it
 - fix crash on story mode song switch
+- add media engine code for audio playback on psp
+- add smooth transition thingy

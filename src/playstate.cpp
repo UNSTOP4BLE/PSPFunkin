@@ -286,7 +286,7 @@ void PlayStateScreen::drawIcons(void) {
                           ICON_SIZE, 
                           ICON_SIZE};
 
-    GFX::RECT<int> disp = {80+static_cast<int>(abs(health - 1.0)*320)-ICON_SIZE, 220, ICON_SIZE, ICON_SIZE};
+    GFX::RECT<int> disp = {80+static_cast<int>(abs(health - 1.0)*320)-ICON_SIZE, 210, ICON_SIZE, ICON_SIZE};
     GFX::drawTex<int>(icons, &img, &disp, 0, 255, hudcam.zoom.getValue() + iconcam.zoom.getValue());
 
     //player
@@ -297,7 +297,7 @@ void PlayStateScreen::drawIcons(void) {
            ICON_SIZE, 
            ICON_SIZE};
 
-    disp = {80+static_cast<int>(abs(health - 1.0)*320), 220, ICON_SIZE, ICON_SIZE};
+    disp = {80+static_cast<int>(abs(health - 1.0)*320), 210, ICON_SIZE, ICON_SIZE};
     GFX::drawTex<int>(icons, &img, &disp, 0, 255, hudcam.zoom.getValue() + iconcam.zoom.getValue());
 }
 
@@ -371,7 +371,7 @@ void PlayStateScreen::missedNote(int pos) {
     if (pos != 0) { //sustain
         int notediff = pos - app->parser.songTime;
         if (notediff < 0 && (notediff % 8) == 0) 
-                health -= 0.05;
+                health -= 0.05/2;
     }
     else { //normal note
         health -= 0.05;
@@ -469,7 +469,7 @@ void PlayStateScreen::updateInput(void)
             player->setAnim(1+type, ModeNone); //play animation 
 
             if ((static_cast<int>(notediff) % 8) == 0) 
-                health += 0.05;
+                health += 0.05 / 2;
            
             if (health > 1)
                 health = 1;
