@@ -44,7 +44,8 @@ Anim_OBJECT::Anim_OBJECT(std::string path, std::string objname)
         textures[i] = new GFX::Texture();
         textures[i]->load(_path.c_str());  
     }
-
+    _path = path + objname;
+    
     //reset vars
     cantick = cananimate = false;
     curframe = 0;
@@ -54,7 +55,10 @@ Anim_OBJECT::Anim_OBJECT(std::string path, std::string objname)
     curanim.tex = frames[0].tex;
     curanim.framecount = 0;
     curanim.endtime = 0;
-    frame.setValue(0);
+    frame.setValue(0); 
+
+    debugLog("animationinit: %s anim %d tex %d framecount %d endtime %f", _path.c_str(), curanim.anim, curanim.tex, curanim.framecount, curanim.endtime);
+    debugLog("animationinit: %s curframe %d cantick %d cananimate %d frame %f", _path.c_str(), curframe, cantick, cananimate, frame.getValue());
 }
 
 Anim_OBJECT::~Anim_OBJECT(void)

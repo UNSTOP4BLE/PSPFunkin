@@ -1,3 +1,4 @@
+#include <cstdio>
 #define SDL_MAIN_HANDLED
 #include "main.h"
 #include "app.h"
@@ -46,6 +47,17 @@ void ErrMSG(const char *filename, const char *function, int line, const char *ex
     }
 }
 
+void debugLog(const char *format, ...)
+{
+    va_list list;
+    char string[1024] = "";
+    va_start(list, format);
+    std::vsprintf(string, format, list);
+    va_end(list);
+
+    app->debugmessages.push_back(string);
+}
+
 int main()
 {
     //get a random number seed
@@ -75,6 +87,10 @@ int main()
     Timer fpsTimer;
     fpsTimer.start();
     float fps = 0;
+
+    bool debugshown = false;
+    debugLog("debug_start");
+    int debugy = 0;
     while(1)
     {
         std::chrono::time_point<std::chrono::system_clock> last = std::chrono::high_resolution_clock::now();
@@ -96,6 +112,25 @@ int main()
         app->currentScreen->update();  
         app->currentScreen->draw();  
         app->normalFont->Print(Left, 0, 0, "FPS: %d", static_cast<int>(fps));
+
+        if (app->event.isPressed(Input::DEBUG_SHOW)) 
+            debugshown = !debugshown; 
+        if (debugshown) {
+            if (app->event.isPressed(Input::MENU_DOWN)) 
+                debugy ++;
+            else if (app->event.isPressed(Input::MENU_UP)) 
+                debugy --;
+            for (int i = debugy; i < static_cast<int>(app->debugmessages.size()); i++)
+            {
+                if (i < 0)
+                    i = 0;
+                char linenumber[32];
+                sprintf(linenumber, "%d. ", i);
+                std::string toprint = linenumber + app->debugmessages[i];
+                app->normalFont->Print(Left, 0, (i*10)-debugy*10, toprint.c_str());
+            }
+        }
+
         GFX::flip();
 
         std::chrono::time_point<std::chrono::system_clock> current = std::chrono::high_resolution_clock::now();

@@ -15,6 +15,7 @@
 class PSPFunkin
 {
 public:
+    std::vector<std::string> debugmessages; //debug terminal
     int screenwidth;
     int screenheight;
 //#ifndef PSP

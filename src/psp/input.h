@@ -4,7 +4,7 @@
 
 namespace Input {
 
-static constexpr int NUM_BUTTONS = 12;
+static constexpr int NUM_BUTTONS = 13;
 
 enum Button {
     // In-game controls
@@ -21,7 +21,9 @@ enum Button {
     MENU_RIGHT,
     MENU_ENTER,
     MENU_ESCAPE,
-    MENU_OPTION
+    MENU_OPTION,
+    
+    DEBUG_SHOW
 };
 
 struct Event {

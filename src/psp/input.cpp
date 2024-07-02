@@ -24,7 +24,9 @@ static const uint32_t pspMapping[NUM_BUTTONS]{
     PSP_CTRL_RIGHT,  // MENU_RIGHT
     PSP_CTRL_CROSS,  // MENU_ENTER
     PSP_CTRL_CIRCLE, // MENU_ESCAPE
-    PSP_CTRL_SQUARE  // MENU_OPTION
+    PSP_CTRL_SQUARE, // MENU_OPTION
+
+    PSP_CTRL_SELECT  // DEBUG_SHOW
 };
 #else
 static const int controllerMapping[NUM_BUTTONS][2]{
@@ -40,7 +42,9 @@ static const int controllerMapping[NUM_BUTTONS][2]{
     { SDL_CONTROLLER_BUTTON_DPAD_RIGHT, -1 },                          // MENU_RIGHT
     { SDL_CONTROLLER_BUTTON_A,          SDL_CONTROLLER_BUTTON_START }, // MENU_ENTER
     { SDL_CONTROLLER_BUTTON_B,          -1 },                          // MENU_ESCAPE
-    { SDL_CONTROLLER_BUTTON_X           -1 }                           // MENU_OPTION
+    { SDL_CONTROLLER_BUTTON_X,          -1 },                          // MENU_OPTION
+
+    { SDL_CONTROLLER_BUTTON_SELECT,     -1 }                           // DEBUG_SHOW
 };
 
 static const SDL_Scancode keyboardMapping[NUM_BUTTONS]{
@@ -56,7 +60,9 @@ static const SDL_Scancode keyboardMapping[NUM_BUTTONS]{
     SDL_SCANCODE_RIGHT,  // MENU_RIGHT
     SDL_SCANCODE_RETURN, // MENU_ENTER
     SDL_SCANCODE_ESCAPE, // MENU_ESCAPE
-    SDL_SCANCODE_TAB     // MENU_OPTION
+    SDL_SCANCODE_TAB,    // MENU_OPTION
+
+    SDL_SCANCODE_BACKSPACE     // DEBUG_SHOW
 };
 #endif
 

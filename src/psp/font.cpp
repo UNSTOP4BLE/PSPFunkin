@@ -102,7 +102,7 @@ void FontManager::Print(Align all, int x, int y, const char *format, ...)
 {
     va_list list;
     
-    char string[256] = "";
+    char string[1024] = "";
 
     va_start(list, format);
     std::vsprintf(string, format, list);
