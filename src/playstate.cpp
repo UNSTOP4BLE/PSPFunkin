@@ -495,6 +495,7 @@ void PlayStateScreen::updateInput(void)
                 health = 1;
             combo.combo += 1;
             combo.spawnNew(rating.name);
+            checkPad[type] = false;
         }
     }        
 
