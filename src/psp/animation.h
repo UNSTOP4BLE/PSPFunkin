@@ -19,7 +19,6 @@ struct AnimFrames
 struct Animation
 {
     int anim;
-    int tex;
     int framecount;
     float endtime;
 };

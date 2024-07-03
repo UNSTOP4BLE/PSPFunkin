@@ -12,7 +12,6 @@ Anim_OBJECT::Anim_OBJECT(void) {
     mode = ModeNone;
 
     curanim.anim = 0;
-    curanim.tex = 0;
     curanim.framecount = 0;
     curanim.endtime = 0;
     frame.setValue(0);
@@ -52,12 +51,11 @@ Anim_OBJECT::Anim_OBJECT(std::string path, std::string objname)
     mode = ModeNone;
 
     curanim.anim = 0;
-    curanim.tex = frames[0].tex;
     curanim.framecount = 0;
     curanim.endtime = 0;
     frame.setValue(0); 
 
-    debugLog("animationinit: %s anim %d tex %d framecount %d endtime %f", _path.c_str(), curanim.anim, curanim.tex, curanim.framecount, curanim.endtime);
+    debugLog("animationinit: %s anim %d framecount %d endtime %f", _path.c_str(), curanim.anim, curanim.framecount, curanim.endtime);
     debugLog("animationinit: %s curframe %d cantick %d cananimate %d frame %f", _path.c_str(), curframe, cantick, cananimate, frame.getValue());
 }
 
@@ -78,7 +76,6 @@ void Anim_OBJECT::setAnim(int anim, AnimationModes mode)
 
     curanim.anim = anim;
     curframe = conf[curanim.anim][0];
-    curanim.tex = frames[curframe].tex;
     curanim.framecount = conf[anim].size();
     cantick = cananimate = true;
     if (speed[curanim.anim] == 0)
@@ -112,7 +109,6 @@ void Anim_OBJECT::tick(void)
             cantick = false;
             return;
         }
-        curanim.tex = frames[curframe].tex;
     }
 }
 
@@ -130,7 +126,7 @@ void Anim_OBJECT::draw(float x, float y, float angle, int alpha, float zoom)
                                  static_cast<float>(frames[curframe].w),
                                  static_cast<float>(frames[curframe].h)};
 
-        ASSERTFUNC(textures[curanim.tex], "texture is NULL");   
-        GFX::drawTex<float>(textures[curanim.tex], &img, &disp, angle, alpha, zoom);
+        ASSERTFUNC(textures[frames[curframe].tex], "texture is NULL");   
+        GFX::drawTex<float>(textures[frames[curframe].tex], &img, &disp, angle, alpha, zoom);
     }
 }
