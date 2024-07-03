@@ -1,6 +1,7 @@
 #include "playstate.h"
 #include <unistd.h>
 #include "main.h"
+#include "psp/hash.h"
 #include "screen.h"
 #include "psp/font.h"
 #include "psp/input.h"
@@ -45,6 +46,11 @@ void PlayStateScreen::initscr(std::string song, bool _freeplay) {
     sprintf(_path, "assets/songs/%s/config.json", cursong.c_str());
     Json::Value _config;
     loadJson(getPath(_path).c_str(), &_config);
+
+    //events 
+    sprintf(_path, "assets/songs/%s/events.json", cursong.c_str());
+    if (access(_path, F_OK) == 0) //file exists
+        loadJson(getPath(_path).c_str(), &events);
 
     //next song info
     nextsong = _config["next"].asString();
@@ -151,6 +157,32 @@ void PlayStateScreen::Camera::update(float ox, float oy, float oz, float px, flo
     }
 }
 
+void PlayStateScreen::updateEvents(void) {
+    for (int i = 0; i < static_cast<int>(events["events"].size()); i++)
+    {
+        Json::Value &event = events["events"][i];
+        if (event["eventstep"].asInt() == app->parser.curStep && app->parser.justStep)
+        {
+            debugLog("Playing event %s", event["eventname"].asString().c_str());
+            switch (Hash::FromString(event["eventname"].asString().c_str())) {
+                case "Play Animation"_h:
+                    switch (Hash::FromString(event["character"].asString().c_str()))
+                    {
+                        case "Player"_h:
+                            player->setAnim(event["animation"].asInt(), ModeNone);
+                            break;
+                        case "Opponent"_h:
+                            opponent->setAnim(event["animation"].asInt(), ModeNone);
+                            break;
+                        case "GF"_h:
+                            gf->setAnim(event["animation"].asInt(), ModeNone);
+                            break;
+                    }
+            }
+        }
+    }
+}
+
 void PlayStateScreen::update(void)
 {
     //process audio streams
@@ -165,6 +197,9 @@ void PlayStateScreen::update(void)
 
     if (isPlaying)
     {
+        if (events["events"] != NULL)
+            updateEvents();
+
         if (app->parser.justStep && !(app->parser.curStep % 16))
             gamecam.update(opponent->camx, opponent->camy, opponent->camzoom,
                            player->camx, player->camy, player->camzoom);
@@ -324,7 +359,7 @@ void PlayStateScreen::draw(void)
     drawHealthBar();
     drawIcons();
     app->normalFont->setZoom(hudcam.zoom.getValue());
-    app->normalFont->Print(Center, app->screenwidth/2+11, app->screenheight/2+120, "Score: %d | Misses: %d   combo: %d",  score, misses, combo.combo);
+    app->normalFont->Print(Center, app->screenwidth/2+11, app->screenheight/2+120, "Score: %d | Misses: %d   combo: %d",  score, misses, app->parser.curStep);//combo.combo);
 }
 
 PlayStateScreen::~PlayStateScreen(void)
@@ -370,11 +405,11 @@ void PlayStateScreen::missedNote(int pos) {
 
     if (pos != 0) { //sustain
         int notediff = pos - app->parser.songTime;
-        if (notediff < 0 && (notediff % 8) == 0) 
-                health -= 0.05/2;
+      //  if (notediff < 0 && (notediff % 8) == 0) 
+              //  health -= 0.05/2;
     }
     else { //normal note
-        health -= 0.05;
+       //health -= 0.05;
         misses += 1;
         combo.combo = 0;
     }

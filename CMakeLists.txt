@@ -48,7 +48,7 @@ foreach(input IN LISTS charts)
     cmake_path(GET input PARENT_PATH parent)
     cmake_path(GET input STEM LAST_ONLY name)
 
-    if("${name}" STREQUAL "config") # ignore config.json
+        if(("${name}" STREQUAL "config") OR ("${name}" STREQUAL "events")) # ignore config.json or events.json
         continue()
     endif()
 

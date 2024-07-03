@@ -6,6 +6,7 @@
 #include "psp/tween.h"
 #include "psp/audio_streamed_file.h"
 #include "combo.h"
+#include <json/json.h>
 
 struct Pos 
 {
@@ -47,6 +48,7 @@ private:
         float basezoom;
     } gamecam, hudcam, iconcam;
     void initscr(std::string song, bool _freeplay);
+    void updateEvents(void);
     void drawHealthBar(void);
     void drawIcons(void);
     void deleteNote(int &note, bool opponent);
@@ -94,4 +96,5 @@ private:
     //note animation
     Tween<float, QuadInOutEasing, Chrono> noteframe[4];
     bool notehit[4];
+    Json::Value events;
 };
