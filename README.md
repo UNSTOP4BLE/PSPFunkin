@@ -11,15 +11,13 @@ to build for pc and any other platforms should be self explanitory
 
 TODO:
 - change bpm mid song
-- week 4 milf camera bump (possibly a custom event format??)
+- week 4 milf camera bump
 - story menu
 - rewrite graphics code
-- fix some animation starts like dad texture bugging out
 - add sprites and songs
 - week 6 hud and effects
 - combo window
 - pause menu
-- debug message terminal # mostly done!!! just gotta refine it
 - fix crash on story mode song switch
 - add media engine code for audio playback on psp
 - add smooth transition thingy

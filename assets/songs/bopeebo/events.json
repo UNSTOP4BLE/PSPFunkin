@@ -1,97 +1,97 @@
 {
     "events": [
         {
-            "eventstep": 32,
+            "eventstep": 30,
             "eventname": "Play Animation",
             "character": "Player",
             "animation": 3
         },
         {
-            "eventstep": 64,
+            "eventstep": 62,
             "eventname": "Play Animation",
             "character": "Player",
             "animation": 3
         },
         {
-            "eventstep": 96,
+            "eventstep": 94,
             "eventname": "Play Animation",
             "character": "Player",
             "animation": 3
         },
         {
-            "eventstep": 128,
+            "eventstep": 126,
             "eventname": "Play Animation",
             "character": "Player",
             "animation": 3
         },
         {
-            "eventstep": 160,
+            "eventstep": 158,
             "eventname": "Play Animation",
             "character": "Player",
             "animation": 3
         },
         {
-            "eventstep": 192,
+            "eventstep": 190,
             "eventname": "Play Animation",
             "character": "Player",
             "animation": 3
         },
         {
-            "eventstep": 224,
+            "eventstep": 222,
             "eventname": "Play Animation",
             "character": "Player",
             "animation": 3
         },
         {
-            "eventstep": 256,
+            "eventstep": 254,
             "eventname": "Play Animation",
             "character": "Player",
             "animation": 3
         },
         {
-            "eventstep": 288,
+            "eventstep": 286,
             "eventname": "Play Animation",
             "character": "Player",
             "animation": 3
         },
         {
-            "eventstep": 320,
+            "eventstep": 318,
             "eventname": "Play Animation",
             "character": "Player",
             "animation": 3
         },
         {
-            "eventstep": 352,
+            "eventstep": 350,
             "eventname": "Play Animation",
             "character": "Player",
             "animation": 3
         },
         {
-            "eventstep": 384,
+            "eventstep": 382,
             "eventname": "Play Animation",
             "character": "Player",
             "animation": 3
         },
         {
-            "eventstep": 416,
+            "eventstep": 414,
             "eventname": "Play Animation",
             "character": "Player",
             "animation": 3
         },
         {
-            "eventstep": 448,
+            "eventstep": 446,
             "eventname": "Play Animation",
             "character": "Player",
             "animation": 3
         },
         {
-            "eventstep": 480,
+            "eventstep": 478,
             "eventname": "Play Animation",
             "character": "Player",
             "animation": 3
         },
         {
-            "eventstep": 512,
+            "eventstep": 510,
             "eventname": "Play Animation",
             "character": "Player",
             "animation": 3

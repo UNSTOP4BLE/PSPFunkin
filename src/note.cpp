@@ -74,7 +74,7 @@ void PlayStateScreen::drawSustain(int note, float y, int type, bool isopponent)
 
         GFX::RECT<float> disp = {static_cast<float>(xpos - hudcam.camx.getValue()), ypos + (i*SUSTAIN_CLIPHEIGHT) - hudcam.camy.getValue(), static_cast<float>(img.w), static_cast<float>(img.h)};
   
-        if (disp.y+SUSTAIN_CLIPHEIGHT < 0) {
+        if ((disp.y+SUSTAIN_CLIPHEIGHT < sustain.y && app->parser.gamenotes[isopponent][note].flag & FLAG_NOTE_HIT) || (disp.y+SUSTAIN_CLIPHEIGHT < 0)) {
             continue;
         }
         if ((isopponent || (!isopponent && notehit[type])) && disp.y < sustain.y+SUSTAIN_CLIPHEIGHT) {
