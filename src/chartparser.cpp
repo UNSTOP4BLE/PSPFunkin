@@ -25,6 +25,7 @@ void ChartParser::loadChart(const char *filename)
     chart.read(reinterpret_cast<char *>(gamenotes[0].data()), gamenotes[0].size() * sizeof(Note)); // player notes
     chart.read(reinterpret_cast<char *>(gamenotes[1].data()), gamenotes[1].size() * sizeof(Note)); // opponent
     chart.close();
+    debugLog("loadChart: %s", filename);
 }
 
 void ChartParser::calcCrochet(void)

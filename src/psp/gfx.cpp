@@ -32,6 +32,7 @@ Texture::~Texture(void) {
         printf("destroying %d\n", handle);
     }
     handle = nullptr;
+    debugLog("Texture::~Texture:");
 }
 
 void Texture::setCol(uint8_t r, uint8_t g, uint8_t b) {
@@ -46,6 +47,7 @@ bool Texture::load(const char *path) {
     printf("loading %d\n", handle);
     std::string errmsg = "loading texture " + static_cast<std::string>(path) + " is NULL";
     ASSERTFUNC(handle, errmsg.c_str());
+    debugLog("Texture::load: %s", path);
     return true;
 }
 

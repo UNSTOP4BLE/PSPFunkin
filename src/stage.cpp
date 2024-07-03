@@ -27,6 +27,8 @@ void Stage::load(const char *jpath, std::string stage) {
     parseObjects(fgobjects, "foreground", data);
     parseObjects(mdobjects, "middleground", data);
     parseObjects(bgobjects, "background", data);
+
+    debugLog("Stage::load: %s", jpath);
 }
 
 void Stage::tick(float cx, float cy) {
@@ -42,6 +44,7 @@ void Stage::free(void) {
         delete textures[i].texture;
         textures[i].texture = nullptr;
     }
+    debugLog("Stage::free:");
 }
 
 void Stage::drawObjects(std::vector<StageObject> &objs, float camzoom) {

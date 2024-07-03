@@ -15,6 +15,7 @@ Anim_OBJECT::Anim_OBJECT(void) {
     curanim.framecount = 0;
     curanim.endtime = 0;
     frame.setValue(0);
+    debugLog("Anim_OBJECT:");
 }
 
 Anim_OBJECT::Anim_OBJECT(std::string path, std::string objname)
@@ -55,8 +56,7 @@ Anim_OBJECT::Anim_OBJECT(std::string path, std::string objname)
     curanim.endtime = 0;
     frame.setValue(0); 
 
-    debugLog("animationinit: %s anim %d framecount %d endtime %f", _path.c_str(), curanim.anim, curanim.framecount, curanim.endtime);
-    debugLog("animationinit: %s curframe %d cantick %d cananimate %d frame %f", _path.c_str(), curframe, cantick, cananimate, frame.getValue());
+    debugLog("Anim_OBJECT: %s", _path.c_str());
 }
 
 Anim_OBJECT::~Anim_OBJECT(void)
@@ -68,6 +68,7 @@ Anim_OBJECT::~Anim_OBJECT(void)
         delete textures[i];
         textures[i] = nullptr;
     }
+    debugLog("~Anim_OBJECT:");
 }
 
 void Anim_OBJECT::setAnim(int anim, AnimationModes mode)

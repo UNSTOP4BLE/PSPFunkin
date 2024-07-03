@@ -18,11 +18,13 @@ Character::Character(std::string path, std::string objstr, float _x, float _y) {
     singendtime = 0;
     obj->setAnim(0, ModeNone);
     singendtime = 0;
+    debugLog("Character::Character: %s", path.c_str());
 }
 
 GFCharacter::GFCharacter(std::string path, std::string objstr, float _x, float _y) : Character::Character(path, objstr, _x, _y) {
     obj_speaker = new Anim_OBJECT(path, "speaker.json");
     obj_speaker->setAnim(0, ModeNone);
+    debugLog("GFCharacter::GFCharacter: %s", path.c_str());
 }
 
 void Character::setPos(float _x, float _y) {
@@ -48,7 +50,8 @@ void Character::setAnim(int anim, AnimationModes mode) {
 }
 
 void GFCharacter::setAnim(int anim, AnimationModes mode) {
-    obj_speaker->setAnim(0, ModeNone);
+    if (obj_speaker != NULL)
+        obj_speaker->setAnim(0, ModeNone);
     Character::setAnim(anim, mode);
 }
 
@@ -78,7 +81,8 @@ void Character::tick(void) {
 }
 
 void GFCharacter::tick(void) {
-    obj_speaker->tick();  
+    if (obj_speaker != NULL)
+        obj_speaker->tick();  
     obj->tick();  
 
     if (singendtime < app->parser.curStep)
@@ -101,17 +105,19 @@ void Character::draw(float cx, float cy, float cz) {
 }
 
 void GFCharacter::draw(float cx, float cy, float cz) {
-    obj_speaker->draw((x-50)-cx, (y+72)-cy, 0, 255, cz);
+    if (obj_speaker != NULL)
+        obj_speaker->draw((x-50)-cx, (y+72)-cy, 0, 255, cz);
     Character::draw(cx, cy, cz);
 }
 
 Character::~Character(void) {
+    debugLog("Character::~Character");
     delete obj;
-    printf("deletingobj %s \n", type.c_str());
 }
 
 GFCharacter::~GFCharacter(void) {
-  //  Character::~Character();
-    delete obj_speaker;
-    printf("deletingobj speaker\n");
+    Character::~Character();
+    debugLog("GFCharacter::~GFCharacter");
+    if (obj_speaker != NULL)
+        delete obj_speaker;
 }

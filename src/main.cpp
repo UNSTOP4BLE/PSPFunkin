@@ -33,16 +33,44 @@ PSP_MODULE_INFO("PSPFunkin", 0, 1, 0);
 #endif
 
 PSPFunkin *app;
+#define DEBUGLOG_MAX 128
+void debugmenu(int &debugy)
+{
+    if (app->event.isHeld(Input::MENU_DOWN)) 
+        debugy ++;
+    else if (app->event.isHeld(Input::MENU_UP)) 
+        debugy --;
+    for (int i = debugy; i < static_cast<int>(app->debugmessages.size()); i++)
+    {
+        while (static_cast<int>(app->debugmessages.size()) > DEBUGLOG_MAX)
+            app->debugmessages.erase(app->debugmessages.begin());
+        if (i < 0)
+            i = 0;
+        char linenumber[32];
+        sprintf(linenumber, "%d. ", i);
+        std::string toprint = linenumber + app->debugmessages[i];
+        app->normalFont->Print(Left, 0, (i*10)-debugy*10, toprint.c_str());
+    } 
+}
 
 //error handler
 void ErrMSG(const char *filename, const char *function, int line, const char *expr, const char *msg)
 {
     char errstr[512];
     sprintf(errstr, "error\nmessage: %s\nexpression: %s\nfile: %s\nfunction: %s\nline %d", msg, expr, filename, function, line);
+    int debugy = -10;
+#if defined(PSP) || defined(__vita__)
+    Input::ControllerDevice inputDevice;
+#else
+    Input::KeyboardDevice inputDevice;
+#endif
     while(1)
     {
         GFX::clear(app->screenCol);
+        inputDevice.getEvent(app->event);
         app->normalFont->Print(Left, 0, 0, errstr);
+        debugmenu(debugy);
+        
         GFX::flip();
     }
 }
@@ -58,6 +86,12 @@ void debugLog(const char *format, ...)
     app->debugmessages.push_back(string);
 }
 
+void debugLogClear(void)
+{
+    app->debugmessages.clear();
+}
+
+
 int main()
 {
     //get a random number seed
@@ -65,6 +99,7 @@ int main()
 
     app = new PSPFunkin(); //new pspfunkin every single time?? no need for a rewrite!
 
+    debugLog("debug_start");
 #ifdef PSP
     setupcallbacks();
 #endif
@@ -89,7 +124,6 @@ int main()
     float fps = 0;
 
     bool debugshown = false;
-    debugLog("debug_start");
     int debugy = 0;
     while(1)
     {
@@ -115,21 +149,8 @@ int main()
 
         if (app->event.isPressed(Input::DEBUG_SHOW)) 
             debugshown = !debugshown; 
-        if (debugshown) {
-            if (app->event.isPressed(Input::MENU_DOWN)) 
-                debugy ++;
-            else if (app->event.isPressed(Input::MENU_UP)) 
-                debugy --;
-            for (int i = debugy; i < static_cast<int>(app->debugmessages.size()); i++)
-            {
-                if (i < 0)
-                    i = 0;
-                char linenumber[32];
-                sprintf(linenumber, "%d. ", i);
-                std::string toprint = linenumber + app->debugmessages[i];
-                app->normalFont->Print(Left, 0, (i*10)-debugy*10, toprint.c_str());
-            }
-        }
+        if (debugshown)
+            debugmenu(debugy);
 
         GFX::flip();
 
