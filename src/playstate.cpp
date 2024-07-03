@@ -177,7 +177,13 @@ void PlayStateScreen::updateEvents(void) {
                         case "GF"_h:
                             gf->setAnim(event["animation"].asInt(), ModeNone);
                             break;
+                        default:
+                            break;
                     }
+                    break;
+
+                default:
+                    break;
             }
         }
     }
@@ -197,7 +203,7 @@ void PlayStateScreen::update(void)
 
     if (isPlaying)
     {
-        if (events["events"] != NULL)
+        if (events.isMember("events"))
             updateEvents();
 
         if (app->parser.justStep && !(app->parser.curStep % 16))
@@ -405,11 +411,11 @@ void PlayStateScreen::missedNote(int pos) {
 
     if (pos != 0) { //sustain
         int notediff = pos - app->parser.songTime;
-      //  if (notediff < 0 && (notediff % 8) == 0) 
-              //  health -= 0.05/2;
+        if (notediff < 0 && (notediff % 8) == 0) 
+            health -= 0.05/2;
     }
     else { //normal note
-       //health -= 0.05;
+        health -= 0.05;
         misses += 1;
         combo.combo = 0;
     }
