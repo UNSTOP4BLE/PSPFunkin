@@ -25,7 +25,7 @@ void PlayStateScreen::initscr(std::string song, bool _freeplay) {
     //reset vars
     isfreeplay = _freeplay;
     combo.init();
-    ghosttap = false;
+    ghosttap = true;
     botplay = false;
     score = misses = 0;
     cursong = song;
@@ -41,7 +41,7 @@ void PlayStateScreen::initscr(std::string song, bool _freeplay) {
         notehit[i] = checkPadHeld[i] = checkPad[i] = 0;
     }
 
-    char _path[40];
+    char _path[256];
     sprintf(_path, "assets/songs/%s/config.json", cursong.c_str());
     Json::Value _config;
     loadJson(getPath(_path).c_str(), &_config);
@@ -128,7 +128,7 @@ void PlayStateScreen::initscr(std::string song, bool _freeplay) {
     ratingData.emplace_back("bad",  135, 0.4, 100, false);
     ratingData.emplace_back("shit", 165, 0,    50, false);
 
-    app->parser.chartdata.speed /= 5;
+    app->parser.chartdata.speed /= 6;
 }
 
 PlayStateScreen::PlayStateScreen(std::string song, bool _freeplay)

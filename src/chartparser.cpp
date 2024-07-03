@@ -5,7 +5,9 @@
 void ChartParser::loadChart(const char *filename) 
 {
     chart.open(filename, std::istream::binary);
-    ASSERTFUNC(chart, "failed to open chart");
+    char errmsg[128] = "";
+    sprintf(errmsg, "failed to open chart \n%s", filename);
+    ASSERTFUNC(chart, errmsg);
     curStep = 0;
     songTime = 0;
     crochet = 0;
