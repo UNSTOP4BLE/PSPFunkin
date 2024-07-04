@@ -1,14 +1,14 @@
 {   
     "player": "bf",
-    "playerpos": [400, 260,
-                  80.0, 40.0, 1.0],
+    "playerpos": [360, 220,
+                  80.0, 0, 1.0],
     "opponent": "spooky_kids",
-    "opponentpos": [240, 260,
-                    0, 20, 1.0],
+    "opponentpos": [200, 220,
+                    0, 0, 1.0],
     "gf": "gf",
-    "gfpos": [320, 160],
+    "gfpos": [280, 120],
 
-    "back": "stage",
+    "back": "spooky",
     
     "next": "south"
 

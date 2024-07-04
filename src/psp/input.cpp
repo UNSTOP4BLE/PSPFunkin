@@ -22,7 +22,7 @@ static const uint32_t pspMapping[NUM_BUTTONS]{
     PSP_CTRL_DOWN,   // MENU_DOWN
     PSP_CTRL_LEFT,   // MENU_LEFT
     PSP_CTRL_RIGHT,  // MENU_RIGHT
-    PSP_CTRL_CROSS,  // MENU_ENTER
+    PSP_CTRL_CROSS | PSP_CTRL_START,  // MENU_ENTER
     PSP_CTRL_CIRCLE, // MENU_ESCAPE
     PSP_CTRL_SQUARE, // MENU_OPTION
 
@@ -44,7 +44,7 @@ static const int controllerMapping[NUM_BUTTONS][2]{
     { SDL_CONTROLLER_BUTTON_B,          -1 },                          // MENU_ESCAPE
     { SDL_CONTROLLER_BUTTON_X,          -1 },                          // MENU_OPTION
 
-    { SDL_CONTROLLER_BUTTON_SELECT,     -1 }                           // DEBUG_SHOW
+    { SDL_CONTROLLER_BUTTON_START,      -1 }                           // DEBUG_SHOW
 };
 
 static const SDL_Scancode keyboardMapping[NUM_BUTTONS]{

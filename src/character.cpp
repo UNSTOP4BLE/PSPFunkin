@@ -134,7 +134,6 @@ Character::~Character(void) {
 }
 
 GFCharacter::~GFCharacter(void) {
-    Character::~Character();
     debugLog("GFCharacter::~GFCharacter");
     if (obj_speaker != NULL)
         delete obj_speaker;

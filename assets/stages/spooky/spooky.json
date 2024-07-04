@@ -1,0 +1,13 @@
+{
+    "textures": [
+        {"def": "back", "path": "back.png"}
+    ],
+
+    "objects": {
+        "foreground":[],
+        "middleground":[],
+        "background":[
+            {"def": "back",  "img": [  0,   0, 512, 249], "disp": [ 20,   0, 525, 249], "scrollfactor": [1, 1], "angle":   0, "alpha": 255} //back
+        ]
+    }
+}
