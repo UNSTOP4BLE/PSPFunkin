@@ -72,11 +72,29 @@ void Character::tick(void) {
 
     if (singendtime < app->parser.curStep)
         issinging = false;
+
     //set animations
-    if (!issinging)
+    switch(Hash::FromString(type.c_str()))
     {
-        if (app->parser.justStep && !(app->parser.curStep % 8))
-            setAnim(0, ModeStep);
+        case "spooky_idle"_h:
+            if (!issinging)
+            {
+                if (app->parser.justStep && !(app->parser.curStep % 4))
+                {
+                    if (obj->curanim.anim == 5)
+                        setAnim(0, ModeStep);
+                    else
+                        setAnim(5, ModeStep); 
+                }    
+            }
+            break;
+        default:
+            if (!issinging)
+            {
+                if (app->parser.justStep && !(app->parser.curStep % 8))
+                    setAnim(0, ModeStep);
+            }
+            break;
     }
 }
 
