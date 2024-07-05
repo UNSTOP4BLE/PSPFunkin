@@ -32,7 +32,8 @@ TitleScreen::TitleScreen(int songpos, TitleStates _state)
     confirm = Audio::loadFile(getPath("assets/sounds/confirmMenu.wav").c_str());
    // app->audioMixer->playBuffer(*confirm);
     //load textures
-//    AnimOBJECT_Init(&titleGF, "assets/menu/title/gf/", "frames.json");
+    titleGF = new Anim_OBJECT("assets/menu/title/gf/", "frames.json");
+    titleGF->setAnim(0, ModeNone);
     ng = new GFX::Texture();
     ng->load(getPath("assets/menu/title/ng.png").c_str());
 
@@ -52,12 +53,12 @@ void TitleScreen::update(void)
 
     if (app->parser.justStep && !(app->parser.curStep % 4))
     {
-        //if (titleGF.curanim == 1)
-   //         AnimOBJECT_SetAnim(&titleGF, 0, -1);
-    //    else
-      //      AnimOBJECT_SetAnim(&titleGF, 1, -1);
+        if (titleGF->curanim.anim == 1)
+            titleGF->setAnim(0, ModeStep);
+        else
+            titleGF->setAnim(1, ModeStep);
     }
-//    AnimOBJECT_Tick(&titleGF);
+    titleGF->tick();
     if (app->event.isPressed(Input::MENU_ENTER))
     {
         if (state != Title)
@@ -127,13 +128,14 @@ void TitleScreen::draw(void)
             state = Title;
             break;
         case Title:
-          //  AnimOBJECT_Draw(&titleGF, 200, 200, 0, 255, 1.0f);
+            titleGF->draw(200, 200, 0, 255, 1);
             break;
     }
 }
 
 TitleScreen::~TitleScreen(void) 
 {
+    delete titleGF;
     delete freaky;
     delete confirm;
     delete ng;
