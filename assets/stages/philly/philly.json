@@ -1,0 +1,25 @@
+{
+    "textures": [
+        {"def": "back", "path": "back.png"},
+        {"def": "street", "path": "street.png"},
+        {"def": "win0", "path": "win0.png"},
+        {"def": "win1", "path": "win1.png"},
+        {"def": "win2", "path": "win2.png"},
+        {"def": "win3", "path": "win3.png"},
+        {"def": "win4", "path": "win4.png"}
+    ],
+
+    "objects": {
+        "foreground":[],
+        "middleground":[],
+        "background":[
+            {"def": "back",  "img": [  1, 359, 381, 131], "disp": [ 18,  4, 381, 131], "scrollfactor": [0.1, 0.1], "angle":   0, "alpha": 255}, //sky
+            {"def": "back",  "img": [  1, 145, 391, 213], "disp": [  8, 13, 391, 213], "scrollfactor": [0.3, 0.3], "angle":   0, "alpha": 255}, //city
+            {"def": "back",  "img": [  1,   1,  70, 142], "disp": [ 54, 24,  70, 142], "scrollfactor": [1, 1], "angle":   0, "alpha": 255}, //behindtrainL
+            {"def": "back",  "img": [ 72,   1,  70, 143], "disp": [276, 24,  70, 143], "scrollfactor": [1, 1], "angle":   0, "alpha": 255}, //behindtrainR
+
+
+            {"def": "street","img": [  0,   0, 432, 239], "disp": [  0,  0, 432, 239], "scrollfactor": [1, 1], "angle":   0, "alpha": 255} //street
+        ]
+    }
+}

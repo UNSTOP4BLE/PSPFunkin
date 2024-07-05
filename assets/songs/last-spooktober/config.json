@@ -1,15 +1,15 @@
 {   
     "player": "bf",
-    "playerpos": [400, 260,
-                  80.0, 40.0, 1.0],
-    "opponent": "dad",
-    "opponentpos": [240, 260,
-                    0, 20, 1.0],
+    "playerpos": [260, 195,
+                  -50, -20, 1.2],
+    "opponent": "pico",
+    "opponentpos": [130, 195,
+                 -70, -20, 1.2],
     "gf": "gf",
-    "gfpos": [320, 160],
+    "gfpos": [215, 95],
 
-    "back": "stage",
+    "back": "philly",
     
-    "next": "dad-battle"
+    "next": "null"
 
 }
