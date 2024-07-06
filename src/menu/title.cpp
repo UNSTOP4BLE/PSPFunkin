@@ -30,7 +30,6 @@ TitleScreen::TitleScreen(int songpos, TitleStates _state)
     freaky->play(true);
     freaky->setPosition(songpos);
     confirm = Audio::loadFile(getPath("assets/sounds/confirmMenu.wav").c_str());
-   // app->audioMixer->playBuffer(*confirm);
     //load textures
     titleGF = new Anim_OBJECT("assets/menu/title/gf/", "frames.json");
     titleGF->setAnim(0, ModeNone);
@@ -69,7 +68,10 @@ void TitleScreen::update(void)
         if (state != Title)
             state = Title;
         else
+        {        
+            app->audioMixer->playBuffer(*confirm);
             setScreen(new MainMenuScreen(freaky->getPosition()));
+        }
     }
 }
 

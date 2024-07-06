@@ -10,6 +10,7 @@ DonateScreen::DonateScreen(int songpos) {
     freaky->setPosition(songpos);
     background = new GFX::Texture();
     background->load(getPath("assets/menu/back.png").c_str());
+    back = Audio::loadFile(getPath("assets/sounds/cancelMenu.wav").c_str());
 }
 
 void DonateScreen::update(void) 
@@ -18,6 +19,7 @@ void DonateScreen::update(void)
 
     if (app->event.isPressed(Input::MENU_ESCAPE))
     {
+        app->audioMixer->playBuffer(*back);
         setScreen(new MainMenuScreen(freaky->getPosition()));
     }
 }
@@ -36,4 +38,5 @@ DonateScreen::~DonateScreen(void)
 {
     delete background;
     delete freaky;
+    delete back;
 }

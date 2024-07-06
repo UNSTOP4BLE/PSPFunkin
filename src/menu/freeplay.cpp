@@ -34,6 +34,9 @@ FreeplayScreen::FreeplayScreen(int songpos) {
     }
 
     closedir(dir);
+    option = Audio::loadFile(getPath("assets/sounds/scrollMenu.wav").c_str());
+    confirm = Audio::loadFile(getPath("assets/sounds/confirmMenu.wav").c_str());
+    back = Audio::loadFile(getPath("assets/sounds/cancelMenu.wav").c_str());
 }
 
 void FreeplayScreen::update(void) 
@@ -42,6 +45,7 @@ void FreeplayScreen::update(void)
    
     if (app->event.isPressed(Input::MENU_UP))
     {
+        app->audioMixer->playBuffer(*option);
         selection -= 1;
         if (selection < 0)
             selection = 0;
@@ -49,6 +53,7 @@ void FreeplayScreen::update(void)
     }
     else if (app->event.isPressed(Input::MENU_DOWN))    
     {
+        app->audioMixer->playBuffer(*option);
         selection += 1;
         if (selection > static_cast<int>(songs.size()-1))
             selection = static_cast<int>(songs.size()-1);
@@ -56,11 +61,13 @@ void FreeplayScreen::update(void)
     }
     if (app->event.isPressed(Input::MENU_ENTER))
     {
+        app->audioMixer->playBuffer(*confirm);
         setScreen(new PlayStateScreen(songs[selection], true));
     }
 
     if (app->event.isPressed(Input::MENU_ESCAPE))
     {
+        app->audioMixer->playBuffer(*back);
         setScreen(new MainMenuScreen(freaky->getPosition()));
     }
 }
@@ -92,4 +99,7 @@ FreeplayScreen::~FreeplayScreen(void)
 {
     delete background;
     delete freaky;
+    delete option;
+    delete confirm;
+    delete back;
 }

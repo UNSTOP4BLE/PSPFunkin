@@ -15,4 +15,5 @@ public:
 private:
     GFX::Texture *background;
     Audio::StreamedFile *freaky; 
+    Audio::AudioBuffer *back;
 };

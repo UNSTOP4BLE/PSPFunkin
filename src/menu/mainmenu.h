@@ -20,4 +20,7 @@ private:
     int selection;
     Anim_OBJECT *menu_selections[4];
     Tween<float, QuadInOutEasing, Chrono> backgroundy;
+    Audio::AudioBuffer *option;
+    Audio::AudioBuffer *back;
+    Audio::AudioBuffer *confirm;
 };

@@ -18,6 +18,9 @@ private:
     //selections
     int selection;
     std::vector<std::string> songs;
+    Audio::AudioBuffer *option;
+    Audio::AudioBuffer *back;
+    Audio::AudioBuffer *confirm;
     Tween<float, QuadInOutEasing, Chrono> textx;
     Tween<float, QuadInOutEasing, Chrono> texty;
 };
