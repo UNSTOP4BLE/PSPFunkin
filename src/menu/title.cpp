@@ -34,6 +34,8 @@ TitleScreen::TitleScreen(int songpos, TitleStates _state)
     //load textures
     titleGF = new Anim_OBJECT("assets/menu/title/gf/", "frames.json");
     titleGF->setAnim(0, ModeNone);
+    logo = new Anim_OBJECT("assets/menu/title/", "logoBumpin.json");
+    logo->setAnim(0, ModeNone);
     ng = new GFX::Texture();
     ng->load(getPath("assets/menu/title/ng.png").c_str());
 
@@ -53,11 +55,14 @@ void TitleScreen::update(void)
 
     if (app->parser.justStep && !(app->parser.curStep % 4))
     {
+        logo->setAnim(0, ModeStep);
+
         if (titleGF->curanim.anim == 1)
             titleGF->setAnim(0, ModeStep);
         else
             titleGF->setAnim(1, ModeStep);
     }
+    logo->tick();
     titleGF->tick();
     if (app->event.isPressed(Input::MENU_ENTER))
     {
@@ -128,7 +133,8 @@ void TitleScreen::draw(void)
             state = Title;
             break;
         case Title:
-            titleGF->draw(200, 200, 0, 255, 1);
+            titleGF->draw(320, 228, 0, 255, 1.4);
+            logo->draw(40, 30, 0, 255, 1.4);
             break;
     }
 }
@@ -136,6 +142,7 @@ void TitleScreen::draw(void)
 TitleScreen::~TitleScreen(void) 
 {
     delete titleGF;
+    delete logo;
     delete freaky;
     delete confirm;
     delete ng;

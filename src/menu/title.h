@@ -22,6 +22,7 @@ private:
     TitleStates state;
     GFX::Texture *ng;
     Anim_OBJECT *titleGF;
+    Anim_OBJECT *logo;
     std::string funnymessage[2];
     Audio::StreamedFile *freaky; 
     Audio::AudioBuffer *confirm;
