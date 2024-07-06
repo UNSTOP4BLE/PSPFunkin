@@ -1,0 +1,15 @@
+{   
+    "player": "bf",
+    "playerpos": [260, 195,
+                  -50, -20, 1.2],
+    "opponent": "pico",
+    "opponentpos": [130, 195,
+                 -70, -20, 1.2],
+    "gf": "gf",
+    "gfpos": [215, 95],
+
+    "back": "philly",
+    
+    "next": "null"
+
+}
