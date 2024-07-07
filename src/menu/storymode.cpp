@@ -10,8 +10,6 @@ StoryModeScreen::StoryModeScreen(int songpos) {
     freaky = new Audio::StreamedFile(*app->audioMixer, getPath("assets/music/freaky/freaky.ogg").c_str());
     freaky->play(true);
     freaky->setPosition(songpos);
-    background = new GFX::Texture();
-    background->load(getPath("assets/menu/back.png").c_str());
     selection = 0;
 }
 
@@ -43,15 +41,19 @@ void StoryModeScreen::update(void)
 
 void StoryModeScreen::draw(void) 
 {
-    GFX::RECT<int> background_img = {0, 0, 512, 331};
-    GFX::RECT<float> background_disp = {app->screenwidth/2 - 700/2, app->screenheight/2 - 397/2, 700, 397};
-    GFX::drawTex<float>(background, &background_img, &background_disp, 0, 255, 1);
+    GFX::RECT<int> black_background = {0, 0, app->screenwidth, app->screenheight};
+    GFX::drawRect(&black_background, 1, 0, 0, 0);
+    GFX::RECT<int> middle_strap = {0, 21, app->screenwidth, 152};
+    GFX::drawRect(&middle_strap, 1, 247, 208, 81);
 
-    app->normalFont->Print(Left, 50, 50, "only week 1 currently available \n(press x to start)");
+    app->normalFont->Print(Left,  5,   6, "WEEK SCORE: ");
+    app->normalFont->Print(Left, 51, 191, "TRACKS");
+    app->normalFont->Print(Center, 51, 213, "TEST");
+    app->normalFont->Print(Center, 51, 213+10, "TESTTESTTEST");
+    app->normalFont->Print(Left, 50,  50, "only week 1 currently available \n(press x to start)");
 }
 
 StoryModeScreen::~StoryModeScreen(void) 
 {
-    delete background;
     delete freaky;
 }

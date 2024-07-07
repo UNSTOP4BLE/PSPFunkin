@@ -13,7 +13,6 @@ public:
     void draw(void);
     ~StoryModeScreen(void); 
 private:
-    GFX::Texture *background;
     Audio::StreamedFile *freaky; 
     //selections
     int selection;

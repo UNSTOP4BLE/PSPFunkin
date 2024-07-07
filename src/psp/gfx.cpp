@@ -59,6 +59,11 @@ typedef enum
     SDL_ScaleModeBest     < anisotropic filtering 
 } SDL_ScaleMode;
 */
+void drawRect(GFX::RECT<int> *Disp, float zoom, uint8_t r, uint8_t g, uint8_t b) {
+    SDL_Rect zoomDisp = {static_cast<int>((Disp->x * zoom) + (app->screenwidth * (1 - zoom) / 2)), static_cast<int>((Disp->y * zoom) + (app->screenheight * (1 - zoom) / 2)), static_cast<int>(Disp->w * zoom), static_cast<int>(Disp->h * zoom)};
+    SDL_SetRenderDrawColor(app->renderer, r, g, b, 255);
+    SDL_RenderFillRect(app->renderer, &zoomDisp);
+}
 
 template<typename T> void drawTex(Texture* tex, GFX::RECT<int> *Img, GFX::RECT<T> *Disp, float angle, int alpha, float zoom) {
     RECT<T> zoomDisp = {static_cast<T>((Disp->x * zoom) + (app->screenwidth * (1 - zoom) / 2)), static_cast<T>((Disp->y * zoom) + (app->screenheight * (1 - zoom) / 2)), static_cast<T>(Disp->w * zoom), static_cast<T>(Disp->h * zoom)};

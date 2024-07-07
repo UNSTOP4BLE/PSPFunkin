@@ -63,8 +63,6 @@ Anim_OBJECT::~Anim_OBJECT(void)
 {
     for (int i = 0; i < static_cast<int>(textures.size()); i++)
     {
-        if (textures.size() == 0)
-            return;
         delete textures[i];
         textures[i] = nullptr;
     }
