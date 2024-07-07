@@ -416,11 +416,11 @@ void PlayStateScreen::missedNote(int pos) {
 
     if (pos != 0) { //sustain
         int notediff = pos - app->parser.songTime;
-//        if (notediff < 0 && (notediff % 8) == 0) 
-  //          health -= 0.05/2;
+        if (notediff < 0 && (notediff % 8) == 0) 
+            health -= 0.05/2;
     }
     else { //normal note
-    //    health -= 0.05;
+        health -= 0.05;
         misses += 1;
         combo.combo = 0;
     }
