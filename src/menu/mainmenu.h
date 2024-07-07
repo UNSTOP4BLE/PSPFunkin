@@ -6,6 +6,7 @@
 #include "../psp/animation.h"
 #include <string>            
 #include <vector>  
+#include "../psp/assetmanager.h"   
 
 class MainMenuScreen : public Screen {
 public:
@@ -14,7 +15,7 @@ public:
     void draw(void);
     ~MainMenuScreen(void); 
 private:
-    GFX::Texture *background;
+    const ImageAsset *background;
     Audio::StreamedFile *freaky; 
     //selections
     int selection;

@@ -12,8 +12,7 @@ FreeplayScreen::FreeplayScreen(int songpos) {
     freaky = new Audio::StreamedFile(*app->audioMixer, getPath("assets/music/freaky/freaky.ogg").c_str());
     freaky->play(true);
     freaky->setPosition(songpos);
-    background = new GFX::Texture();
-    background->load(getPath("assets/menu/back.png").c_str());
+    background = app->assetmanager.get<ImageAsset>(getPath("assets/menu/back.png").c_str());
     selection = 0;
     texty.setValue(((selection)*20));
 
@@ -48,7 +47,7 @@ void FreeplayScreen::update(void)
         app->audioMixer->playBuffer(*option);
         selection -= 1;
         if (selection < 0)
-            selection = 0;
+            selection = static_cast<int>(songs.size()-1);
         texty.setValue(((selection)*20), 0.2);
     }
     else if (app->event.isPressed(Input::MENU_DOWN))    
@@ -56,7 +55,7 @@ void FreeplayScreen::update(void)
         app->audioMixer->playBuffer(*option);
         selection += 1;
         if (selection > static_cast<int>(songs.size()-1))
-            selection = static_cast<int>(songs.size()-1);
+            selection = 0;
         texty.setValue(((selection)*20), 0.2);
     }
     if (app->event.isPressed(Input::MENU_ENTER))
@@ -76,7 +75,7 @@ void FreeplayScreen::draw(void)
 {
     GFX::RECT<int> background_img = {0, 0, 512, 331};
     GFX::RECT<float> background_disp = {app->screenwidth/2 - 700/2, app->screenheight/2 - 397/2, 700, 397};
-    GFX::drawColTex<float>(background, &background_img, &background_disp, 0, 255, 1,
+    GFX::drawColTex<float>(&background->image, &background_img, &background_disp, 0, 255, 1,
                             146, 113, 253);
     for (int i = 0; i < static_cast<int>(songs.size()); i++)
     {
@@ -97,7 +96,6 @@ void FreeplayScreen::draw(void)
 
 FreeplayScreen::~FreeplayScreen(void) 
 {
-    delete background;
     delete freaky;
     delete option;
     delete confirm;

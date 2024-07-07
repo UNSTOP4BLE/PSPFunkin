@@ -104,10 +104,8 @@ void PlayStateScreen::initscr(std::string song, bool _freeplay) {
         sprintf(_path, "assets/songs/%s/Inst.ogg", cursong.c_str());
         vocals = new Audio::StreamedFile(*app->audioMixer, getPath(_path).c_str());
     }
-    hud = new GFX::Texture();
-    hud->load(getPath("assets/hud.png").c_str());
-    icons = new GFX::Texture();
-    icons->load(getPath("assets/icons.png").c_str());
+    hud = app->assetmanager.get<ImageAsset>(getPath("assets/hud.png").c_str());
+    icons = app->assetmanager.get<ImageAsset>(getPath("assets/icons.png").c_str());
     gamecam.camx = opponent->camx;
     gamecam.camy = opponent->camy;
     gamecam.basezoom = opponent->camzoom+CAMERA_ZOOM_OFFSET;
@@ -312,13 +310,13 @@ void PlayStateScreen::drawHealthBar(void) {
     GFX::RECT<int> img = {1, 501, 320, 10};
     GFX::RECT<int> disp = {80, 235, img.w, 10};
     //player
-    GFX::drawTex<int>(icons, &img, &disp, 0, 255, hudcam.zoom.getValue());
+    GFX::drawTex<int>(&icons->image, &img, &disp, 0, 255, hudcam.zoom.getValue());
 
     //opponent
     img.y = 490;
     img.w = fabs(health - 1.0) * 320;
     disp.w = img.w;
-    GFX::drawTex<int>(icons, &img, &disp, 0, 255, hudcam.zoom.getValue());
+    GFX::drawTex<int>(&icons->image, &img, &disp, 0, 255, hudcam.zoom.getValue());
 }
 
 #define ICON_ROWS 10
@@ -333,7 +331,7 @@ void PlayStateScreen::drawIcons(void) {
                           ICON_SIZE};
 
     GFX::RECT<int> disp = {80+static_cast<int>(abs(health - 1.0)*320)-ICON_SIZE, 210, ICON_SIZE, ICON_SIZE};
-    GFX::drawTex<int>(icons, &img, &disp, 0, 255, hudcam.zoom.getValue() + iconcam.zoom.getValue());
+    GFX::drawTex<int>(&icons->image, &img, &disp, 0, 255, hudcam.zoom.getValue() + iconcam.zoom.getValue());
 
     //player
     dying = (health < 0.2 ? ICON_SIZE+1 : 0);
@@ -344,7 +342,7 @@ void PlayStateScreen::drawIcons(void) {
            ICON_SIZE};
 
     disp = {80+static_cast<int>(abs(health - 1.0)*320), 210, ICON_SIZE, ICON_SIZE};
-    GFX::drawTex<int>(icons, &img, &disp, 0, 255, hudcam.zoom.getValue() + iconcam.zoom.getValue());
+    GFX::drawTex<int>(&icons->image, &img, &disp, 0, 255, hudcam.zoom.getValue() + iconcam.zoom.getValue());
 }
 
 void PlayStateScreen::draw(void)
@@ -361,7 +359,7 @@ void PlayStateScreen::draw(void)
     combo.draw(hud, hudcam.zoom.getValue());
     
     if (app->parser.curStep < 0)
-        GFX::drawTex<int>(hud, &countdown_img, &countdown_disp, 0, static_cast<int>(countdown_alpha.getValue()), hudcam.zoom.getValue());
+        GFX::drawTex<int>(&hud->image, &countdown_img, &countdown_disp, 0, static_cast<int>(countdown_alpha.getValue()), hudcam.zoom.getValue());
 
     drawDummyNotes();
     drawNotes(false);
@@ -381,9 +379,6 @@ PlayStateScreen::~PlayStateScreen(void)
         delete opponent;
     if (gf != NULL)
         delete gf;
-    curstage.free();
-    delete hud;
-    delete icons;
     if (inst != NULL)
         delete inst;
     if (vocals != NULL)

@@ -7,8 +7,7 @@ OptionsScreen::OptionsScreen(int songpos) {
     freaky = new Audio::StreamedFile(*app->audioMixer, getPath("assets/music/freaky/freaky.ogg").c_str());
     freaky->play(true);
     freaky->setPosition(songpos);
-    background = new GFX::Texture();
-    background->load(getPath("assets/menu/back.png").c_str());
+    background = app->assetmanager.get<ImageAsset>(getPath("assets/menu/back.png").c_str());
     selection = 0;
 }
 
@@ -52,11 +51,10 @@ void OptionsScreen::draw(void)
 {
     GFX::RECT<int> background_img = {0, 0, 512, 331};
     GFX::RECT<float> background_disp = {app->screenwidth/2 - 700/2, app->screenheight/2 - 397/2, 700, 397};
-    GFX::drawTex<float>(background, &background_img, &background_disp, 0, 255, 1);
+    GFX::drawTex<float>(&background->image, &background_img, &background_disp, 0, 255, 1);
 }
 
 OptionsScreen::~OptionsScreen(void) 
 {
-    delete background;
     delete freaky;
 }

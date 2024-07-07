@@ -5,6 +5,7 @@
 #include "../psp/tween.h"
 #include <string>            
 #include <vector>  
+#include "../psp/assetmanager.h"   
 
 class OptionsScreen : public Screen {
 public:
@@ -13,7 +14,7 @@ public:
     void draw(void);
     ~OptionsScreen(void); 
 private:
-    GFX::Texture *background;
+    const ImageAsset *background;
     Audio::StreamedFile *freaky; 
     //selections
     int selection;

@@ -5,6 +5,7 @@
 #include "../psp/tween.h"
 #include <string>            
 #include <vector>  
+#include "../psp/assetmanager.h"   
 
 class DonateScreen : public Screen {
 public:
@@ -13,7 +14,7 @@ public:
     void draw(void);
     ~DonateScreen(void); 
 private:
-    GFX::Texture *background;
+    const ImageAsset *background;
     Audio::StreamedFile *freaky; 
     Audio::AudioBuffer *back;
 };

@@ -8,8 +8,7 @@ DonateScreen::DonateScreen(int songpos) {
     freaky = new Audio::StreamedFile(*app->audioMixer, getPath("assets/music/freaky/freaky.ogg").c_str());
     freaky->play(true);
     freaky->setPosition(songpos);
-    background = new GFX::Texture();
-    background->load(getPath("assets/menu/back.png").c_str());
+    background->loadFromFile(getPath("assets/menu/back.png").c_str());
     back = Audio::loadFile(getPath("assets/sounds/cancelMenu.wav").c_str());
 }
 
@@ -28,7 +27,7 @@ void DonateScreen::draw(void)
 {
     GFX::RECT<int> background_img = {0, 0, 512, 331};
     GFX::RECT<float> background_disp = {app->screenwidth/2 - 700/2, app->screenheight/2 - 397/2, 700, 397};
-    GFX::drawTex<float>(background, &background_img, &background_disp, 0, 255, 1);
+    GFX::drawTex<float>(&background->image, &background_img, &background_disp, 0, 255, 1);
 
     app->normalFont->Print(Center, app->screenwidth/2, app->screenheight/2, "DONATE TO ME IF YOU LIKE MY WORKS!!");
     app->normalFont->Print(Center, app->screenwidth/2, app->screenheight/2+11, "paypal.me/johnathanthepork16th");
@@ -36,7 +35,6 @@ void DonateScreen::draw(void)
 
 DonateScreen::~DonateScreen(void) 
 {
-    delete background;
     delete freaky;
     delete back;
 }

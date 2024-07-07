@@ -7,27 +7,54 @@
 
 class Asset {
 public:
+    virtual ~Asset(void) {}
+
+    static const Asset *loadFromFile(const char *path) { return nullptr; }
+};
+
+class ImageAsset : public Asset {
+public:
+    GFX::Texture image;
+
+    inline ImageAsset(void) {}
+    ~ImageAsset(void);
+
+    static const Asset *loadFromFile(const char *path);
+};
+
+/* Asset manager */
+
+class AssetTableEntry {
+public:
     int refCount;
-    union {
-        const void *ptr;
+    const Asset *ptr;
 
-        const GFX::Texture *texture;
-        const Audio::StreamedFile *stream;
-        const Audio::AudioBuffer *sound;
-        /* ... */
-    };
-
-    Asset(void) : refCount(1), ptr(nullptr) {}
-    ~Asset(void) {
-        if (ptr) { /* deallocate asset data here */ }
+    inline AssetTableEntry(void) : refCount(1), ptr(nullptr) {}
+    inline ~AssetTableEntry(void) {
+        if (ptr) {
+            delete ptr;
+        ptr = nullptr;
     }
+}
+
 };
 
 class AssetManager {
 private:
-    std::unordered_map<uint32_t, Asset> assets;
+    std::unordered_map<uint32_t, AssetTableEntry> loadedAssets;
+
+    const Asset *_get(const char *path, const Asset *(*loader)(const char *path));
 
 public:
-    Asset *getAsset(const char *path, bool allowLoading = true);
-    void release(const char *path);
+    // Allow loading new assets: assetManager.get<ImageAsset>(path)
+    template<typename T> inline const T *get(const char *path) {
+        return reinterpret_cast<const T *>(_get(path, &(T::loadFromFile)));
+    }
+
+    // Do not allow loading new assets: assetManager.get(path)
+    inline const Asset *get(const char *path) {
+        return _get(path, nullptr);
+}
+
+void release(const char *path);
 };

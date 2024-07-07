@@ -65,7 +65,7 @@ void drawRect(GFX::RECT<int> *Disp, float zoom, uint8_t r, uint8_t g, uint8_t b)
     SDL_RenderFillRect(app->renderer, &zoomDisp);
 }
 
-template<typename T> void drawTex(Texture* tex, GFX::RECT<int> *Img, GFX::RECT<T> *Disp, float angle, int alpha, float zoom) {
+template<typename T> void drawTex(const Texture* tex, GFX::RECT<int> *Img, GFX::RECT<T> *Disp, float angle, int alpha, float zoom) {
     RECT<T> zoomDisp = {static_cast<T>((Disp->x * zoom) + (app->screenwidth * (1 - zoom) / 2)), static_cast<T>((Disp->y * zoom) + (app->screenheight * (1 - zoom) / 2)), static_cast<T>(Disp->w * zoom), static_cast<T>(Disp->h * zoom)};
 //    zoomDisp.x -= 480;
  //   zoomDisp.y -= 272;
@@ -90,10 +90,10 @@ template<typename T> void drawTex(Texture* tex, GFX::RECT<int> *Img, GFX::RECT<T
     }
 }
 
-template void drawTex<int>(Texture* tex, GFX::RECT<int> *Img, GFX::RECT<int> *Disp, float angle, int alpha, float zoom);
-template void drawTex<float>(Texture* tex, GFX::RECT<int> *Img, GFX::RECT<float> *Disp, float angle, int alpha, float zoom);
+template void drawTex<int>(const Texture* tex, GFX::RECT<int> *Img, GFX::RECT<int> *Disp, float angle, int alpha, float zoom);
+template void drawTex<float>(const Texture* tex, GFX::RECT<int> *Img, GFX::RECT<float> *Disp, float angle, int alpha, float zoom);
 
-template<typename T> void drawColTex(Texture* tex, GFX::RECT<int> *Img, GFX::RECT<T> *Disp, float angle, int alpha, float zoom, uint8_t r, uint8_t g, uint8_t b) {
+template<typename T> void drawColTex(const Texture* tex, GFX::RECT<int> *Img, GFX::RECT<T> *Disp, float angle, int alpha, float zoom, uint8_t r, uint8_t g, uint8_t b) {
     RECT<T> zoomDisp = {static_cast<T>((Disp->x * zoom) + (app->screenwidth * (1 - zoom) / 2)), static_cast<T>((Disp->y * zoom) + (app->screenheight * (1 - zoom) / 2)), static_cast<T>(Disp->w * zoom), static_cast<T>(Disp->h * zoom)};
 //    zoomDisp.x -= 480;
  //   zoomDisp.y -= 272;
@@ -115,11 +115,11 @@ template<typename T> void drawColTex(Texture* tex, GFX::RECT<int> *Img, GFX::REC
         SDL_SetTextureAlphaMod(tex->getHandle(), alpha);
         SDL_SetTextureScaleMode(tex->getHandle(), SDL_ScaleModeBest);
         ASSERTFUNC(SDL_RenderCopyEx(app->renderer, tex->getHandle(), &_img, &_disp, static_cast<double>(angle), NULL, SDL_FLIP_NONE) >= 0, SDL_GetError());
-        tex->setCol(128, 128, 128);
+  //      tex->setCol(128, 128, 128);
     }
 }
 
-template void drawColTex<int>(Texture* tex, GFX::RECT<int> *Img, GFX::RECT<int> *Disp, float angle, int alpha, float zoom, uint8_t r, uint8_t g, uint8_t b);
-template void drawColTex<float>(Texture* tex, GFX::RECT<int> *Img, GFX::RECT<float> *Disp, float angle, int alpha, float zoom, uint8_t r, uint8_t g, uint8_t b);
+template void drawColTex<int>(const Texture* tex, GFX::RECT<int> *Img, GFX::RECT<int> *Disp, float angle, int alpha, float zoom, uint8_t r, uint8_t g, uint8_t b);
+template void drawColTex<float>(const Texture* tex, GFX::RECT<int> *Img, GFX::RECT<float> *Disp, float angle, int alpha, float zoom, uint8_t r, uint8_t g, uint8_t b);
 
 };

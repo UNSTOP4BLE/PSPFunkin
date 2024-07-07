@@ -35,8 +35,7 @@ TitleScreen::TitleScreen(int songpos, TitleStates _state)
     titleGF->setAnim(0, ModeNone);
     logo = new Anim_OBJECT("assets/menu/title/", "logoBumpin.json");
     logo->setAnim(0, ModeNone);
-    ng = new GFX::Texture();
-    ng->load(getPath("assets/menu/title/ng.png").c_str());
+    ng = app->assetmanager.get<ImageAsset>(getPath("assets/menu/title/ng.png").c_str());
 
     state = _state;
     //begin with a flash if you went back to title from menu
@@ -99,7 +98,7 @@ void TitleScreen::draw(void)
                     break;
                 case 7:
                     app->boldFont->Print(Center, app->screenwidth / 2, app->screenheight / 2 - 10, "NEWGROUNDS");
-                    GFX::drawTex<int>(ng, &NG_img, &NG_disp, 0, 255, 1);
+                    GFX::drawTex<int>(&ng->image, &NG_img, &NG_disp, 0, 255, 1);
                         [[fallthrough]];
                 case 6:
                         [[fallthrough]];
@@ -147,5 +146,4 @@ TitleScreen::~TitleScreen(void)
     delete logo;
     delete freaky;
     delete confirm;
-    delete ng;
 }

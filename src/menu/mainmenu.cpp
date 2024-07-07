@@ -15,8 +15,7 @@ MainMenuScreen::MainMenuScreen(int songpos) {
     freaky = new Audio::StreamedFile(*app->audioMixer, getPath("assets/music/freaky/freaky.ogg").c_str());
     freaky->play(true);
     freaky->setPosition(songpos);
-    background = new GFX::Texture();
-    background->load(getPath("assets/menu/back.png").c_str());
+    background = app->assetmanager.get<ImageAsset>(getPath("assets/menu/back.png").c_str());
     selection = 0;
     backgroundy.setValue(-(static_cast<int>(COUNT_OF(menu_selections))/2)*10*selection);
 
@@ -51,7 +50,7 @@ void MainMenuScreen::update(void)
         app->audioMixer->playBuffer(*option);
         selection -= 1;
         if (selection < 0)
-            selection = 0;
+            selection = static_cast<int>(COUNT_OF(menu_selections)-1);
 
         backgroundy.setValue(-(static_cast<int>(COUNT_OF(menu_selections))/2)*10*selection, BACKGROUND_SPEED);
     }
@@ -60,7 +59,7 @@ void MainMenuScreen::update(void)
         app->audioMixer->playBuffer(*option);
         selection += 1;
         if (selection > static_cast<int>(COUNT_OF(menu_selections)-1))
-            selection = static_cast<int>(COUNT_OF(menu_selections)-1);
+            selection = 0;
         backgroundy.setValue(-(static_cast<int>(COUNT_OF(menu_selections))/2)*10*selection, BACKGROUND_SPEED);
     }
     if (app->event.isPressed(Input::MENU_ENTER))
@@ -93,7 +92,7 @@ void MainMenuScreen::draw(void)
 {
     GFX::RECT<int> background_img = {0, 0, 512, 331};
     GFX::RECT<float> background_disp = {app->screenwidth/2 - 700/2, backgroundy.getValue(), 700, 397};
-    GFX::drawColTex<float>(background, &background_img, &background_disp, 0, 255, 1, 
+    GFX::drawColTex<float>(&background->image, &background_img, &background_disp, 0, 255, 1, 
                             253, 232, 113);
 
     int y = 0;
@@ -106,8 +105,6 @@ void MainMenuScreen::draw(void)
 
 MainMenuScreen::~MainMenuScreen(void) 
 {
-    delete background;
-
     for (int i = 0; i < static_cast<int>(COUNT_OF(menu_selections)); i++)
     {
         delete menu_selections[i];

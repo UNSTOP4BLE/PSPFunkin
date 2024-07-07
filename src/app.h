@@ -6,6 +6,7 @@
 #include "screen.h"
 #include "psp/input.h"
 #include "psp/font.h"
+#include "psp/assetmanager.h"
 
 
 //#ifndef PSP
@@ -26,6 +27,7 @@ public:
     FontManager *boldFont;
     FontManager *normalFont;
 //#endif
+    AssetManager assetmanager;
     Timer timer;
     Audio::Mixer *audioMixer;
     ChartParser parser;

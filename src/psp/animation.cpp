@@ -40,9 +40,8 @@ Anim_OBJECT::Anim_OBJECT(std::string path, std::string objname)
     {
         if (data["textures"].size() == 0)
             return;
-        _path = path + data["textures"][i].asString();     
-        textures[i] = new GFX::Texture();
-        textures[i]->load(_path.c_str());  
+        _path = path + data["textures"][i].asString();    
+        textures[i] = app->assetmanager.get<ImageAsset>(_path.c_str());  
     }
     _path = path + objname;
     
@@ -59,15 +58,6 @@ Anim_OBJECT::Anim_OBJECT(std::string path, std::string objname)
     debugLog("Anim_OBJECT: %s", _path.c_str());
 }
 
-Anim_OBJECT::~Anim_OBJECT(void)
-{
-    for (int i = 0; i < static_cast<int>(textures.size()); i++)
-    {
-        delete textures[i];
-        textures[i] = nullptr;
-    }
-    debugLog("~Anim_OBJECT:");
-}
 
 void Anim_OBJECT::setAnim(int anim, AnimationModes mode)
 {
@@ -125,7 +115,7 @@ void Anim_OBJECT::draw(float x, float y, float angle, int alpha, float zoom)
                                  static_cast<float>(frames[curframe].w),
                                  static_cast<float>(frames[curframe].h)};
 
-        ASSERTFUNC(textures[frames[curframe].tex], "texture is NULL");   
-        GFX::drawTex<float>(textures[frames[curframe].tex], &img, &disp, angle, alpha, zoom);
+//        ASSERTFUNC(textures[frames[curframe].tex]->image, "texture is NULL");   
+        GFX::drawTex<float>(&textures[frames[curframe].tex]->image, &img, &disp, angle, alpha, zoom);
     }
 }

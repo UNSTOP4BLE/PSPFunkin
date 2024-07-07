@@ -19,8 +19,7 @@ void Stage::load(const char *jpath, std::string stage) {
         textures[i].def = "";
         textures[i].def = data["textures"][i]["def"].asString();
         std::string texpath = "assets/stages/" + stage + "/" + data["textures"][i]["path"].asString();
-        textures[i].texture = new GFX::Texture();
-        textures[i].texture->load(texpath.c_str()); 
+        textures[i].texture = app->assetmanager.get<ImageAsset>(texpath.c_str()); 
     }
 
     //stage data
@@ -37,16 +36,6 @@ void Stage::tick(float cx, float cy) {
     tickObjects(bgobjects, cx, cy);
 }
 
-void Stage::free(void) {
-    for (int i = 0; i < static_cast<int>(textures.size()); i++) {
-        if (textures.size() == 0)
-            return;
-        delete textures[i].texture;
-        textures[i].texture = nullptr;
-    }
-    debugLog("Stage::free:");
-}
-
 void Stage::drawObjects(std::vector<StageObject> &objs, float camzoom) {
     for (int i = 0; i < static_cast<int>(objs.size()); i++) {
         if (objs.size() == 0)
@@ -60,7 +49,7 @@ void Stage::drawObjects(std::vector<StageObject> &objs, float camzoom) {
             }
         }
         ASSERTFUNC(tex != -1, "invalid background texture def, is it defined?");
-        GFX::drawTex<float>(textures[tex].texture, &objs[i].img, &objs[i].disp, objs[i].angle, objs[i].alpha, camzoom);
+        GFX::drawTex<float>(&textures[tex].texture->image, &objs[i].img, &objs[i].disp, objs[i].angle, objs[i].alpha, camzoom);
     }
 }
 

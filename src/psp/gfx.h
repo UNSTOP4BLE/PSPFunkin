@@ -29,6 +29,6 @@ void init(void);
 void clear(int color);
 void flip(void);
 void drawRect(GFX::RECT<int> *Disp, float zoom, uint8_t r, uint8_t g, uint8_t b);
-template<typename T> void drawTex(Texture* tex, GFX::RECT<int> *Img, GFX::RECT<T> *Disp, float angle, int alpha, float zoom);
-template<typename T> void drawColTex(Texture* tex, GFX::RECT<int> *Img, GFX::RECT<T> *Disp, float angle, int alpha, float zoom, uint8_t r, uint8_t g, uint8_t b);
+template<typename T> void drawTex(const Texture* tex, GFX::RECT<int> *Img, GFX::RECT<T> *Disp, float angle, int alpha, float zoom);
+template<typename T> void drawColTex(const Texture* tex, GFX::RECT<int> *Img, GFX::RECT<T> *Disp, float angle, int alpha, float zoom, uint8_t r, uint8_t g, uint8_t b);
 };

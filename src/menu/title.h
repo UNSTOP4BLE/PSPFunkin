@@ -4,6 +4,7 @@
 #include <string>  
 #include "../psp/animation.h"
 #include "../psp/audio_streamed_file.h"
+#include "../psp/assetmanager.h"   
 
 enum TitleStates
 {
@@ -20,7 +21,7 @@ public:
     ~TitleScreen(void);
 private:
     TitleStates state;
-    GFX::Texture *ng;
+    const ImageAsset *ng;
     Anim_OBJECT *titleGF;
     Anim_OBJECT *logo;
     std::string funnymessage[2];

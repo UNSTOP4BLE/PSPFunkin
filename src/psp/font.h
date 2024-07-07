@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gfx.h"
+#include "assetmanager.h"
 
 enum Align
 {   
@@ -23,7 +23,7 @@ struct Font
 struct FontManager
 {
 private:
-    GFX::Texture* tex; 
+    const ImageAsset *tex; 
     float zoom;
     int alpha;
     Fonts font;

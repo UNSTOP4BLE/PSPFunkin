@@ -1,7 +1,8 @@
 #pragma once
 #include "psp/gfx.h"
 #include <string>   
-#include "psp/tween.h"        
+#include "psp/tween.h" 
+#include "psp/assetmanager.h"          
 
 #define COMBO_OBJ_MAX 128
 
@@ -25,7 +26,7 @@ public:
     void init(void);
     void spawnNew(std::string name);
     void tick(void);
-    void draw(GFX::Texture *tex, float zoom);
+    void draw(const ImageAsset *tex, float zoom);
     int combo;
 private:
     int objectindex;

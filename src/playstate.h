@@ -65,8 +65,8 @@ private:
     //stage
     Stage curstage;
     //textures
-    GFX::Texture *hud;
-    GFX::Texture *icons;
+    const ImageAsset *hud;
+    const ImageAsset *icons;
     //audio
     Audio::StreamedFile *inst; 
     Audio::StreamedFile *vocals; 

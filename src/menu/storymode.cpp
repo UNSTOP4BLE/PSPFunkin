@@ -51,8 +51,6 @@ void StoryModeScreen::draw(void)
     app->normalFont->Print(Left, 51, 191, "TRACKS");
     for (int i = 0; i < static_cast<int>(data["weeks"][selection]["songs"].size()); i++)
         app->normalFont->Print(Center, 51, 213+(10*i), data["weeks"][selection]["songs"][i].asString().c_str());
-    
-    app->normalFont->Print(Left, 50,  50, "only week 1 currently available \n(press x to start)");
 }
 
 StoryModeScreen::~StoryModeScreen(void) 

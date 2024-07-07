@@ -13,9 +13,8 @@ FontManager::FontManager(Fonts dafont, const char *path)
 {   
     zoom = 1;
     alpha = 255;
-    tex = new GFX::Texture();
     font = dafont;
-    tex->load(path);
+    tex = app->assetmanager.get<ImageAsset>(path);
     switch (dafont)
     {
         case Font_Font:
@@ -93,7 +92,7 @@ void FontManager::PrintMSG(int x, int y, const char *str, Align all)
                 font_Img.y = fontmap[c].charY + 69;
         }
         GFX::RECT<int> font_Disp = {x, y, fontmap[c].charW, fontmap[c].charH};
-        GFX::drawTex<int>(tex, &font_Img, &font_Disp, 0, alpha, zoom);
+        GFX::drawTex<int>(&tex->image, &font_Img, &font_Disp, 0, alpha, zoom);
         x += fontmap[c].charW - 1;
     }
 

@@ -80,7 +80,7 @@ void Combo::tick(void)
     }*/
 }
 
-void Combo::draw(GFX::Texture *tex, float zoom)
+void Combo::draw(const ImageAsset *tex, float zoom)
 {
     /*
     for (int i = 0; i < COMBO_OBJ_MAX; i++)
