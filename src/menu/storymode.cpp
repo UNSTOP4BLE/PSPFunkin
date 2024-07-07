@@ -11,6 +11,7 @@ StoryModeScreen::StoryModeScreen(int songpos) {
     freaky->play(true);
     freaky->setPosition(songpos);
     selection = 0;
+    loadJson(getPath("assets/menu/story/storymenu.json").c_str(), &data);
 }
 
 void StoryModeScreen::update(void) 
@@ -20,17 +21,17 @@ void StoryModeScreen::update(void)
     {
         selection -= 1;
         if (selection < 0)
-            selection = 0;
+            selection = static_cast<int>(data["weeks"].size())-1;
     }
     else if (app->event.isPressed(Input::MENU_DOWN))    
     {
         selection += 1;
-//        if (selection > static_cast<int>(songs.size()-1))
-  //          selection = static_cast<int>(songs.size()-1);
+        if (selection > static_cast<int>(data["weeks"].size())-1)
+            selection = 0;
     }
     if (app->event.isPressed(Input::MENU_ENTER))
     {
-        setScreen(new PlayStateScreen("bopeebo", false));
+        setScreen(new PlayStateScreen(data["weeks"][selection]["songs"][0].asString(), false));
     }
 
     if (app->event.isPressed(Input::MENU_ESCAPE))
@@ -48,8 +49,9 @@ void StoryModeScreen::draw(void)
 
     app->normalFont->Print(Left,  5,   6, "WEEK SCORE: ");
     app->normalFont->Print(Left, 51, 191, "TRACKS");
-    app->normalFont->Print(Center, 51, 213, "TEST");
-    app->normalFont->Print(Center, 51, 213+10, "TESTTESTTEST");
+    for (int i = 0; i < static_cast<int>(data["weeks"][selection]["songs"].size()); i++)
+        app->normalFont->Print(Center, 51, 213+(10*i), data["weeks"][selection]["songs"][i].asString().c_str());
+    
     app->normalFont->Print(Left, 50,  50, "only week 1 currently available \n(press x to start)");
 }
 
