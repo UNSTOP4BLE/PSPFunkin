@@ -13,14 +13,14 @@ public:
 
 class Texture {
 private:
-    SDL_Texture *handle;
 public:
+    SDL_Texture *handle;
     inline Texture(void)
     : handle(nullptr) {}
     inline SDL_Texture *getHandle(void) {
         return handle;
     }
-    void setCol(uint8_t r, uint8_t g, uint8_t b);
+//    void setCol(uint8_t r, uint8_t g, uint8_t b);
     ~Texture(void);
     bool load(const char *path);
 };

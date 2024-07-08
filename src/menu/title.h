@@ -26,6 +26,6 @@ private:
     Anim_OBJECT *logo;
     std::string funnymessage[2];
     Audio::StreamedFile *freaky; 
-    Audio::AudioBuffer *confirm;
+    const SoundAsset *confirm;
     int curStep;
 };

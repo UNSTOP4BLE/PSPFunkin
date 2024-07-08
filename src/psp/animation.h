@@ -29,6 +29,7 @@ class Anim_OBJECT {
 public:
     Anim_OBJECT(void);
     Anim_OBJECT(std::string path, std::string objname);
+    ~Anim_OBJECT(void);
     void setAnim(int anim, AnimationModes mode);
     void tick(void);
     void draw(float x, float y, float angle, int alpha, float zoom);

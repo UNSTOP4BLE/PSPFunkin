@@ -41,7 +41,7 @@ private:
 
 public:
     void feed(const void *data, int size);
-    void feed(AudioBuffer &buffer);
+    void feed(const AudioBuffer &buffer);
     int getBufferedSamples(void);
     int cancelPlayback(void);
 
@@ -90,7 +90,7 @@ public:
     void stop(void);
 
     MixerChannel *openChannel(SDL_AudioFormat format, int channels, int sampleRate);
-    MixerChannel *playBuffer(AudioBuffer &buffer, bool close = true);
+    MixerChannel *playBuffer(const AudioBuffer &buffer, bool close = true);
     void setMasterVolume(float left, float right);
     int64_t getSampleOffset(void);
 };

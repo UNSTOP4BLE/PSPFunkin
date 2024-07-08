@@ -23,27 +23,25 @@ Anim_OBJECT::Anim_OBJECT(std::string path, std::string objname)
     std::string _path;
 
     _path = path + objname;
-    Json::Value data;
-    loadJson(_path.c_str(), &data);
+    const JsonAsset *data = app->assetmanager.get<JsonAsset>(getPath(_path.c_str()).c_str());
 
-    conf.resize(data["config"].size());
-    for (int i = 0; i < static_cast<int>(data["config"].size()); i++)
+    conf.resize(data->value["config"].size());
+    for (int i = 0; i < static_cast<int>(data->value["config"].size()); i++)
     {
-        speed.push_back(data["config"][i][0].asInt()); //speed
-        for (int j = 1; j < static_cast<int>(data["config"][i].size()); j++) //frames per animation
-            conf[i].push_back(data["config"][i][j].asInt());
+        speed.push_back(data->value["config"][i][0].asInt()); //speed
+        for (int j = 1; j < static_cast<int>(data->value["config"][i].size()); j++) //frames per animation
+            conf[i].push_back(data->value["config"][i][j].asInt());
     }
     frames = readFramesFromJson(_path.c_str());
-    textures.resize(data["textures"].size());
+    textures.resize(data->value["textures"].size());
 
-    for (int i = 0; i < static_cast<int>(data["textures"].size()); i++)
+    for (int i = 0; i < static_cast<int>(data->value["textures"].size()); i++)
     {
-        if (data["textures"].size() == 0)
-            return;
-        _path = path + data["textures"][i].asString();    
-        textures[i] = app->assetmanager.get<ImageAsset>(_path.c_str());  
+        _path = path + data->value["textures"][i].asString();    
+        textures[i] = app->assetmanager.get<ImageAsset>(getPath(_path.c_str()).c_str());  
     }
     _path = path + objname;
+    app->assetmanager.release(data->assetpath.c_str());
     
     //reset vars
     cantick = cananimate = false;
@@ -58,6 +56,14 @@ Anim_OBJECT::Anim_OBJECT(std::string path, std::string objname)
     debugLog("Anim_OBJECT: %s", _path.c_str());
 }
 
+Anim_OBJECT::~Anim_OBJECT(void)
+{
+    for (int i = 0; i < static_cast<int>(textures.size()); i++)
+    {
+        app->assetmanager.release(textures[i]->assetpath.c_str());
+    }
+    debugLog("~Anim_OBJECT:");
+}
 
 void Anim_OBJECT::setAnim(int anim, AnimationModes mode)
 {

@@ -8,8 +8,8 @@ DonateScreen::DonateScreen(int songpos) {
     freaky = new Audio::StreamedFile(*app->audioMixer, getPath("assets/music/freaky/freaky.ogg").c_str());
     freaky->play(true);
     freaky->setPosition(songpos);
-    background->loadFromFile(getPath("assets/menu/back.png").c_str());
-    back = Audio::loadFile(getPath("assets/sounds/cancelMenu.wav").c_str());
+    background = app->assetmanager.get<ImageAsset>(getPath("assets/menu/back.png").c_str());
+    back = app->assetmanager.get<SoundAsset>(getPath("assets/sounds/cancelMenu.wav").c_str());
 }
 
 void DonateScreen::update(void) 
@@ -18,7 +18,7 @@ void DonateScreen::update(void)
 
     if (app->event.isPressed(Input::MENU_ESCAPE))
     {
-        app->audioMixer->playBuffer(*back);
+        app->audioMixer->playBuffer(back->soundbuffer);
         setScreen(new MainMenuScreen(freaky->getPosition()));
     }
 }
@@ -35,6 +35,7 @@ void DonateScreen::draw(void)
 
 DonateScreen::~DonateScreen(void) 
 {
+    app->assetmanager.release(background->assetpath.c_str());
     delete freaky;
-    delete back;
+    app->assetmanager.release(back->assetpath.c_str());
 }

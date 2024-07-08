@@ -8,17 +8,18 @@
 
 Character::Character(std::string path, std::string objstr, float _x, float _y) {
     std::string _path = path + objstr;
-    Json::Value chardata;
-    loadJson(_path.c_str(), &chardata);
+    const JsonAsset *chardata = app->assetmanager.get<JsonAsset>(getPath(_path.c_str()).c_str());;
+
     setPos(_x, _y);
-    setIcon(chardata["icon"].asInt());
-    type = chardata["type"].asString();
+    setIcon(chardata->value["icon"].asInt());
+    type = chardata->value["type"].asString();
     obj = new Anim_OBJECT(path, objstr);
     issinging = false;
     singendtime = 0;
     obj->setAnim(0, ModeNone);
     singendtime = 0;
     debugLog("Character::Character: %s", path.c_str());
+    app->assetmanager.release(chardata->assetpath.c_str()); 
 }
 
 GFCharacter::GFCharacter(std::string path, std::string objstr, float _x, float _y) : Character::Character(path, objstr, _x, _y) {

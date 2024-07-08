@@ -8,10 +8,39 @@
 const Asset *ImageAsset::loadFromFile(const char *path) {
     auto asset = new ImageAsset();
     asset->image.load(path);
+    asset->assetpath = static_cast<std::string>(path);
     return asset;
  }
 
 ImageAsset::~ImageAsset(void) {}
+
+const Asset *SoundAsset::loadFromFile(const char *path) {
+    auto asset = new SoundAsset();
+    Audio::loadFile(asset->soundbuffer, path);
+    asset->assetpath = static_cast<std::string>(path);
+    return asset;
+ }
+
+SoundAsset::~SoundAsset(void) {}
+
+const Asset *JsonAsset::loadFromFile(const char *path) {
+    auto asset = new JsonAsset();
+    
+    std::ifstream file(path);
+    Json::Reader reader;
+ 
+    debugLog("loadJson: %s", path);
+    ASSERTFUNC(reader.parse(file, asset->value), reader.getFormattedErrorMessages().c_str());   
+
+    file.close();
+
+    asset->assetpath = static_cast<std::string>(path);
+    return asset;
+}
+
+JsonAsset::~JsonAsset(void) {}
+
+
 /* Asset manager */
 
 
@@ -43,7 +72,8 @@ void AssetManager::release(const char *path) {
     auto pathHash = Hash::FromString(path);
     auto result = loadedAssets.find(pathHash);
 
-    ASSERTFUNC(result != loadedAssets.end(), "Attempted to release asset that was not loaded");
+    std::string errmsg = "Attempted to release asset that was not loaded " + static_cast<std::string>(path);
+    ASSERTFUNC(result != loadedAssets.end(), errmsg.c_str());
 
     auto tableEntry = &(result->second);
     tableEntry->refCount--;

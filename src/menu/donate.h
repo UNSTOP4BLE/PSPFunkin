@@ -16,5 +16,5 @@ public:
 private:
     const ImageAsset *background;
     Audio::StreamedFile *freaky; 
-    Audio::AudioBuffer *back;
+    const SoundAsset *back;
 };

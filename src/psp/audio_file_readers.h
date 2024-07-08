@@ -65,6 +65,6 @@ public:
 };
 
 FileReader *openFile(const char *path);
-AudioBuffer *loadFile(const char *path);
+bool loadFile(AudioBuffer &buffer, const char *path);
 
 }

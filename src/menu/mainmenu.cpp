@@ -22,13 +22,13 @@ MainMenuScreen::MainMenuScreen(int songpos) {
     //initialize menu select sprites
     for (int i = 0; i < static_cast<int>(COUNT_OF(menu_selections)); i++)
     {
-        menu_selections[i] = new Anim_OBJECT(getPath("assets/menu/").c_str(), "menuassets.json");
+        menu_selections[i] = new Anim_OBJECT("assets/menu/", "menuassets.json");
         menu_selections[i]->setAnim(0, ModeNone);
     }
 
-    option = Audio::loadFile(getPath("assets/sounds/scrollMenu.wav").c_str());
-    confirm = Audio::loadFile(getPath("assets/sounds/confirmMenu.wav").c_str());
-    back = Audio::loadFile(getPath("assets/sounds/cancelMenu.wav").c_str());
+    option = app->assetmanager.get<SoundAsset>(getPath("assets/sounds/scrollMenu.wav").c_str());
+    confirm = app->assetmanager.get<SoundAsset>(getPath("assets/sounds/confirmMenu.wav").c_str());
+    back = app->assetmanager.get<SoundAsset>(getPath("assets/sounds/cancelMenu.wav").c_str());
 }
 
 void MainMenuScreen::update(void) 
@@ -47,7 +47,7 @@ void MainMenuScreen::update(void)
    
     if (app->event.isPressed(Input::MENU_UP))
     {
-        app->audioMixer->playBuffer(*option);
+        app->audioMixer->playBuffer(option->soundbuffer);
         selection -= 1;
         if (selection < 0)
             selection = static_cast<int>(COUNT_OF(menu_selections)-1);
@@ -56,7 +56,7 @@ void MainMenuScreen::update(void)
     }
     else if (app->event.isPressed(Input::MENU_DOWN))    
     {
-        app->audioMixer->playBuffer(*option);
+        app->audioMixer->playBuffer(option->soundbuffer);
         selection += 1;
         if (selection > static_cast<int>(COUNT_OF(menu_selections)-1))
             selection = 0;
@@ -64,7 +64,7 @@ void MainMenuScreen::update(void)
     }
     if (app->event.isPressed(Input::MENU_ENTER))
     {
-        app->audioMixer->playBuffer(*confirm);
+        app->audioMixer->playBuffer(confirm->soundbuffer);
         switch (selection)
         {
             case 0: //story mode
@@ -83,7 +83,7 @@ void MainMenuScreen::update(void)
     }
     if (app->event.isPressed(Input::MENU_ESCAPE))
     {
-        app->audioMixer->playBuffer(*back);
+        app->audioMixer->playBuffer(back->soundbuffer);
         setScreen(new TitleScreen(freaky->getPosition(), Flash)); 
     }
 }
@@ -105,12 +105,13 @@ void MainMenuScreen::draw(void)
 
 MainMenuScreen::~MainMenuScreen(void) 
 {
+    app->assetmanager.release(background->assetpath.c_str()); 
     for (int i = 0; i < static_cast<int>(COUNT_OF(menu_selections)); i++)
     {
         delete menu_selections[i];
     }
     delete freaky;
-    delete option;
-    delete confirm;
-    delete back;
+    app->assetmanager.release(option->assetpath.c_str()); 
+    app->assetmanager.release(confirm->assetpath.c_str()); 
+    app->assetmanager.release(back->assetpath.c_str()); 
 }

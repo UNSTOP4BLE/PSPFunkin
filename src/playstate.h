@@ -77,11 +77,11 @@ private:
     std::string nextsong;
     NotePos notePos;
     //gameplay
-    Audio::AudioBuffer *sfx_3;
-    Audio::AudioBuffer *sfx_2;
-    Audio::AudioBuffer *sfx_1;
-    Audio::AudioBuffer *sfx_go;
-    Audio::AudioBuffer *sfx_misses[3];
+    const SoundAsset *sfx_3;
+    const SoundAsset *sfx_2;
+    const SoundAsset *sfx_1;
+    const SoundAsset *sfx_go;
+    const SoundAsset *sfx_misses[3];
     GFX::RECT<int> countdown_img;
     GFX::RECT<int> countdown_disp;
     Tween<float, QuadInOutEasing, Chrono> countdown_alpha;
@@ -96,5 +96,5 @@ private:
     //note animation
     Tween<float, QuadInOutEasing, Chrono> noteframe[4];
     bool notehit[4];
-    Json::Value events;
+    const JsonAsset *events;
 };

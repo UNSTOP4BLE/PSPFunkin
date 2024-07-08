@@ -16,20 +16,20 @@ TitleScreen::TitleScreen(int songpos, TitleStates _state)
     setScreenCol(0xFF000000);
 
     //load menu jsons
-    Json::Value titleJson;
-    loadJson(getPath("assets/menu/title/title.json").c_str(), &titleJson);
+    const JsonAsset *titleJson = app->assetmanager.get<JsonAsset>(getPath("assets/menu/title/title.json").c_str());
     
-    int curmsg = rand() % (titleJson["messages"].size()); //get a random message
-    funnymessage[0] = titleJson["messages"][curmsg][0].asString();
-    funnymessage[1] = titleJson["messages"][curmsg][1].asString();
+    int curmsg = rand() % (titleJson->value["messages"].size()); //get a random message
+    funnymessage[0] = titleJson->value["messages"][curmsg][0].asString();
+    funnymessage[1] = titleJson->value["messages"][curmsg][1].asString();
+
 
     //load and play music
-    app->parser.chartdata.bpm = titleJson["menuSongBPM"].asDouble();   
+    app->parser.chartdata.bpm = titleJson->value["menuSongBPM"].asDouble();   
     app->parser.calcCrochet();
     freaky = new Audio::StreamedFile(*app->audioMixer, getPath("assets/music/freaky/freaky.ogg").c_str());
     freaky->play(true);
     freaky->setPosition(songpos);
-    confirm = Audio::loadFile(getPath("assets/sounds/confirmMenu.wav").c_str());
+    confirm = app->assetmanager.get<SoundAsset>(getPath("assets/sounds/confirmMenu.wav").c_str());
     //load textures
     titleGF = new Anim_OBJECT("assets/menu/title/gf/", "frames.json");
     titleGF->setAnim(0, ModeNone);
@@ -37,6 +37,7 @@ TitleScreen::TitleScreen(int songpos, TitleStates _state)
     logo->setAnim(0, ModeNone);
     ng = app->assetmanager.get<ImageAsset>(getPath("assets/menu/title/ng.png").c_str());
 
+    app->assetmanager.release(titleJson->assetpath.c_str());
     state = _state;
     //begin with a flash if you went back to title from menu
     if (state != Intro)
@@ -68,7 +69,7 @@ void TitleScreen::update(void)
             state = Title;
         else
         {        
-            app->audioMixer->playBuffer(*confirm);
+            app->audioMixer->playBuffer(confirm->soundbuffer);
             setScreen(new MainMenuScreen(freaky->getPosition()));
         }
     }
@@ -142,8 +143,9 @@ void TitleScreen::draw(void)
 
 TitleScreen::~TitleScreen(void) 
 {
+    app->assetmanager.release(ng->assetpath.c_str()); 
     delete titleGF;
     delete logo;
     delete freaky;
-    delete confirm;
+    app->assetmanager.release(confirm->assetpath.c_str()); 
 }

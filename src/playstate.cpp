@@ -44,55 +44,56 @@ void PlayStateScreen::initscr(std::string song, bool _freeplay) {
 
     char _path[256];
     sprintf(_path, "assets/songs/%s/config.json", cursong.c_str());
-    Json::Value _config;
-    loadJson(getPath(_path).c_str(), &_config);
+    const JsonAsset *_config = app->assetmanager.get<JsonAsset>(getPath(_path).c_str());;
 
     //events 
     sprintf(_path, "assets/songs/%s/events.json", cursong.c_str());
-    if (access(_path, F_OK) == 0) //file exists
-        loadJson(getPath(_path).c_str(), &events);
+    if (access(getPath(_path).c_str(), F_OK) == 0) //file exists
+        events = app->assetmanager.get<JsonAsset>(getPath(_path).c_str());
+    
 
     //next song info
-    nextsong = _config["next"].asString();
+    nextsong = _config->value["next"].asString();
 
     //load characters
 
     //player
-    sprintf(_path, "assets/characters/%s/", _config["player"].asString().c_str());
-    player = new Character(getPath(_path).c_str(), _config["player"].asString() + ".json", _config["playerpos"][0].asFloat(), _config["playerpos"][1].asFloat());
-    player->setFocus(_config["playerpos"][2].asFloat(), _config["playerpos"][3].asFloat(),  _config["playerpos"][4].asFloat());
+    sprintf(_path, "assets/characters/%s/", _config->value["player"].asString().c_str());
+    player = new Character(_path, _config->value["player"].asString() + ".json", _config->value["playerpos"][0].asFloat(), _config->value["playerpos"][1].asFloat());
+    player->setFocus(_config->value["playerpos"][2].asFloat(), _config->value["playerpos"][3].asFloat(),  _config->value["playerpos"][4].asFloat());
 
     //opponent
-    sprintf(_path, "assets/characters/%s/", _config["opponent"].asString().c_str());
-    opponent = new Character(getPath(_path).c_str(), _config["opponent"].asString() + ".json", _config["opponentpos"][0].asFloat(), _config["opponentpos"][1].asFloat());
-    opponent->setFocus(_config["opponentpos"][2].asFloat(), _config["opponentpos"][3].asFloat(),  _config["opponentpos"][4].asFloat());
+    sprintf(_path, "assets/characters/%s/", _config->value["opponent"].asString().c_str());
+    opponent = new Character(_path, _config->value["opponent"].asString() + ".json", _config->value["opponentpos"][0].asFloat(), _config->value["opponentpos"][1].asFloat());
+    opponent->setFocus(_config->value["opponentpos"][2].asFloat(), _config->value["opponentpos"][3].asFloat(),  _config->value["opponentpos"][4].asFloat());
 
     //gf    
-    sprintf(_path, "assets/characters/%s/", _config["gf"].asString().c_str());
-    gf = new GFCharacter(getPath(_path).c_str(), _config["gf"].asString() + ".json", _config["gfpos"][0].asFloat(), _config["gfpos"][1].asFloat());
+    sprintf(_path, "assets/characters/%s/", _config->value["gf"].asString().c_str());
+    gf = new GFCharacter(_path, _config->value["gf"].asString() + ".json", _config->value["gfpos"][0].asFloat(), _config->value["gfpos"][1].asFloat());
 
     //stage
-    sprintf(_path, "assets/stages/%s/%s.json", _config["back"].asString().c_str(), _config["back"].asString().c_str()); 
-    curstage.load(getPath(_path).c_str(), _config["back"].asString());
+    sprintf(_path, "assets/stages/%s/%s.json", _config->value["back"].asString().c_str(), _config->value["back"].asString().c_str()); 
+    curstage.load(_path, _config->value["back"].asString());
 
+    app->assetmanager.release(_config->assetpath.c_str()); 
     //load game assets
 
     //load sound effects
-    sfx_3 = Audio::loadFile(getPath("assets/sounds/intro3.wav").c_str());
-    sfx_2 = Audio::loadFile(getPath("assets/sounds/intro2.wav").c_str());
-    sfx_1 = Audio::loadFile(getPath("assets/sounds/intro1.wav").c_str());
-    sfx_go = Audio::loadFile(getPath("assets/sounds/introGo.wav").c_str());
+    sfx_3 = app->assetmanager.get<SoundAsset>(getPath("assets/sounds/intro3.wav").c_str());
+    sfx_2 = app->assetmanager.get<SoundAsset>(getPath("assets/sounds/intro2.wav").c_str());
+    sfx_1 = app->assetmanager.get<SoundAsset>(getPath("assets/sounds/intro1.wav").c_str());
+    sfx_go = app->assetmanager.get<SoundAsset>(getPath("assets/sounds/introGo.wav").c_str());
 
-    sfx_misses[0] = Audio::loadFile(getPath("assets/sounds/missnote1.wav").c_str());
-    sfx_misses[1] = Audio::loadFile(getPath("assets/sounds/missnote2.wav").c_str());
-    sfx_misses[2] = Audio::loadFile(getPath("assets/sounds/missnote3.wav").c_str());
+    sfx_misses[0] = app->assetmanager.get<SoundAsset>(getPath("assets/sounds/missnote1.wav").c_str());
+    sfx_misses[1] = app->assetmanager.get<SoundAsset>(getPath("assets/sounds/missnote2.wav").c_str());
+    sfx_misses[2] = app->assetmanager.get<SoundAsset>(getPath("assets/sounds/missnote3.wav").c_str());
 
     sprintf(_path, "assets/songs/%s/%s.bin", cursong.c_str(), cursong.c_str()); //todo implement difficulty
     app->parser.loadChart(getPath(_path).c_str());
     app->parser.songTime = -30 * app->parser.step_crochet; //always start at step -30
 
     sprintf(_path, "assets/songs/%s/Voices.ogg", cursong.c_str());
-    if (access(_path, F_OK) == 0) //file exists
+    if (access(getPath(_path).c_str(), F_OK) == 0) //file exists
     {
         vocals = new Audio::StreamedFile(*app->audioMixer, getPath(_path).c_str());
         sprintf(_path, "assets/songs/%s/Inst.ogg", cursong.c_str());
@@ -156,10 +157,10 @@ void PlayStateScreen::Camera::update(float ox, float oy, float oz, float px, flo
 }
 
 void PlayStateScreen::updateEvents(void) {
-    for (int i = 0; i < static_cast<int>(events["events"].size()); i++)
+    for (int i = 0; i < static_cast<int>(events->value["events"].size()); i++)
     {
-        Json::Value &event = events["events"][i];
-        if (event["eventstep"].asInt() == app->parser.curStep && app->parser.justStep)
+        const Json::Value &event = events->value["events"][i];
+        if (events->value["eventstep"].asInt() == app->parser.curStep && app->parser.justStep)
         {
             debugLog("Playing event %s", event["eventname"].asString().c_str());
             switch (Hash::FromString(event["eventname"].asString().c_str())) {
@@ -201,7 +202,7 @@ void PlayStateScreen::update(void)
 
     if (isPlaying)
     {
-        if (events.isMember("events"))
+        if (events->value.isMember("events"))
             updateEvents();
 
         if (app->parser.justStep && !(app->parser.curStep % 16))
@@ -242,23 +243,23 @@ void PlayStateScreen::update(void)
             {
                 case -16:
                 //3
-                    app->audioMixer->playBuffer(*sfx_3);
+                    app->audioMixer->playBuffer(sfx_3->soundbuffer);
                     break;
                 case -12:
                 //2
                     countdown_alpha.setValue(255, 0, 4 * app->parser.stepsPerSecond);
-                    app->audioMixer->playBuffer(*sfx_2);
+                    app->audioMixer->playBuffer(sfx_2->soundbuffer);
                     break;
                 case -8:
                 //1
                     countdown_alpha.setValue(255, 0, 4 * app->parser.stepsPerSecond);
-                    app->audioMixer->playBuffer(*sfx_1);
+                    app->audioMixer->playBuffer(sfx_1->soundbuffer);
                     countdown_img.y += 91;
                     break;
                 case -4:
                 //go
                     countdown_alpha.setValue(255, 0, 4 * app->parser.stepsPerSecond);
-                    app->audioMixer->playBuffer(*sfx_go);
+                    app->audioMixer->playBuffer(sfx_go->soundbuffer);
                     countdown_img.y += 91;
                     break;
             }
@@ -291,8 +292,6 @@ void PlayStateScreen::update(void)
                     setScreen(new StoryModeScreen(0));
                 else
                 {
-                    delete app->currentScreen;
-                    app->currentScreen = NULL;
                     std::string next = nextsong;
                     setScreen(new PlayStateScreen(next, false));
                 }
@@ -384,14 +383,22 @@ PlayStateScreen::~PlayStateScreen(void)
     if (vocals != NULL)
         delete vocals;
 
-    delete sfx_3;
-    delete sfx_2;
-    delete sfx_1;
-    delete sfx_go;
+    curstage.free();
+    
+    app->assetmanager.release(icons->assetpath.c_str()); 
+    app->assetmanager.release(hud->assetpath.c_str()); 
 
-    delete sfx_misses[0];
-    delete sfx_misses[1];
-    delete sfx_misses[2];
+    app->assetmanager.release(sfx_3->assetpath.c_str()); 
+    app->assetmanager.release(sfx_2->assetpath.c_str()); 
+    app->assetmanager.release(sfx_1->assetpath.c_str()); 
+    app->assetmanager.release(sfx_go->assetpath.c_str()); 
+
+    app->assetmanager.release(sfx_misses[0]->assetpath.c_str()); 
+    app->assetmanager.release(sfx_misses[1]->assetpath.c_str()); 
+    app->assetmanager.release(sfx_misses[2]->assetpath.c_str()); 
+
+    if (events->value.isMember("events"))
+        app->assetmanager.release(events->assetpath.c_str()); 
 }
 
 Rating PlayStateScreen::judgeNote(float diff)
@@ -543,7 +550,7 @@ void PlayStateScreen::updateInput(void)
     if (!ghosttap && (checkPad[0] || checkPad[1] || checkPad[2] || checkPad[3]) && !justhitnote) //miss note if ghosttapping is off
     {
         missedNote(0);
-        app->audioMixer->playBuffer(*sfx_misses[rand() % (COUNT_OF(sfx_misses))]);
+        app->audioMixer->playBuffer(sfx_misses[rand() % (COUNT_OF(sfx_misses))]->soundbuffer);
 
         //miss animation
         if (checkPad[0] || checkPad[1] || checkPad[2] || checkPad[3])

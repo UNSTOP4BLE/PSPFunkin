@@ -73,7 +73,7 @@ void MixerChannel::feed(const void *data, int size) {
     _mixer->_unlockCallback();
 }
 
-void MixerChannel::feed(AudioBuffer &buffer) {
+void MixerChannel::feed(const AudioBuffer &buffer) {
     feed(buffer.data.data(), buffer.data.size());
 }
 
@@ -269,7 +269,7 @@ MixerChannel *Mixer::openChannel(SDL_AudioFormat format, int channels, int sampl
     return nullptr;
 }
 
-MixerChannel *Mixer::playBuffer(AudioBuffer &buffer, bool close) {
+MixerChannel *Mixer::playBuffer(const AudioBuffer &buffer, bool close) {
     auto channel = openChannel(buffer.format, buffer.channels, buffer.sampleRate);
     if (channel) {
         channel->feed(buffer);

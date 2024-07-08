@@ -4,24 +4,44 @@
 #include "gfx.h"
 #include "audio_streamed_file.h"
 #include "audio_buffer.h"
+#include <json/json.h>
 
 class Asset {
 public:
     virtual ~Asset(void) {}
 
-    static const Asset *loadFromFile(const char *path) { return nullptr; }
+    static const Asset *loadFromFile(const char *path) { (void) path; return nullptr; }
 };
 
 class ImageAsset : public Asset {
 public:
+    std::string assetpath;
     GFX::Texture image;
-
     inline ImageAsset(void) {}
     ~ImageAsset(void);
 
     static const Asset *loadFromFile(const char *path);
 };
 
+class SoundAsset : public Asset {
+public:
+    std::string assetpath;
+    Audio::AudioBuffer soundbuffer;
+    inline SoundAsset(void) {}
+    ~SoundAsset(void);
+
+    static const Asset *loadFromFile(const char *path);
+};
+
+class JsonAsset : public Asset {
+public:
+    std::string assetpath;
+    Json::Value value;
+    inline JsonAsset(void) {}
+    ~JsonAsset(void);
+
+    static const Asset *loadFromFile(const char *path);
+};
 /* Asset manager */
 
 class AssetTableEntry {

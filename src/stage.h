@@ -27,6 +27,7 @@ public:
     void load(const char *jpath, std::string stage);
     void tick(float cx, float cy);
     void drawObjects(std::vector<StageObject> &objs, float camzoom);
+    void free(void);
     std::vector<StageObject> fgobjects;
     std::vector<StageObject> mdobjects;
     std::vector<StageObject> bgobjects;

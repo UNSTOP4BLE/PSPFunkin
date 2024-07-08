@@ -16,9 +16,7 @@ FreeplayScreen::FreeplayScreen(int songpos) {
     selection = 0;
     texty.setValue(((selection)*20));
 
-    const char* songsPath = getPath("assets/songs").c_str();
-
-    DIR *dir = opendir(songsPath);
+    DIR *dir = opendir(getPath("assets/songs").c_str());
 
     for (dirent *entry = readdir(dir); entry != NULL; entry = readdir(dir))
     {
@@ -33,9 +31,9 @@ FreeplayScreen::FreeplayScreen(int songpos) {
     }
 
     closedir(dir);
-    option = Audio::loadFile(getPath("assets/sounds/scrollMenu.wav").c_str());
-    confirm = Audio::loadFile(getPath("assets/sounds/confirmMenu.wav").c_str());
-    back = Audio::loadFile(getPath("assets/sounds/cancelMenu.wav").c_str());
+    option = app->assetmanager.get<SoundAsset>(getPath("assets/sounds/scrollMenu.wav").c_str());
+    confirm = app->assetmanager.get<SoundAsset>(getPath("assets/sounds/confirmMenu.wav").c_str());
+    back = app->assetmanager.get<SoundAsset>(getPath("assets/sounds/cancelMenu.wav").c_str());
 }
 
 void FreeplayScreen::update(void) 
@@ -44,7 +42,7 @@ void FreeplayScreen::update(void)
    
     if (app->event.isPressed(Input::MENU_UP))
     {
-        app->audioMixer->playBuffer(*option);
+        app->audioMixer->playBuffer(option->soundbuffer);
         selection -= 1;
         if (selection < 0)
             selection = static_cast<int>(songs.size()-1);
@@ -52,7 +50,7 @@ void FreeplayScreen::update(void)
     }
     else if (app->event.isPressed(Input::MENU_DOWN))    
     {
-        app->audioMixer->playBuffer(*option);
+        app->audioMixer->playBuffer(option->soundbuffer);
         selection += 1;
         if (selection > static_cast<int>(songs.size()-1))
             selection = 0;
@@ -60,13 +58,13 @@ void FreeplayScreen::update(void)
     }
     if (app->event.isPressed(Input::MENU_ENTER))
     {
-        app->audioMixer->playBuffer(*confirm);
+        app->audioMixer->playBuffer(confirm->soundbuffer);
         setScreen(new PlayStateScreen(songs[selection], true));
     }
 
     if (app->event.isPressed(Input::MENU_ESCAPE))
     {
-        app->audioMixer->playBuffer(*back);
+        app->audioMixer->playBuffer(back->soundbuffer);
         setScreen(new MainMenuScreen(freaky->getPosition()));
     }
 }
@@ -96,8 +94,9 @@ void FreeplayScreen::draw(void)
 
 FreeplayScreen::~FreeplayScreen(void) 
 {
+    app->assetmanager.release(background->assetpath.c_str()); 
     delete freaky;
-    delete option;
-    delete confirm;
-    delete back;
+    app->assetmanager.release(option->assetpath.c_str()); 
+    app->assetmanager.release(confirm->assetpath.c_str()); 
+    app->assetmanager.release(back->assetpath.c_str()); 
 }

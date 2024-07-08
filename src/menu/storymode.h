@@ -19,12 +19,12 @@ private:
     //selections
     int selection;
     std::vector<std::string> songs;
-    Json::Value data;
+    const JsonAsset *data;
     Anim_OBJECT *bf;
     Anim_OBJECT *opp;
     Anim_OBJECT *gf;
-    Audio::AudioBuffer *option;
-    Audio::AudioBuffer *back;
-    Audio::AudioBuffer *confirm;
+    const SoundAsset *option;
+    const SoundAsset *back;
+    const SoundAsset *confirm;
     Tween<float, QuadInOutEasing, Chrono> backgroundy;
 };

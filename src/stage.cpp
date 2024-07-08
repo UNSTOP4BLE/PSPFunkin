@@ -1,6 +1,7 @@
 #include "stage.h"
 #include "main.h"
 #include "psp/file.h"
+#include "app.h"
 
 //misc functions
 static void parseObjects(std::vector<StageObject> &objs, std::string gnd, Json::Value data);
@@ -8,24 +9,26 @@ static void tickObjects(std::vector<StageObject> &objs, float cx, float cy);
 
 //stage functions
 void Stage::load(const char *jpath, std::string stage) {
-    Json::Value data;
-    loadJson(jpath, &data);
+
+    const JsonAsset *data = app->assetmanager.get<JsonAsset>(getPath(jpath).c_str());
 
     //textures
-    textures.resize(static_cast<int>(data["textures"].size()));
-    for (int i = 0; i < static_cast<int>(data["textures"].size()); i++) {
-        if (data["textures"].size() == 0)
+    textures.resize(static_cast<int>(data->value["textures"].size()));
+    for (int i = 0; i < static_cast<int>(data->value["textures"].size()); i++) {
+        if (data->value["textures"].size() == 0)
             return;
         textures[i].def = "";
-        textures[i].def = data["textures"][i]["def"].asString();
-        std::string texpath = "assets/stages/" + stage + "/" + data["textures"][i]["path"].asString();
-        textures[i].texture = app->assetmanager.get<ImageAsset>(texpath.c_str()); 
+        textures[i].def = data->value["textures"][i]["def"].asString();
+        std::string texpath = "assets/stages/" + stage + "/" + data->value["textures"][i]["path"].asString();
+        textures[i].texture = app->assetmanager.get<ImageAsset>(getPath(texpath.c_str()).c_str()); 
     }
 
     //stage data
-    parseObjects(fgobjects, "foreground", data);
-    parseObjects(mdobjects, "middleground", data);
-    parseObjects(bgobjects, "background", data);
+    parseObjects(fgobjects, "foreground", data->value);
+    parseObjects(mdobjects, "middleground", data->value);
+    parseObjects(bgobjects, "background", data->value);
+
+    app->assetmanager.release(data->assetpath.c_str());
 
     debugLog("Stage::load: %s", jpath);
 }
@@ -51,6 +54,14 @@ void Stage::drawObjects(std::vector<StageObject> &objs, float camzoom) {
         ASSERTFUNC(tex != -1, "invalid background texture def, is it defined?");
         GFX::drawTex<float>(&textures[tex].texture->image, &objs[i].img, &objs[i].disp, objs[i].angle, objs[i].alpha, camzoom);
     }
+}
+
+void Stage::free(void) {
+    //textures
+    for (int i = 0; i < static_cast<int>(textures.size()); i++) {
+        app->assetmanager.release(textures[i].texture->assetpath.c_str()); 
+    }
+    debugLog("Stage::free:");
 }
 
 //misc functions

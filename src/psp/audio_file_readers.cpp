@@ -182,16 +182,14 @@ FileReader *openFile(const char *path) {
     return nullptr;
 }
 
-AudioBuffer *loadFile(const char *path) {
+bool loadFile(AudioBuffer &buffer, const char *path) {
     auto reader = openFile(path);
     if (!reader)
-        return nullptr;
+        return false;
 
-    auto buffer = new AudioBuffer();
-    reader->read(*buffer, reader->totalNumSamples);
+    reader->read(buffer, reader->totalNumSamples);
     delete reader;
-
-    return buffer;
+    return true;
 }
 
 }

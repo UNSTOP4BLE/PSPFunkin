@@ -56,5 +56,6 @@ void OptionsScreen::draw(void)
 
 OptionsScreen::~OptionsScreen(void) 
 {
+    app->assetmanager.release(background->assetpath.c_str()); 
     delete freaky;
 }

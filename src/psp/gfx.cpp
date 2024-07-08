@@ -29,15 +29,14 @@ void flip(void) {
 Texture::~Texture(void) {
     if (handle) {
         SDL_DestroyTexture(handle);
-        printf("destroying %d\n", handle);
     }
     handle = nullptr;
     debugLog("Texture::~Texture:");
 }
 
-void Texture::setCol(uint8_t r, uint8_t g, uint8_t b) {
+//void Texture::setCol(uint8_t r, uint8_t g, uint8_t b) {
 //    ASSERTFUNC(SDL_SetTextureColorMod(handle, r, g, b), SDL_GetError());
-} 
+//} 
 
 bool Texture::load(const char *path) {
     if (handle)
@@ -77,16 +76,16 @@ template<typename T> void drawTex(const Texture* tex, GFX::RECT<int> *Img, GFX::
     //zoomDisp.x *= (app->screenwidth/480);
     //zoomDisp.y *= (app->screenheight/272);
 
-    ASSERTFUNC(tex->getHandle(), "texture is NULL");
+    ASSERTFUNC(tex->handle, "texture is NULL");
 
     if (Disp->x+Disp->w >= 0 && Disp->x <= app->screenwidth && Disp->y+Disp->h >= 0 && Disp->y <= app->screenheight)
     {
         SDL_Rect _img = {static_cast<int>(Img->x), static_cast<int>(Img->y), static_cast<int>(Img->w), static_cast<int>(Img->h)};
         SDL_Rect _disp = {static_cast<int>(zoomDisp.x), static_cast<int>(zoomDisp.y), static_cast<int>(zoomDisp.w), static_cast<int>(zoomDisp.h)};
 
-        SDL_SetTextureAlphaMod(tex->getHandle(), alpha);
-        SDL_SetTextureScaleMode(tex->getHandle(), SDL_ScaleModeBest);
-        ASSERTFUNC(SDL_RenderCopyEx(app->renderer, tex->getHandle(), &_img, &_disp, static_cast<double>(angle), NULL, SDL_FLIP_NONE) >= 0, SDL_GetError());
+        SDL_SetTextureAlphaMod(tex->handle, alpha);
+        SDL_SetTextureScaleMode(tex->handle, SDL_ScaleModeBest);
+        ASSERTFUNC(SDL_RenderCopyEx(app->renderer, tex->handle, &_img, &_disp, static_cast<double>(angle), NULL, SDL_FLIP_NONE) >= 0, SDL_GetError());
     }
 }
 
@@ -105,17 +104,17 @@ template<typename T> void drawColTex(const Texture* tex, GFX::RECT<int> *Img, GF
     //zoomDisp.x *= (app->screenwidth/480);
     //zoomDisp.y *= (app->screenheight/272);
 
-    ASSERTFUNC(tex->getHandle(), "texture is NULL");
-    tex->setCol(r, g, b);
+    ASSERTFUNC(tex->handle, "texture is NULL");
+    //tex->setCol(r, g, b);
 
     if (Disp->x+Disp->w >= 0 && Disp->x <= app->screenwidth && Disp->y+Disp->h >= 0 && Disp->y <= app->screenheight)
     {
         SDL_Rect _img = {static_cast<int>(Img->x), static_cast<int>(Img->y), static_cast<int>(Img->w), static_cast<int>(Img->h)};
         SDL_Rect _disp = {static_cast<int>(zoomDisp.x), static_cast<int>(zoomDisp.y), static_cast<int>(zoomDisp.w), static_cast<int>(zoomDisp.h)};
-        SDL_SetTextureAlphaMod(tex->getHandle(), alpha);
-        SDL_SetTextureScaleMode(tex->getHandle(), SDL_ScaleModeBest);
-        ASSERTFUNC(SDL_RenderCopyEx(app->renderer, tex->getHandle(), &_img, &_disp, static_cast<double>(angle), NULL, SDL_FLIP_NONE) >= 0, SDL_GetError());
-  //      tex->setCol(128, 128, 128);
+        SDL_SetTextureAlphaMod(tex->handle, alpha);
+        SDL_SetTextureScaleMode(tex->handle, SDL_ScaleModeBest);
+        ASSERTFUNC(SDL_RenderCopyEx(app->renderer, tex->handle, &_img, &_disp, static_cast<double>(angle), NULL, SDL_FLIP_NONE) >= 0, SDL_GetError());
+//        tex->setCol(128, 128, 128);
     }
 }
 
