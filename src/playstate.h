@@ -97,4 +97,5 @@ private:
     Tween<float, QuadInOutEasing, Chrono> noteframe[4];
     bool notehit[4];
     const JsonAsset *events;
+    bool events_exist;
 };

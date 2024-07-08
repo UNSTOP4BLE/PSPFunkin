@@ -43,7 +43,7 @@ WAVFileReader::WAVFileReader(const char *path) {
     _readValue<uint32_t>(_wavFile); //ignore total file size
     ASSERTFUNC(_readValue<uint32_t>(_wavFile) == "WAVE"_m, "not a valid WAV file");
 
-    debugLog("WAVFileReader: %s", path);
+    PRINT_ALLOC();
 
     while (!feof(_wavFile)) {
         auto chunkType = _readValue<uint32_t>(_wavFile);
@@ -104,7 +104,7 @@ int WAVFileReader::read(AudioBuffer &buf, int numSamples, int bufferOffset) {
 }
 
 WAVFileReader::~WAVFileReader(void) {
-    debugLog("~WAVFileReader:");
+    PRINT_FREE();
     fclose(_wavFile);
 }
 
@@ -121,7 +121,7 @@ OGGFileReader::OGGFileReader(const char *path) {
     bytesPerSample = sizeof(int16_t) * info->channels;
 
     _bitstreamIndex = 0;
-    debugLog("OGGFileReader: %s", path);
+    PRINT_ALLOC();
 }
 
 int OGGFileReader::getPosition(void) {
@@ -166,7 +166,7 @@ int OGGFileReader::read(AudioBuffer &buf, int numSamples, int bufferOffset) {
 }
 
 OGGFileReader::~OGGFileReader(void) {
-    debugLog("~OGGFileReader:");
+    PRINT_FREE();
     ov_clear(&_oggFile);
 }
 

@@ -26,7 +26,6 @@ FreeplayScreen::FreeplayScreen(int songpos) {
         for (auto& x : name)
             x = std::toupper(x); 
 
-        printf("song found(%s)\n", name.c_str());
         songs.push_back(name);
     }
 

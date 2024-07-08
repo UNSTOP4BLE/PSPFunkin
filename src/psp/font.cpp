@@ -24,7 +24,7 @@ FontManager::FontManager(Fonts dafont, const char *path)
             fontmap = font_boldmap;
             break;
     }
-    debugLog("FontManager: %s", path);
+    PRINT_ALLOC();
 }
 
 int FontManager::GetW(const char *str)

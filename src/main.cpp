@@ -21,7 +21,10 @@
 #include "psp/tween.h"
 
 #include "menu/title.h"
-
+#ifdef _WIN32
+#include <windows.h>
+#include <psapi.h>
+#endif 
 //#define DEBUG //for profiling
 #ifdef DEBUG
 #include <pspprof.h>
@@ -83,6 +86,8 @@ void debugLog(const char *format, ...)
     std::vsprintf(string, format, list);
     va_end(list);
 
+    printf(string);
+    printf("\n");
     app->debugmessages.push_back(string);
 }
 
@@ -100,6 +105,7 @@ int main()
     app = new PSPFunkin(); //new pspfunkin every single time?? no need for a rewrite!
 
     debugLog("debug_start");
+
 #ifdef PSP
     setupcallbacks();
 #endif
@@ -145,7 +151,15 @@ int main()
         ASSERTFUNC(app->currentScreen, "screen is NULL");                
         app->currentScreen->update();  
         app->currentScreen->draw();  
+
+#ifdef _WIN32 
+        PROCESS_MEMORY_COUNTERS_EX pmc;
+        GetProcessMemoryInfo(GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
+        SIZE_T virtualMemUsedByMe = pmc.PrivateUsage;
+        app->normalFont->Print(Left, 0, 0, "FPS: %d RAM: %f", static_cast<int>(fps), virtualMemUsedByMe/0x100000);
+#else
         app->normalFont->Print(Left, 0, 0, "FPS: %d", static_cast<int>(fps));
+#endif
 
         if (app->event.isPressed(Input::DEBUG_SHOW)) 
             debugshown = !debugshown; 

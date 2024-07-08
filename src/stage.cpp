@@ -30,7 +30,7 @@ void Stage::load(const char *jpath, std::string stage) {
 
     app->assetmanager.release(data->assetpath.c_str());
 
-    debugLog("Stage::load: %s", jpath);
+    PRINT_ALLOC();
 }
 
 void Stage::tick(float cx, float cy) {
@@ -61,7 +61,7 @@ void Stage::free(void) {
     for (int i = 0; i < static_cast<int>(textures.size()); i++) {
         app->assetmanager.release(textures[i].texture->assetpath.c_str()); 
     }
-    debugLog("Stage::free:");
+    PRINT_FREE();
 }
 
 //misc functions

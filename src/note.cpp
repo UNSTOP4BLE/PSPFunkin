@@ -47,8 +47,6 @@ void PlayStateScreen::drawDummyNotes(void)
 
 void PlayStateScreen::deleteNote(int &note, bool opponent) {
     app->parser.gamenotes[opponent].erase(app->parser.gamenotes[opponent].begin() + note);
-    printf((opponent ? "deleting oppnote %d\n" : "deleting pnote %d\n"), note);
-    printf((app->parser.gamenotes[opponent][note].sus != 0 ? "that is a sustain\n" : "\n"));
     note = -1;
 }
 

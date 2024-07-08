@@ -7,7 +7,7 @@
 #include "psp/font.h"
     
 void setScreen(Screen *scr)
-{   
+{
     if (app->currentScreen != NULL)
         delete app->currentScreen;
     app->currentScreen = scr;

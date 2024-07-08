@@ -15,7 +15,7 @@ Anim_OBJECT::Anim_OBJECT(void) {
     curanim.framecount = 0;
     curanim.endtime = 0;
     frame.setValue(0);
-    debugLog("Anim_OBJECT:");
+    PRINT_ALLOC();
 }
 
 Anim_OBJECT::Anim_OBJECT(std::string path, std::string objname)
@@ -53,7 +53,7 @@ Anim_OBJECT::Anim_OBJECT(std::string path, std::string objname)
     curanim.endtime = 0;
     frame.setValue(0); 
 
-    debugLog("Anim_OBJECT: %s", _path.c_str());
+    PRINT_ALLOC();
 }
 
 Anim_OBJECT::~Anim_OBJECT(void)
@@ -62,7 +62,7 @@ Anim_OBJECT::~Anim_OBJECT(void)
     {
         app->assetmanager.release(textures[i]->assetpath.c_str());
     }
-    debugLog("~Anim_OBJECT:");
+    PRINT_FREE();
 }
 
 void Anim_OBJECT::setAnim(int anim, AnimationModes mode)

@@ -8,6 +8,7 @@
 
 class Asset {
 public:
+    std::string assetpath;
     virtual ~Asset(void) {}
 
     static const Asset *loadFromFile(const char *path) { (void) path; return nullptr; }
@@ -74,7 +75,8 @@ public:
     // Do not allow loading new assets: assetManager.get(path)
     inline const Asset *get(const char *path) {
         return _get(path, nullptr);
-}
+    }
 
-void release(const char *path);
+    void release(const char *path);
+    void printLoadedAssets(void);
 };

@@ -35,7 +35,7 @@ void StoryModeScreen::update(void)
     }
 
     if (app->event.isPressed(Input::MENU_ESCAPE))
-    {
+    {       
         setScreen(new MainMenuScreen(freaky->getPosition()));
     }
 }

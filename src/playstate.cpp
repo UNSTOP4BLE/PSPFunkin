@@ -47,9 +47,13 @@ void PlayStateScreen::initscr(std::string song, bool _freeplay) {
     const JsonAsset *_config = app->assetmanager.get<JsonAsset>(getPath(_path).c_str());;
 
     //events 
+    events_exist = false;
     sprintf(_path, "assets/songs/%s/events.json", cursong.c_str());
     if (access(getPath(_path).c_str(), F_OK) == 0) //file exists
+    {
+        events_exist = true;
         events = app->assetmanager.get<JsonAsset>(getPath(_path).c_str());
+    }
 
     //next song info
     nextsong = _config->value["next"].asString();
@@ -201,7 +205,7 @@ void PlayStateScreen::update(void)
 
     if (isPlaying)
     {
-        if (events != NULL)
+        if (events_exist)
             updateEvents();
 
         if (app->parser.justStep && !(app->parser.curStep % 16))
@@ -396,7 +400,7 @@ PlayStateScreen::~PlayStateScreen(void)
     app->assetmanager.release(sfx_misses[1]->assetpath.c_str()); 
     app->assetmanager.release(sfx_misses[2]->assetpath.c_str()); 
 
-    if (events != NULL)
+    if (events_exist)
         app->assetmanager.release(events->assetpath.c_str()); 
 }
 

@@ -29,7 +29,7 @@ const Asset *JsonAsset::loadFromFile(const char *path) {
     std::ifstream file(path);
     Json::Reader reader;
  
-    debugLog("loadJson: %s", path);
+    PTR_PRINT_ALLOC(asset);
     ASSERTFUNC(reader.parse(file, asset->value), reader.getFormattedErrorMessages().c_str());   
 
     file.close();
@@ -79,4 +79,13 @@ void AssetManager::release(const char *path) {
     tableEntry->refCount--;
     if (tableEntry->refCount <= 0)
         loadedAssets.erase(result);
+}
+
+void AssetManager::printLoadedAssets(void) {
+    printf("Currently loaded assets:\n");
+
+    for (auto item = loadedAssets.begin(); item != loadedAssets.end(); item++) {
+        auto &asset = item->second;
+        printf("- [%d] %s\n", asset.refCount, asset.ptr->assetpath.c_str());
+    }
 }

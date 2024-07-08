@@ -18,14 +18,14 @@ Character::Character(std::string path, std::string objstr, float _x, float _y) {
     singendtime = 0;
     obj->setAnim(0, ModeNone);
     singendtime = 0;
-    debugLog("Character::Character: %s", path.c_str());
+    PRINT_ALLOC();
     app->assetmanager.release(chardata->assetpath.c_str()); 
 }
 
 GFCharacter::GFCharacter(std::string path, std::string objstr, float _x, float _y) : Character::Character(path, objstr, _x, _y) {
     obj_speaker = new Anim_OBJECT(path, "speaker.json");
     obj_speaker->setAnim(0, ModeNone);
-    debugLog("GFCharacter::GFCharacter: %s", path.c_str());
+    PRINT_ALLOC();
 }
 
 void Character::setPos(float _x, float _y) {
@@ -130,12 +130,12 @@ void GFCharacter::draw(float cx, float cy, float cz) {
 }
 
 Character::~Character(void) {
-    debugLog("Character::~Character");
+    PRINT_FREE();
     delete obj;
 }
 
 GFCharacter::~GFCharacter(void) {
-    debugLog("GFCharacter::~GFCharacter");
+    PRINT_FREE();
     if (obj_speaker != NULL)
         delete obj_speaker;
 }
