@@ -30,6 +30,6 @@ std::string getPath(std::string path) {
     #ifdef __vita__ 
         return "app0:/" + path;
     #else
-        return "shit/" + path;
+        return path;
     #endif
 }
