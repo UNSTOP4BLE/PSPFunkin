@@ -201,7 +201,7 @@ void PlayStateScreen::update(void)
 
     if (isPlaying)
     {
-        if (events->value.isMember("events"))
+        if (events != NULL)
             updateEvents();
 
         if (app->parser.justStep && !(app->parser.curStep % 16))
@@ -396,7 +396,7 @@ PlayStateScreen::~PlayStateScreen(void)
     app->assetmanager.release(sfx_misses[1]->assetpath.c_str()); 
     app->assetmanager.release(sfx_misses[2]->assetpath.c_str()); 
 
-    if (events->value.isMember("events"))
+    if (events != NULL)
         app->assetmanager.release(events->assetpath.c_str()); 
 }
 
