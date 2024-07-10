@@ -42,10 +42,10 @@ void StoryModeScreen::update(void)
 
 void StoryModeScreen::draw(void) 
 {
-    GFX::RECT<int> black_background = {0, 0, app->screenwidth, app->screenheight};
-    GFX::drawRect(&black_background, 1, 0, 0, 0);
-    GFX::RECT<int> middle_strap = {0, 21, app->screenwidth, 152};
-    GFX::drawRect(&middle_strap, 1, 247, 208, 81);
+    RECT<int> black_background = {0, 0, app->renderer->screenwidth, app->renderer->screenheight};
+    //GFX::drawrect(&black_background, 1, 0, 0, 0);
+    RECT<int> middle_strap = {0, 21, app->renderer->screenwidth, 152};
+    //GFX::drawrect(&middle_strap, 1, 247, 208, 81);
 
     app->normalFont->Print(Left,  5,   6, "WEEK SCORE: ");
     app->normalFont->Print(Left, 51, 191, "TRACKS");

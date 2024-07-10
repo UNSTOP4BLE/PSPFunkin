@@ -69,12 +69,12 @@ void Combo::tick(void)
             objects[i].falling = true;
         
         if (objects[i].falling) {
-            objects[objectindex].y.setValue(app->screenheight, 0.3);
+            objects[objectindex].y.setValue(app->renderer->screenheight, 0.3);
             if (objects[i].timer > 0)
                 objects[i].alpha -= 4;
         }
         //destroy object
-        if (objects[i].y.getValue() >= app->screenheight)
+        if (objects[i].y.getValue() >= app->renderer->screenheight)
             objects[i].tick = false;
         objects[i].disp = {static_cast<int>(objects[i].x), static_cast<int>(objects[i].y.getValue()), 100, 50};
     }*/
@@ -89,7 +89,7 @@ void Combo::draw(const ImageAsset *tex, float zoom)
             continue;
         if (objects[i].alpha < 0)
             objects[i].alpha = 0;
-//        GFX::drawTex<int>(tex, &objects[i].img, &objects[i].disp, 0, static_cast<int>(objects[i].alpha), zoom);
+//        //GFX::drawTex<int>(tex, &objects[i].img, &objects[i].disp, 0, static_cast<int>(objects[i].alpha), zoom);
     }*/
     
 }

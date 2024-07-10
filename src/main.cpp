@@ -1,3 +1,4 @@
+#include "psp/gfx.h"
 #include <cstdio>
 #define SDL_MAIN_HANDLED
 #include "main.h"
@@ -69,12 +70,13 @@ void ErrMSG(const char *filename, const char *function, int line, const char *ex
 #endif
     while(1)
     {
-        GFX::clear(app->screenCol);
+        app->renderer->clear(app->screenCol);
         inputDevice.getEvent(app->event);
         app->normalFont->Print(Left, 0, 0, errstr);
         debugmenu(debugy);
         
-        GFX::flip();
+        app->renderer->swapBuffers();
+        app->renderer->waitForVSync();
     }
 }
 
@@ -112,7 +114,7 @@ int main()
     ASSERTFUNC(SDL_Init(SDL_INIT_EVERYTHING) >= 0, "failed to init sdl");
     app->audioMixer = new Audio::Mixer();
     app->audioMixer->start();
-    GFX::init();
+    app->renderer = new PSPRenderer(480, 272, 2);
     app->normalFont = new FontManager(Font_Font, getPath("assets/font/font.png").c_str());
     app->boldFont = new FontManager(Font_Bold, getPath("assets/font/boldfont.png").c_str());
     setScreenCol(0xFF00FF00);
@@ -135,7 +137,7 @@ int main()
     {
         std::chrono::time_point<std::chrono::system_clock> last = std::chrono::high_resolution_clock::now();
         
-        GFX::clear(app->screenCol);
+        app->renderer->clear(app->screenCol);
 #ifndef PSP
         SDL_PumpEvents();
 
@@ -166,7 +168,8 @@ int main()
         if (debugshown)
             debugmenu(debugy);
 
-        GFX::flip();
+        app->renderer->swapBuffers();
+        app->renderer->waitForVSync();
 
         std::chrono::time_point<std::chrono::system_clock> current = std::chrono::high_resolution_clock::now();
         app->deltatime = static_cast<double>(std::chrono::duration_cast<std::chrono::milliseconds>(current - last).count());

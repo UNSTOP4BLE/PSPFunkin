@@ -8,9 +8,9 @@
 class StageObject {
 public:
     std::string def; //definition of the texture used 
-    GFX::RECT<int> img;
-    GFX::RECT<int> initialdisp;
-    GFX::RECT<float> disp;
+    RECT<int> img;
+    RECT<int> initialdisp;
+    RECT<float> disp;
     float scrollfactor[2];
     float angle;
     int alpha;

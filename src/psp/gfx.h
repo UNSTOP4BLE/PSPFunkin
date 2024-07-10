@@ -30,6 +30,11 @@ public:
     Color color;
 };
 
+template<typename T> struct RECT {
+public:
+    T x, y, w, h;
+};
+
 struct TexturedTriangle {
 public:
     Vec3<float> verts[3];
@@ -39,6 +44,9 @@ public:
 
 struct Texture {
 public:
+    ~Texture(void);
+
+    bool load(const char *path);
 };
 
 class Mat4 {
@@ -49,7 +57,8 @@ public:
     void setTranslation(Vec3<float> vec);
     void setRotation(Vec3<float> vec);
     void setScale(Vec3<float> vec);
-    void multiply(const Mat4 &other, Mat4 &output);
+    void multiply(const Mat4 &other, Mat4 &output) const;
+    
 };
 
 class Renderer {
@@ -82,4 +91,7 @@ public:
     PSPRenderer(int width, int height, int numBuffers);
     ~PSPRenderer(void);
 
+    void clear(Color color);
+    void swapBuffers(void);
+    void waitForVSync(void); 
 };

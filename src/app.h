@@ -8,21 +8,16 @@
 #include "psp/font.h"
 #include "psp/assetmanager.h"
 
-
 //#ifndef PSP
-#include <SDL2/SDL.h>
 //#endif
 
 class PSPFunkin
 {
 public:
     std::vector<std::string> debugmessages; //debug terminal
-    int screenwidth;
-    int screenheight;
+
 //#ifndef PSP
-    SDL_Window *window;
-    SDL_Renderer *renderer;
-    SDL_Surface *screenSurface;
+    Renderer *renderer;
     Input::Event event;
     FontManager *boldFont;
     FontManager *normalFont;

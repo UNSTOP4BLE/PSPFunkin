@@ -13,8 +13,8 @@ public:
     float x;
     Tween<float, QuadInOutEasing, Chrono> y;
     int ymin;
-    GFX::RECT<int> img;
-    GFX::RECT<int> disp;
+    RECT<int> img;
+    RECT<int> disp;
     int timer;
     float alpha;
 private:
