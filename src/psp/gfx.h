@@ -15,14 +15,29 @@ public:
     T x, y;
 };
 
-
 using Color = uint32_t; // RGBA color
+
+union Color {
+public:
+    uint32_t value;
+    struct {
+        uint8_t r, g, b, a;
+    };
+};
 
 struct Line {
 public:
     Vec3<float> a, b;
     Color color;
 };
+
+struct LineVertex {
+public:
+    Color       color;
+    Vec3<float> pos;
+};
+using Line = LineVertex[2];
+    
 
 struct Triangle {
 public:
@@ -66,7 +81,6 @@ public:
     int screenwidth;
     int screenheight;
 
-    Renderer(int width, int height, int numBuffers) {(void) width; (void) height; (void) numBuffers; }
     virtual ~Renderer(void) {}
 
     virtual void drawLines(const Line *prims, size_t count) {(void) prims; (void) count; }
@@ -90,6 +104,8 @@ public:
     
     PSPRenderer(int width, int height, int numBuffers);
     ~PSPRenderer(void);
+
+    void drawLines(const Line *prims, size_t count);
 
     void clear(Color color);
     void swapBuffers(void);

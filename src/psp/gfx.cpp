@@ -30,48 +30,38 @@ void Mat4::setTranslation(Vec3<float> vec) {
 }
 
 void Mat4::setRotation(Vec3<float> vec) {
-    /*
-	Mat4 multiplied;
-    Mat4 copy;
-	int s, c; 
+    Mat4 rot, temp;
 
-	if (vec.x) {
-		s = sin(vec.x);
-		c = cos(vec.x);
+    float cosX = cos(vec.x), sinX = sin(vec.x);
+    float cosY = cos(vec.y), sinY = sin(vec.y);
+    float cosZ = cos(vec.z), sinZ = sin(vec.z);
 
-		multiplied.m[1] = {
-			c, -s,  0,
-			s,  c,  0,
-			0,  0,  1
-        };
-        this->multiply(multiplied, copy);
-        this->m[0] = copy.m[0];
-	}
-	if (vec.y) {
-		s = sin(vec.y);
-		c = cos(vec.y);
+    rot.setIdentity();
+    rot.m[1][1] = cosX;
+    rot.m[1][2] = -sinX;
+    rot.m[2][1] = sinX;
+    rot.m[2][2] = cosX;
 
-		multiplied.m[2] = {
-			 c,  0,  s,
-			 0,  1,  0,
-			-s,  0,  c
-        };
-        this->multiply(multiplied, copy);
-        this->m[2] = copy.m[2];
-	}
-	if (vec.z) {
-		s = sin(vec.z);
-		c = cos(vec.z);
+    multiply(rot, temp);
+    *this = temp;
 
-		multiplied.m[3] = {
-			  1,  0,  0,
-			  0,  c, -s,
-			  0,  s,  c
-        };
-        this->multiply(multiplied, copy);
-        this->m[3] = copy.m[3];
-	}
-*/
+    rot.setIdentity();
+    rot.m[0][0] = cosY;
+    rot.m[0][2] = sinY;
+    rot.m[2][0] = -sinY;
+    rot.m[2][2] = cosY;
+
+    multiply(rot, temp);
+    *this = temp;
+
+    rot.setIdentity();
+    rot.m[0][0] = cosZ; 
+    rot.m[0][1] = -sinZ;
+    rot.m[1][0] = sinZ;
+    rot.m[1][1] = cosZ;
+
+    multiply(rot, temp);
+    *this = temp;
 }
 
 void Mat4::setScale(Vec3<float> vec) { 
@@ -101,8 +91,20 @@ PSPRenderer::~PSPRenderer(void) {
     sceGuTerm();
 }
 
+void PSPRenderer::drawLines(const Line *prims, size_t count) {
+    int flags = 0
+    | GU_COLOR_8888    // 24bpp vertex colors
+    | GU_VERTEX_32BITF // float vertices
+    | GU_TRANSFORM_3D  // use matrices
+    | GU_VERTICES(2);  // 2 vertices per line
+
+    sceGuDrawArray(GU_LINES, flags, count, indices, vertices);
+}
+
+
 void PSPRenderer::clear(Color color) {
     sceGuClearColor(color);
+    sceGuClear(GU_COLOR_BUFFER_BIT);
 }
 
 void PSPRenderer::swapBuffers(void) {
