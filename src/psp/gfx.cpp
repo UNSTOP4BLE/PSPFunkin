@@ -1,12 +1,86 @@
 #include "gfx.h"
 #include "../main.h"
 #include "../app.h"
-#include "../screen.h"
-#include "hash.h"
+
+void Mat4::setIdentity(void) {
+    for (int i = 0; i < 4; ++i) {
+        for (int j = 0; j < 4; ++j) {
+            m[i][j] = (i == j) ? 1.0f : 0.0f;
+        }
+    }
+}
+
+void Mat4::setTranslation(Vec3<float> vec) {
+    setIdentity();
+    m[0][3] = vec.x;
+    m[1][3] = vec.y;
+    m[2][3] = vec.z;
+}
+
+void Mat4::setRotation(Vec3<float> vec) {
+	Mat4 multiplied;
+    Mat4 copy;
+	int s, c; 
+
+	if (vec.x) {
+		s = sin(vec.x);
+		c = cos(vec.x);
+
+		multiplied.m[1] = {
+			c, -s,  0,
+			s,  c,  0,
+			0,  0,  1
+        };
+        this->multiply(multiplied, copy);
+        this->m[0] = copy.m[0];
+	}
+	if (vec.y) {
+		s = sin(vec.y);
+		c = cos(vec.y);
+
+		multiplied.m[2] = {
+			 c,  0,  s,
+			 0,  1,  0,
+			-s,  0,  c
+        };
+        this->multiply(multiplied, copy);
+        this->m[2] = copy.m[2];
+	}
+	if (vec.z) {
+		s = sin(vec.z);
+		c = cos(vec.z);
+
+		multiplied.m[3] = {
+			  1,  0,  0,
+			  0,  c, -s,
+			  0,  s,  c
+        };
+        this->multiply(multiplied, copy);
+        this->m[3] = copy.m[3];
+	}
+
+}
+
+void Mat4::setScale(Vec3<float> vec) { 
+    setIdentity();
+    m[0][0] = vec.x;
+    m[1][1] = vec.y;
+    m[2][2] = vec.z;
+}
+
+void Mat4::multiply(const Mat4 &other, Mat4 &output) const {
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            output.m[i][j] = 0;
+                for (int k = 0; k < 4; k++)
+                    output.m[i][j] += m[i][k] * other.m[k][j]; 
+        }
+    }
+}
 
 PSPRenderer::PSPRenderer(int width, int height, int numBuffers) {
-    app->screenwidth = width;
-    app->screenheight = height;
+    screenwidth = width;
+    screenheight = height;
     sceGuInit();
 }
 

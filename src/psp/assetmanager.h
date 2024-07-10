@@ -17,7 +17,7 @@ public:
 class ImageAsset : public Asset {
 public:
     std::string assetpath;
-    GFX::Texture image;
+    Texture image;
     inline ImageAsset(void) {}
     ~ImageAsset(void);
 
