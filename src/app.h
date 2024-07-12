@@ -27,7 +27,7 @@ public:
     Audio::Mixer *audioMixer;
     ChartParser parser;
     double deltatime;
-    int screenCol;
+    Color screenCol;
     Screen *currentScreen;
 };
 

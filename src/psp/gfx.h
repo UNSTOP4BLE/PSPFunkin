@@ -4,6 +4,9 @@
 #include <vector>   
 #include <stdint.h>  
 #include <pspgu.h>  
+#include <pspdisplay.h>
+
+#define BUF_WIDTH (512)
 
 template<typename T> struct Vec3 {
 public:
@@ -15,8 +18,6 @@ public:
     T x, y;
 };
 
-using Color = uint32_t; // RGBA color
-
 union Color {
 public:
     uint32_t value;
@@ -25,19 +26,12 @@ public:
     };
 };
 
-struct Line {
-public:
-    Vec3<float> a, b;
-    Color color;
-};
-
 struct LineVertex {
 public:
     Color       color;
     Vec3<float> pos;
 };
 using Line = LineVertex[2];
-    
 
 struct Triangle {
 public:
@@ -72,9 +66,18 @@ public:
     void setTranslation(Vec3<float> vec);
     void setRotation(Vec3<float> vec);
     void setScale(Vec3<float> vec);
-    void multiply(const Mat4 &other, Mat4 &output) const;
-    
+    void multiply(const Mat4 &other, Mat4 &output) const;    
 };
+
+template<typename T> static inline T *allocateAligned(size_t length, size_t alignment) {
+    auto ptr    = new T[length + alignment * 2 / sizeof(T)];
+    auto offset = reinterpret_cast<uintptr_t>(ptr) % alignment;
+
+    if (offset)
+        ptr = reinterpret_cast<T *>(ptr + alignment - offset);
+
+    return ptr;
+}
 
 class Renderer {
 public:
@@ -91,23 +94,35 @@ public:
     virtual int popMatrix(void) {return 0;}
     virtual void resetMatrix(void) {}
 
-    virtual void clear(Color color) {(void)color;}
+    virtual void clear(Color color, int z) {(void)color; (void)z;}
     virtual void swapBuffers(void) {}
     virtual void waitForVSync(void) {}
 };
 
-
 class PSPRenderer : public Renderer {
+private:
+    std::vector<Mat4> _matrices;
+
+    void _updateMatrix(int matrixType);
+
 public:
     int screenwidth;
     int screenheight;
+    
+    void *list;
+    void *buffer;
     
     PSPRenderer(int width, int height, int numBuffers);
     ~PSPRenderer(void);
 
     void drawLines(const Line *prims, size_t count);
 
-    void clear(Color color);
+    const Mat4 &getCurrentMatrix(void) const;
+    int pushMatrix(const Mat4 &mat);
+    int popMatrix(void);
+    void resetMatrix(void);
+
+    void clear(Color color, int z);
     void swapBuffers(void);
     void waitForVSync(void); 
 };

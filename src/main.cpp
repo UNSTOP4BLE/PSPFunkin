@@ -70,7 +70,7 @@ void ErrMSG(const char *filename, const char *function, int line, const char *ex
 #endif
     while(1)
     {
-        app->renderer->clear(app->screenCol);
+        app->renderer->clear(app->screenCol, 0);
         inputDevice.getEvent(app->event);
         app->normalFont->Print(Left, 0, 0, errstr);
         debugmenu(debugy);
@@ -137,7 +137,7 @@ int main()
     {
         std::chrono::time_point<std::chrono::system_clock> last = std::chrono::high_resolution_clock::now();
         
-        app->renderer->clear(app->screenCol);
+        app->renderer->clear(app->screenCol, 0);
 #ifndef PSP
         SDL_PumpEvents();
 
@@ -154,6 +154,11 @@ int main()
         app->currentScreen->update();  
         app->currentScreen->draw();  
 
+        Line line = {
+{0xff00ff00,10,20, 1}, // 0
+{0xffff0000,20,40, 1}, // 1
+        };
+        app->renderer->drawLines(&line, 1);
 #ifdef _WIN32 
         PROCESS_MEMORY_COUNTERS_EX pmc;
         GetProcessMemoryInfo(GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
@@ -168,8 +173,8 @@ int main()
         if (debugshown)
             debugmenu(debugy);
 
-        app->renderer->swapBuffers();
         app->renderer->waitForVSync();
+        app->renderer->swapBuffers();
 
         std::chrono::time_point<std::chrono::system_clock> current = std::chrono::high_resolution_clock::now();
         app->deltatime = static_cast<double>(std::chrono::duration_cast<std::chrono::milliseconds>(current - last).count());

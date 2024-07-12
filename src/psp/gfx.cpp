@@ -84,7 +84,69 @@ void Mat4::multiply(const Mat4 &other, Mat4 &output) const {
 PSPRenderer::PSPRenderer(int width, int height, int numBuffers) {
     screenwidth = width;
     screenheight = height;
-    sceGuInit();
+    buffer = 0;
+    list = allocateAligned<int>(0x40000, 16);
+
+	sceGuInit();
+
+    sceGuStart(GU_DIRECT,list);
+    sceGuDrawBuffer(GU_PSM_8888,(void*)0,BUF_WIDTH);
+    sceGuDispBuffer(screenwidth,screenheight,(void*)0x88000,BUF_WIDTH);
+    sceGuDepthBuffer((void*)0x110000,BUF_WIDTH);
+    sceGuOffset(2048 - (screenwidth/2),2048 - (screenheight/2));
+    sceGuViewport(2048,2048,screenwidth,screenheight);
+    sceGuDepthRange(0xffff, 0);
+    sceGuScissor(0,0,screenwidth,screenheight);
+    sceGuEnable(GU_SCISSOR_TEST);
+    sceGuDepthFunc(GU_GEQUAL);
+    sceGuEnable(GU_DEPTH_TEST);
+    sceGuShadeModel(GU_SMOOTH);
+    sceGuDisable(GU_CULL_FACE);
+    sceGuEnable(GU_CLIP_PLANES);
+    sceGuFinish();
+    sceGuSync(0,0);
+
+    sceDisplayWaitVblankStart();
+    sceGuDisplay(GU_TRUE);
+
+    resetMatrix();
+    _updateMatrix(GU_VIEW); // not used, leave set to identity matrix
+    _updateMatrix(GU_PROJECTION); // not used, leave set to identity matrix
+    
+}
+
+void PSPRenderer::_updateMatrix(int matrixType) {
+    [[gnu::aligned(16)]] static ScePspFMatrix4 temp; // global, must be aligned
+    memcpy(&temp, &_matrices.back(), sizeof(temp));
+    sceGuSetMatrix(matrixType, &temp);
+}
+
+const Mat4 &PSPRenderer::getCurrentMatrix(void) const {
+    return _matrices.back();
+}
+
+int PSPRenderer::pushMatrix(const Mat4 &mat) {
+    Mat4 &newMatrix = _matrices.emplace_back();
+
+    _matrices.back().multiply(mat, newMatrix);
+    _updateMatrix(GU_MODEL);
+
+    return _matrices.size();
+}
+
+int PSPRenderer::popMatrix(void) {
+    if (_matrices.size() > 1) {
+        _matrices.pop_back();
+        _updateMatrix(GU_MODEL);
+    }
+
+    return _matrices.size();
+}
+
+void PSPRenderer::resetMatrix(void) {
+    _matrices.clear();
+    _matrices.emplace_back().setIdentity();
+    _updateMatrix(GU_MODEL);
 }
 
 PSPRenderer::~PSPRenderer(void) {
@@ -92,28 +154,31 @@ PSPRenderer::~PSPRenderer(void) {
 }
 
 void PSPRenderer::drawLines(const Line *prims, size_t count) {
+    sceGuDisable(GU_TEXTURE_2D);
     int flags = 0
     | GU_COLOR_8888    // 24bpp vertex colors
     | GU_VERTEX_32BITF // float vertices
-    | GU_TRANSFORM_3D  // use matrices
-    | GU_VERTICES(2);  // 2 vertices per line
-
-    sceGuDrawArray(GU_LINES, flags, count, indices, vertices);
+    | GU_TRANSFORM_2D;  // use matrices
+    //count * 2 because a line has 2 points
+    sceGuDrawArray(GU_LINES, flags, count*2, 0, prims);
 }
 
-
-void PSPRenderer::clear(Color color) {
-    sceGuClearColor(color);
-    sceGuClear(GU_COLOR_BUFFER_BIT);
+void PSPRenderer::clear(Color color, int z) {
+    sceGuStart(GU_DIRECT,list);
+    sceGuClearColor(color.value);
+    sceGuClearDepth(z);
+    sceGuClear(GU_COLOR_BUFFER_BIT | GU_FAST_CLEAR_BIT | GU_DEPTH_BUFFER_BIT);
 }
 
 void PSPRenderer::swapBuffers(void) {
-    //set buffer todo
-    sceGuSwapBuffers();
+    buffer = sceGuSwapBuffers();
 }
 
 void PSPRenderer::waitForVSync(void) {
+    sceGuFinish();
+    sceGuSync(0, 0);
     sceGuSync(GU_SYNC_FINISH, GU_SYNC_WHAT_DONE);
+    sceDisplayWaitVblankStart();
 }
 
 /*

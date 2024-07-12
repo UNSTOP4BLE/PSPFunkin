@@ -21,7 +21,6 @@ score(score),
 noteSplash(splash) {}
 
 void PlayStateScreen::initscr(std::string song, bool _freeplay) {
-    setScreenCol(0xFF00FF00);
     app->timer.start();
     //reset vars
     isfreeplay = _freeplay;

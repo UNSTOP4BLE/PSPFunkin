@@ -11,4 +11,4 @@ public:
 };
 
 void setScreen(Screen *scr);
-void setScreenCol(int color);
+void setScreenCol(uint32_t color);

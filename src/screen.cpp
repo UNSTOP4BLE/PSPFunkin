@@ -13,7 +13,7 @@ void setScreen(Screen *scr)
     app->currentScreen = scr;
 }
 
-void setScreenCol(int color)
+void setScreenCol(uint32_t color)
 {
-    app->screenCol = color;
+    app->screenCol.value = color;
 }
