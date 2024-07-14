@@ -1,6 +1,6 @@
 #pragma once
-#include "psp/gfx.h"
 #include <string>   
+#include "psp/gfx_common.h"
 #include "psp/tween.h" 
 #include "psp/assetmanager.h"          
 
@@ -13,8 +13,8 @@ public:
     float x;
     Tween<float, QuadInOutEasing, Chrono> y;
     int ymin;
-    RECT<int> img;
-    RECT<int> disp;
+    Gfx::RectWH<int> img;
+    Gfx::RectWH<int> disp;
     int timer;
     float alpha;
 private:

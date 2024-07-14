@@ -28,7 +28,7 @@ public:
     float ratingMod;
     int score;
     bool noteSplash;
-    RECT<int> img;
+    Gfx::RectWH<int> img;
 };
 
 #define SUSTAIN_CLIPHEIGHT 16
@@ -82,8 +82,8 @@ private:
     const SoundAsset *sfx_1;
     const SoundAsset *sfx_go;
     const SoundAsset *sfx_misses[3];
-    RECT<int> countdown_img;
-    RECT<int> countdown_disp;
+    Gfx::RectWH<int> countdown_img;
+    Gfx::RectWH<int> countdown_disp;
     Tween<float, QuadInOutEasing, Chrono> countdown_alpha;
     Combo combo;
     bool checkPad[4];

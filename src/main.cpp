@@ -1,6 +1,6 @@
-#include "psp/gfx.h"
-#include <cstdio>
 #define SDL_MAIN_HANDLED
+#include "psp/gfx_renderer_psp.h"
+#include <cstdio>
 #include "main.h"
 #include "app.h"
 #include "screen.h"
@@ -9,17 +9,12 @@
 #include <pspkernel.h>
 #include <psputility.h>
 #include "psp/callbacks.h"
-#else
-#include <SDL2/SDL_image.h>
 #endif
 #include <SDL2/SDL.h>
 #include <chrono>
-#include "psp/audio_file_readers.h"
-#include "psp/audio_streamed_file.h"
 #include "psp/font.h"
 #include "psp/font.h"
 #include "psp/input.h"
-#include "psp/tween.h"
 
 #include "menu/title.h"
 #ifdef _WIN32
@@ -76,7 +71,6 @@ void ErrMSG(const char *filename, const char *function, int line, const char *ex
         debugmenu(debugy);
         
         app->renderer->swapBuffers();
-        app->renderer->waitForVSync();
     }
 }
 
@@ -114,11 +108,29 @@ int main()
     ASSERTFUNC(SDL_Init(SDL_INIT_EVERYTHING) >= 0, "failed to init sdl");
     app->audioMixer = new Audio::Mixer();
     app->audioMixer->start();
-    app->renderer = new PSPRenderer(480, 272, 2);
+#ifdef PSP
+    app->renderer = new Gfx::PSPRenderer(480, 272);
+#else
+    app->renderer = new Gfx::OpenGLRenderer(1280, 720);
+#endif
+    if (!app->renderer)
+    {
+        char buffer[512];
+        snprintf(buffer, sizeof(buffer), "renderer initialization failed");
+
+#ifdef _WIN32
+        MessageBox(nullptr, buffer, "PSPFunkin error", MB_ICONERROR | MB_OK);
+#else
+        debugLog(buffer); 
+#endif
+        exit(1);
+    }
+    
+    app->draw_ctx.renderer = app->renderer;
     app->normalFont = new FontManager(Font_Font, getPath("assets/font/font.png").c_str());
     app->boldFont = new FontManager(Font_Bold, getPath("assets/font/boldfont.png").c_str());
+    
     setScreenCol(0xFF00FF00);
-
 #if defined(PSP) || defined(__vita__)
     Input::ControllerDevice inputDevice;
 #else
@@ -137,7 +149,7 @@ int main()
     {
         std::chrono::time_point<std::chrono::system_clock> last = std::chrono::high_resolution_clock::now();
         
-        app->renderer->clear(app->screenCol, 0);
+        app->draw_ctx.beginFrame();
 #ifndef PSP
         SDL_PumpEvents();
 
@@ -154,11 +166,19 @@ int main()
         app->currentScreen->update();  
         app->currentScreen->draw();  
 
-        Line line = {
-{0xff00ff00,10,20, 1}, // 0
-{0xffff0000,20,40, 1}, // 1
+        Gfx::Line line = {
+            {0xffff0000, 10,20, 1},
+            {0xffff0000, 20,40, 1}
         };
-        app->renderer->drawLines(&line, 1);
+        app->draw_ctx.drawLine(line);
+    
+        Gfx::Triangle triangle = {
+            {0xffff0000, 10,20, 1},
+            {0xffff0000, 20,40, 1}, 
+            {0xffff0000, 40,50, 1}
+        };
+//        app->draw_ctx.drawTriangle(triangle);
+    
 #ifdef _WIN32 
         PROCESS_MEMORY_COUNTERS_EX pmc;
         GetProcessMemoryInfo(GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
@@ -173,8 +193,7 @@ int main()
         if (debugshown)
             debugmenu(debugy);
 
-        app->renderer->waitForVSync();
-        app->renderer->swapBuffers();
+        app->draw_ctx.endFrame();
 
         std::chrono::time_point<std::chrono::system_clock> current = std::chrono::high_resolution_clock::now();
         app->deltatime = static_cast<double>(std::chrono::duration_cast<std::chrono::milliseconds>(current - last).count());

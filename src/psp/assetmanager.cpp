@@ -7,7 +7,7 @@
 /* Asset classes */
 const Asset *ImageAsset::loadFromFile(const char *path) {
     auto asset = new ImageAsset();
-    asset->image.load(path);
+  //  asset->image.load(path);
     asset->assetpath = static_cast<std::string>(path);
     return asset;
  }

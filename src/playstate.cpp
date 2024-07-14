@@ -32,7 +32,7 @@ void PlayStateScreen::initscr(std::string song, bool _freeplay) {
     health = 0.5;
     countdown_alpha.setValue(0);
     countdown_img = {311, 205, 200, 90};
-    countdown_disp = {(app->renderer->screenwidth/2) - (countdown_img.w/2), (app->renderer->screenheight/2) - (countdown_img.h/2), countdown_img.w, countdown_img.h};
+    countdown_disp = {(app->renderer->width/2) - (countdown_img.w/2), (app->renderer->height/2) - (countdown_img.h/2), countdown_img.w, countdown_img.h};
 
     //init animation
     for (int i = 0; i < 4; i ++)
@@ -308,8 +308,8 @@ void PlayStateScreen::update(void)
 }
 
 void PlayStateScreen::drawHealthBar(void) {
-    RECT<int> img = {1, 501, 320, 10};
-    RECT<int> disp = {80, 235, img.w, 10};
+    Gfx::RectWH<int> img = {1, 501, 320, 10};
+    Gfx::RectWH<int> disp = {80, 235, img.w, 10};
     //player
     //GFX::drawTex<int>(&icons->image, &img, &disp, 0, 255, hudcam.zoom.getValue());
 
@@ -326,12 +326,12 @@ void PlayStateScreen::drawIcons(void) {
     //opponent
     int dying = (health > 0.8 ? ICON_SIZE+1 : 0);
     int i = opponent->icon;
-    RECT<int> img = {dying+1+((i % (ICON_ROWS/2))*((1+ICON_SIZE)*2)), 
+    Gfx::RectWH<int> img = {dying+1+((i % (ICON_ROWS/2))*((1+ICON_SIZE)*2)), 
                           1+((i/(ICON_ROWS/2))*(1+ICON_SIZE)), 
                           ICON_SIZE, 
                           ICON_SIZE};
 
-    RECT<int> disp = {80+static_cast<int>(abs(health - 1.0)*320)-ICON_SIZE, 210, ICON_SIZE, ICON_SIZE};
+    Gfx::RectWH<int> disp = {80+static_cast<int>(abs(health - 1.0)*320)-ICON_SIZE, 210, ICON_SIZE, ICON_SIZE};
     //GFX::drawTex<int>(&icons->image, &img, &disp, 0, 255, hudcam.zoom.getValue() + iconcam.zoom.getValue());
 
     //player
@@ -369,7 +369,7 @@ void PlayStateScreen::draw(void)
     drawHealthBar();
     drawIcons();
     app->normalFont->setZoom(hudcam.zoom.getValue());
-    app->normalFont->Print(Center, app->renderer->screenwidth/2+11, app->renderer->screenheight/2+120, "Score: %d | Misses: %d   combo: %d",  score, misses, app->parser.curStep);//combo.combo);
+    app->normalFont->Print(Center, app->renderer->width/2+11, app->renderer->height/2+120, "Score: %d | Misses: %d   combo: %d",  score, misses, app->parser.curStep);//combo.combo);
 }
 
 PlayStateScreen::~PlayStateScreen(void)
@@ -458,7 +458,7 @@ void PlayStateScreen::updateInput(void)
         int curNotey = static_cast<int>(((notes[i].pos - app->parser.songTime) * app->parser.chartdata.speed) + notePos.opponent[type].y);
 
         //note is below the screen, so go back to index 0
-        if (curNotey > app->renderer->screenheight)
+        if (curNotey > app->renderer->height)
             break;
 
         //delete note if hit
@@ -485,7 +485,7 @@ void PlayStateScreen::updateInput(void)
         int curNotey = static_cast<int>(((notes[i].pos - app->parser.songTime) * app->parser.chartdata.speed) + notePos.player[type].y);
       
         //note is below the screen, so go back to index 0
-        if (curNotey > app->renderer->screenheight)
+        if (curNotey > app->renderer->height)
             break;
 
         //delete note if offscreen

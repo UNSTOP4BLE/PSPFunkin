@@ -25,12 +25,12 @@ void DonateScreen::update(void)
 
 void DonateScreen::draw(void) 
 {
-    RECT<int> background_img = {0, 0, 512, 331};
-    RECT<float> background_disp = {app->renderer->screenwidth/2 - 700/2, app->renderer->screenheight/2 - 397/2, 700, 397};
+    Gfx::RectWH<int> background_img = {0, 0, 512, 331};
+    Gfx::RectWH<int> background_disp = {app->renderer->width/2 - 700/2, app->renderer->height/2 - 397/2, 700, 397};
     //GFX::drawTex<float>(&background->image, &background_img, &background_disp, 0, 255, 1);
 
-    app->normalFont->Print(Center, app->renderer->screenwidth/2, app->renderer->screenheight/2, "DONATE TO ME IF YOU LIKE MY WORKS!!");
-    app->normalFont->Print(Center, app->renderer->screenwidth/2, app->renderer->screenheight/2+11, "paypal.me/johnathanthepork16th");
+    app->normalFont->Print(Center, app->renderer->width/2, app->renderer->height/2, "DONATE TO ME IF YOU LIKE MY WORKS!!");
+    app->normalFont->Print(Center, app->renderer->width/2, app->renderer->height/2+11, "paypal.me/johnathanthepork16th");
 }
 
 DonateScreen::~DonateScreen(void) 

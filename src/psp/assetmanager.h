@@ -1,7 +1,7 @@
 #pragma once
 
 #include <unordered_map>   
-#include "gfx.h"
+#include "gfx_common.h"
 #include "audio_streamed_file.h"
 #include "audio_buffer.h"
 #include <json/json.h>
@@ -17,7 +17,7 @@ public:
 class ImageAsset : public Asset {
 public:
     std::string assetpath;
-    Texture image;
+    Gfx::Texture image;
     inline ImageAsset(void) {}
     ~ImageAsset(void);
 

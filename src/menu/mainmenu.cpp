@@ -90,15 +90,15 @@ void MainMenuScreen::update(void)
 
 void MainMenuScreen::draw(void) 
 {
-    RECT<int> background_img = {0, 0, 512, 331};
-    RECT<float> background_disp = {app->renderer->screenwidth/2 - 700/2, backgroundy.getValue(), 700, 397};
+    Gfx::RectWH<int> background_img = {0, 0, 512, 331};
+    Gfx::RectWH<int> background_disp = {app->renderer->width/2 - 700/2, backgroundy.getValue(), 700, 397};
     //GFX::drawColTex<float>(&background->image, &background_img, &background_disp, 0, 255, 1, 
                       //      253, 232, 113);
 
     int y = 0;
     for (int i = 0; i < static_cast<int>(COUNT_OF(menu_selections)); i++)
     {
-        menu_selections[i]->draw(app->renderer->screenwidth/2 - menu_selections[i]->frames[menu_selections[i]->curframe].w/2, y + (25 + menu_selections[i]->frames[menu_selections[i]->curframe].h/2), 0, 255, 1);
+        menu_selections[i]->draw(app->renderer->width/2 - menu_selections[i]->frames[menu_selections[i]->curframe].w/2, y + (25 + menu_selections[i]->frames[menu_selections[i]->curframe].h/2), 0, 255, 1);
         y += MENU_SPACING;
     }
 }

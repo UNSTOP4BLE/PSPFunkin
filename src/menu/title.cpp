@@ -13,7 +13,7 @@
 
 TitleScreen::TitleScreen(int songpos, TitleStates _state) 
 {
-    setScreenCol(0xFF000000);
+//    setScreenCol(0xFF000000);
 
     //load menu jsons
     const JsonAsset *titleJson = app->assetmanager.get<JsonAsset>(getPath("assets/menu/title/title.json").c_str());
@@ -21,7 +21,6 @@ TitleScreen::TitleScreen(int songpos, TitleStates _state)
     int curmsg = rand() % (titleJson->value["messages"].size()); //get a random message
     funnymessage[0] = titleJson->value["messages"][curmsg][0].asString();
     funnymessage[1] = titleJson->value["messages"][curmsg][1].asString();
-
 
     //load and play music
     app->parser.chartdata.bpm = titleJson->value["menuSongBPM"].asDouble();   
@@ -78,52 +77,52 @@ void TitleScreen::update(void)
 void TitleScreen::draw(void) 
 {
     //NG logo 
-    RECT<int> NG_img = {0, 0, 90, 88};
-    RECT<int> NG_disp = {app->renderer->screenwidth / 2 - 90/2, (app->renderer->screenheight / 2 + 88/2) - 20, 90, 88};
+    Gfx::RectWH<int> NG_img = {0, 0, 90, 88};
+    Gfx::RectWH<int> NG_disp = {app->renderer->width / 2 - 90/2, (app->renderer->height / 2 + 88/2) - 20, 90, 88};
     switch (state)
     {
         case Intro:
             switch (app->parser.curBeat) 
             {
                 case 3:
-                    app->boldFont->Print(Center, app->renderer->screenwidth / 2, app->renderer->screenheight / 2 + 38, "PRESENT");
+                    app->boldFont->Print(Center, app->renderer->width / 2, app->renderer->height / 2 + 38, "PRESENT");
                         [[fallthrough]];
                 case 2:
                         [[fallthrough]];
                 case 1:
-                    app->boldFont->Print(Center, app->renderer->screenwidth / 2, app->renderer->screenheight / 2 - 57, "UNSTOPABLE");
-                    app->boldFont->Print(Center, app->renderer->screenwidth / 2, app->renderer->screenheight / 2 - 38,  "IGORSOU");
-                    app->boldFont->Print(Center, app->renderer->screenwidth / 2, app->renderer->screenheight / 2 - 19,  "MAXDEV");
-                    app->boldFont->Print(Center, app->renderer->screenwidth / 2, app->renderer->screenheight / 2,       "SPICYJPEG");
-                    app->boldFont->Print(Center, app->renderer->screenwidth / 2, app->renderer->screenheight / 2 + 19,  "BILIOUS");
+                    app->boldFont->Print(Center, app->renderer->width / 2, app->renderer->height / 2 - 57, "UNSTOPABLE");
+                    app->boldFont->Print(Center, app->renderer->width / 2, app->renderer->height / 2 - 38,  "IGORSOU");
+                    app->boldFont->Print(Center, app->renderer->width / 2, app->renderer->height / 2 - 19,  "MAXDEV");
+                    app->boldFont->Print(Center, app->renderer->width / 2, app->renderer->height / 2,       "SPICYJPEG");
+                    app->boldFont->Print(Center, app->renderer->width / 2, app->renderer->height / 2 + 19,  "BILIOUS");
                     break;
                 case 7:
-                    app->boldFont->Print(Center, app->renderer->screenwidth / 2, app->renderer->screenheight / 2 - 10, "NEWGROUNDS");
+                    app->boldFont->Print(Center, app->renderer->width / 2, app->renderer->height / 2 - 10, "NEWGROUNDS");
                     //GFX::drawTex<int>(&ng->image, &NG_img, &NG_disp, 0, 255, 1);
                         [[fallthrough]];
                 case 6:
                         [[fallthrough]];
                 case 5:
-                    app->boldFont->Print(Center, app->renderer->screenwidth / 2, app->renderer->screenheight / 2 - 48, "IN ASSOCIATION");
-                    app->boldFont->Print(Center, app->renderer->screenwidth / 2, app->renderer->screenheight / 2 - 29, "WITH");
+                    app->boldFont->Print(Center, app->renderer->width / 2, app->renderer->height / 2 - 48, "IN ASSOCIATION");
+                    app->boldFont->Print(Center, app->renderer->width / 2, app->renderer->height / 2 - 29, "WITH");
                     break;
 
                 case 11:
-                    app->boldFont->Print(Center, app->renderer->screenwidth / 2, app->renderer->screenheight / 2, funnymessage[1].c_str());
+                    app->boldFont->Print(Center, app->renderer->width / 2, app->renderer->height / 2, funnymessage[1].c_str());
                         [[fallthrough]];
                 case 10:
                         [[fallthrough]];
                 case 9:
-                    app->boldFont->Print(Center, app->renderer->screenwidth / 2, app->renderer->screenheight / 2 - 19, funnymessage[0].c_str());
+                    app->boldFont->Print(Center, app->renderer->width / 2, app->renderer->height / 2 - 19, funnymessage[0].c_str());
                     break;
                 case 15:
-                    app->boldFont->Print(Center, app->renderer->screenwidth / 2, app->renderer->screenheight / 2 + 9, "FUNKIN");
+                    app->boldFont->Print(Center, app->renderer->width / 2, app->renderer->height / 2 + 9, "FUNKIN");
                         [[fallthrough]];
                 case 14:
-                    app->boldFont->Print(Center, app->renderer->screenwidth / 2, app->renderer->screenheight / 2 - 10, "NIGHT");
+                    app->boldFont->Print(Center, app->renderer->width / 2, app->renderer->height / 2 - 10, "NIGHT");
                         [[fallthrough]];
                 case 13:
-                    app->boldFont->Print(Center, app->renderer->screenwidth / 2, app->renderer->screenheight / 2 - 29, "FRIDAY");
+                    app->boldFont->Print(Center, app->renderer->width / 2, app->renderer->height / 2 - 29, "FRIDAY");
                     break;
                 case 16:
                     state = Flash;

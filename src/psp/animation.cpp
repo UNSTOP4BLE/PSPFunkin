@@ -111,15 +111,15 @@ void Anim_OBJECT::draw(float x, float y, float angle, int alpha, float zoom)
 {
     if (cananimate)
     {
-        RECT<int> img = {frames[curframe].x,
+        Gfx::RectWH<int> img = {frames[curframe].x,
                             frames[curframe].y,
                             frames[curframe].w,
                             frames[curframe].h};
 
-        RECT<float> disp = {static_cast<float>(x - frames[curframe].offsetx),
-                                 static_cast<float>(y - frames[curframe].offsety),
-                                 static_cast<float>(frames[curframe].w),
-                                 static_cast<float>(frames[curframe].h)};
+        Gfx::RectWH<int> disp = {x - frames[curframe].offsetx,
+                                 y - frames[curframe].offsety,
+                                 frames[curframe].w,
+                                 frames[curframe].h};
 
 //        ASSERTFUNC(textures[frames[curframe].tex]->image, "texture is NULL");   
         //GFX::drawTex<float>(&textures[frames[curframe].tex]->image, &img, &disp, angle, alpha, zoom);

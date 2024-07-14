@@ -77,7 +77,6 @@ set(
 set(
     sdlLibraries
     SDL2
-    SDL2_image
 )
 set(
     pspLibraries

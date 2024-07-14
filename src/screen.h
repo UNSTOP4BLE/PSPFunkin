@@ -1,6 +1,6 @@
 #pragma once
 
-#include "psp/gfx.h"
+#include "psp/gfx_common.h"
 
 class Screen {
 public:

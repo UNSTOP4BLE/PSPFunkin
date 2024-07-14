@@ -15,5 +15,5 @@ void setScreen(Screen *scr)
 
 void setScreenCol(uint32_t color)
 {
-    app->screenCol.value = color;
+    app->draw_ctx.backgroundColor.value = color;
 }

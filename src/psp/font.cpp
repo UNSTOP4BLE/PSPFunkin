@@ -83,7 +83,7 @@ void FontManager::PrintMSG(int x, int y, const char *str, Align all)
             continue;
         
         //Draw character
-        RECT<int> font_Img = {fontmap[c].charX, fontmap[c].charY, fontmap[c].charW, fontmap[c].charH};
+        Gfx::RectWH<int> font_Img = {fontmap[c].charX, fontmap[c].charY, fontmap[c].charW, fontmap[c].charH};
         if (font == Font_Bold)
         {
             if (!(static_cast<int>(app->timer.elapsedMS()/10) % 2))
@@ -91,7 +91,7 @@ void FontManager::PrintMSG(int x, int y, const char *str, Align all)
             else 
                 font_Img.y = fontmap[c].charY + 69;
         }
-        RECT<int> font_Disp = {x, y, fontmap[c].charW, fontmap[c].charH};
+        Gfx::RectWH<int> font_Disp = {x, y, fontmap[c].charW, fontmap[c].charH};
         //GFX::drawTex<int>(&tex->image, &font_Img, &font_Disp, 0, alpha, zoom);
         x += fontmap[c].charW - 1;
     }

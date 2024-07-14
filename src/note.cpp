@@ -9,10 +9,10 @@ void PlayStateScreen::drawDummyNotes(void)
 {
     for (int i = 0; i < 4; i++)
     {
-        RECT<int> img = {1 + (40*i), 1, 39, 39};
+        Gfx::RectWH<int> img = {1 + (40*i), 1, 39, 39};
         
         //opponent
-        RECT<float> disp = {notePos.opponent[i].x - hudcam.camx.getValue(), notePos.opponent[i].y - hudcam.camy.getValue(), static_cast<float>(img.w), static_cast<float>(img.h)};  
+        Gfx::RectWH<int> disp = {notePos.opponent[i].x - hudcam.camx.getValue(), notePos.opponent[i].y - hudcam.camy.getValue(), static_cast<float>(img.w), static_cast<float>(img.h)};  
         //GFX::drawTex<float>(&hud->image, &img, &disp, 0, 200, hudcam.zoom.getValue());
 
         //player
@@ -54,7 +54,7 @@ void PlayStateScreen::drawSustain(int note, float y, int type, bool isopponent)
 {
     int length = ((app->parser.gamenotes[isopponent][note].sus * app->parser.chartdata.speed) / SUSTAIN_CLIPHEIGHT) - 1; //maybe right
 
-    RECT<int> img = {
+    Gfx::RectWH<int> img = {
         161 + (14*type),
         18,
         13,
@@ -70,7 +70,7 @@ void PlayStateScreen::drawSustain(int note, float y, int type, bool isopponent)
         if (i == length-1) //draw sustain ends
             img.y = 1;
 
-        RECT<float> disp = {static_cast<float>(xpos - hudcam.camx.getValue()), ypos + (i*SUSTAIN_CLIPHEIGHT) - hudcam.camy.getValue(), static_cast<float>(img.w), static_cast<float>(img.h)};
+        Gfx::RectWH<int> disp = {xpos - hudcam.camx.getValue(), ypos + (i*SUSTAIN_CLIPHEIGHT) - hudcam.camy.getValue(), img.w, img.h};
   
         if ((disp.y+SUSTAIN_CLIPHEIGHT < sustain.y && app->parser.gamenotes[isopponent][note].flag & FLAG_NOTE_HIT) || (disp.y+SUSTAIN_CLIPHEIGHT < 0)) {
             continue;
@@ -99,7 +99,7 @@ void PlayStateScreen::drawNotes(bool isopponent)
         int curNotex = note.x;
         int curNotey = static_cast<int>(((notes[i].pos - app->parser.songTime) * app->parser.chartdata.speed) + note.y);
         //note is below the screen, so go back to index 0
-        if (curNotey > app->renderer->screenheight)
+        if (curNotey > app->renderer->height)
             break;
         if (curNotey+(notes[i].sus * app->parser.chartdata.speed) < 0 && notes[i].sus != 0) {
             deleteNote(i, isopponent);
@@ -110,18 +110,18 @@ void PlayStateScreen::drawNotes(bool isopponent)
             drawSustain(i, curNotey, type, isopponent);
         if (!(notes[i].flag & FLAG_NOTE_HIT))
         {
-            RECT<int> img = {
+            Gfx::RectWH<int> img = {
                 1 + (40*type),
                 121,
                 39,
                 39
             };
         
-            RECT<float> disp = {
+            Gfx::RectWH<int> disp = {
                 curNotex - hudcam.camx.getValue(),
                 curNotey - hudcam.camy.getValue(),
-                static_cast<float>(img.w),
-                static_cast<float>(img.h)
+                img.w,
+                img.h
             };
 
             //GFX::drawTex<float>(&hud->image, &img, &disp, 0, 200, hudcam.zoom.getValue());

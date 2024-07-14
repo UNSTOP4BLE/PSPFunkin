@@ -2,15 +2,15 @@
 
 #include <string>     
 #include <vector>     
-#include "psp/gfx.h"
+#include "psp/gfx_common.h"
 #include "psp/assetmanager.h"
 
 class StageObject {
 public:
     std::string def; //definition of the texture used 
-    RECT<int> img;
-    RECT<int> initialdisp;
-    RECT<float> disp;
+    Gfx::RectWH<int> img;
+    Gfx::RectWH<int> initialdisp;
+    Gfx::RectWH<int> disp;
     float scrollfactor[2];
     float angle;
     int alpha;

@@ -8,26 +8,23 @@
 #include "psp/font.h"
 #include "psp/assetmanager.h"
 
-//#ifndef PSP
-//#endif
-
 class PSPFunkin
 {
 public:
     std::vector<std::string> debugmessages; //debug terminal
 
-//#ifndef PSP
-    Renderer *renderer;
+    Gfx::Renderer *renderer;
+    Gfx::DrawingContext draw_ctx;
+
     Input::Event event;
     FontManager *boldFont;
     FontManager *normalFont;
-//#endif
     AssetManager assetmanager;
     Timer timer;
     Audio::Mixer *audioMixer;
     ChartParser parser;
     double deltatime;
-    Color screenCol;
+    Gfx::Color screenCol;
     Screen *currentScreen;
 };
 
