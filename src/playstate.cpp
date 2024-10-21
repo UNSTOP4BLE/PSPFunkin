@@ -23,6 +23,7 @@ noteSplash(splash) {}
 void PlayStateScreen::initscr(std::string song, bool _freeplay) {
     app->timer.start();
     //reset vars
+    bumpfreq = 16;
     isfreeplay = _freeplay;
     combo.init();
     ghosttap = true;
@@ -182,6 +183,9 @@ void PlayStateScreen::updateEvents(void) {
                             break;
                     }
                     break;
+                case "Bump Speed Change"_h:
+                    bumpfreq = event["value"].asInt()
+                    break;
 
                 default:
                     break;
@@ -212,11 +216,11 @@ void PlayStateScreen::update(void)
                            player->camx, player->camy, player->camzoom);
 
         //bump hud
-        if (app->parser.justStep && !(app->parser.curStep % 16)) {
+        if (app->parser.justStep && !(app->parser.curStep % bumpfreq)) {
             hudcam.zoom.setValue(1.1, 1.0, 0.2); 
         }
         //bump game
-        if (app->parser.justStep && !(app->parser.curStep % 16)) {
+        if (app->parser.justStep && !(app->parser.curStep % bumpfreq)) {
             gamecam.zoom.setValue(gamecam.basezoom+0.05, gamecam.basezoom, 0.2); 
         }
         //bump icons

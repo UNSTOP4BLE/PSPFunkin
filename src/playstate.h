@@ -89,6 +89,7 @@ private:
     bool checkPad[4];
     bool checkPadHeld[4];
     int score;
+    int bumpfreq; // in steps
     double health;
     int misses;
     bool ghosttap;

@@ -11,7 +11,6 @@ to build for pc and any other platforms should be self explanitory
 
 TODO:
 - change bpm mid song
-- week 4 milf camera bump
 - story menu
 - rewrite graphics code
 - add sprites and songs
