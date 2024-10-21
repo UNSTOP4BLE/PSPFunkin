@@ -184,7 +184,7 @@ void PlayStateScreen::updateEvents(void) {
                     }
                     break;
                 case "Bump Speed Change"_h:
-                    bumpfreq = event["value"].asInt()
+                    bumpfreq = event["value"].asInt();
                     break;
 
                 default:
