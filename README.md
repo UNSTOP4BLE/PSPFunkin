@@ -20,3 +20,4 @@ TODO:
 - add media engine code for audio playback on psp
 - add smooth transition thingy
 - week 2 events
+- week 3 train and windows
