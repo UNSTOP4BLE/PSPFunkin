@@ -127,7 +127,7 @@ endif()
 file(
     GLOB_RECURSE sources
     RELATIVE     "${PROJECT_SOURCE_DIR}"
-    "src/*.cpp"
+    "src/*.c" "src/*.cpp"
 )
 
 add_executable(main ${sources})

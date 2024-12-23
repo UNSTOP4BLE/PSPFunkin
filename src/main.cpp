@@ -1,10 +1,11 @@
 #define SDL_MAIN_HANDLED
-#include "psp/gfx_renderer_psp.h"
+
 #include <cstdio>
 #include "main.h"
 #include "app.h"
 #include "screen.h"
 #ifdef PSP
+#include "psp/gfx_renderer_psp.h"
 #include <pspdebug.h>
 #include <pspkernel.h>
 #include <psputility.h>
@@ -18,6 +19,7 @@
 
 #include "menu/title.h"
 #ifdef _WIN32
+#include "psp/gfx_renderer_opengl.h"
 #include <windows.h>
 #include <psapi.h>
 #endif 
@@ -153,24 +155,25 @@ int main()
 #ifndef PSP
         SDL_PumpEvents();
 
+/*
         if (Input::windowClosed()) {
             SDL_DestroyWindow(app->window);
             app->window = NULL;
             app->screenSurface = NULL;
             SDL_Quit();
             abort();
-        }
+        }*/
 #endif
         inputDevice.getEvent(app->event);
         ASSERTFUNC(app->currentScreen, "screen is NULL");                
-        app->currentScreen->update();  
-        app->currentScreen->draw();  
+        //app->currentScreen->update();  
+      //  app->currentScreen->draw();  
 
         Gfx::Line line = {
             {0xffff0000, 10,20, 1},
             {0xffff0000, 20,40, 1}
         };
-        app->draw_ctx.drawLine(line);
+//        app->draw_ctx.drawLine(line);
     
         Gfx::Triangle triangle = {
             {0xffff0000, 10,20, 1},
