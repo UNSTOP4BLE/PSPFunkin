@@ -82,19 +82,18 @@ OpenGLRenderer::OpenGLRenderer(int width, int height) : Renderer(width, height) 
     //free shaders    
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);  
-/*
+
   
  // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
+  
     float vertices[] = {
-         0.5f,  0.5f, 0.0f,  // top right
-         0.5f, -0.5f, 0.0f,  // bottom right
-        -0.5f, -0.5f, 0.0f,  // bottom left
-        -0.5f,  0.5f, 0.0f   // top left 
+         0.5f,  0.5f, 0.0f, 
+         0.5f, -0.5f, 0.0f,  
+        -0.5f, -0.5f, 0.0f, 
     };
     unsigned int indices[] = {  // note that we start from 0!
-        0, 1, 3,  // first Triangle
-        1, 2, 3   // second Triangle
+        0, 1, 2,  // first Triangle
     };
     unsigned int VBO, VAO, EBO;
     glGenVertexArrays(1, &VAO);
@@ -142,7 +141,7 @@ OpenGLRenderer::OpenGLRenderer(int width, int height) : Renderer(width, height) 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
         SDL_GL_SwapWindow(window);
-    }*/
+    }
 }
 
 OpenGLRenderer::~OpenGLRenderer(void) {
@@ -184,6 +183,18 @@ void OpenGLRenderer::drawPoints(const Point *prims, size_t count) {
     // TODO
 }
 
+
+      //  Gfx::Line line = {
+     //       {0xffff0000, 10,20, 1},
+     //       {0xffff0000, 20,40, 1}
+     //   };
+
+    
+       // Gfx::Triangle triangle = {
+        //    {0xffff0000, 10,20, 1},
+         //   {0xffff0000, 20,40, 1}, 
+          //  {0xffff0000, 40,50, 1}
+        //};
 void OpenGLRenderer::drawLines(const Line *prims, size_t count) {
 
 //    int flags = 0
@@ -207,6 +218,7 @@ void OpenGLRenderer::drawLines(const Line *prims, size_t count) {
 }
 
 void OpenGLRenderer::drawTriangles(const Triangle *prims, size_t count) {
+    glDrawArrays(GL_TRIANGLES, 0, count * 3);
     // TODO
 }
 
