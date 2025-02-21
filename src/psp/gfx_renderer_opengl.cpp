@@ -124,45 +124,20 @@ OpenGLRenderer::OpenGLRenderer(int width, int height) : Renderer(width, height) 
         glClear(GL_COLOR_BUFFER_BIT);
 
         // draw our first triangle
-        Color col;
-        col.setValue(255,0,0,255);
-        int vertices[] = {
-            //x                  y                      z    color(hex) TODO FIX UNSIGNED AND SIGNED INT
-            width/2,             height/4,              0, col.value, //top
-            width/4,             (height/4)+(height/2), 0, col.value, //left
-            (width/4)+(width/2), (height/4)+(height/2), 0, col.value  //right
-        };
-        Gfx::Triangle triangle = {
-            {0xffff0000, 10,20, 1},
-            {0xffff0000, 20,40, 1}, 
-            {0xffff0000, 40,50, 1}
-        };
-        unsigned int indices[] = {
-            0, 1, 2,  // first Triangle
-        };
+        Color r;
+        r.setValue(255,0,0,255);
+        Color g;
+        g.setValue(0,255,0,255);
+        Color b;
+        b.setValue(0,0,255,255);
 
-        unsigned int VBO, VAO;
-        glGenVertexArrays(1, &VAO);
-        glGenBuffers(1, &VBO);
-        // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-        glBindVertexArray(VAO);
-    
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    
-        // position attribute
-        glVertexAttribPointer(0, 3, GL_INT, GL_FALSE, 4 * sizeof(int), (void*)0);
-        glEnableVertexAttribArray(0);
-        // color attribute
-        glVertexAttribPointer(1, 3, GL_INT, GL_FALSE, sizeof(int), (void*)(3 * sizeof(int)));
-        glEnableVertexAttribArray(1);
-        
-        glUseProgram(shaderProgram);
-        setUniformVar<int>(shaderProgram, "scr_width", width);
-        setUniformVar<int>(shaderProgram, "scr_height", height);
-        glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-        
+        Gfx::Triangle triangle = {
+            {r, width/2, height/4, 0},
+            {g, width/4, (height/4)+(height/2), 0}, 
+            {b, (width/4)+(width/2), (height/4)+(height/2), 0}
+        };   
+
+        drawTriangles(&triangle, 1);
 
         SDL_GL_SwapWindow(window);
     }
@@ -242,8 +217,28 @@ void OpenGLRenderer::drawLines(const Line *prims, size_t count) {
 }
 
 void OpenGLRenderer::drawTriangles(const Triangle *prims, size_t count) {
-    glDrawArrays(GL_TRIANGLES, 0, count * 3);
-    // TODO
+    unsigned int VBO, VAO;
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
+    glBindVertexArray(VAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(*prims), *prims, GL_STATIC_DRAW);
+
+    // position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float)*4, (void *)sizeof(Color));
+    glEnableVertexAttribArray(0);
+    // color attribute
+    //todo fix color, works with float but not unsigned int
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float)*4, (void*)0);
+    glEnableVertexAttribArray(1);
+
+    glUseProgram(shaderProgram);
+    setUniformVar<int>(shaderProgram, "scr_width", width);
+    setUniformVar<int>(shaderProgram, "scr_height", height);
+    glBindVertexArray(VAO);
+    glDrawArrays(GL_TRIANGLES, 0, 3*count);
 }
 
 void OpenGLRenderer::drawTexturedTriangles(const TexturedTriangle *prims, size_t count) {

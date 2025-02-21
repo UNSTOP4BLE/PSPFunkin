@@ -62,7 +62,6 @@ public:
         g = (v >> 16) & 0xFF;
         b = (v >> 8) & 0xFF;
         a = v & 0xFF;
-        printf("r%d g%d b%d a%d h%u\n", r,g,b,a,value);
     }
 
     void setValue(uint8_t rv,uint8_t gv,uint8_t bv,uint8_t av) {
@@ -74,7 +73,6 @@ public:
                 (static_cast<uint32_t>(g) << 16) |
                 (static_cast<uint32_t>(b) << 8) |
                 static_cast<uint32_t>(a);
-    	printf("r%d g%d b%d a%d h%u\n", r,g,b,a,value);
     }
 };
 
