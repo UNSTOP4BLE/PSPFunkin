@@ -1,10 +1,7 @@
 //written by spicyjpeg and UNSTOP4BLE
 #pragma once
 
-#if _WIN32
-#define ENABLE_OPENGL_RENDERER
-#endif
-
+#include "../defs.h"
 #ifdef ENABLE_OPENGL_RENDERER
 
 #include <cstddef>
@@ -17,6 +14,16 @@
 
 namespace Gfx {
 
+class OpenGLShader {
+public:
+    void loadshader(const char* path, GLenum type);
+    void freeshader(void);
+
+    unsigned int shader;
+
+};
+
+    
 class OpenGLTexture : public Texture {
 public:
     OpenGLTexture(TextureFormat _format, bool _bilinearFilter, int _width, int _height);
@@ -29,8 +36,8 @@ class OpenGLRenderer : public Renderer {
 private:
     SDL_Window* window;
     SDL_GLContext glContext;
-    unsigned int vertexShader;
-    unsigned int fragmentShader;
+    OpenGLShader vertexShader;
+    OpenGLShader fragmentShader;
     unsigned int shaderProgram;
 public:
     OpenGLRenderer(int width, int height);

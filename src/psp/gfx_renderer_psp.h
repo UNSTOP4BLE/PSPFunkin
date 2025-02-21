@@ -1,7 +1,9 @@
 //written by spicyjpeg
 #pragma once
 
-#ifdef PSP
+#include "../defs.h"
+#ifdef ENABLE_PSP_RENDERER
+
 
 #include <cstddef>
 #include <cstdint>

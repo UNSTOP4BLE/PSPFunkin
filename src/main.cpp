@@ -1,5 +1,6 @@
 #define SDL_MAIN_HANDLED
 
+#include "defs.h"
 #include <cstdio>
 #include "main.h"
 #include "app.h"
@@ -18,8 +19,10 @@
 #include "psp/input.h"
 
 #include "menu/title.h"
-#ifdef _WIN32
+#ifdef ENABLE_OPENGL_RENDERER
 #include "psp/gfx_renderer_opengl.h"
+#endif
+#ifdef _WIN32
 #include <windows.h>
 #include <psapi.h>
 #endif 
@@ -34,7 +37,6 @@ PSP_MODULE_INFO("PSPFunkin", 0, 1, 0);
 #endif
 
 PSPFunkin *app;
-#define DEBUGLOG_MAX 128
 void debugmenu(int &debugy)
 {
     if (app->event.isHeld(Input::MENU_DOWN)) 

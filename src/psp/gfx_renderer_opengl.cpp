@@ -1,4 +1,5 @@
 //written by spicyjpeg and UNSTOP4BLE
+
 #include "glad/gl.h"
 #include "../main.h"
 #include "file.h"
@@ -10,32 +11,59 @@
 #include "gfx_common.h"
 #include "util.h"
 
-static unsigned int loadshader(const char* path, GLenum type) {
+namespace Gfx {
+
+template<typename T> void setUniformVar(unsigned int ID, const std::string& name, T value) {
+    debugLog("ERROR::SHADER::SETUNIFORM: Unsupported type %s", name.c_str());
+}
+
+// Specialization for int
+template<> void setUniformVar<int>(unsigned int ID, const std::string& name, int value) {
+    GLint location = glGetUniformLocation(ID, name.c_str());
+    if (location != -1) {
+        glUniform1i(location, value); // For integer uniforms
+    } else {
+        debugLog("ERROR::SHADER::SETUNIFORM: Uniform not found! %s\n", name.c_str());
+    }
+}
+
+// Specialization for float
+template<> void setUniformVar<float>(unsigned int ID, const std::string& name, float value) {
+    GLint location = glGetUniformLocation(ID, name.c_str());
+    if (location != -1) {
+        glUniform1f(location, value); // For float uniforms
+    } else {
+        debugLog("ERROR::SHADER::SETUNIFORM: Uniform not found! %s\n", name.c_str());
+    }
+}
+
+void OpenGLShader::loadshader(const char* path, GLenum type) {
     std::ifstream t(path);
     std::stringstream buffer;
     buffer << t.rdbuf();
     std::string source = buffer.str();
     t.close();
-
-    unsigned int shader = glCreateShader(type);
+    
+    unsigned int builtshader = glCreateShader(type);
     const char *src = source.c_str();
-    glShaderSource(shader, 1, static_cast<char const * const *>(&src), NULL);
-    glCompileShader(shader);
-
+    glShaderSource(builtshader, 1, static_cast<char const * const *>(&src), NULL);
+    glCompileShader(builtshader);
+    
     int  success;
     char infoLog[512];
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-
+    glGetShaderiv(builtshader, GL_COMPILE_STATUS, &success);
+    
     if (!success)
     {
         glGetShaderInfoLog(shader, 512, NULL, infoLog);
         debugLog("ERROR::SHADER::COMPILATION_FAILED: %s", infoLog);
     }
-
-    return shader;
+    shader = builtshader;
 }
-
-namespace Gfx {
+    
+void OpenGLShader::freeshader(void) {         
+    glDeleteShader(shader);
+}
 
 OpenGLTexture::OpenGLTexture(TextureFormat _format, bool _bilinearFilter, int _width, int _height) {
     // TODO
@@ -70,56 +98,20 @@ OpenGLRenderer::OpenGLRenderer(int width, int height) : Renderer(width, height) 
     printf("GL %d.%d\n", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
 
     //load shaders
-    vertexShader = loadshader(getPath("assets/shaders/vertexShader.glsl").c_str(), GL_VERTEX_SHADER);
-    fragmentShader = loadshader(getPath("assets/shaders/fragmentShader.glsl").c_str(), GL_FRAGMENT_SHADER);
-
+    vertexShader.loadshader(getPath("assets/shaders/vertexShader.glsl").c_str(), GL_VERTEX_SHADER);
+    fragmentShader.loadshader(getPath("assets/shaders/fragmentShader.glsl").c_str(), GL_FRAGMENT_SHADER);
     //set up shader program
     shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
+    glAttachShader(shaderProgram, vertexShader.shader);
+    glAttachShader(shaderProgram, fragmentShader.shader);
     glLinkProgram(shaderProgram);
-
     //free shaders    
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);  
+    vertexShader.freeshader();
+    fragmentShader.freeshader();  
 
   
  // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
-  
-    float vertices[] = {
-         0.5f,  0.5f, 0.0f, 
-         0.5f, -0.5f, 0.0f,  
-        -0.5f, -0.5f, 0.0f, 
-    };
-    unsigned int indices[] = {  // note that we start from 0!
-        0, 1, 2,  // first Triangle
-    };
-    unsigned int VBO, VAO, EBO;
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
-    // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-    glBindVertexArray(VAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
-    // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
-    glBindBuffer(GL_ARRAY_BUFFER, 0); 
-
-    // remember: do NOT unbind the EBO while a VAO is active as the bound element buffer object IS stored in the VAO; keep the EBO bound.
-    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-    // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
-    // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
-    glBindVertexArray(0); 
 
     // render loop
     // -----------
@@ -132,14 +124,46 @@ OpenGLRenderer::OpenGLRenderer(int width, int height) : Renderer(width, height) 
         glClear(GL_COLOR_BUFFER_BIT);
 
         // draw our first triangle
+        Color col;
+        col.setValue(255,0,0,255);
+        int vertices[] = {
+            //x                  y                      z    color(hex) TODO FIX UNSIGNED AND SIGNED INT
+            width/2,             height/4,              0, col.value, //top
+            width/4,             (height/4)+(height/2), 0, col.value, //left
+            (width/4)+(width/2), (height/4)+(height/2), 0, col.value  //right
+        };
+        Gfx::Triangle triangle = {
+            {0xffff0000, 10,20, 1},
+            {0xffff0000, 20,40, 1}, 
+            {0xffff0000, 40,50, 1}
+        };
+        unsigned int indices[] = {
+            0, 1, 2,  // first Triangle
+        };
+
+        unsigned int VBO, VAO;
+        glGenVertexArrays(1, &VAO);
+        glGenBuffers(1, &VBO);
+        // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
+        glBindVertexArray(VAO);
+    
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    
+        // position attribute
+        glVertexAttribPointer(0, 3, GL_INT, GL_FALSE, 4 * sizeof(int), (void*)0);
+        glEnableVertexAttribArray(0);
+        // color attribute
+        glVertexAttribPointer(1, 3, GL_INT, GL_FALSE, sizeof(int), (void*)(3 * sizeof(int)));
+        glEnableVertexAttribArray(1);
+        
         glUseProgram(shaderProgram);
-        glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
- //       glDrawArrays(GL_TRIANGLES, 0, 6);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        // glBindVertexArray(0); // no need to unbind it every time 
- 
-        // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-        // -------------------------------------------------------------------------------
+        setUniformVar<int>(shaderProgram, "scr_width", width);
+        setUniformVar<int>(shaderProgram, "scr_height", height);
+        glBindVertexArray(VAO);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        
+
         SDL_GL_SwapWindow(window);
     }
 }

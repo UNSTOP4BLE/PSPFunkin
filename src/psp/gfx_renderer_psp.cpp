@@ -1,5 +1,5 @@
 //written by spicyjpeg
-#ifdef PSP
+#ifdef ENABLE_PSP_RENDERER
 
 #include <pspgu.h>
 #include <pspdisplay.h>
