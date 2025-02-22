@@ -1,4 +1,6 @@
 //written by spicyjpeg
+
+#include "gfx_renderer_psp.h"
 #ifdef ENABLE_PSP_RENDERER
 
 #include <pspgu.h>
@@ -6,7 +8,6 @@
 #include <pspkernel.h>
 #include <cstring>
 #include "gfx_common.h"
-#include "gfx_renderer_psp.h"
 #include "util.h"
 #include "../main.h"
 
