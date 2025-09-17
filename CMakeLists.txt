@@ -3,176 +3,109 @@ cmake_minimum_required(VERSION 3.20)
 project(
     PSPFunkin
     VERSION      "1.0.0"
-    DESCRIPTION  "pspfunki"
+    DESCRIPTION  "PSPFunkin Rewrite"
     LANGUAGES    C CXX
     HOMEPAGE_URL "https://github.com/UNSTOP4BLE/PSPFunkin"
 )
 
-if(DEFINED VITA)
-    include("${VITASDK}/share/vita.cmake" REQUIRED)
-endif()
-
-## Settings
-
-set(
-    PSPFUNKIN_DISPLAY_NAME "PSPFunkin"
-    CACHE STRING           "Game display name"
-)
-set(
-    PSPFUNKIN_GAME_ID "PSPF69420"
-    CACHE STRING      "Game ID in XXXXnnnnn format (currently only used in Vita build)"
+# Manually list source files
+set(SRC_FILES
+    src/main.cpp
+    src/engine/audio_file_readers.cpp
+    src/engine/audio_mixer.cpp
+    src/engine/audio_streamed_file.cpp
+    src/engine/file.cpp
+    src/engine/scene.cpp
+    src/scenes/playstate.cpp
+    src/scenes/title.cpp
 )
 
-## Chart and asset conversion
+include(FetchContent)
 
-find_program(
-    PSPFUNKIN_CHT2BIN "cht2bin" REQUIRED
-    DOC   "Path to compiled cht2bin executable (from cht2bin subdirectory)"
-    HINTS "${PROJECT_SOURCE_DIR}/cht2bin/build"
-)
+find_package(PkgConfig REQUIRED)
 
-file(
-    COPY        "${PROJECT_SOURCE_DIR}/assets/"
-    DESTINATION "${PROJECT_BINARY_DIR}/assets" NO_SOURCE_PERMISSIONS
-    PATTERN     "SOURCE_FILES" EXCLUDE
-    PATTERN     "pbp" EXCLUDE
-    PATTERN     "vpk" EXCLUDE
-)
-file(
-    GLOB_RECURSE charts
-    RELATIVE     "${PROJECT_SOURCE_DIR}"
-    "assets/songs/*.json"
-)
-
-foreach(input IN LISTS charts)
-    cmake_path(GET input PARENT_PATH parent)
-    cmake_path(GET input STEM LAST_ONLY name)
-
-        if(("${name}" STREQUAL "config") OR ("${name}" STREQUAL "events")) # ignore config.json or events.json
-        continue()
-    endif()
-
-    set(output "${PROJECT_BINARY_DIR}/${parent}/${name}.bin")
-    list(APPEND builtCharts "${output}")
-
-    add_custom_command(
-        OUTPUT  "${output}"
-        COMMAND "${PSPFUNKIN_CHT2BIN}" "${PROJECT_SOURCE_DIR}/${input}" "${output}"
-        DEPENDS "${PROJECT_SOURCE_DIR}/${input}"
-        COMMENT "Building chart ${output}"
+# Detect Homebrew prefix on macOS
+if(APPLE)
+    execute_process(
+        COMMAND brew --prefix
+        OUTPUT_VARIABLE HOMEBREW_PREFIX
+        OUTPUT_STRIP_TRAILING_WHITESPACE
     )
-endforeach()
+    message(STATUS "Homebrew prefix detected: ${HOMEBREW_PREFIX}")
 
-add_custom_target(charts ALL DEPENDS ${builtCharts})
-
-## Libraries
-
-set(
-    libraries
-    jsoncpp
-    vorbisfile
-    vorbis
-    ogg
-)
-set(
-    sdlLibraries
-    SDL2
-)
-set(
-    pspLibraries
-    GL
-    pspaudio
-    pspctrl
-    pspdebug
-    pspdisplay
-    pspgu
-    pspge
-    pspgum
-    psphprm
-    pspprof
-    pspvfpu
-    pspvram
-    xmp
-)
-set(
-    libraryDependencies
-    jpeg  # SDL2_image dependency
-    png   # SDL2_image dependency
-    z     # libpng dependency
-)
-
-if(DEFINED PSP)
-    # HACK: PSPSDK's pkg-config and SDL2 CMake scripts are broken, but the
-    # toolchain already has all include paths set up
-    list(APPEND libraries ${libraryDependencies} ${pspLibraries})
-else()
-    find_package(PkgConfig REQUIRED)
-
-    foreach(library IN LISTS libraries)
-        pkg_check_modules(${library} REQUIRED IMPORTED_TARGET GLOBAL ${library})
-    endforeach()
-
-    foreach(library IN LISTS sdlLibraries)
-        find_package(${library} CONFIG)
-
-        # HACK: because *of course* CMake's package search doesn't always work
-        if(NOT ${library}_FOUND)
-            pkg_check_modules(${library} REQUIRED IMPORTED_TARGET GLOBAL ${library})
-        endif()
-    endforeach()
+    include_directories("${HOMEBREW_PREFIX}/include")
+    link_directories("${HOMEBREW_PREFIX}/lib")
 endif()
 
-## Main executable
+pkg_check_modules(VORBIS REQUIRED vorbis vorbisfile ogg)
+find_package(SDL2 REQUIRED)
+if (!PSP)
+    find_package(JsonCpp REQUIRED)
+    FetchContent_Declare(
+    glfw
+    GIT_REPOSITORY https://github.com/glfw/glfw.git
+    GIT_TAG 3.4
+    )
+    FetchContent_MakeAvailable(glfw)
+endif()
 
-file(
-    GLOB_RECURSE sources
-    RELATIVE     "${PROJECT_SOURCE_DIR}"
-    "src/*.c" "src/*.cpp"
+
+
+# Manually list source files
+if (PSP)
+
+    set(PSP_SRCS
+        src/engine/psp/glib2d.cpp
+        src/engine/psp/rendererpsp.cpp
+    )
+
+    set(PSPLIBS
+        pspvfpu
+        m
+        z
+        jpeg
+        png
+    )
+else()
+
+    set(PC_SRCS
+        src/engine/pc/glad.c
+        src/engine/pc/renderergl.cpp
+    )
+
+    set(PCLIBS
+        glfw
+    )
+endif()
+
+add_executable(main ${SRC_FILES} ${PSP_SRCS} ${PC_SRCS})
+
+target_compile_features(main PRIVATE c_std_11 cxx_std_17)
+
+target_include_directories(main PRIVATE
+    ${SDL2_INCLUDE_DIRS}
+    ${VORBIS_INCLUDE_DIRS}
+#    ${JsonCpp_INCLUDE_DIRS}
 )
 
-add_executable(main ${sources})
-target_include_directories(main PRIVATE "include")
-target_compile_features(main PRIVATE c_std_11 cxx_std_17)
-target_compile_options(main PRIVATE -Wall -Wextra)
-target_link_libraries(main PRIVATE m ${libraries} ${sdlLibraries})
+target_link_libraries(main PRIVATE
+    ${SDL2_LIBRARIES}
+    ${VORBIS_LIBRARIES}
+    jsoncpp
+ #   JsonCpp::JsonCpp
+    ${PCLIBS}
+    ${PSPLIBS}
+)
 
-# HACK: make sure charts are built before main executable
-# (and thus before PSP/Vita packages)
-add_dependencies(main charts)
+# Copy assets folder to the build directory
+file(COPY "${CMAKE_SOURCE_DIR}/assets" DESTINATION "${CMAKE_BINARY_DIR}")
 
-## PSP build
-
-if(DEFINED PSP)
+if(PSP)
     create_pbp_file(
         TARGET          main
         ICON_PATH       "${PROJECT_SOURCE_DIR}/ICON0.PNG"
         BACKGROUND_PATH "${PROJECT_SOURCE_DIR}/PIC1.PNG"
         PREVIEW_PATH    NULL
-        TITLE           "${PSPFUNKIN_DISPLAY_NAME}"
-    )
-endif()
-
-## Vita build
-
-if(DEFINED VITA)
-    target_link_libraries(main PRIVATE
-        SDL2::SDL2
-    )
-    target_include_directories(
-        main PRIVATE
-         "$ENV{VITASDK}/arm-vita-eabi/include/jsoncpp"
-    )
-
-    vita_create_self(${PROJECT_NAME}.self main)
-
-    vita_create_vpk(
-        ${PROJECT_NAME}.vpk "${PSPFUNKIN_GAME_ID}" ${PROJECT_NAME}.self
-        VERSION "01.00" # dummy
-        NAME    "${PSPFUNKIN_DISPLAY_NAME}"
-        #FILE    "${PROJECT_SOURCE_DIR}/assets/vpk/icon0.png"    "sce_sys/icon0.png"
-        #FILE    "${PROJECT_SOURCE_DIR}/assets/vpk/bg.png"       "sce_sys/livearea/contents/bg.png"
-        #FILE    "${PROJECT_SOURCE_DIR}/assets/vpk/startup.png"  "sce_sys/livearea/contents/startup.png"
-        #FILE    "${PROJECT_SOURCE_DIR}/assets/vpk/template.xml" "sce_sys/livearea/contents/template.xml"
-        FILE    "${PROJECT_BINARY_DIR}/assets"                  "assets"
+        TITLE           PSPFunkin
     )
 endif()

@@ -1,217 +1,62 @@
 #define SDL_MAIN_HANDLED
 
-#include "defs.h"
-#include <cstdio>
-#include "main.h"
-#include "app.h"
-#include "screen.h"
-#ifdef PSP
-#include "psp/gfx_renderer_psp.h"
-#include <pspdebug.h>
-#include <pspkernel.h>
-#include <psputility.h>
-#include "psp/callbacks.h"
-#endif
+#include "app.hpp"
 #include <SDL2/SDL.h>
 #include <chrono>
-#include "psp/font.h"
-#include "psp/font.h"
-#include "psp/input.h"
-
-#include "menu/title.h"
-#ifdef ENABLE_OPENGL_RENDERER
-#include "psp/gfx_renderer_opengl.h"
-#endif
-#ifdef _WIN32
-#include <windows.h>
-#include <psapi.h>
-#endif 
-//#define DEBUG //for profiling
-#ifdef DEBUG
-#include <pspprof.h>
-#endif
+#include <cassert>
 
 #ifdef PSP
+#include "engine/psp/rendererpsp.hpp"
+#include "engine/psp/callbacks.h"
 PSP_MAIN_THREAD_ATTR(THREAD_ATTR_USER | THREAD_ATTR_VFPU);
 PSP_MODULE_INFO("PSPFunkin", 0, 1, 0);
-#endif
-
-PSPFunkin *app;
-void debugmenu(int &debugy)
-{
-    if (app->event.isHeld(Input::MENU_DOWN)) 
-        debugy ++;
-    else if (app->event.isHeld(Input::MENU_UP)) 
-        debugy --;
-    for (int i = debugy; i < static_cast<int>(app->debugmessages.size()); i++)
-    {
-        while (static_cast<int>(app->debugmessages.size()) > DEBUGLOG_MAX)
-            app->debugmessages.erase(app->debugmessages.begin());
-        if (i < 0)
-            i = 0;
-        char linenumber[32];
-        sprintf(linenumber, "%d. ", i);
-        std::string toprint = linenumber + app->debugmessages[i];
-        app->normalFont->Print(Left, 0, (i*10)-debugy*10, toprint.c_str());
-    } 
-}
-
-//error handler
-void ErrMSG(const char *filename, const char *function, int line, const char *expr, const char *msg)
-{
-    char errstr[512];
-    sprintf(errstr, "error\nmessage: %s\nexpression: %s\nfile: %s\nfunction: %s\nline %d", msg, expr, filename, function, line);
-    int debugy = -10;
-#if defined(PSP) || defined(__vita__)
-    Input::ControllerDevice inputDevice;
 #else
-    Input::KeyboardDevice inputDevice;
+#include "engine/pc/renderergl.hpp"
 #endif
-    while(1)
-    {
-        app->renderer->clear(app->screenCol, 0);
-        inputDevice.getEvent(app->event);
-        app->normalFont->Print(Left, 0, 0, errstr);
-        debugmenu(debugy);
-        
-        app->renderer->swapBuffers();
-    }
-}
 
-void debugLog(const char *format, ...)
-{
-    va_list list;
-    char string[1024] = "";
-    va_start(list, format);
-    std::vsprintf(string, format, list);
-    va_end(list);
+PSPFunkin g_app;
 
-    printf(string);
-    printf("\n");
-    app->debugmessages.push_back(string);
-}
-
-void debugLogClear(void)
-{
-    app->debugmessages.clear();
-}
-
+#include "scenes/title.hpp"
+#include "scenes/playstate.hpp"
 
 int main()
 {
     //get a random number seed
     srand(time(NULL));
 
-    app = new PSPFunkin(); //new pspfunkin every single time?? no need for a rewrite!
-
-    debugLog("debug_start");
-
 #ifdef PSP
     setupcallbacks();
-#endif
-    ASSERTFUNC(SDL_Init(SDL_INIT_EVERYTHING) >= 0, "failed to init sdl");
-    app->audioMixer = new Audio::Mixer();
-    app->audioMixer->start();
-#ifdef PSP
-    app->renderer = new Gfx::PSPRenderer(480, 272);
+    g_app.renderer = new GFX::PSPRenderer();
 #else
-    app->renderer = new Gfx::OpenGLRenderer(1280, 720);
+    g_app.renderer = new GFX::GLRenderer();
 #endif
-    if (!app->renderer)
-    {
-        char buffer[512];
-        snprintf(buffer, sizeof(buffer), "renderer initialization failed");
+    g_app.renderer->init();
 
-#ifdef _WIN32
-        MessageBox(nullptr, buffer, "PSPFunkin error", MB_ICONERROR | MB_OK);
-#else
-        debugLog(buffer); 
-#endif
-        exit(1);
-    }
+    assert(SDL_Init(SDL_INIT_AUDIO) >= 0);
+    g_app.audiomixer.start();
+
+
+   // setScreenCol(0xFF00FF00);
     
-    app->draw_ctx.renderer = app->renderer;
-    app->normalFont = new FontManager(Font_Font, getPath("assets/font/font.png").c_str());
-    app->boldFont = new FontManager(Font_Bold, getPath("assets/font/boldfont.png").c_str());
-    
-    setScreenCol(0xFF00FF00);
-#if defined(PSP) || defined(__vita__)
-    Input::ControllerDevice inputDevice;
-#else
-    Input::KeyboardDevice inputDevice;
-#endif
-    app->timer.start();
-    setScreen(new TitleScreen(0, Intro));
+    SCENE::set(new PlayStateSCN());
 
-    Timer fpsTimer;
-    fpsTimer.start();
-    float fps = 0;
-
-    bool debugshown = false;
-    int debugy = 0;
-    while(1)
+    auto last_t = std::chrono::high_resolution_clock::now();
+    while (g_app.renderer->running())
     {
-        std::chrono::time_point<std::chrono::system_clock> last = std::chrono::high_resolution_clock::now();
-        
-        app->draw_ctx.beginFrame();
+        g_app.renderer->beginFrame();
 #ifndef PSP
         SDL_PumpEvents();
-
-/*
-        if (Input::windowClosed()) {
-            SDL_DestroyWindow(app->window);
-            app->window = NULL;
-            app->screenSurface = NULL;
-            SDL_Quit();
-            abort();
-        }*/
 #endif
-        inputDevice.getEvent(app->event);
-        ASSERTFUNC(app->currentScreen, "screen is NULL");                
-        //app->currentScreen->update();  
-      //  app->currentScreen->draw();  
+        g_app.curscene->update();  
+        g_app.curscene->draw();  
 
-        Gfx::Line line = {
-            {0xffff0000, 10,20, 1},
-            {0xffff0000, 20,40, 1}
-        };
-//        app->draw_ctx.drawLine(line);
-    
-        Gfx::Triangle triangle = {
-            {0xffff0000, 10,20, 1},
-            {0xffff0000, 20,40, 1}, 
-            {0xffff0000, 40,50, 1}
-        };
-//        app->draw_ctx.drawTriangle(triangle);
-    
-#ifdef _WIN32 
-        PROCESS_MEMORY_COUNTERS_EX pmc;
-        GetProcessMemoryInfo(GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
-        SIZE_T virtualMemUsedByMe = pmc.PrivateUsage;
-        app->normalFont->Print(Left, 0, 0, "FPS: %d RAM: %f", static_cast<int>(fps), virtualMemUsedByMe/0x100000);
-#else
-        app->normalFont->Print(Left, 0, 0, "FPS: %d", static_cast<int>(fps));
-#endif
+        g_app.renderer->endFrame();
+        auto cur_t = std::chrono::high_resolution_clock::now();
+        g_app.deltatime = std::chrono::duration<double, std::milli>(cur_t - last_t).count();
 
-        if (app->event.isPressed(Input::DEBUG_SHOW)) 
-            debugshown = !debugshown; 
-        if (debugshown)
-            debugmenu(debugy);
-
-        app->draw_ctx.endFrame();
-
-        std::chrono::time_point<std::chrono::system_clock> current = std::chrono::high_resolution_clock::now();
-        app->deltatime = static_cast<double>(std::chrono::duration_cast<std::chrono::milliseconds>(current - last).count());
-        if (fpsTimer.elapsedMS()/1000 > 0.5){
-            fps = 1 / (app->deltatime / 1000);
-            fpsTimer.stop();
-            fpsTimer.start();
-        }
-        last = current;
+        last_t = cur_t;
     }
-#if defined(DEBUG) && defined(PSP)
-    gprof_cleanup();
-#endif
+
 
     return 0;
 }
