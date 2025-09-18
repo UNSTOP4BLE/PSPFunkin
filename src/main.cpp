@@ -11,7 +11,7 @@
 PSP_MAIN_THREAD_ATTR(THREAD_ATTR_USER | THREAD_ATTR_VFPU);
 PSP_MODULE_INFO("PSPFunkin", 0, 1, 0);
 #else
-#include "engine/pc/renderergl.hpp"
+#include "engine/pc/renderersdl.hpp"
 #endif
 
 PSPFunkin g_app;
@@ -28,7 +28,7 @@ int main()
     setupcallbacks();
     g_app.renderer = new GFX::PSPRenderer();
 #else
-    g_app.renderer = new GFX::GLRenderer();
+    g_app.renderer = new GFX::SDLRenderer();
 #endif
     g_app.renderer->init();
 

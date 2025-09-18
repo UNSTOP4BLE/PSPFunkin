@@ -41,19 +41,13 @@ pkg_check_modules(VORBIS REQUIRED vorbis vorbisfile ogg)
 find_package(SDL2 REQUIRED)
 if (!PSP)
     find_package(JsonCpp REQUIRED)
-    FetchContent_Declare(
-    glfw
-    GIT_REPOSITORY https://github.com/glfw/glfw.git
-    GIT_TAG 3.4
-    )
-    FetchContent_MakeAvailable(glfw)
+    pkg_check_modules(SDL2IMAGE REQUIRED sdl2_image)
 endif()
 
 
 
 # Manually list source files
 if (PSP)
-
     set(PSP_SRCS
         src/engine/psp/glib2d.cpp
         src/engine/psp/rendererpsp.cpp
@@ -69,12 +63,10 @@ if (PSP)
 else()
 
     set(PC_SRCS
-        src/engine/pc/glad.c
-        src/engine/pc/renderergl.cpp
+        src/engine/pc/renderersdl.cpp
     )
 
     set(PCLIBS
-        glfw
     )
 endif()
 
@@ -84,12 +76,14 @@ target_compile_features(main PRIVATE c_std_11 cxx_std_17)
 
 target_include_directories(main PRIVATE
     ${SDL2_INCLUDE_DIRS}
+    ${SDL2_IMAGE_INCLUDE_DIRS}
     ${VORBIS_INCLUDE_DIRS}
 #    ${JsonCpp_INCLUDE_DIRS}
 )
 
 target_link_libraries(main PRIVATE
     ${SDL2_LIBRARIES}
+    -lSDL2_image
     ${VORBIS_LIBRARIES}
     jsoncpp
  #   JsonCpp::JsonCpp

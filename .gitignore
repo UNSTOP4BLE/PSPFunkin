@@ -7,7 +7,6 @@
 *.sav
 *.save
 *.bin
-cht2bin/build
 build
 build-debug
 buildpc

@@ -1,35 +1,31 @@
-#include "renderer.hpp"
-#define STB_IMAGE_IMPLEMENTATION
 #include "file.hpp"
+#include <cassert>
 #ifndef PSP
-#include "pc/glad.h"
+#include "pc/renderersdl.hpp"
 #endif
-#include "pc/stb_image.h"
 
 namespace FS {
 GFX::Texture loadTexFile(const std::string& path) {
-    #ifndef PSP
+#ifdef PSP
+    
+#else
     GFX::Texture tex;
+    SDL_Surface* surface = IMG_Load(path.c_str());
+    assert(surface);
 
-    int channels;
-    unsigned char* data = stbi_load(path.c_str(), &tex.width, &tex.height, &channels, 4);
-    assert(data && "Failed to load texture");
+    SDL_Surface* converted = SDL_ConvertSurfaceFormat(surface, SDL_PIXELFORMAT_RGBA32, 0);
+    SDL_FreeSurface(surface);
 
-    glGenTextures(1, &tex.id);
-    glBindTexture(GL_TEXTURE_2D, tex.id);
+    tex.tex = SDL_CreateTextureFromSurface(GFX::g_sdlrenderer, converted);
+    SDL_FreeSurface(converted);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    // Upload RGBA data
-    // Flip V if necessary: OpenGL expects bottom-left origin
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tex.width, tex.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-    glBindTexture(GL_TEXTURE_2D, 0);
-
-    stbi_image_free(data);
+    assert(tex.tex);
+    SDL_SetTextureBlendMode(tex.tex, SDL_BLENDMODE_BLEND);
 
     return tex;
-    #endif
+
+#endif
+    //default
     return GFX::Texture();
 }
 }

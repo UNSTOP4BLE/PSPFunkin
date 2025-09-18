@@ -3,10 +3,6 @@
 #include <fstream>
 #include <cassert>
 
-inline bool compareByPos(const NoteData &a, const NoteData &b) {
-    return a.pos < b.pos;
-}
-
 PlayStateSCN::PlayStateSCN(void) {
     std::string songname = "assets/songs/bopeebo/";
     //todo diffictuly
@@ -35,7 +31,7 @@ PlayStateSCN::PlayStateSCN(void) {
             curnote.sustain = j_curnote[2].asFloat();
       
             //determine target container, decides if note is player or opponent
-            auto &target = (cursec.musthit ^ (curnote.type >= 4)) ? chart.opponentnotes : chart.playernotes;
+            auto &target = (cursec.musthit ^ (curnote.type >= 4)) ? chart.opponentnotes.notes : chart.playernotes.notes;
             if (curnote.type >= 4) 
                 curnote.type -= 4;
        
@@ -44,8 +40,8 @@ PlayStateSCN::PlayStateSCN(void) {
         }
     }
     //sort notes
-    std::sort(chart.opponentnotes.begin(), chart.opponentnotes.end(), compareByPos); 
-    std::sort(chart.playernotes.begin(), chart.playernotes.end(), compareByPos); 
+    chart.opponentnotes.init();
+    chart.playernotes.init();
 
     chart.scrollspeed = j_song["speed"].asFloat()/10;
     chart.bpm = j_song["bpm"].asInt();
@@ -54,7 +50,7 @@ PlayStateSCN::PlayStateSCN(void) {
     chart.stepcrochet = chart.crochet / 4;
     chart.step_per_sec = 15/chart.bpm;
 
-    printf("song has %zu notes and %zu sections\n", chart.playernotes.size()+chart.opponentnotes.size(), chart.sections.size());
+    printf("song has %d notes and %zu sections\n", chart.playernotes.getSize()+chart.opponentnotes.getSize(), chart.sections.size());
 
     file.close();
 
@@ -103,13 +99,28 @@ void PlayStateSCN::update(void) {
 
 }
 
+void PlayStateSCN::drawNotes(NoteContainer &container, GFX::XY<int32_t> pos) {
+    for (size_t i = container.cullingindex; i < container.notes.size(); i++) {
+        auto &note = container.notes[i];
+        int y = static_cast<int>((note.pos - songtime) * chart.scrollspeed);
+
+        //cull notes off screen, this does assume a note is never larger than 64x64 so yeah gotta change this
+        if (y < -pos.y-64) {
+            container.cullingindex = i;
+            continue;
+        }
+        if (y > GFX::SCREEN_HEIGHT) {
+            break;
+        }
+
+        int x = 32 * note.type;
+        g_app.renderer->drawRect({pos.x+x, pos.y+y, 32, 32}, 0, 0xFFFFFFFF);
+    }
+}
+
 void PlayStateSCN::draw(void) {
-    for (auto &note : chart.playernotes) {
-        g_app.renderer->drawRect({32*note.type, static_cast<int>((note.pos - songtime)*chart.scrollspeed), 32, 32}, 0, 0xFFFFFF);
-    }
-    for (auto &note : chart.opponentnotes) {
-        g_app.renderer->drawRect({GFX::SCREEN_WIDTH/2 + 32*note.type, static_cast<int>((note.pos - songtime)*chart.scrollspeed), 32, 32}, 0, 0xFFFFFF);
-    }
+    drawNotes(chart.opponentnotes, {GFX::SCREEN_WIDTH/2, 0});
+    drawNotes(chart.playernotes, {0, 0});
 }
 
 PlayStateSCN::~PlayStateSCN(void) {
