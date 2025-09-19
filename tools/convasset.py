@@ -78,6 +78,7 @@ def main(inputxml, outputdir, maxsize, scale): #scale in %
         new_height = int(round(sub_img.height * scalefactor))
 
         sub_img = sub_img.resize((new_width, new_height), Image.Resampling.LANCZOS)
+        sub_img, newox, newoy = cropimg(sub_img)
 
         # Check if image is larger than atlas
         if sub_img.width > atlas.width or sub_img.height > atlas.height:
@@ -97,7 +98,6 @@ def main(inputxml, outputdir, maxsize, scale): #scale in %
 
         texname = basefilename + f"{atlases.index(atlas)}.png"
 
-        sub_img, newox, newoy = cropimg(sub_img)
         # Paste the sub-image
         atlas.paste(sub_img, (x, y), sub_img)
         # update frames

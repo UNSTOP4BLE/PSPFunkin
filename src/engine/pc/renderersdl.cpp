@@ -1,5 +1,6 @@
 #include "renderersdl.hpp"
 #include <cassert>
+#include <ratio>
 
 namespace GFX {
 
@@ -9,14 +10,26 @@ void SDLRenderer::init() {
     window = SDL_CreateWindow("PSPFunkin", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
     g_sdlrenderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     surface = SDL_GetWindowSurface(window);
+    setClearCol(0x00FF00FF);
 }
 
 bool SDLRenderer::running() {
-    return 1;
+    bool running = true;
+    SDL_Event event;
+    while (SDL_PollEvent(&event)) {
+        if (event.type == SDL_QUIT) {
+            running = false;
+        }
+    }
+    return running;
 }
 
 void SDLRenderer::beginFrame() {
-    SDL_SetRenderDrawColor(g_sdlrenderer, 0, 255, 0, 255);
+    uint8_t r = (clearcol >> 24) & 0xFF;
+    uint8_t g = (clearcol >> 16) & 0xFF;
+    uint8_t b = (clearcol >> 8)  & 0xFF;
+    uint8_t a = (clearcol)       & 0xFF;
+    SDL_SetRenderDrawColor(g_sdlrenderer, r,g,b,a);
     SDL_RenderClear(g_sdlrenderer);
 }
 

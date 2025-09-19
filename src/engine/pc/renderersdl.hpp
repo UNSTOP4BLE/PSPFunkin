@@ -10,6 +10,8 @@ public:
 	void init(void);
 	bool running(void);
 
+	inline void setClearCol(uint32_t col) {clearcol = col;}
+
 	void beginFrame(void);
 	void endFrame(void);
 
@@ -17,7 +19,8 @@ public:
 	void drawTexRect(const Texture &tex, RECT<int32_t> &src, RECT<int32_t> &dst, int z, uint32_t col);
 
 private:
-    SDL_Window *window;
+	uint32_t clearcol;
+	SDL_Window *window;
     SDL_Surface *surface;
 };
 }

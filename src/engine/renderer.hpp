@@ -39,6 +39,8 @@ class Renderer {
 public:
 	virtual void init(void) {}
 	virtual bool running(void) {return 0;}
+
+	virtual void setClearCol(uint32_t col) {}
 	
 	virtual void beginFrame(void) {}
 	virtual void endFrame(void) {}

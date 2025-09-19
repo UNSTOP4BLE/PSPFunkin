@@ -6,7 +6,8 @@ import shutil
 #add sprites here
 sprites = [
     "assets/menu/gftitle/gfDanceTitle.xml",
-    "assets/menu/logo/logoBumpin.xml"
+    "assets/menu/logo/logoBumpin.xml",
+    "assets/menu/enter/titleEnter.xml",
 ]
 
 def excludedirs(files, dirs):
