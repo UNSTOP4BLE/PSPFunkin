@@ -7,26 +7,6 @@
     },
     "configurePresets": [        
         {
-            "name": "3ds-test",
-            "displayName": "Release (3DS)",
-            "binaryDir": "${sourceDir}/build-debug",
-            "generator": "Unix Makefiles",
-            "cacheVariables": {
-                "CMAKE_TOOLCHAIN_FILE": "$env{DEVKITPRO}/cmake/3DS.cmake",
-                "CMAKE_BUILD_TYPE": "RelWithDebInfo"
-            }
-        },    
-        {
-            "name": "vita-test",
-            "displayName": "Release (VITA)",
-            "binaryDir": "${sourceDir}/build",
-            "generator": "Unix Makefiles",
-            "cacheVariables": {
-                "CMAKE_TOOLCHAIN_FILE": "$env{VITASDK}/share/vita.toolchain.cmake",
-                "CMAKE_BUILD_TYPE": "RelWithDebInfo"
-            }
-        },
-        {
             "name": "pc-debug",
             "displayName": "Debug (PC)",
             "binaryDir": "${sourceDir}/build-debug",
@@ -41,7 +21,7 @@
             "binaryDir": "${sourceDir}/build",
             "generator": "Ninja",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+                "CMAKE_BUILD_TYPE": "Release"
             }
         },
         {
@@ -61,7 +41,7 @@
             "generator": "Unix Makefiles",
             "cacheVariables": {
                 "CMAKE_TOOLCHAIN_FILE": "$env{PSPDEV}/psp/share/pspdev.cmake",
-                "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+                "CMAKE_BUILD_TYPE": "Release"
             }
         }
     ]

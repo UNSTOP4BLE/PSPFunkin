@@ -22,13 +22,6 @@ set(SRC_FILES
     src/scenes/playstate.cpp
     src/scenes/title.cpp
 )
-# sprites
-set(SPRITE_FILES
-    assets/menu/gftitle/gfDanceTitle.xml
-    assets/menu/logo/logoBumpin.xml
-)
-
-include(tools/tools.cmake)
 
 include(FetchContent)
 
@@ -53,8 +46,6 @@ if (!PSP)
     find_package(JsonCpp REQUIRED)
     pkg_check_modules(SDL2IMAGE REQUIRED sdl2_image)
 endif()
-
-
 
 # Manually list source files
 if (PSP)
@@ -100,27 +91,6 @@ target_link_libraries(main PRIVATE
     ${PCLIBS}
     ${PSPLIBS}
 )
-
-# Copy assets folder to the build directory
-# Collect all files under assets
-file(GLOB_RECURSE ALL_ASSETS
-    "${CMAKE_SOURCE_DIR}/assets/*"
-)
-
-# Filter out sprite files/folders
-set(FILTERED_ASSETS "")
-foreach(FILE ${ALL_ASSETS})
-    set(EXCLUDE FALSE)
-    foreach(SPRITE ${SPRITE_FILES})
-        if(FILE MATCHES "^${SPRITE}.*")
-            set(EXCLUDE TRUE)
-        endif()
-    endforeach()
-    if(NOT EXCLUDE)
-        list(APPEND FILTERED_ASSETS "${FILE}")
-    endif()
-endforeach()
-file(COPY "${FILTERED_ASSETS}" DESTINATION "${CMAKE_BINARY_DIR}")
 
 if(PSP)
     create_pbp_file(

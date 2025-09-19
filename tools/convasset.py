@@ -6,7 +6,6 @@ from PIL import Image
 import os 
 import json
 
-
 def cropimg(img):
     """
     Crop transparent pixels from an RGBA image.
