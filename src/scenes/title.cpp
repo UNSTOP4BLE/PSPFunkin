@@ -29,7 +29,7 @@ void TitleSCN::update(void) {
 
 void TitleSCN::draw(void) {
     gf.draw({200, 13});
-    logo.draw({-65, -45});
+    logo.draw({-3, 3});
 }
 
 TitleSCN::~TitleSCN(void) {

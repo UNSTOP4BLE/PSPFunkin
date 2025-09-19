@@ -84,12 +84,12 @@ def main(inputxml, outputdir, maxsize, scale): #scale in %
         if sub_img.width > atlas.width or sub_img.height > atlas.height:
             raise ValueError("Atlas too small for a single image!")
 
-        # Find the next empty spot
+        # Find the next empty spot, very slow should rewrite
         while not areaisempty(atlas, x, y, sub_img.width, sub_img.height):
             x += 1
             if x + sub_img.width > atlas.width:
                 x = 0
-                y += sub_img.height #1 #this was more accurate but slow
+                y += sub_img.height;#doesnt work well, should be 1 but 1 is slow
             if y + sub_img.height > atlas.height:
                 # Make a new atlas
                 atlases.append(Image.new("RGBA", (maxsize, maxsize), (0, 0, 0, 0)))
@@ -97,17 +97,19 @@ def main(inputxml, outputdir, maxsize, scale): #scale in %
                 x, y = 0, 0
 
         texname = basefilename + f"{atlases.index(atlas)}.png"
+
+        sub_img, newox, newoy = cropimg(sub_img)
         # Paste the sub-image
         atlas.paste(sub_img, (x, y), sub_img)
         # update frames
         frame[0] = texname
         frame[1] = x 
         frame[2] = y 
-        frame[3] = new_width 
-        frame[4] = new_height 
+        frame[3] = sub_img.width
+        frame[4] = sub_img.height 
         # todo fix ugly rounding
-        frame[5] = int(round(ox * scalefactor))  # ox
-        frame[6] = int(round(oy * scalefactor))  # oy
+        frame[5] = int(round((ox+newox) * scalefactor))  # ox
+        frame[6] = int(round((oy+newoy) * scalefactor))  # oy
 
         print(f"Placed sprite {i}")
 
