@@ -8,7 +8,7 @@ void newscenetest(void) {
 }
 
 TitleSCN::TitleSCN(void) {
-//    g_app.renderer->setClearCol(0x000000FF);
+    g_app.renderer->setClearCol(0x000000FF);
     freaky = new Audio::StreamedFile(g_app.audiomixer, FS::getFilePath("assets/music/freaky.ogg").c_str());
     freaky->play(true);
     auto jdata = FS::readJsonFile(FS::getFilePath("assets/menu/menu.json"));

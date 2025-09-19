@@ -2,6 +2,7 @@
 #include "app.hpp"
 #include "engine/renderer.hpp"
 
+//todo horrible and needs a rewrite
 namespace GAME {
 
 void Transition::update(float time) {
