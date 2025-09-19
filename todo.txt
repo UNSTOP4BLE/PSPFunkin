@@ -1,0 +1,36 @@
+- fix memory leaks, probably a lot of em
+- gameplay: miss, score, hp, score showing thing, inputs, icon bumps, hud bumps, cameras
+- cool smooth fade transition thing
+- stages, including parallax effect
+- bpm change mid song
+- (maybe) scroll speed change mid song for mod support
+- all levels tutorial - week6
+- game over screen
+- all menus, story mode menu cool lerp thing with week score numbers
+- make asset packer better
+- options menu 
+- downscroll
+- difficulty ingame
+- song preview in freeplay when hovering a song, only instrumental plays
+- pixel hud week6 
+- dialogue week 6
+- curscene things in week5 and week 6
+- health bar in code
+- seamless song loading or back to menu depending on next song
+- week 1 events (peace) and dunno if tutorial has it
+- week 2 events and animations
+- week 3 events and animations
+- week 4 events and animations
+- week 5 events and animations
+- week 6 events and animations
+- milf bumps
+- fps counter
+- miss animations
+- pause menu
+- (maybe) option to pick between good input and shitty old fnf input
+- psp port (duh)
+- save data
+- all character sprites
+- pull function calls out of asserts so the game doesnt shit out when not in debug mode
+- remove unused includes
+- URGENT! trans.cpp and trans.hpp suck and are very slow, rewrite

@@ -31,6 +31,7 @@ int main()
     g_app.renderer = new GFX::SDLRenderer();
 #endif
     g_app.renderer->init();
+    g_app.trans.init();
 
     assert(SDL_Init(SDL_INIT_AUDIO) >= 0);
     g_app.audiomixer.start();
@@ -49,7 +50,9 @@ int main()
         SDL_PumpEvents();
 #endif
         g_app.curscene->update();  
+        g_app.trans.update(g_app.timer.elapsedMS()/1000);
         g_app.curscene->draw();  
+        g_app.trans.draw();
 
         g_app.renderer->endFrame();
         auto cur_t = std::chrono::high_resolution_clock::now();

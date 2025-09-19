@@ -1,6 +1,7 @@
 #include "file.hpp"
 #include <cassert>
 #include <unistd.h> 
+#include <fstream>
 #ifndef PSP
 #include "pc/renderersdl.hpp"
 #endif
@@ -78,11 +79,20 @@ static std::string getAppDirectory() {
     return path;
 }
 
-std::string getFilePath(std::string path) {
+std::string getFilePath(const std::string& path) {
     const std::string prefix = getAppDirectory() + "/";
     printf("path %s\n", (prefix + path).c_str());
     assert(access((prefix + path).c_str(), F_OK) == 0);
     return prefix + path;
 }
 
+Json::Value readJsonFile(const std::string& path) {
+    std::ifstream file(path);
+    Json::Reader reader;
+    Json::Value jdata;
+    int r = reader.parse(file, jdata);
+    assert(r);   
+    file.close();
+    return jdata;
+}
 }

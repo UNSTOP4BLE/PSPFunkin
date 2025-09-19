@@ -1,6 +1,5 @@
 #include "object.hpp"
 
-#include <json/json.h>
 #include <fstream>
 #include <cassert>
 #include "hash.hpp"
@@ -26,10 +25,7 @@ static void splitPath(const std::string& path, std::string& directory, std::stri
 void Object::init(std::string path) {
     std::string dir, jsonname;
     splitPath(path, dir, jsonname);
-    std::ifstream file(dir + jsonname);
-    Json::Reader reader;
-    Json::Value jdata;
-    assert(reader.parse(file, jdata));   
+    Json::Value jdata = FS::readJsonFile(dir + jsonname);
 
     //texture data
     for (int i = 0; i < jdata["textures"].size(); i++) {
@@ -67,12 +63,11 @@ void Object::init(std::string path) {
         }
         animations.push_back(anim);
     }
-    file.close();
 
     //set animation as default 
     setAnim("none"_h); 
-    obj.curframe.setValue(0);//end immediatley
     setScale(1);
+    playAnim(0);//end immediatley
 }
 
 void Object::update(float animtime) {

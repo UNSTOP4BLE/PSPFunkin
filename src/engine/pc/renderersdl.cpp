@@ -10,6 +10,7 @@ void SDLRenderer::init() {
     window = SDL_CreateWindow("PSPFunkin", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
     g_sdlrenderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     surface = SDL_GetWindowSurface(window);
+    SDL_SetRenderDrawBlendMode(g_sdlrenderer, SDL_BLENDMODE_BLEND);
     setClearCol(0x00FF00FF);
 }
 

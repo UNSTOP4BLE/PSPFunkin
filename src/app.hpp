@@ -4,10 +4,12 @@
 #include "engine/renderer.hpp"
 #include "engine/file.hpp"
 #include "engine/timer.hpp"
+#include "trans.hpp"
 
 class PSPFunkin {
 public:
     GFX::Renderer *renderer; 
+    GAME::Transition trans;
     TIMER::Timer timer;
     float deltatime; //todo put this in timer
 //    Input::Event event;

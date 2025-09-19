@@ -4,6 +4,8 @@
 #include "tween.hpp"
 #include <vector>
 
+#include "../app.hpp"
+
 namespace OBJECT {
 
 struct KeyFrame {
@@ -50,6 +52,23 @@ private:
     float scale;
     int findAnimationIndex(uint32_t hash);
     AnimTex* findTexture(uint32_t hash);
+};
+
+class ObjectGeneric {
+public:
+    inline void init(std::string path) {obj2d.init(path); setLoop(false);}
+    inline void setLoop(bool l) {loop = l;};
+    
+    inline void update(void) {obj2d.update(g_app.timer.elapsedMS()/1000); if (loop && !obj2d.playing()) playAnim();}
+    inline void setAnim(uint32_t animhash) {obj2d.setAnim(animhash);}
+    inline void playAnim(void) {obj2d.playAnim(obj2d.getCurIndicieCount()/obj2d.getCurFps());} //fps animation
+    inline void playAnim(uint32_t animhash) { setAnim(animhash); playAnim();}
+    inline void draw(GFX::XY<int32_t> pos) {obj2d.draw(pos);}
+    inline void setScale(float s) {obj2d.setScale(s);};
+    inline void free(void) {obj2d.free();}
+private:
+    bool loop;
+    Object obj2d;
 };
 
 }

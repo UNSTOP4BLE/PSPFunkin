@@ -5,7 +5,7 @@
 
 PlayStateSCN::PlayStateSCN(void) {
     std::string songname = "assets/songs/bopeebo/";
-    //todo diffictuly
+    //todo diffictuly and use fs json stuff
     std::ifstream file(FS::getFilePath(songname + "bopeebo.json"));
     Json::Reader reader;
     Json::Value j_chart;

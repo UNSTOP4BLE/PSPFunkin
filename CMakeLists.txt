@@ -11,6 +11,7 @@ project(
 # Manually list source files
 set(SRC_FILES
     src/main.cpp
+    src/trans.cpp
     src/engine/audio_file_readers.cpp
     src/engine/audio_mixer.cpp
     src/engine/audio_streamed_file.cpp

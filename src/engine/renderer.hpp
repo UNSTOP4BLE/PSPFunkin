@@ -41,6 +41,8 @@ public:
 	virtual bool running(void) {return 0;}
 
 	virtual void setClearCol(uint32_t col) {}
+	virtual uint32_t getClearCol(void) {return 0;}
+	
 	
 	virtual void beginFrame(void) {}
 	virtual void endFrame(void) {}

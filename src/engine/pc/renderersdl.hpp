@@ -11,6 +11,7 @@ public:
 	bool running(void);
 
 	inline void setClearCol(uint32_t col) {clearcol = col;}
+	inline uint32_t getClearCol(void) {return clearcol;}
 
 	void beginFrame(void);
 	void endFrame(void);

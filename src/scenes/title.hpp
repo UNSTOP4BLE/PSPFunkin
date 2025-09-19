@@ -14,7 +14,10 @@ public:
     ~TitleSCN(void); 
 private:
     Audio::StreamedFile *freaky; 
-    OBJECT::Object gf;
-    OBJECT::Object logo;
-    OBJECT::Object pressenter;
+    OBJECT::ObjectGeneric gf;
+    OBJECT::ObjectGeneric logo;
+    OBJECT::ObjectGeneric pressenter;
+    float stepcrochet;
+    float curstep;
+    std::string funnymessage[2];
 };

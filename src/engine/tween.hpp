@@ -50,6 +50,7 @@ public:
             return _base + _delta;
         return _base + _delta * E::apply(1.0 - time * _timeScale);
     }
+    
     inline bool isDone(void) {
         return (getTweenTime() <= _endTime);
     }
@@ -61,9 +62,11 @@ public:
         _endTime   = getTweenTime() + duration;
         _timeScale = 1.0 / duration;
     }
+
     inline void setValue(T target, float duration) {
         setValue(getValue(), target, duration);
     }
+    
     inline void setValue(T target) {
         _base    = target;
         _delta   = static_cast<T>(0);
