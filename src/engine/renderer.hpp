@@ -43,7 +43,7 @@ public:
 	virtual void beginFrame(void) {}
 	virtual void endFrame(void) {}
 
-	virtual void drawRect(RECT<int32_t> rect, int z, uint32_t col) {}
-    virtual void drawTexRect(const Texture &tex, RECT<int32_t> src, RECT<int32_t> dst, int z, uint32_t col) {}
+	virtual void drawRect(RECT<int32_t> &rect, int z, uint32_t col) {}
+    virtual void drawTexRect(const Texture &tex, RECT<int32_t> &src, RECT<int32_t> &dst, int z, uint32_t col) {}
 };
 }

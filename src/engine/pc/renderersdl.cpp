@@ -24,7 +24,7 @@ void SDLRenderer::endFrame() {
     SDL_RenderPresent(g_sdlrenderer);
 }
 
-void SDLRenderer::drawRect(RECT<int32_t> rect, int z, uint32_t col) {
+void SDLRenderer::drawRect(RECT<int32_t> &rect, int z, uint32_t col) {
     uint8_t r = (col >> 24) & 0xFF;
     uint8_t g = (col >> 16) & 0xFF;
     uint8_t b = (col >> 8) & 0xFF;
@@ -36,7 +36,7 @@ void SDLRenderer::drawRect(RECT<int32_t> rect, int z, uint32_t col) {
     SDL_RenderFillRect(g_sdlrenderer, &sdlRect);
 }
 
-void SDLRenderer::drawTexRect(const Texture &tex, RECT<int32_t> src, RECT<int32_t> dst, int z, uint32_t col) {
+void SDLRenderer::drawTexRect(const Texture &tex, RECT<int32_t> &src, RECT<int32_t> &dst, int z, uint32_t col) {
     uint8_t r = (col >> 24) & 0xFF;
     uint8_t g = (col >> 16) & 0xFF;
     uint8_t b = (col >> 8) & 0xFF;

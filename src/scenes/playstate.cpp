@@ -6,7 +6,7 @@
 PlayStateSCN::PlayStateSCN(void) {
     std::string songname = "assets/songs/bopeebo/";
     //todo diffictuly
-    std::ifstream file(getFilePath(songname + "bopeebo.json"));
+    std::ifstream file(FS::getFilePath(songname + "bopeebo.json"));
     Json::Reader reader;
     Json::Value j_chart;
     assert(reader.parse(file, j_chart));   
@@ -57,10 +57,10 @@ PlayStateSCN::PlayStateSCN(void) {
     //init
     songtime = -30 * chart.stepcrochet; //start at step -30
 
-    inst = new Audio::StreamedFile(g_app.audiomixer, getFilePath(songname + "Inst.ogg").c_str());
+    inst = new Audio::StreamedFile(g_app.audiomixer, FS::getFilePath(songname + "Inst.ogg").c_str());
     
     if (chart.hasvoices)
-        voices = new Audio::StreamedFile(g_app.audiomixer, getFilePath(songname + "Voices.ogg").c_str());
+        voices = new Audio::StreamedFile(g_app.audiomixer, FS::getFilePath(songname + "Voices.ogg").c_str());
 }
 
 void PlayStateSCN::update(void) {
@@ -114,7 +114,8 @@ void PlayStateSCN::drawNotes(NoteContainer &container, GFX::XY<int32_t> pos) {
         }
 
         int x = 32 * note.type;
-        g_app.renderer->drawRect({pos.x+x, pos.y+y, 32, 32}, 0, 0xFFFFFFFF);
+        GFX::RECT<int32_t> notepos = {pos.x+x, pos.y+y, 32, 32};
+        g_app.renderer->drawRect(notepos, 0, 0xFFFFFFFF);
     }
 }
 

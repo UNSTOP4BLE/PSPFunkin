@@ -3,6 +3,9 @@
 #include "../app.hpp"
 #include "../engine/audio_streamed_file.hpp"
 
+
+#include "../engine/object.hpp"
+
 class TitleSCN : public SCENE::Scene {
 public:
     TitleSCN(void);
@@ -12,4 +15,5 @@ public:
 private:
     Audio::StreamedFile *freaky; 
     GFX::Texture test;
+    OBJECT::Object object;
 };

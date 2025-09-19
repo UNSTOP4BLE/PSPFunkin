@@ -38,8 +38,9 @@ int main()
 
    // setScreenCol(0xFF00FF00);
     
-    SCENE::set(new PlayStateSCN());
+    SCENE::set(new TitleSCN());
 
+    g_app.timer.start();
     auto last_t = std::chrono::high_resolution_clock::now();
     while (g_app.renderer->running())
     {

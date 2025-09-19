@@ -16,6 +16,9 @@ set(SRC_FILES
     src/engine/audio_streamed_file.cpp
     src/engine/file.cpp
     src/engine/scene.cpp
+    src/engine/object.cpp
+    src/engine/timer.cpp
+    #game scenes
     src/scenes/playstate.cpp
     src/scenes/title.cpp
 )
