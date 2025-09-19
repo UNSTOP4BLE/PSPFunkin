@@ -14,6 +14,6 @@ public:
     ~TitleSCN(void); 
 private:
     Audio::StreamedFile *freaky; 
-    GFX::Texture test;
-    OBJECT::Object object;
+    OBJECT::Object gf;
+    OBJECT::Object logo;
 };

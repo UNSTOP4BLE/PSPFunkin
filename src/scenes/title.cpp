@@ -5,23 +5,35 @@
 TitleSCN::TitleSCN(void) {
     freaky = new Audio::StreamedFile(g_app.audiomixer, FS::getFilePath("assets/music/freaky.ogg").c_str());
     freaky->play(true);
-    object.init(FS::getFilePath("assets/menu/gftitle/gfDanceTitle.json"));
-    object.setAnim("gfDance"_h);
-    object.playAnim(object.getCurIndicieCount()/object.getCurFps());
-    object.setScale(0.975);
+    //dancing gf
+    gf.init(FS::getFilePath("assets/menu/gftitle/gfDanceTitle.json"));
+    gf.setAnim("gfDance"_h);
+    gf.playAnim(gf.getCurIndicieCount()/gf.getCurFps());
+    gf.setScale(0.975);
+    //fnf logo
+    logo.init(FS::getFilePath("assets/menu/logo/logoBumpin.json"));
+    logo.setAnim("logo bumpin"_h);
+    logo.playAnim(logo.getCurIndicieCount()/logo.getCurFps());
+    logo.setScale(0.975);
 }
 
 void TitleSCN::update(void) {
     freaky->process();
-    object.update(g_app.timer.elapsedMS()/1000);
-    if (!object.playing())
-        object.playAnim(object.getCurIndicieCount()/object.getCurFps());
+    gf.update(g_app.timer.elapsedMS()/1000);
+    if (!gf.playing()) //seamless looping
+        gf.playAnim(gf.getCurIndicieCount()/gf.getCurFps());
+    logo.update(g_app.timer.elapsedMS()/1000);
+    if (!logo.playing()) 
+        logo.playAnim(logo.getCurIndicieCount()/logo.getCurFps());
 }
 
 void TitleSCN::draw(void) {
-    object.draw({0, 13});
+    gf.draw({200, 13});
+    logo.draw({-65, -45});
 }
 
 TitleSCN::~TitleSCN(void) {
     delete freaky;
+    gf.free();
+    logo.free();
 }  

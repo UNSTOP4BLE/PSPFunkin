@@ -135,7 +135,7 @@ void Object::draw(GFX::XY<int32_t> pos) {
     g_app.renderer->drawTexRect(obj.curtex->tex, src, dst, 0, 0xFFFFFFFF);
 }
 
-void Object::free() {
+void Object::free(void) {
     //todo
 }
 

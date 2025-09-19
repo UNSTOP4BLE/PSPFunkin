@@ -41,7 +41,7 @@ public:
     inline float getCurFps(void) {return obj.curanim->fps;}
     inline void setScale(float s) {scale = s;}
     void draw(GFX::XY<int32_t> pos);
-    void free();
+    void free(void);
 private:
     std::vector<KeyFrame> keyframes;
     std::vector<AnimTex> textures;
