@@ -16,4 +16,5 @@ private:
     Audio::StreamedFile *freaky; 
     OBJECT::Object gf;
     OBJECT::Object logo;
+    OBJECT::Object pressenter;
 };

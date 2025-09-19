@@ -5,9 +5,11 @@ import shutil
 
 #add sprites here
 sprites = [
-    "assets/menu/gftitle/gfDanceTitle.xml",
-    "assets/menu/logo/logoBumpin.xml",
-    "assets/menu/enter/titleEnter.xml",
+    "assets/menu/gftitle/gf.xml",
+    "assets/menu/logo.xml",
+    "assets/menu/titleenter.xml",
+    #characters
+    "assets/characters/dad/dad.xml",
 ]
 
 def excludedirs(files, dirs):
@@ -17,6 +19,10 @@ def excludedirs(files, dirs):
         f for f in files
         if not any(f.startswith(d + os.sep) or f == d for d in sprite_dirs)
     ]
+    return filtered_files
+
+def excludefiles(files, exclude_list):
+    filtered_files = [f for f in files if f not in exclude_list]
     return filtered_files
 
 def main(): 
@@ -34,15 +40,15 @@ def main():
         for f in files
     ]
 
-    #get all assets except for the ones were gonna make
-    allfiles = excludedirs(allfiles, sprites)
-
     for s in sprites:
+        #exclude specific source files
+        allfiles = excludefiles(allfiles, [s, s.replace(".xml", ".png")])
+
         for b in builddirs:
-            dst = os.path.join(b, os.path.dirname(s))
+            dst = os.path.join(b, s.replace(".xml", ".json"))
             if (not os.path.exists(dst) or (os.path.getmtime(s) > os.path.getmtime(dst))):
                 print("making asset", dst)
-                subprocess.run([sys.executable, "tools/convasset.py", s, dst], text=True)
+                subprocess.run([sys.executable, "tools/convasset.py", s, os.path.dirname(dst)], text=True)
 
     #copy remaining files
     for f in allfiles:
