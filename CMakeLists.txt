@@ -19,6 +19,7 @@ set(SRC_FILES
     src/engine/scene.cpp
     src/engine/object.cpp
     src/engine/timer.cpp
+    src/engine/input.cpp
     #game scenes
     src/scenes/playstate.cpp
     src/scenes/title.cpp

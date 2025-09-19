@@ -15,14 +15,9 @@ void SDLRenderer::init() {
 }
 
 bool SDLRenderer::running() {
-    bool running = true;
     SDL_Event event;
-    while (SDL_PollEvent(&event)) {
-        if (event.type == SDL_QUIT) {
-            running = false;
-        }
-    }
-    return running;
+    int count = SDL_PeepEvents(&event, 1, SDL_PEEKEVENT, SDL_QUIT, SDL_QUIT);
+    return (count == 0); // if SDL_QUIT exists, stop
 }
 
 void SDLRenderer::beginFrame() {

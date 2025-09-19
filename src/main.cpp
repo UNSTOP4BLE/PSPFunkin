@@ -24,16 +24,27 @@ int main()
     //get a random number seed
     srand(time(NULL));
 
+    int e; //error code for sdl
+    uint32_t sdlflags = 0;
+    sdlflags |= SDL_INIT_AUDIO;
+
+    //todo this is plain wrong lmao, on other platfroms sdl_init never gets executed
 #ifdef PSP
     setupcallbacks();
     g_app.renderer = new GFX::PSPRenderer();
+    INPUT::ControllerDevice inputDevice;
 #else
+    sdlflags |= SDL_INIT_VIDEO;
+    sdlflags |= SDL_INIT_EVENTS;
+    e = (SDL_Init(sdlflags) >= 0);//SDL_INIT_EVENTS | SDL_INIT_VIDEO | SDL_INIT_AUDIO) >= 0);
     g_app.renderer = new GFX::SDLRenderer();
+    
+    assert(e);
+    INPUT::KeyboardDevice inputDevice;
 #endif
     g_app.renderer->init();
     g_app.trans.init();
 
-    assert(SDL_Init(SDL_INIT_AUDIO) >= 0);
     g_app.audiomixer.start();
 
 
@@ -49,6 +60,8 @@ int main()
 #ifndef PSP
         SDL_PumpEvents();
 #endif
+        inputDevice.getEvent(g_app.input);
+
         g_app.curscene->update();  
         g_app.trans.update(g_app.timer.elapsedMS()/1000);
         g_app.curscene->draw();  

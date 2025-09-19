@@ -3,10 +3,6 @@
 #include "../engine/hash.hpp"
 #include "playstate.hpp"
 
-void newscenetest(void) {
-    SCENE::set(new PlayStateSCN);
-}
-
 TitleSCN::TitleSCN(void) {
     g_app.renderer->setClearCol(0x000000FF);
     freaky = new Audio::StreamedFile(g_app.audiomixer, FS::getFilePath("assets/music/freaky.ogg").c_str());
@@ -34,9 +30,6 @@ TitleSCN::TitleSCN(void) {
     pressenter.playAnim("Press Enter to Begin"_h);
     pressenter.setLoop(true);
     pressenter.setScale(0.975);
-
-    g_app.trans.init(newscenetest);
-    g_app.trans.start();
 }
 
 void TitleSCN::update(void) {
@@ -45,6 +38,8 @@ void TitleSCN::update(void) {
     gf.update();
     logo.update();
     pressenter.update();
+    if (g_app.input.isHeld(INPUT::MENU_ENTER))
+        printf("test \n");
 }
 
 void TitleSCN::draw(void) {
