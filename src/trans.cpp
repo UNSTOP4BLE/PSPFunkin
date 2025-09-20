@@ -10,7 +10,7 @@ void Transition::update(float time) {
     dst.y = static_cast<int>(y.getValue());
     //reset 
     if (dst.y >= GFX::SCREEN_HEIGHT+TRANS_PIXELS){
-        printf("resseting transition\n");
+//        printf("resseting transition\n");
         init(); 
     }
     if (dst.y >= 0 && !loadedassets) {
@@ -40,7 +40,7 @@ void Transition::draw(void) {
     //main rect
     g_app.renderer->drawRect(dst, 0, 0x000000FF);
 
-    printf("drawing trans\n");
+//    printf("drawing trans\n");
 }
 
 }
