@@ -25,6 +25,7 @@ set(SRC_FILES
     src/scenes/playstate.cpp
     src/scenes/title.cpp
     src/scenes/mainmenu.cpp
+    src/scenes/freeplay.cpp
 )
 
 include(FetchContent)

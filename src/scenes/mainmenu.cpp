@@ -3,6 +3,8 @@
 #include "../engine/hash.hpp"
 #include <algorithm>
 
+#include "freeplay.hpp"
+
 static void updateAnims(std::vector<Option> &menuoptions, int selection) {
     for (int i = 0; i < menuoptions.size(); i++) {
         auto &option = menuoptions[i];
@@ -10,6 +12,7 @@ static void updateAnims(std::vector<Option> &menuoptions, int selection) {
         if (i == selection)
             animname = " white";
         uint32_t animhash = Hash::FromString((option.name + animname).c_str());
+        //set to select animation
         option.obj.playAnim(animhash);
     }
 }
@@ -48,6 +51,10 @@ MainMenuSCN::MainMenuSCN(void) {
 constexpr float MENUBG_SPEED = 0.4;
 constexpr float MENUBG_AMOUNT = 8;
 
+void loadFreePlay(void) {
+    SCENE::set(new FreePlaySCN());
+}
+
 void MainMenuSCN::update(void) {
     menubgy.setTweenTime(g_app.timer.elapsedMS()/1000);
     if (g_app.input.isPressed(INPUT::MENU_UP)) {
@@ -64,6 +71,26 @@ void MainMenuSCN::update(void) {
     for (auto &option : menuoptions) {
         option.obj.update(g_app.timer);
     }
+
+    //handle selection
+    if (g_app.input.isPressed(INPUT::MENU_ENTER)) {
+        switch (Hash::FromString(menuoptions[selection].name.c_str())) {
+            case "story mode"_h: 
+                printf("hi\n");
+                break;
+
+            case "freeplay"_h: 
+                g_app.trans.init(loadFreePlay);
+                g_app.trans.start();
+                break;
+
+            case "options"_h: 
+                printf("hi\n");
+                break;
+            default:
+                break;
+        }
+    }
 }
 
 void MainMenuSCN::draw(void) {
@@ -79,11 +106,11 @@ void MainMenuSCN::draw(void) {
     //scale around center
     GFX::RECT<int32_t> dst = {
         static_cast<int>(cx - (width * scale) / 2),
-        0-static_cast<int>(menubgy.getValue()),
+        -static_cast<int>(menubgy.getValue()),
         static_cast<int>(width * scale),
         static_cast<int>(height * scale)
     };
-    g_app.renderer->drawTexRect(menubg, src, dst, 0, 0xFFFFFFFF);
+    g_app.renderer->drawTexRect(menubg, src, dst, 0, 0xFCE871FF);
     for (int i = menuoptions.size()-1; i >= 0; i--) { //draw different layering
         auto &option = menuoptions[i];
         auto o = option.offset;

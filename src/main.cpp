@@ -58,7 +58,8 @@ int main()
     {
         g_app.renderer->beginFrame();
 #ifndef PSP
-        SDL_PumpEvents();
+        if (!g_app.trans.isrunning())
+            SDL_PumpEvents();
 #endif
         inputDevice.getEvent(g_app.input);
 
