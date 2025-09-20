@@ -1,10 +1,11 @@
+//done
 #pragma once
 
 #include <cstdint>
 #include <vorbis/vorbisfile.h>
 #include "audio_buffer.hpp"
 
-namespace Audio {
+namespace AUDIO {
 
 struct __attribute__((packed)) WAVFormatChunk {
     uint16_t format;
@@ -43,7 +44,7 @@ private:
     int _dataOffset;
 
 public:
-    WAVFileReader(const char *path);
+    WAVFileReader(const std::string& path);
     int getPosition(void);
     int setPosition(int sampleOffset);
     int read(AudioBuffer &buf, int numSamples, int bufferOffset = 0);
@@ -56,14 +57,14 @@ private:
     int _bitstreamIndex;
 
 public:
-    OGGFileReader(const char *path);
+    OGGFileReader(const std::string& path);
     int getPosition(void);
     int setPosition(int sampleOffset);
     int read(AudioBuffer &buf, int numSamples, int bufferOffset = 0);
     ~OGGFileReader(void);
 };
 
-FileReader *openFile(const char *path);
-bool loadFile(AudioBuffer &buffer, const char *path);
+FileReader *openFile(const std::string& path);
+bool loadFile(AudioBuffer &buffer, const std::string& path);
 
 }

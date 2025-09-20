@@ -1,12 +1,15 @@
 #include "title.hpp"
-#include "../engine/pc/renderersdl.hpp"
+
 #include "../engine/hash.hpp"
-#include "playstate.hpp"
+#include "../engine/file.hpp"
+
+#include "mainmenu.hpp"
 
 TitleSCN::TitleSCN(void) {
     g_app.renderer->setClearCol(0x000000FF);
-    freaky = new Audio::StreamedFile(g_app.audiomixer, FS::getFilePath("assets/music/freaky.ogg").c_str());
-    freaky->play(true);
+    g_app.audiomanager.loadFile(g_app.audiomixer, FS::getFilePath("assets/music/freaky.ogg"));
+    g_app.audiomanager.play(true);
+
     auto jdata = FS::readJsonFile(FS::getFilePath("assets/menu/menu.json"));
     float crochet = (60 / jdata["menuSongBPM"].asFloat()) * 1000;
     stepcrochet = crochet / 4;
@@ -32,24 +35,28 @@ TitleSCN::TitleSCN(void) {
     pressenter.setScale(0.975);
 }
 
+static void loadMainMenu(void) {
+    SCENE::set(new MainMenuSCN());
+}
+
 void TitleSCN::update(void) {
-    curstep = freaky->getChannel().getTime()*1000 / stepcrochet;
-    freaky->process();
-    gf.update();
-    logo.update();
-    pressenter.update();
-    if (g_app.input.isHeld(INPUT::MENU_ENTER))
-        printf("test \n");
+    curstep =  g_app.audiomanager.getMS() / stepcrochet;
+    gf.update(g_app.timer);
+    logo.update(g_app.timer);
+    pressenter.update(g_app.timer);
+    if (g_app.input.isPressed(INPUT::MENU_ENTER)) {
+        g_app.trans.init(loadMainMenu);
+        g_app.trans.start();
+    }
 }
 
 void TitleSCN::draw(void) {
-    gf.draw({200, 13});
-    logo.draw({-3, 3});
-    pressenter.draw({GFX::SCREEN_WIDTH/2-200, GFX::SCREEN_HEIGHT * 5 / 6});
+    gf.draw(g_app.renderer, {200, 13});
+    logo.draw(g_app.renderer, {-3, 3});
+    pressenter.draw(g_app.renderer, {GFX::SCREEN_WIDTH/2-200, GFX::SCREEN_HEIGHT * 5 / 6});
 }
 
 TitleSCN::~TitleSCN(void) {
-    delete freaky;
     gf.free();
     logo.free();
     pressenter.free();

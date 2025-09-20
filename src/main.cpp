@@ -62,6 +62,7 @@ int main()
 #endif
         inputDevice.getEvent(g_app.input);
 
+        g_app.audiomanager.update();
         g_app.curscene->update();  
         g_app.trans.update(g_app.timer.elapsedMS()/1000);
         g_app.curscene->draw();  

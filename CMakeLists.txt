@@ -20,9 +20,11 @@ set(SRC_FILES
     src/engine/object.cpp
     src/engine/timer.cpp
     src/engine/input.cpp
+    src/engine/audiomanager.cpp
     #game scenes
     src/scenes/playstate.cpp
     src/scenes/title.cpp
+    src/scenes/mainmenu.cpp
 )
 
 include(FetchContent)

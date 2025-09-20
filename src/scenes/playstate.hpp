@@ -1,3 +1,4 @@
+//to rewrite
 #pragma once
 
 #include "../app.hpp"
@@ -49,7 +50,7 @@ public:
     ~PlayStateSCN(void); 
 private:
     void drawNotes(NoteContainer &container, GFX::XY<int32_t> pos);
-    Audio::StreamedFile *inst, *voices; 
+    AUDIO::StreamedFile *inst, *voices; 
     ChartData chart;
     float songtime;
     int songstep;

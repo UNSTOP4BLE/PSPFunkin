@@ -1,3 +1,4 @@
+//done
 #pragma once
 
 #include <cstdint>
@@ -6,7 +7,7 @@
 #include <SDL2/SDL_mutex.h>
 #include "audio_buffer.hpp"
 
-namespace Audio {
+namespace AUDIO {
 
 // 1024-sample buffer at 44100 Hz = ~23ms latency
 static constexpr int NUM_MIXER_CHANNELS = 16;

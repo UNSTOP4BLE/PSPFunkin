@@ -34,3 +34,5 @@
 - pull function calls out of asserts so the game doesnt shit out when not in debug mode
 - remove unused includes
 - URGENT! trans.cpp and trans.hpp suck and are very slow, rewrite
+- URGENT! remove stupid circular dependencies in src/engine
+- URGENT! use unique ptrs

@@ -1,4 +1,4 @@
-
+//done
 #include <cstdio>
 #include <cstring>
 #include <algorithm>
@@ -33,10 +33,10 @@ template<typename T> static inline void _readValueInPlace(FILE *fp, T &value) {
     assert(fread(&value, sizeof(T), 1, fp));
 }
 
-namespace Audio {
+namespace AUDIO {
 
-WAVFileReader::WAVFileReader(const char *path) {
-    _wavFile = fopen(path, "rb");
+WAVFileReader::WAVFileReader(const std::string& path) {
+    _wavFile = fopen(path.c_str(), "rb");
     assert(_wavFile);
 
     assert(_readValue<uint32_t>(_wavFile) == "RIFF"_m);
@@ -105,9 +105,8 @@ WAVFileReader::~WAVFileReader(void) {
     fclose(_wavFile);
 }
 
-OGGFileReader::OGGFileReader(const char *path) {
-    int error = ov_fopen(path, &_oggFile);
-    printf("path: %s\n", path);
+OGGFileReader::OGGFileReader(const std::string& path) {
+    int error = ov_fopen(path.c_str(), &_oggFile);
     assert(!error);
 
     auto info = ov_info(&_oggFile, -1);
@@ -166,8 +165,8 @@ OGGFileReader::~OGGFileReader(void) {
     ov_clear(&_oggFile);
 }
 
-FileReader *openFile(const char *path) {
-    const char *ext = &path[strlen(path) - 4];
+FileReader *openFile(const std::string& path) {
+    const char *ext = &path[path.size() - 4];
 
     if (!strcmp(ext, ".wav"))
         return (FileReader *) new WAVFileReader(path);
@@ -178,7 +177,7 @@ FileReader *openFile(const char *path) {
     return nullptr;
 }
 
-bool loadFile(AudioBuffer &buffer, const char *path) {
+bool loadFile(AudioBuffer &buffer, const std::string& path) {
     auto reader = openFile(path);
     if (!reader)
         return false;

@@ -1,10 +1,11 @@
+//done
 #pragma once
 
 #include "audio_buffer.hpp"
 #include "audio_file_readers.hpp"
 #include "audio_mixer.hpp"
 
-namespace Audio {
+namespace AUDIO {
 
 static constexpr int STREAM_BUFFER_SIZE = 4096;
 static constexpr int DEFAULT_MAX_FILL_LENGTH = 2048; // See note in the source file

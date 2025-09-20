@@ -1,10 +1,8 @@
 #pragma once
-#include "file.hpp"
 #include "renderer.hpp"
+#include "timer.hpp"
 #include "tween.hpp"
 #include <vector>
-
-#include "../app.hpp"
 
 namespace OBJECT {
 
@@ -38,11 +36,11 @@ public:
     void update(float animtime);
     void setAnim(uint32_t animhash);
     void playAnim(float endtime);
-    inline bool playing(void) {return !(obj.curframe.getValue()>=getCurIndicieCount());}
-    inline float getCurIndicieCount(void) {return obj.curanim->indices.size()-1;}
-    inline float getCurFps(void) {return obj.curanim->fps;}
-    inline void setScale(float s) {scale = s;}
-    void draw(GFX::XY<int32_t> pos);
+    bool playing(void) {return !(obj.curframe.getValue()>=getCurIndicieCount());}
+    float getCurIndicieCount(void) {return obj.curanim->indices.size()-1;}
+    float getCurFps(void) {return obj.curanim->fps;}
+    void setScale(float s) {scale = s;}
+    void draw(GFX::Renderer *renderer, const GFX::XY<int32_t> &pos);
     void free(void);
 private:
     std::vector<KeyFrame> keyframes;
@@ -56,16 +54,16 @@ private:
 
 class ObjectGeneric {
 public:
-    inline void init(std::string path) {obj2d.init(path); setLoop(false);}
-    inline void setLoop(bool l) {loop = l;};
+    void init(std::string path) {obj2d.init(path); setLoop(false);}
+    void setLoop(bool l) {loop = l;};
     
-    inline void update(void) {obj2d.update(g_app.timer.elapsedMS()/1000); if (loop && !obj2d.playing()) playAnim();}
-    inline void setAnim(uint32_t animhash) {obj2d.setAnim(animhash);}
-    inline void playAnim(void) {obj2d.playAnim(obj2d.getCurIndicieCount()/obj2d.getCurFps());} //fps animation
-    inline void playAnim(uint32_t animhash) { setAnim(animhash); playAnim();}
-    inline void draw(GFX::XY<int32_t> pos) {obj2d.draw(pos);}
-    inline void setScale(float s) {obj2d.setScale(s);};
-    inline void free(void) {obj2d.free();}
+    void update(TIMER::Timer &timer) {obj2d.update(timer.elapsedMS()/1000); if (loop && !obj2d.playing()) playAnim();}
+    void setAnim(uint32_t animhash) {obj2d.setAnim(animhash);}
+    void playAnim(void) {obj2d.playAnim(obj2d.getCurIndicieCount()/obj2d.getCurFps());} //fps animation
+    void playAnim(uint32_t animhash) { setAnim(animhash); playAnim();}
+    void draw(GFX::Renderer *renderer, const GFX::XY<int32_t> &pos) {obj2d.draw(renderer, pos);}
+    void setScale(float s) {obj2d.setScale(s);};
+    void free(void) {obj2d.free();}
 private:
     bool loop;
     Object obj2d;

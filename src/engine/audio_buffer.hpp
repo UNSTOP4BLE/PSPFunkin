@@ -1,10 +1,11 @@
+//done
 #pragma once
 
 #include <cstdint>
 #include <vector>
 #include <SDL2/SDL_audio.h>
 
-namespace Audio {
+namespace AUDIO {
 
 class AudioBuffer {
 public:

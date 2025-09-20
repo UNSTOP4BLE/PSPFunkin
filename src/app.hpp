@@ -1,11 +1,11 @@
 #pragma once 
-#include "engine/audio_mixer.hpp"
-#include "engine/scene.hpp"
 #include "engine/renderer.hpp"
-#include "engine/file.hpp"
-#include "engine/timer.hpp"
 #include "engine/input.hpp"
 #include "trans.hpp"
+#include "engine/audio_mixer.hpp"
+#include "engine/timer.hpp"
+#include "engine/scene.hpp"
+#include "engine/audiomanager.hpp"
 
 class PSPFunkin {
 public:
@@ -14,8 +14,10 @@ public:
     GAME::Transition trans;
     TIMER::Timer timer;
     float deltatime; //todo put this in timer
-    Audio::Mixer audiomixer; //todo this bothers me lol capitalize audio napespace
+    AUDIO::Mixer audiomixer;
     SCENE::Scene *curscene;
+    //managers
+    MANAGER::AudioManager audiomanager;
 };
 
 extern PSPFunkin g_app;

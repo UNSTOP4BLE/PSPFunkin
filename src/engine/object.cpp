@@ -3,7 +3,7 @@
 #include <fstream>
 #include <cassert>
 #include "hash.hpp"
-#include "../app.hpp"
+#include "file.hpp"
 #include "renderer.hpp"
 
 namespace OBJECT {
@@ -111,7 +111,7 @@ void Object::playAnim(float endtime) {
     obj.curframe.setValue(0, getCurIndicieCount(), endtime);
 }
 
-void Object::draw(GFX::XY<int32_t> pos) {
+void Object::draw(GFX::Renderer *renderer, const GFX::XY<int32_t> &pos) {
     auto &f = obj.curkeyframe;
 
     //screen center
@@ -127,7 +127,7 @@ void Object::draw(GFX::XY<int32_t> pos) {
     GFX::RECT<int32_t> src = {f->x, f->y, f->w, f->h};
     GFX::RECT<int32_t> dst = {dst_x, dst_y, scaled_w, scaled_h};
 
-    g_app.renderer->drawTexRect(obj.curtex->tex, src, dst, 0, 0xFFFFFFFF);
+    renderer->drawTexRect(obj.curtex->tex, src, dst, 0, 0xFFFFFFFF);
 }
 
 void Object::free(void) {

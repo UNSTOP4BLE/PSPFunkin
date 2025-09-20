@@ -1,8 +1,9 @@
+//done
 #include "audio_streamed_file.hpp"
 #include <algorithm>
 #include <cassert>
 
-namespace Audio {
+namespace AUDIO {
 
 StreamedFile::StreamedFile(Mixer &mixer, const char *path)
 : _playing(false), _loopOffset(-1) {

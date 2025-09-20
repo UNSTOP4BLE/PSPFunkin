@@ -1,4 +1,4 @@
-
+//done
 #include <cstdint>
 #include <algorithm>
 #include <cassert>
@@ -30,7 +30,7 @@
 
 #define _seconds std::chrono::duration<float, std::ratio<1>>
 
-namespace Audio {
+namespace AUDIO {
 
 void MixerChannel::_open(SDL_AudioFormat format, int channels, int sampleRate, int mixerSampleRate) {
     _mixer->_lockCallback();

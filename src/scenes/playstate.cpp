@@ -1,7 +1,10 @@
+//to rewrite
 #include "playstate.hpp"
 #include <json/json.h>
 #include <fstream>
 #include <cassert>
+
+#include "../engine/file.hpp"
 
 PlayStateSCN::PlayStateSCN(void) {
     std::string songname = "assets/songs/bopeebo/";
@@ -57,10 +60,10 @@ PlayStateSCN::PlayStateSCN(void) {
     //init
     songtime = -30 * chart.stepcrochet; //start at step -30
 
-    inst = new Audio::StreamedFile(g_app.audiomixer, FS::getFilePath(songname + "Inst.ogg").c_str());
+    inst = new AUDIO::StreamedFile(g_app.audiomixer, FS::getFilePath(songname + "Inst.ogg").c_str());
     
     if (chart.hasvoices)
-        voices = new Audio::StreamedFile(g_app.audiomixer, FS::getFilePath(songname + "Voices.ogg").c_str());
+        voices = new AUDIO::StreamedFile(g_app.audiomixer, FS::getFilePath(songname + "Voices.ogg").c_str());
 }
 
 void PlayStateSCN::update(void) {
