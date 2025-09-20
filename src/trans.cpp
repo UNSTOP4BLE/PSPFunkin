@@ -11,6 +11,7 @@ void Transition::update(float time) {
     //reset 
     if (dst.y >= GFX::SCREEN_HEIGHT+TRANS_PIXELS){
 //        printf("resseting transition\n");
+        running = false;
         init(); 
     }
     if (dst.y >= 0 && !loadedassets) {

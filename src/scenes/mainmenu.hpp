@@ -17,6 +17,8 @@ public:
     void draw(void);
     ~MainMenuSCN(void); 
 private:
+    GFX::Texture menubg;
     std::vector<Option> menuoptions;
     int selection;
+    Tween<float, SineInOutEasing> menubgy;
 };

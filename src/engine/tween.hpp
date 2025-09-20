@@ -1,5 +1,6 @@
 //done
 #pragma once
+#include <cmath>
 
 class LinearEasing {
 public:
@@ -20,6 +21,13 @@ public:
             return 2.0 * value * value;
         else
             return 1.0 - 2.0 * (value - 1.0) * (value - 1.0);
+    }
+};
+
+class SineInOutEasing {
+public:
+    static inline float apply(float value) {
+        return 0.5f * (1 - cosf(value * 3.14159265f));
     }
 };
 
