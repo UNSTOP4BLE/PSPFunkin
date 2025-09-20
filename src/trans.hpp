@@ -10,18 +10,21 @@ constexpr int TRANS_EXTRA_BUF = 16; //pixels
 
 class Transition {
 public:
-    inline void init(void (*loadFunc)(void) = nullptr) {loadedassets = false; 
+    inline void init(void (*loadFunc)(void) = nullptr) {
+                                                        if (running) return;
+                                                        loadedassets = false; 
                                                         y.setValue(-(GFX::SCREEN_HEIGHT+TRANS_EXTRA_BUF+TRANS_PIXELS*2)); 
                                                         dst = {0, static_cast<int>(y.getValue()), GFX::SCREEN_WIDTH, GFX::SCREEN_HEIGHT+TRANS_EXTRA_BUF};
                                                         loadFunction = loadFunc; 
+                                                        running = false;
                                                        };
-    inline void start(void) {y.setValue(GFX::SCREEN_HEIGHT+TRANS_PIXELS, TRANS_SPEED);};
+    inline void start(void) {y.setValue(GFX::SCREEN_HEIGHT+TRANS_PIXELS, TRANS_SPEED); running = true;};
     void update(float time);
     void draw(void);
 private:
     GFX::RECT<int32_t> dst;
     Tween<float, LinearEasing> y;
-    bool loadedassets;
+    bool loadedassets, running;
     void (*loadFunction)(void);
 };
 

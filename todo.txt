@@ -1,6 +1,6 @@
 - fix memory leaks, probably a lot of em
 - gameplay: miss, score, hp, score showing thing, inputs, icon bumps, hud bumps, cameras
-- cool smooth fade transition thing
+- URGENT! trans.cpp and trans.hpp suck and are very slow, rewrite
 - stages, including parallax effect
 - bpm change mid song
 - (maybe) scroll speed change mid song for mod support
@@ -33,6 +33,6 @@
 - all character sprites
 - pull function calls out of asserts so the game doesnt shit out when not in debug mode
 - remove unused includes
-- URGENT! trans.cpp and trans.hpp suck and are very slow, rewrite
 - URGENT! remove stupid circular dependencies in src/engine
 - URGENT! use unique ptrs
+- URGENT! texture manager to return id of texture and not load same texture for example 5 times

@@ -8,6 +8,7 @@ sprites = [
     "assets/menu/gftitle/gf.xml",
     "assets/menu/logo.xml",
     "assets/menu/titleenter.xml",
+    "assets/menu/selections.xml",
     #characters
     "assets/characters/dad/dad.xml",
 ]
