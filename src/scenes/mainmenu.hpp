@@ -5,7 +5,7 @@
 #include "../engine/object.hpp"
 
 struct Option {
-    OBJECT::ObjectGeneric obj;
+//    OBJECT::ObjectGeneric obj;
     std::string name;
     GFX::XY<int32_t> offset;
 };
@@ -17,7 +17,7 @@ public:
     void draw(void);
     ~MainMenuSCN(void); 
 private:
-    GFX::Texture menubg;
+    const ASSETS::ImageAsset *menubg;
     std::vector<Option> menuoptions;
     int selection;
     Tween<float, SineInOutEasing> menubgy;

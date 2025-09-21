@@ -12,15 +12,15 @@ static void updateAnims(std::vector<Option> &menuoptions, int selection) {
         if (i == selection)
             animname = " white";
         uint32_t animhash = Hash::FromString((option.name + animname).c_str());
-        //set to select animation
-        option.obj.playAnim(animhash);
+        //set to selected animation
+        //option.obj.playAnim(animhash);
     }
 }
 
 MainMenuSCN::MainMenuSCN(void) {
     g_app.renderer->setClearCol(0x00FF00FF);
     
-    menubg = FS::loadTexFile(FS::getFilePath("assets/menu/menu.png"));
+    menubg =  g_app.assets.get<ASSETS::ImageAsset>(FS::getFilePath("assets/menu/menu.png").c_str());
 
     //must match up the animation name in xml
     struct {
@@ -40,8 +40,8 @@ MainMenuSCN::MainMenuSCN(void) {
         auto &opt = menuoptions.back();
         opt.name = option.name;
         opt.offset = option.pos;
-        opt.obj.init(g_app.assets, atlaspath);
-        opt.obj.setLoop(true);
+       // opt.obj.init(g_app.assets, atlaspath);
+       // opt.obj.setLoop(true);
     }
     selection = 0;
     updateAnims(menuoptions, selection);
@@ -70,7 +70,7 @@ void MainMenuSCN::update(void) {
         menubgy.setValue(selection*MENUBG_AMOUNT, MENUBG_SPEED);
     }
     for (auto &option : menuoptions) {
-        option.obj.update(g_app.timer);
+        //option.obj.update(g_app.timer);
     }
 
     //handle selection
@@ -111,7 +111,8 @@ void MainMenuSCN::draw(void) {
         static_cast<int>(width * scale),
         static_cast<int>(height * scale)
     };
-    g_app.renderer->drawTexRect(menubg, src, dst, 0, 0xFCE871FF);
+    g_app.renderer->drawTexRect(menubg->image, src, dst, 0, 0xFCE871FF);
+
     for (int i = menuoptions.size()-1; i >= 0; i--) { //draw different layering
         auto &option = menuoptions[i];
         auto o = option.offset;
@@ -119,7 +120,7 @@ void MainMenuSCN::draw(void) {
             o.x += o.x/4;
             o.y -= o.y/4;
         }
-        option.obj.draw(g_app.renderer, {(GFX::SCREEN_WIDTH/2)-o.x, (60*i)-o.y});
+   //     option.obj.draw(g_app.renderer, {(GFX::SCREEN_WIDTH/2)-o.x, (60*i)-o.y});
     }
 }
 

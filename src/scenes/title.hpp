@@ -10,10 +10,11 @@ public:
     void draw(void);
     ~TitleSCN(void); 
 private:
-    OBJECT::ObjectGeneric gf;
-    OBJECT::ObjectGeneric logo;
-    OBJECT::ObjectGeneric pressenter;
+//    OBJECT::ObjectGeneric gf;
+  //  OBJECT::ObjectGeneric logo;
+    //OBJECT::ObjectGeneric pressenter;
     float stepcrochet;
     float curstep;
     std::string funnymessage[2];
+    const ASSETS::JsonAsset *menudata;
 };

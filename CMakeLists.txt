@@ -18,6 +18,7 @@ set(SRC_FILES
     src/engine/file.cpp
     src/engine/scene.cpp
     src/engine/object.cpp
+    src/engine/animation.cpp
     src/engine/timer.cpp
     src/engine/input.cpp
     src/engine/assets.cpp
@@ -26,6 +27,7 @@ set(SRC_FILES
     src/scenes/title.cpp
     src/scenes/mainmenu.cpp
     src/scenes/freeplay.cpp
+    src/scenes/test.cpp
 )
 
 include(FetchContent)

@@ -10,7 +10,9 @@ TitleSCN::TitleSCN(void) {
   //  g_app.audiomanager.loadFile(g_app.audiomixer, FS::getFilePath("assets/music/freaky.ogg"));
 //    g_app.audiomanager.play(true);
 
-    auto jdata = FS::readJsonFile(FS::getFilePath("assets/menu/menu.json"));
+    menudata = g_app.assets.get<ASSETS::JsonAsset>(FS::getFilePath("assets/menu/menu.json").c_str());
+    auto jdata = menudata->value;
+
     float crochet = (60 / jdata["menuSongBPM"].asFloat()) * 1000;
     stepcrochet = crochet / 4;
 
@@ -21,18 +23,18 @@ TitleSCN::TitleSCN(void) {
 
     printf("%s %s \n", funnymessage[0].c_str(), funnymessage[1].c_str()); //todo display
     //dancing gf
-    gf.init(g_app.assets, FS::getFilePath("assets/menu/gftitle/gf.json"));
-    gf.setLoop(true);
-    gf.setScale(0.975);
+  //  gf.init(g_app.assets, FS::getFilePath("assets/menu/gftitle/gf.json"));
+    //gf.setLoop(true);
+   // gf.setScale(0.975);
     //fnf logo, todo make this step based instead
-    logo.init(g_app.assets, FS::getFilePath("assets/menu/logo.json"));
-    logo.setLoop(true);
-    logo.setScale(0.975);
+    //logo.init(g_app.assets, FS::getFilePath("assets/menu/logo.json"));
+    //logo.setLoop(true);
+    //logo.setScale(0.975);
     //press enter
-    pressenter.init(g_app.assets, FS::getFilePath("assets/menu/titleenter.json"));
-    pressenter.playAnim("Press Enter to Begin"_h);
-    pressenter.setLoop(true);
-    pressenter.setScale(0.975);
+    //pressenter.init(g_app.assets, FS::getFilePath("assets/menu/titleenter.json"));
+    //pressenter.playAnim("Press Enter to Begin"_h);
+    //pressenter.setLoop(true);
+    //pressenter.setScale(0.975);
 }
 
 static void loadMainMenu(void) {
@@ -41,9 +43,9 @@ static void loadMainMenu(void) {
 
 void TitleSCN::update(void) {
 //    curstep =  g_app.audiomanager.getMS() / stepcrochet;
-    gf.update(g_app.timer);
-    logo.update(g_app.timer);
-    pressenter.update(g_app.timer);
+   // gf.update(g_app.timer);
+   // logo.update(g_app.timer);
+   // pressenter.update(g_app.timer);
     if (g_app.input.isPressed(INPUT::MENU_ENTER)) {
         g_app.trans.init(loadMainMenu);
         g_app.trans.start();
@@ -51,13 +53,13 @@ void TitleSCN::update(void) {
 }
 
 void TitleSCN::draw(void) {
-    gf.draw(g_app.renderer, {200, 13});
-    logo.draw(g_app.renderer, {-3, 3});
-    pressenter.draw(g_app.renderer, {GFX::SCREEN_WIDTH/2-200, GFX::SCREEN_HEIGHT * 5 / 6});
+    //gf.draw(g_app.renderer, {200, 13});
+    //logo.draw(g_app.renderer, {-3, 3});
+    //pressenter.draw(g_app.renderer, {GFX::SCREEN_WIDTH/2-200, GFX::SCREEN_HEIGHT * 5 / 6});
 }
 
 TitleSCN::~TitleSCN(void) {
-    gf.free();
-    logo.free();
-    pressenter.free();
+   //gf.free();
+    //logo.free();
+    //pressenter.free();
 }  
