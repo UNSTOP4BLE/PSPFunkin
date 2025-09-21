@@ -67,4 +67,4 @@ public:
 FileReader *openFile(const std::string& path);
 bool loadFile(AudioBuffer &buffer, const std::string& path);
 
-}
+} //namespace AUDIO

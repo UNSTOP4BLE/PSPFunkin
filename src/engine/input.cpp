@@ -155,4 +155,4 @@ bool ControllerDevice::getEvent(Event &output) {
 #endif
 }
 
-}
+} //namespace INPUT

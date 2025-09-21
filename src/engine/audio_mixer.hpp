@@ -95,4 +95,4 @@ public:
     int64_t getSampleOffset(void);
 };
 
-}
+} //namespace AUDIO

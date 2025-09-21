@@ -40,7 +40,7 @@ MainMenuSCN::MainMenuSCN(void) {
         auto &opt = menuoptions.back();
         opt.name = option.name;
         opt.offset = option.pos;
-        opt.obj.init(atlaspath);
+        opt.obj.init(g_app.assets, atlaspath);
         opt.obj.setLoop(true);
     }
     selection = 0;
@@ -62,6 +62,7 @@ void MainMenuSCN::update(void) {
         selection = std::clamp(selection, 0, static_cast<int>(menuoptions.size()-1));
         updateAnims(menuoptions, selection);
         menubgy.setValue(selection*MENUBG_AMOUNT, MENUBG_SPEED);
+        g_app.assets.printLoadedAssets();
     } else if (g_app.input.isPressed(INPUT::MENU_DOWN)) {
         selection ++;
         selection = std::clamp(selection, 0, static_cast<int>(menuoptions.size()-1));

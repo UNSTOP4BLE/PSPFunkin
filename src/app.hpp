@@ -5,7 +5,7 @@
 #include "engine/audio_mixer.hpp"
 #include "engine/timer.hpp"
 #include "engine/scene.hpp"
-#include "engine/audiomanager.hpp"
+#include "engine/assets.hpp"
 
 class PSPFunkin {
 public:
@@ -17,7 +17,7 @@ public:
     AUDIO::Mixer audiomixer;
     SCENE::Scene *curscene;
     //managers
-    MANAGER::AudioManager audiomanager;
+    ASSETS::AssetManager assets;
 };
 
 extern PSPFunkin g_app;

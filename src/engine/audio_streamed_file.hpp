@@ -50,4 +50,4 @@ private:
     int _loopOffset;
 };
 
-}
+} //namespace AUDIO

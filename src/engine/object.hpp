@@ -1,4 +1,5 @@
 #pragma once
+#include "assets.hpp"
 #include "renderer.hpp"
 #include "timer.hpp"
 #include "tween.hpp"
@@ -13,7 +14,7 @@ struct KeyFrame {
 
 struct AnimTex {
     uint32_t tex_hash;
-    GFX::Texture tex;
+    const ASSETS::ImageAsset *tex;
 };
 
 struct Animation {
@@ -32,7 +33,7 @@ struct Anim_obj {
 
 class Object {
 public:
-    void init(std::string path);
+    void init(ASSETS::AssetManager &fmgr, std::string path);
     void update(float animtime);
     void setAnim(uint32_t animhash);
     void playAnim(float endtime);
@@ -54,7 +55,7 @@ private:
 
 class ObjectGeneric {
 public:
-    void init(std::string path) {obj2d.init(path); setLoop(false);}
+    void init(ASSETS::AssetManager &fmgr, std::string path) {obj2d.init(fmgr, path); setLoop(false);}
     void setLoop(bool l) {loop = l;};
     
     void update(TIMER::Timer &timer) {obj2d.update(timer.elapsedMS()/1000); if (loop && !obj2d.playing()) playAnim();}
@@ -69,4 +70,4 @@ private:
     Object obj2d;
 };
 
-}
+} //namespace OBJECT

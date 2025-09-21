@@ -7,8 +7,8 @@
 
 TitleSCN::TitleSCN(void) {
     g_app.renderer->setClearCol(0x000000FF);
-    g_app.audiomanager.loadFile(g_app.audiomixer, FS::getFilePath("assets/music/freaky.ogg"));
-    g_app.audiomanager.play(true);
+  //  g_app.audiomanager.loadFile(g_app.audiomixer, FS::getFilePath("assets/music/freaky.ogg"));
+//    g_app.audiomanager.play(true);
 
     auto jdata = FS::readJsonFile(FS::getFilePath("assets/menu/menu.json"));
     float crochet = (60 / jdata["menuSongBPM"].asFloat()) * 1000;
@@ -21,15 +21,15 @@ TitleSCN::TitleSCN(void) {
 
     printf("%s %s \n", funnymessage[0].c_str(), funnymessage[1].c_str()); //todo display
     //dancing gf
-    gf.init(FS::getFilePath("assets/menu/gftitle/gf.json"));
+    gf.init(g_app.assets, FS::getFilePath("assets/menu/gftitle/gf.json"));
     gf.setLoop(true);
     gf.setScale(0.975);
     //fnf logo, todo make this step based instead
-    logo.init(FS::getFilePath("assets/menu/logo.json"));
+    logo.init(g_app.assets, FS::getFilePath("assets/menu/logo.json"));
     logo.setLoop(true);
     logo.setScale(0.975);
     //press enter
-    pressenter.init(FS::getFilePath("assets/menu/titleenter.json"));
+    pressenter.init(g_app.assets, FS::getFilePath("assets/menu/titleenter.json"));
     pressenter.playAnim("Press Enter to Begin"_h);
     pressenter.setLoop(true);
     pressenter.setScale(0.975);
@@ -40,7 +40,7 @@ static void loadMainMenu(void) {
 }
 
 void TitleSCN::update(void) {
-    curstep =  g_app.audiomanager.getMS() / stepcrochet;
+//    curstep =  g_app.audiomanager.getMS() / stepcrochet;
     gf.update(g_app.timer);
     logo.update(g_app.timer);
     pressenter.update(g_app.timer);

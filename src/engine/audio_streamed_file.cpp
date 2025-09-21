@@ -71,4 +71,4 @@ void StreamedFile::pause(void) {
     setPosition(getPosition() - offset);
 }
 
-}
+} //namespace AUDIO

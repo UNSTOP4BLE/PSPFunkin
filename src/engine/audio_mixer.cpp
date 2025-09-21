@@ -305,4 +305,4 @@ int64_t Mixer::getSampleOffset(void) {
     return offset + static_cast<int64_t>(delta.count() * static_cast<float>(_sampleRate));
 }
 
-}
+} //namespace AUDIO

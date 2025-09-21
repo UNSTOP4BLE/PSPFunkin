@@ -187,4 +187,4 @@ bool loadFile(AudioBuffer &buffer, const std::string& path) {
     return true;
 }
 
-}
+} //namespace AUDIO

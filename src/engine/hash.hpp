@@ -30,7 +30,7 @@ namespace Hash
             accumulator = (accumulator ^ static_cast<uint32_t>(*string++)) * FNV32_PRIME;
         return accumulator;
     }
-}
+} //namespace HASH
 
 constexpr static inline uint32_t operator"" _h(const char *const literal, size_t length)
 {

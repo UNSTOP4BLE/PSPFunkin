@@ -22,17 +22,17 @@ static void splitPath(const std::string& path, std::string& directory, std::stri
     }
 }
 
-void Object::init(std::string path) {
+void Object::init(ASSETS::AssetManager &fmgr, std::string path) {
     std::string dir, jsonname;
     splitPath(path, dir, jsonname);
-    Json::Value jdata = FS::readJsonFile(dir + jsonname);
+    Json::Value jdata = FS::readJsonFile(dir + jsonname); //todo use filemnager
 
     //texture data
     for (int i = 0; i < jdata["textures"].size(); i++) {
         auto &curtex = jdata["textures"][i];
         AnimTex t {
             Hash::FromString(curtex.asString().c_str()), //tex_hash
-            FS::loadTexFile(dir + curtex.asString()) //texture
+            fmgr.get<ASSETS::ImageAsset>((dir + curtex.asString()).c_str()) //texture
         };
         textures.push_back(t);
     }
@@ -127,11 +127,11 @@ void Object::draw(GFX::Renderer *renderer, const GFX::XY<int32_t> &pos) {
     GFX::RECT<int32_t> src = {f->x, f->y, f->w, f->h};
     GFX::RECT<int32_t> dst = {dst_x, dst_y, scaled_w, scaled_h};
 
-    renderer->drawTexRect(obj.curtex->tex, src, dst, 0, 0xFFFFFFFF);
+    renderer->drawTexRect(obj.curtex->tex->image, src, dst, 0, 0xFFFFFFFF);
 }
 
 void Object::free(void) {
     //todo
 }
 
-}
+} //namespace OBJECT

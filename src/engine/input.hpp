@@ -66,4 +66,4 @@ class ControllerDevice : public Device {
 public:
     bool getEvent(Event &output);
 };
-}
+} //namespace INPUT

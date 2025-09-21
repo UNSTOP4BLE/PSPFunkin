@@ -21,4 +21,4 @@ public:
     SDL_AudioFormat format;
 };
 
-}
+} //namespace AUDIO
