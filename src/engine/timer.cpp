@@ -1,4 +1,5 @@
 #include "timer.hpp"
+#include <chrono>
 
 namespace TIMER {
 
@@ -22,6 +23,10 @@ double Timer::elapsedMS(void)
         endTime = m_EndTime;
         
     return std::chrono::duration_cast<std::chrono::milliseconds>(endTime - m_StartTime).count();
+}
+
+double Timer::elapsedS(void) {
+    return elapsedMS()/1000;
 }
 
 }

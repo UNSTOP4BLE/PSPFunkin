@@ -2,6 +2,7 @@
 
 #include "assets.hpp"
 #include "tween.hpp"
+#include <iomanip>
 
 namespace ANIMATION {
 
@@ -22,43 +23,26 @@ struct Animation {
     std::vector<int> indices;
 };
 
-//functions for timing
-class TimeFPS {
-public:
-    static inline float apply(int indcount, float fps) {
-        return indcount/fps;
-    }
-};
-
-class TimeSTEP {
-public:
-
-    TimeSTEP(void) : stepsPerSec(0) {}
-
-    float stepsPerSec;
-    //in this case fps is how many steps the animation should last
-    inline float apply(int indcount, float fps) {
-//        assert(stepsPerSec > 0); 
-        int maxduration = fps * stepsPerSec; //endime * steps per second
-        int minduration = indcount/fps;
-        return std::min(maxduration, minduration); //end x steps later
-    }
-}; 
-
-template<typename T> class Animatable {
+class Animatable {
 public:
     void init(ASSETS::AssetManager &mgr, std::string path);
     void update(float t);
 
     void setAnim(uint32_t anim_h);
+    void setEndTime(float f);
     void playAnim(void);
     void playAnim(uint32_t anim_h) {setAnim(anim_h); playAnim();}
     bool isPlaying(void) {return curframe.isDone();}
     KeyFrame *curkeyframe;
     AnimTex *curtex;
+    int getIndicieCount(void) {return curanim->indices.size();}
+    int getFPS(void) {return curanim->fps;}
+    void setloop(bool l) {loop = l;}
+
 private:
-    T timemanager; 
+    bool loop;
     const ASSETS::JsonAsset *config;
+    float endtime; //animation must end
 
     Animation *curanim;
     Tween<float, LinearEasing> curframe;
@@ -70,7 +54,17 @@ private:
     //helpers
     int findAnimationIndex(uint32_t hash);
     AnimTex* findTexture(uint32_t hash);
-    int getIndicieCount(void) {return curanim->indices.size();}
 };
+
+//helpers
+inline float calcEndTime_FPS(float numindices, float fps) {
+    return numindices/fps;
+}
+
+inline float calcEndTime_Step(float numindices, float fps, float steptosec) {
+    float maxduration = fps * steptosec; //endime * steps per second
+    float minduration = calcEndTime_FPS(numindices, fps);
+    return std::min(maxduration, minduration); //end x steps later
+}
 
 } //namespace ANIMATION

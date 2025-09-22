@@ -8,9 +8,11 @@ TestSCN::TestSCN(void) {
 }
 
 void TestSCN::update(void) {
-    obj.update(g_app.timer.elapsedMS()/1000);
-    if (!obj.isPlaying())
+    obj.update(g_app.timer.elapsedS());
+    if (!obj.isPlaying()) {
+        obj.setEndTime(ANIMATION::calcEndTime_FPS(obj.getIndicieCount(), obj.getFPS()));
         obj.playAnim();
+    }
 }
 
 void TestSCN::draw(void) {

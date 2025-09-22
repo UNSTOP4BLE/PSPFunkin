@@ -105,6 +105,7 @@ void PlayStateSCN::update(void) {
 void PlayStateSCN::drawNotes(NoteContainer &container, GFX::XY<int32_t> pos) {
     for (size_t i = container.cullingindex; i < container.notes.size(); i++) {
         auto &note = container.notes[i];
+        //note position and song time in ms
         int y = static_cast<int>((note.pos - songtime) * chart.scrollspeed);
 
         //cull notes off screen, this does assume a note is never larger than 64x64 so yeah gotta change this
