@@ -8,9 +8,9 @@
 #include "../engine/file.hpp"
 
 PlayStateSCN::PlayStateSCN(void) {
-    std::string songname = "assets/songs/bopeebo/";
+    std::string songname = "assets/songs/no-more-woah/";
     //todo diffictuly
-    const ASSETS::JsonAsset *songchart = g_app.assets.get<ASSETS::JsonAsset>(FS::getFilePath(songname + "bopeebo.json"));
+    const ASSETS::JsonAsset *songchart = g_app.assets.get<ASSETS::JsonAsset>(FS::getFilePath(songname + "no-more-woah.json"));
     const Json::Value &j_chart = songchart->value;
 
     //parse file
@@ -92,7 +92,7 @@ const Rating& PlayStateSCN::judgeNote(float diff) const {
         }
     }
 
-    static const Rating fake{"miss", -1, -1};
+    static const Rating fake{"null", -1, -1};
     return fake;
 }
 
@@ -115,9 +115,11 @@ void PlayStateSCN::update(void) {
     
         //player input
         auto &playercontainer = chart.playernotes;
+
+        uint32_t ignoreflags = (FLAG_HIT | FLAG_MISSED);
         for (int i = playercontainer.cullingindex; i < playercontainer.notes.size(); i++) {
             auto &note = playercontainer.notes[i];
-            if (note.flag & (FLAG_HIT | FLAG_MISSED)) //no point in processing note if its hit
+            if (note.flag & ignoreflags) //no point in processing note if its hit
                 continue;
 
             float diff = note.pos - songtime;
@@ -126,20 +128,30 @@ void PlayStateSCN::update(void) {
                 printf("you missed\n");
             }
 
-            if (inputs[note.type]) {
-                diff = fabs(diff); 
-                if (diff > ratings.back().hitwindow) //dont process note if you cant hit it
-                    break; //can break here because i sorted the notes
-
-                auto rating = judgeNote(diff);
-
-                if (rating.hitwindow == -1) {//missed
-                    //handle misses and ghost tapping
-                    continue;         
+            //check if any button pressed
+            bool anyinput = false;
+            for (int j = 0; j < NUM_NOTES; j++) {
+                if (inputs[j]) {
+                    anyinput = true;
+                    break;
                 }
-                note.flag |= FLAG_HIT;
-                printf("diff %f\n", diff);
-                printf("hit note%s\n", rating.name.c_str());
+            }
+
+            if (anyinput) {
+                diff = fabs(diff); 
+                //hit a note
+                if (diff <= ratings.back().hitwindow && inputs[note.type]) {
+                    auto rating = judgeNote(diff);
+
+                    note.flag |= FLAG_HIT;
+                    printf("diff %f\n", diff);
+                    printf("hit note%s\n", rating.name.c_str());
+                    inputs[note.type] = false;
+                    continue;
+                }
+                //random key pressed, handle ghosttaping here
+                printf("pressed a random key\n");
+                break;
             }
         }
         
