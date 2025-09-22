@@ -22,7 +22,30 @@ struct Animation {
     std::vector<int> indices;
 };
 
-class Animatable {
+//functions for timing
+class TimeFPS {
+public:
+    static inline float apply(int indcount, float fps) {
+        return indcount/fps;
+    }
+};
+
+class TimeSTEP {
+public:
+
+    TimeSTEP(void) : stepsPerSec(0) {}
+
+    float stepsPerSec;
+    //in this case fps is how many steps the animation should last
+    inline float apply(int indcount, float fps) {
+//        assert(stepsPerSec > 0); 
+        int maxduration = fps * stepsPerSec; //endime * steps per second
+        int minduration = indcount/fps;
+        return std::min(maxduration, minduration); //end x steps later
+    }
+}; 
+
+template<typename T> class Animatable {
 public:
     void init(ASSETS::AssetManager &mgr, std::string path);
     void update(float t);
@@ -30,10 +53,11 @@ public:
     void setAnim(uint32_t anim_h);
     void playAnim(void);
     void playAnim(uint32_t anim_h) {setAnim(anim_h); playAnim();}
-    bool isPlaying(void) {return !(curframe.getValue()==getIndicieCount());}
+    bool isPlaying(void) {return curframe.isDone();}
     KeyFrame *curkeyframe;
     AnimTex *curtex;
 private:
+    T timemanager; 
     const ASSETS::JsonAsset *config;
 
     Animation *curanim;

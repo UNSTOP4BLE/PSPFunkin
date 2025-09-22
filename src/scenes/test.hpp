@@ -11,5 +11,5 @@ public:
     void draw(void);
     ~TestSCN(void); 
 private:
-    ANIMATION::Animatable obj;
+    ANIMATION::Animatable<ANIMATION::TimeFPS> obj;
 };

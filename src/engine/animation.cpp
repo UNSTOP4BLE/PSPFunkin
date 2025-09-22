@@ -9,7 +9,8 @@ static std::string dirname(const std::string& path) {
     return path.substr(0, pos) + "/";
 }
 
-void Animatable::init(ASSETS::AssetManager &mgr, std::string path) {
+template<typename T>
+void Animatable<T>::init(ASSETS::AssetManager &mgr, std::string path) {
     std::string dir = dirname(path);
     config = mgr.get<ASSETS::JsonAsset>(path.c_str());
     auto &jdata = config->value;
@@ -59,25 +60,29 @@ void Animatable::init(ASSETS::AssetManager &mgr, std::string path) {
     playAnim(""_h);
 }
 
-void Animatable::update(float t) {
+template<typename T>
+void Animatable<T>::update(float t) {
     curframe.setTweenTime(t);
     curkeyframe = &keyframes[curanim->indices[static_cast<int>(curframe.getValue())]];
     curtex = findTexture(curkeyframe->tex_h);
 }
 
-void Animatable::setAnim(uint32_t anim_h) {
+template<typename T>
+void Animatable<T>::setAnim(uint32_t anim_h) {
     //set to initial frame of animation
     curanim = &animations[findAnimationIndex(anim_h)];
     curkeyframe = &keyframes[curanim->indices[0]];
     curtex = findTexture(curkeyframe->tex_h);
 }
 
-void Animatable::playAnim(void) {
-    curframe.setValue(0, getIndicieCount(), 2); //todo set end time
+template<typename T>
+void Animatable<T>::playAnim(void) {
+    curframe.setValue(0, getIndicieCount(), timemanager.apply(getIndicieCount(), getIndicieCount()));
 }
 
 //helpers
-int Animatable::findAnimationIndex(uint32_t hash) {
+template<typename T>
+int Animatable<T>::findAnimationIndex(uint32_t hash) {
     for (int i = 0; i < animations.size(); i++) {
         if (animations[i].anim_h == hash)
             return static_cast<int>(i);
@@ -85,7 +90,8 @@ int Animatable::findAnimationIndex(uint32_t hash) {
     return 0; // not found, return first animation
 }
 
-AnimTex* Animatable::findTexture(uint32_t hash) {
+template<typename T>
+AnimTex *Animatable<T>::findTexture(uint32_t hash) {
     //todo add asssert here
     for (auto& tex : textures) {
         if (tex.tex_h == hash)
@@ -94,5 +100,7 @@ AnimTex* Animatable::findTexture(uint32_t hash) {
     return nullptr;
 }
 
+template class Animatable<TimeFPS>;
+template class Animatable<TimeSTEP>;
 
 } //namespace ANIMATION
