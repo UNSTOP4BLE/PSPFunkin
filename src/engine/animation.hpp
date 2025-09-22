@@ -30,14 +30,28 @@ public:
 
     void setAnim(uint32_t anim_h);
     void setDuration(float f);
+
+    void calcDuration_FPS(void) {
+        duration = getIndicieCount()/getFPS();
+    }
+
+    void calcDuration_Step(float stepspersec) {
+        float fps = getFPS();
+        float maxduration = fps * stepspersec;
+        float minduration = getIndicieCount() / fps;
+        duration = std::min(maxduration, minduration);
+    }
     void playAnim(void);
     void playAnim(uint32_t anim_h) {setAnim(anim_h); playAnim();}
+    KeyFrame *getCurFrame(void) {
+        return curkeyframe; 
+    }
+    const ASSETS::ImageAsset *getCurTex(void) {
+        return curtex->tex;
+    }
+
+    void setLoop(bool l) {loop = l;}
     bool isPlaying(void) {return curframe.isDone();}
-    KeyFrame *curkeyframe;
-    AnimTex *curtex;
-    int getIndicieCount(void) {return curanim->indices.size();}
-    int getFPS(void) {return curanim->fps;}
-    void setloop(bool l) {loop = l;}
 
 private:
     bool loop;
@@ -50,21 +64,14 @@ private:
     std::vector<KeyFrame> keyframes;
     std::vector<AnimTex> textures;
     std::vector<Animation> animations;
+    KeyFrame *curkeyframe;
+    AnimTex *curtex;
 
     //helpers
     int findAnimationIndex(uint32_t hash);
     AnimTex* findTexture(uint32_t hash);
+    int getIndicieCount(void) {return curanim->indices.size();}
+    int getFPS(void) {return curanim->fps;}
 };
-
-//helpers
-inline float calcDuration_FPS(float numindices, float fps) {
-    return numindices/fps;
-}
-
-inline float calcDuration_Step(float numindices, float fps, float steptosec) {
-    float maxduration = fps * steptosec;
-    float minduration = calcDuration_FPS(numindices, fps);
-    return std::min(maxduration, minduration);
-}
 
 } //namespace ANIMATION

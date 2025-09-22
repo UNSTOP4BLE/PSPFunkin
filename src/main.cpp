@@ -1,3 +1,4 @@
+#include "scenes/title.hpp"
 #define SDL_MAIN_HANDLED
 
 #include "app.hpp"
@@ -49,7 +50,7 @@ int main()
 
    // setScreenCol(0xFF00FF00);
     
-    SCENE::set(new TestSCN());
+    SCENE::set(new TitleSCN());
 
     g_app.timer.start();
     auto last_t = std::chrono::high_resolution_clock::now();

@@ -56,12 +56,15 @@ void Animatable::init(ASSETS::AssetManager &mgr, std::string path) {
 //    mgr.release(json.path); do this in free
 
     //set initial animation
-    setloop(false);
+    setLoop(false);
     setDuration(0);
     playAnim(""_h);
 }
 
 void Animatable::update(float t) {
+    if (!isPlaying() && duration > 0 && loop) //loop animation
+        playAnim();
+
     curframe.setTweenTime(t);
     curkeyframe = &keyframes[curanim->indices[static_cast<int>(curframe.getValue())]];
     curtex = findTexture(curkeyframe->tex_h);

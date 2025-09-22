@@ -2,7 +2,7 @@
 
 #include "../app.hpp"
 #include <vector>
-#include "../engine/object.hpp"
+#include "../object.hpp"
 
 class FreePlaySCN : public SCENE::Scene {
 public:

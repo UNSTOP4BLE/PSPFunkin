@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../app.hpp"
-#include "../engine/object.hpp"
+#include "../object.hpp"
 
 class TitleSCN : public SCENE::Scene {
 public:
@@ -10,7 +10,7 @@ public:
     void draw(void);
     ~TitleSCN(void); 
 private:
-//    OBJECT::ObjectGeneric gf;
+    OBJECT::Object2D gf;
   //  OBJECT::ObjectGeneric logo;
     //OBJECT::ObjectGeneric pressenter;
     float stepcrochet;

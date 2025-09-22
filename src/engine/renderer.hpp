@@ -23,6 +23,15 @@ struct [[gnu::packed]] XY {
     XY() = default;
     XY(T _x, T _y) : x(_x), y(_y) {}
 };
+
+template<typename T>
+struct [[gnu::packed]] VECTOR {
+    T x, y, z;
+
+    VECTOR() = default;
+    VECTOR(T _x, T _y, T _z) : x(_x), y(_y), z(_y) {}
+};
+
 #ifdef PSP
 struct Texture {
     uint32_t id;       
