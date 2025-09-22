@@ -4,6 +4,11 @@
 #include "../app.hpp"
 #include "../engine/audio_streamed_file.hpp"
 
+constexpr int TICKS_PER_BEAT = 4;
+constexpr int NUM_NOTES = 4;
+//cursed unit fnf uses, no idea why they did it like this, this depends on the fucking resolution
+constexpr float PIXELS_PER_MS = 0.45 * GFX::SCREEN_HEIGHT / 720;
+
 struct NoteData {
     float pos;
     int type;
@@ -22,6 +27,7 @@ public:
     }
     inline int getSize(void) {return notes.size();}
     std::vector<NoteData> notes;
+    GFX::XY<int32_t> positions[NUM_NOTES]; //on screen positions
     int cullingindex;
 private:
     static inline bool compareByPos(const NoteData &a, const NoteData &b) {
@@ -38,7 +44,6 @@ struct ChartData {
     bool hasvoices;
     float stepcrochet;
     float crochet;
-    float step_per_sec;
 };
 
 
@@ -49,9 +54,11 @@ public:
     void draw(void);
     ~PlayStateSCN(void); 
 private:
-    void drawNotes(NoteContainer &container, GFX::XY<int32_t> pos);
+    void drawNotes(NoteContainer &container);
+    void drawDummyNotes(NoteContainer &container);
     AUDIO::StreamedFile *inst, *voices; 
     ChartData chart;
     float songtime;
     int songstep;
+    float step_per_sec;
 };

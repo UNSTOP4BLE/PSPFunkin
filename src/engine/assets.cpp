@@ -7,7 +7,7 @@
 namespace ASSETS {
 
 //textures
-const Asset *ImageAsset::loadFromFile(const char *path) {
+const Asset *ImageAsset::loadFromFile(std::string path) {
     auto asset = new ImageAsset();
     asset->image = FS::loadTexFile(path);
     asset->assetpath = static_cast<std::string>(path);
@@ -17,7 +17,7 @@ const Asset *ImageAsset::loadFromFile(const char *path) {
 ImageAsset::~ImageAsset(void) {}
 
 //sound effects
-const Asset *SoundAsset::loadFromFile(const char *path) {
+const Asset *SoundAsset::loadFromFile(std::string path) {
     auto asset = new SoundAsset();
     AUDIO::loadFile(asset->soundbuffer, path);
     asset->assetpath = static_cast<std::string>(path);
@@ -27,7 +27,7 @@ const Asset *SoundAsset::loadFromFile(const char *path) {
 SoundAsset::~SoundAsset(void) {}
 
 //json
-const Asset *JsonAsset::loadFromFile(const char *path) {
+const Asset *JsonAsset::loadFromFile(std::string path) {
     auto asset = new JsonAsset();
     
     std::ifstream file(path);
@@ -45,8 +45,8 @@ JsonAsset::~JsonAsset(void) {}
 
 
 /* Asset manager */
-const Asset *AssetManager::_get(const char *path, const Asset *(*loader)(const char *path)) {
-    auto pathHash = Hash::FromString(path);
+const Asset *AssetManager::_get(std::string path, const Asset *(*loader)(std::string path)) {
+    auto pathHash = Hash::FromString(path.c_str());
     auto result = loadedAssets.find(pathHash);
 
     if (result == loadedAssets.end()) {
@@ -69,8 +69,8 @@ const Asset *AssetManager::_get(const char *path, const Asset *(*loader)(const c
     }
 }
 
-void AssetManager::release(const char *path) {
-    auto pathHash = Hash::FromString(path);
+void AssetManager::release(std::string path) {
+    auto pathHash = Hash::FromString(path.c_str());
     auto result = loadedAssets.find(pathHash);
 
     std::string errmsg = "Attempted to release asset that was not loaded " + static_cast<std::string>(path);

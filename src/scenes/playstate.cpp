@@ -8,11 +8,9 @@
 
 PlayStateSCN::PlayStateSCN(void) {
     std::string songname = "assets/songs/bopeebo/";
-    //todo diffictuly and use fs json stuff
-    std::ifstream file(FS::getFilePath(songname + "bopeebo.json"));
-    Json::Reader reader;
-    Json::Value j_chart;
-    assert(reader.parse(file, j_chart));   
+    //todo diffictuly
+    const ASSETS::JsonAsset *songchart = g_app.assets.get<ASSETS::JsonAsset>(FS::getFilePath(songname + "bopeebo.json"));
+    const Json::Value &j_chart = songchart->value;
 
     //parse file
     auto j_song = j_chart["song"];
@@ -34,28 +32,28 @@ PlayStateSCN::PlayStateSCN(void) {
             curnote.sustain = j_curnote[2].asFloat();
       
             //determine target container, decides if note is player or opponent
-            auto &target = (cursec.musthit ^ (curnote.type >= 4)) ? chart.opponentnotes.notes : chart.playernotes.notes;
-            if (curnote.type >= 4) 
-                curnote.type -= 4;
-       
-            target.push_back(curnote);
+            auto &target = (cursec.musthit ^ (curnote.type >= NUM_NOTES)) ? chart.playernotes.notes : chart.opponentnotes.notes;
+            //normalize
+            if (curnote.type >= NUM_NOTES) 
+                curnote.type -= NUM_NOTES;
+            assert(curnote.type < NUM_NOTES); //wont work for special notes im sorry lol
 
+            target.push_back(curnote);
         }
     }
     //sort notes
     chart.opponentnotes.init();
     chart.playernotes.init();
 
-    chart.scrollspeed = j_song["speed"].asFloat()/10;
+    chart.scrollspeed = j_song["speed"].asFloat();
     chart.bpm = j_song["bpm"].asInt();
     chart.hasvoices = j_song["needsVoices"].asBool();
     chart.crochet = (60 / chart.bpm) * 1000;
     chart.stepcrochet = chart.crochet / 4;
-    chart.step_per_sec = 15/chart.bpm;
+    step_per_sec = (60 / TICKS_PER_BEAT) / chart.bpm;
 
     printf("song has %d notes and %zu sections\n", chart.playernotes.getSize()+chart.opponentnotes.getSize(), chart.sections.size());
-
-    file.close();
+    g_app.assets.release(songchart->assetpath);
 
     //init
     songtime = -30 * chart.stepcrochet; //start at step -30
@@ -64,11 +62,23 @@ PlayStateSCN::PlayStateSCN(void) {
     
     if (chart.hasvoices)
         voices = new AUDIO::StreamedFile(g_app.audiomixer, FS::getFilePath(songname + "Voices.ogg").c_str());
+
+    //read note positions 
+    const ASSETS::JsonAsset *posjson = g_app.assets.get<ASSETS::JsonAsset>(FS::getFilePath("assets/notepositions.json"));
+    const Json::Value &positions = posjson->value["notepositions"];
+    for (int i = 0; i < NUM_NOTES; i++) {
+        chart.opponentnotes.positions[i].x = positions["opponent"][i][0].asInt();
+        chart.opponentnotes.positions[i].y = positions["opponent"][i][1].asInt();
+        chart.playernotes.positions[i].x = positions["player"][i][0].asInt();
+        chart.playernotes.positions[i].y = positions["player"][i][1].asInt();
+    }
+    g_app.assets.release(posjson->assetpath);
+
 }
 
 void PlayStateSCN::update(void) {
     bool playing = inst->isPlaying() || (chart.hasvoices && voices->isPlaying());
-    songstep = songtime / chart.stepcrochet;
+    
     if (playing) { //song is playing  
         auto track = inst; //sync to vocals or instrumental
         inst->process();
@@ -102,14 +112,16 @@ void PlayStateSCN::update(void) {
 
 }
 
-void PlayStateSCN::drawNotes(NoteContainer &container, GFX::XY<int32_t> pos) {
+void PlayStateSCN::drawNotes(NoteContainer &container) {
     for (size_t i = container.cullingindex; i < container.notes.size(); i++) {
         auto &note = container.notes[i];
+        const GFX::XY<int32_t> &pos = container.positions[note.type];
+        
         //note position and song time in ms
-        int y = static_cast<int>((note.pos - songtime) * chart.scrollspeed);
+        int y = static_cast<int>(PIXELS_PER_MS * (note.pos - songtime) * chart.scrollspeed);
 
-        //cull notes off screen, this does assume a note is never larger than 64x64 so yeah gotta change this
-        if (y < -pos.y-64) {
+        //cull notes off screen, this does assume a note is never larger than 40x40 so yeah gotta change this
+        if (y < -pos.y-40) {
             container.cullingindex = i;
             continue;
         }
@@ -117,15 +129,27 @@ void PlayStateSCN::drawNotes(NoteContainer &container, GFX::XY<int32_t> pos) {
             break;
         }
 
-        int x = 32 * note.type;
-        GFX::RECT<int32_t> notepos = {pos.x+x, pos.y+y, 32, 32};
+        GFX::RECT<int32_t> notepos = {pos.x, pos.y+y, 40, 40};
         g_app.renderer->drawRect(notepos, 0, 0xFFFFFFFF);
     }
 }
 
+void PlayStateSCN::drawDummyNotes(NoteContainer &container) {
+    for (int i = 0; i < NUM_NOTES; i++) {
+        const GFX::XY<int32_t> &pos = container.positions[i];
+        
+        GFX::RECT<int32_t> notepos = {pos.x, pos.y, 40, 40};
+        g_app.renderer->drawRect(notepos, 0, 0xFFF00FFF);
+    }
+}
+
 void PlayStateSCN::draw(void) {
-    drawNotes(chart.opponentnotes, {GFX::SCREEN_WIDTH/2, 0});
-    drawNotes(chart.playernotes, {0, 0});
+    //opponent
+    drawDummyNotes(chart.opponentnotes);
+    drawNotes(chart.opponentnotes);
+    //player
+    drawDummyNotes(chart.playernotes);
+    drawNotes(chart.playernotes);
 }
 
 PlayStateSCN::~PlayStateSCN(void) {

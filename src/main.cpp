@@ -1,4 +1,3 @@
-#include "scenes/title.hpp"
 #define SDL_MAIN_HANDLED
 
 #include "app.hpp"
@@ -17,7 +16,7 @@ PSP_MODULE_INFO("PSPFunkin", 0, 1, 0);
 
 PSPFunkin g_app;
 
-#include "scenes/test.hpp"
+#include "scenes/playstate.hpp"
 
 int main()
 {
@@ -50,7 +49,7 @@ int main()
 
    // setScreenCol(0xFF00FF00);
     
-    SCENE::set(new TitleSCN());
+    SCENE::set(new PlayStateSCN());
 
     g_app.timer.start();
     auto last_t = std::chrono::high_resolution_clock::now();

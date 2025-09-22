@@ -24,8 +24,8 @@ TitleSCN::TitleSCN(void) {
     printf("%s %s \n", funnymessage[0].c_str(), funnymessage[1].c_str()); //todo display
     //dancing gf
     gf.init(g_app.assets, FS::getFilePath("assets/menu/gftitle/gf.json"));
-    gf.animator.setLoop(true);
-    gf.setScale(0.975);
+   // gf.animator.setLoop(true);
+   // gf.setScale(0.975);
     //fnf logo, todo make this step based instead
     //logo.init(g_app.assets, FS::getFilePath("assets/menu/logo.json"));
     //logo.setLoop(true);
@@ -54,7 +54,7 @@ void TitleSCN::update(void) {
 
 void TitleSCN::draw(void) {
     GFX::XY<int32_t> pos = {200, 13};
-    gf.draw(g_app.renderer, pos);
+//    gf.draw(g_app.renderer, pos);
     //logo.draw(g_app.renderer, {-3, 3});
     //pressenter.draw(g_app.renderer, {GFX::SCREEN_WIDTH/2-200, GFX::SCREEN_HEIGHT * 5 / 6});
 }

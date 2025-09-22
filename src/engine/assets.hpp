@@ -15,7 +15,7 @@ public:
     std::string assetpath;
     virtual ~Asset() = default;
 
-    static const Asset* loadFromFile(const char* path) { (void)path; return nullptr; }
+    static const Asset* loadFromFile(std::string path) { (void)path; return nullptr; }
 };
 
 class ImageAsset : public Asset {
@@ -25,7 +25,7 @@ public:
     ImageAsset() = default;
     ~ImageAsset();
 
-    static const Asset* loadFromFile(const char* path);
+    static const Asset* loadFromFile(std::string path);
 };
 
 class SoundAsset : public Asset {
@@ -35,7 +35,7 @@ public:
     SoundAsset() = default;
     ~SoundAsset();
 
-    static const Asset* loadFromFile(const char* path);
+    static const Asset* loadFromFile(std::string path);
 };
 
 class JsonAsset : public Asset {
@@ -45,7 +45,7 @@ public:
     JsonAsset() = default;
     ~JsonAsset();
 
-    static const Asset* loadFromFile(const char* path);
+    static const Asset* loadFromFile(std::string path);
 };
 
 class AssetTableEntry {
@@ -65,21 +65,21 @@ class AssetManager {
 private:
     std::unordered_map<uint32_t, AssetTableEntry> loadedAssets;
 
-    const Asset* _get(const char* path, const Asset* (*loader)(const char*));
+    const Asset* _get(std::string path, const Asset* (*loader)(std::string));
 
 public:
     // Allow loading new assets: assetManager.get<ImageAsset>(path)
     template<typename T>
-    const T* get(const char* path) {
+    const T* get(std::string path) {
         return reinterpret_cast<const T*>(_get(path, &(T::loadFromFile)));
     }
 
     // Only retrieve already loaded assets
-    const Asset* get(const char* path) {
+    const Asset* get(std::string path) {
         return _get(path, nullptr);
     }
 
-    void release(const char* path);
+    void release(std::string path);
     void printLoadedAssets();
 };
 
