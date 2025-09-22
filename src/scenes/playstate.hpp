@@ -9,14 +9,31 @@ constexpr int NUM_NOTES = 4;
 //cursed unit fnf uses, no idea why they did it like this, this depends on the fucking resolution
 constexpr float PIXELS_PER_MS = 0.45 * GFX::SCREEN_HEIGHT / 720;
 
+//note stuff
+enum NoteFlags {
+    FLAG_NONE   = 0,
+    FLAG_HIT    = 1 << 0,
+    FLAG_MISSED = 1 << 1
+};
+
 struct NoteData {
     float pos;
     int type;
     float sustain;    
+    uint32_t flag;
 };
 
 struct SectionData {
     bool musthit;
+};
+
+// sick, bad, shit etc
+struct Rating {
+    Rating(const std::string& n, int hw, int s) : name(n), hitwindow(hw), score(s) {}
+    
+    std::string name;
+    int hitwindow;
+    int score;
 };
 
 class NoteContainer {
@@ -54,10 +71,12 @@ public:
     void draw(void);
     ~PlayStateSCN(void); 
 private:
+    const Rating& judgeNote(float diff) const;
     void drawNotes(NoteContainer &container);
     void drawDummyNotes(NoteContainer &container);
     AUDIO::StreamedFile *inst, *voices; 
     ChartData chart;
+    std::vector<Rating> ratings;
     float songtime;
     int songstep;
     float step_per_sec;

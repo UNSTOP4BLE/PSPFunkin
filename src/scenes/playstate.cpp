@@ -1,5 +1,6 @@
 //to rewrite
 #include "playstate.hpp"
+#include <cstdio>
 #include <json/json.h>
 #include <fstream>
 #include <cassert>
@@ -30,6 +31,7 @@ PlayStateSCN::PlayStateSCN(void) {
             curnote.pos = j_curnote[0].asFloat();
             curnote.type = j_curnote[1].asInt();
             curnote.sustain = j_curnote[2].asFloat();
+            curnote.flag = FLAG_NONE;
       
             //determine target container, decides if note is player or opponent
             auto &target = (cursec.musthit ^ (curnote.type >= NUM_NOTES)) ? chart.playernotes.notes : chart.opponentnotes.notes;
@@ -64,7 +66,7 @@ PlayStateSCN::PlayStateSCN(void) {
         voices = new AUDIO::StreamedFile(g_app.audiomixer, FS::getFilePath(songname + "Voices.ogg").c_str());
 
     //read note positions 
-    const ASSETS::JsonAsset *posjson = g_app.assets.get<ASSETS::JsonAsset>(FS::getFilePath("assets/notepositions.json"));
+    const ASSETS::JsonAsset *posjson = g_app.assets.get<ASSETS::JsonAsset>(FS::getFilePath("assets/notes.json"));
     const Json::Value &positions = posjson->value["notepositions"];
     for (int i = 0; i < NUM_NOTES; i++) {
         chart.opponentnotes.positions[i].x = positions["opponent"][i][0].asInt();
@@ -72,8 +74,26 @@ PlayStateSCN::PlayStateSCN(void) {
         chart.playernotes.positions[i].x = positions["player"][i][0].asInt();
         chart.playernotes.positions[i].y = positions["player"][i][1].asInt();
     }
+    //read the rating data
+    const Json::Value &ratingdata = posjson->value["ratings"];
+    for (int i = 0; i < ratingdata.size(); i++) {
+        auto &currating = ratingdata[i];
+        ratings.emplace_back(currating["rating"].asString(), currating["hitwindow"].asInt(), currating["score"].asInt());
+    }
+    
     g_app.assets.release(posjson->assetpath);
 
+}
+
+const Rating& PlayStateSCN::judgeNote(float diff) const {
+    for (const auto& rating : ratings) {
+        if (diff <= rating.hitwindow) {
+            return rating;
+        }
+    }
+
+    static const Rating fake{"miss", -1, -1};
+    return fake;
 }
 
 void PlayStateSCN::update(void) {
@@ -87,6 +107,57 @@ void PlayStateSCN::update(void) {
             track = voices;
         }
         songtime = track->getChannel().getTime()*1000;
+
+        bool inputs[NUM_NOTES] = {g_app.input.isPressed(INPUT::GAME_LEFT),
+                                 g_app.input.isPressed(INPUT::GAME_DOWN), 
+                                 g_app.input.isPressed(INPUT::GAME_UP), 
+                                 g_app.input.isPressed(INPUT::GAME_RIGHT)};
+    
+        //player input
+        auto &playercontainer = chart.playernotes;
+        for (int i = playercontainer.cullingindex; i < playercontainer.notes.size(); i++) {
+            auto &note = playercontainer.notes[i];
+            if (note.flag & (FLAG_HIT | FLAG_MISSED)) //no point in processing note if its hit
+                continue;
+
+            float diff = note.pos - songtime;
+            if (diff < -ratings.back().hitwindow) { // u suck ass and missed a note
+                note.flag |= FLAG_MISSED;
+                printf("you missed\n");
+            }
+
+            if (inputs[note.type]) {
+                diff = fabs(diff); 
+                if (diff > ratings.back().hitwindow) //dont process note if you cant hit it
+                    break; //can break here because i sorted the notes
+
+                auto rating = judgeNote(diff);
+
+                if (rating.hitwindow == -1) {//missed
+                    //handle misses and ghost tapping
+                    continue;         
+                }
+                note.flag |= FLAG_HIT;
+                printf("diff %f\n", diff);
+                printf("hit note%s\n", rating.name.c_str());
+            }
+        }
+        
+        //opponent input (basically botplay)
+        auto &oppcontainer = chart.opponentnotes;
+        for (int i = oppcontainer.cullingindex; i < oppcontainer.notes.size(); i++) {
+            auto &note = oppcontainer.notes[i];
+            if (note.flag & FLAG_HIT) //no point in processing note if its hit
+                continue;
+            
+            float diff = note.pos - songtime; //no absolute value here 
+            if (diff > 0) //dont process note if you cant hit it
+                break; //can break here because i sorted the notes
+
+            if (diff <= 0)
+                note.flag |= FLAG_HIT;
+        }
+
     }
     else { //song didnt start yet
         songtime += g_app.deltatime;
@@ -113,8 +184,10 @@ void PlayStateSCN::update(void) {
 }
 
 void PlayStateSCN::drawNotes(NoteContainer &container) {
-    for (size_t i = container.cullingindex; i < container.notes.size(); i++) {
+    for (int i = container.cullingindex; i < container.notes.size(); i++) {
         auto &note = container.notes[i];
+        if (note.flag & FLAG_HIT) //no point in processing note if its hit
+            continue;
         const GFX::XY<int32_t> &pos = container.positions[note.type];
         
         //note position and song time in ms

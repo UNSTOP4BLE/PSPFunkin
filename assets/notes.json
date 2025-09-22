@@ -17,5 +17,13 @@
             [108, 20],
             [152, 20]
         ]
-    }
+    },
+
+    "ratings": [
+        {"rating": "sick", "hitwindow": 30, "score": 350},
+        {"rating": "good", "hitwindow": 60, "score": 200},
+        {"rating": "bad",  "hitwindow": 100, "score": 100},
+        {"rating": "shit", "hitwindow": 130, "score": 50}
+    ]
+
 }
