@@ -57,7 +57,7 @@ void Animatable::init(ASSETS::AssetManager &mgr, std::string path) {
 
     //set initial animation
     setloop(false);
-    setEndTime(0);
+    setDuration(0);
     playAnim(""_h);
 }
 
@@ -74,12 +74,12 @@ void Animatable::setAnim(uint32_t anim_h) {
     curtex = findTexture(curkeyframe->tex_h);
 }
 
-void Animatable::setEndTime(float f) {
-    endtime = f;
+void Animatable::setDuration(float f) {
+    duration = f;
 }
 
 void Animatable::playAnim(void) {
-    curframe.setValue(0, getIndicieCount(), endtime);
+    curframe.setValue(0, getIndicieCount(), duration);
 }
 
 //helpers

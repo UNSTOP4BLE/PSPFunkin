@@ -29,7 +29,7 @@ public:
     void update(float t);
 
     void setAnim(uint32_t anim_h);
-    void setEndTime(float f);
+    void setDuration(float f);
     void playAnim(void);
     void playAnim(uint32_t anim_h) {setAnim(anim_h); playAnim();}
     bool isPlaying(void) {return curframe.isDone();}
@@ -42,7 +42,7 @@ public:
 private:
     bool loop;
     const ASSETS::JsonAsset *config;
-    float endtime; //animation must end
+    float duration; //animation must end
 
     Animation *curanim;
     Tween<float, LinearEasing> curframe;
@@ -57,14 +57,14 @@ private:
 };
 
 //helpers
-inline float calcEndTime_FPS(float numindices, float fps) {
+inline float calcDuration_FPS(float numindices, float fps) {
     return numindices/fps;
 }
 
-inline float calcEndTime_Step(float numindices, float fps, float steptosec) {
-    float maxduration = fps * steptosec; //endime * steps per second
-    float minduration = calcEndTime_FPS(numindices, fps);
-    return std::min(maxduration, minduration); //end x steps later
+inline float calcDuration_Step(float numindices, float fps, float steptosec) {
+    float maxduration = fps * steptosec;
+    float minduration = calcDuration_FPS(numindices, fps);
+    return std::min(maxduration, minduration);
 }
 
 } //namespace ANIMATION
