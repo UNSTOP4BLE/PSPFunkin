@@ -17,6 +17,8 @@ enum NoteFlags {
 };
 
 struct NoteData {
+    int getSustainH(float speed) {return static_cast<int>(PIXELS_PER_MS * (sustain * speed));};
+    int getNoteY(float speed, float songtime) {return static_cast<int>(PIXELS_PER_MS * (pos - songtime) * speed);};
     float pos;
     int type;
     float sustain;    
@@ -80,4 +82,5 @@ private:
     float songtime;
     int songstep;
     float step_per_sec;
+    int notesizePX;
 };

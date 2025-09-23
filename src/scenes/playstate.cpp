@@ -8,9 +8,9 @@
 #include "../engine/file.hpp"
 
 PlayStateSCN::PlayStateSCN(void) {
-    std::string songname = "assets/songs/no-more-woah/";
+    std::string songname = "assets/songs/bopeebo/";
     //todo diffictuly
-    const ASSETS::JsonAsset *songchart = g_app.assets.get<ASSETS::JsonAsset>(FS::getFilePath(songname + "no-more-woah.json"));
+    const ASSETS::JsonAsset *songchart = g_app.assets.get<ASSETS::JsonAsset>(FS::getFilePath(songname + "bopeebo.json"));
     const Json::Value &j_chart = songchart->value;
 
     //parse file
@@ -68,12 +68,21 @@ PlayStateSCN::PlayStateSCN(void) {
     //read note positions 
     const ASSETS::JsonAsset *posjson = g_app.assets.get<ASSETS::JsonAsset>(FS::getFilePath("assets/notes.json"));
     const Json::Value &positions = posjson->value["notepositions"];
+    notesizePX = posjson->value["note_size"].asInt();
+    int spacing = posjson->value["note_spacing"].asInt();
+    int notestep = notesizePX + spacing;
+
     for (int i = 0; i < NUM_NOTES; i++) {
-        chart.opponentnotes.positions[i].x = positions["opponent"][i][0].asInt();
+        //opponent notes
+        chart.opponentnotes.positions[i].x = positions["opponent"][i][0].asInt() + notestep * i;
         chart.opponentnotes.positions[i].y = positions["opponent"][i][1].asInt();
-        chart.playernotes.positions[i].x = positions["player"][i][0].asInt();
+
+        //player notes (flipped horizontally)
+        int rev = NUM_NOTES - 1 - i;
+        chart.playernotes.positions[i].x = GFX::SCREEN_WIDTH - (positions["player"][i][0].asInt() + notestep * rev) - notesizePX;
         chart.playernotes.positions[i].y = positions["player"][i][1].asInt();
     }
+
     //read the rating data
     const Json::Value &ratingdata = posjson->value["ratings"];
     for (int i = 0; i < ratingdata.size(); i++) {
@@ -108,26 +117,45 @@ void PlayStateSCN::update(void) {
         }
         songtime = track->getChannel().getTime()*1000;
 
+        //set up controls
         bool inputs[NUM_NOTES] = {g_app.input.isPressed(INPUT::GAME_LEFT),
                                  g_app.input.isPressed(INPUT::GAME_DOWN), 
                                  g_app.input.isPressed(INPUT::GAME_UP), 
                                  g_app.input.isPressed(INPUT::GAME_RIGHT)};
+        bool inputsheld[NUM_NOTES] = {g_app.input.isHeld(INPUT::GAME_LEFT),
+                                     g_app.input.isHeld(INPUT::GAME_DOWN), 
+                                     g_app.input.isHeld(INPUT::GAME_UP), 
+                                     g_app.input.isHeld(INPUT::GAME_RIGHT)};
     
         //player input
         auto &playercontainer = chart.playernotes;
 
-        uint32_t ignoreflags = (FLAG_HIT | FLAG_MISSED);
+        int processctrdebug = 0;
         for (int i = playercontainer.cullingindex; i < playercontainer.notes.size(); i++) {
             auto &note = playercontainer.notes[i];
-            if (note.flag & ignoreflags) //no point in processing note if its hit
-                continue;
 
-            float diff = note.pos - songtime;
-            if (diff < -ratings.back().hitwindow) { // u suck ass and missed a note
+            if (note.getNoteY(chart.scrollspeed, songtime) > GFX::SCREEN_HEIGHT) //offscreen
+                break; //can break here cuz the notes are sorted
+
+            float diff = note.pos - songtime; 
+            processctrdebug ++;
+            //hold note hits
+            bool issus = (note.sustain > 0);
+//            if (inputsheld[note.type] && issus) {
+  //              printf("hit a sustain %d\n", note);
+
+//            }
+            if (note.flag & (FLAG_HIT | FLAG_MISSED) || diff > ratings.back().hitwindow) //no point in processing note if its hit or cant be hit
+                continue;
+                
+            if (diff < -ratings.back().hitwindow) { // u suck ass and missed a note, went offscreen
                 note.flag |= FLAG_MISSED;
                 printf("you missed\n");
             }
 
+            if (diff <= 0) //botplay
+                inputs[note.type] = true;
+                
             //check if any button pressed
             bool anyinput = false;
             for (int j = 0; j < NUM_NOTES; j++) {
@@ -136,11 +164,11 @@ void PlayStateSCN::update(void) {
                     break;
                 }
             }
-
+            //normal note hits
             if (anyinput) {
                 diff = fabs(diff); 
                 //hit a note
-                if (diff <= ratings.back().hitwindow && inputs[note.type]) {
+                if (inputs[note.type]) {
                     auto rating = judgeNote(diff);
 
                     note.flag |= FLAG_HIT;
@@ -149,11 +177,9 @@ void PlayStateSCN::update(void) {
                     inputs[note.type] = false;
                     continue;
                 }
-                //random key pressed, handle ghosttaping here
-                printf("pressed a random key\n");
-                break;
             }
         }
+//        printf("processed %d notes this frame\n", processctrdebug);
         
         //opponent input (basically botplay)
         auto &oppcontainer = chart.opponentnotes;
@@ -173,6 +199,7 @@ void PlayStateSCN::update(void) {
     }
     else { //song didnt start yet
         songtime += g_app.deltatime;
+        //song start
         if (songstep <= 0)
         {
             if (songtime >= 0 && !playing) {            
@@ -186,6 +213,7 @@ void PlayStateSCN::update(void) {
                     voices->play();
             }
         }
+        //song end
         else
         {
             //go to menu or load next song
@@ -196,26 +224,39 @@ void PlayStateSCN::update(void) {
 }
 
 void PlayStateSCN::drawNotes(NoteContainer &container) {
+    int tempsusend = 24; //pixels 
     for (int i = container.cullingindex; i < container.notes.size(); i++) {
         auto &note = container.notes[i];
-        if (note.flag & FLAG_HIT) //no point in processing note if its hit
+        bool issus = (note.sustain > 0); //note is sustain
+        if (note.flag & FLAG_HIT && !issus) //no point in processing note if its hit
             continue;
         const GFX::XY<int32_t> &pos = container.positions[note.type];
-        
-        //note position and song time in ms
-        int y = static_cast<int>(PIXELS_PER_MS * (note.pos - songtime) * chart.scrollspeed);
 
-        //cull notes off screen, this does assume a note is never larger than 40x40 so yeah gotta change this
-        if (y < -pos.y-40) {
-            container.cullingindex = i;
+        //cull notes off screen
+        int y = note.getNoteY(chart.scrollspeed, songtime);
+        int sustainh = issus ? note.getSustainH(chart.scrollspeed) : 0;
+
+        if (y < -notesizePX-pos.y-sustainh) {
+            container.cullingindex = i+1; //+1, render the next note
             continue;
         }
         if (y > GFX::SCREEN_HEIGHT) {
             break;
         }
 
+        //note
         GFX::RECT<int32_t> notepos = {pos.x, pos.y+y, 40, 40};
-        g_app.renderer->drawRect(notepos, 0, 0xFFFFFFFF);
+        if (!(note.flag & FLAG_HIT)) //only gets run on sustain notes so if you hit a note it doesnt mean you hit the whole sustain
+            g_app.renderer->drawRect(notepos, 0, 0xFFFFFFFF);
+
+        if (issus) {
+            //sustain body
+            GFX::RECT<int32_t> sustainpos = {pos.x+10, notepos.y+notepos.w/2, 20, sustainh-tempsusend};
+            g_app.renderer->drawRect(sustainpos, 0, 0xFF0000FF);
+            //sustain end
+            GFX::RECT<int32_t> sustainend = {sustainpos.x, sustainpos.y+sustainpos.h, sustainpos.w, tempsusend};
+            g_app.renderer->drawRect(sustainend, 0, 0xFFFF00FF);
+        }
     }
 }
 
