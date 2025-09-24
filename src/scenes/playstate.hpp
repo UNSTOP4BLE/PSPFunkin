@@ -9,6 +9,7 @@ constexpr int NUM_NOTES = 4;
 //cursed unit fnf uses, no idea why they did it like this, this depends on the fucking resolution
 constexpr float PIXELS_PER_MS = 0.45 * GFX::SCREEN_HEIGHT / 720;
 constexpr float HEALTH_INC_AMOUNT = 0.05;
+
 //note stuff
 enum NoteFlags {
     FLAG_NONE   = 0,
@@ -18,15 +19,9 @@ enum NoteFlags {
 };
 
 struct NoteData {
-    int getSustainH(float speed) {return static_cast<int>(PIXELS_PER_MS * (sus * speed));};
-    int getInitialSustainH(float speed) {return static_cast<int>(PIXELS_PER_MS * (initialsus * speed));};
-    int getNoteY(float speed, float songtime) {return static_cast<int>(PIXELS_PER_MS * (pos - songtime) * speed);};
-    int getSusY(float speed, float songtime) {return static_cast<int>(PIXELS_PER_MS * (sus_start - songtime) * speed);};
     float pos;
-    float sus_start;    
     int type;
     float sus;    
-    float initialsus;    
     uint32_t flag;
 };
 
@@ -78,6 +73,9 @@ public:
     void draw(void);
     ~PlayStateSCN(void); 
 private:
+    float SustainPX(const NoteData &note) {return note.sus * chart.scrollspeed;};
+    float NotePosPX(const NoteData &note) {return (note.pos - songtime) * chart.scrollspeed;};
+
     const Rating& judgeNote(float diff) const;
     void drawNotes(NoteContainer &container);
     void drawDummyNotes(NoteContainer &container);

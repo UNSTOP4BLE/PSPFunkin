@@ -31,10 +31,8 @@ PlayStateSCN::PlayStateSCN(void) {
             curnote.flag = FLAG_NONE;
 
             curnote.pos = j_curnote[0].asFloat();
-            curnote.sus_start = curnote.pos;
             curnote.type = j_curnote[1].asInt();
             curnote.sus = j_curnote[2].asFloat();
-            curnote.initialsus = curnote.sus;
             if (curnote.sus > 0)
                 curnote.flag |= FLAG_SUSTAIN;
             //determine target container, decides if note is player or opponent
@@ -51,7 +49,7 @@ PlayStateSCN::PlayStateSCN(void) {
     chart.opponentnotes.init();
     chart.playernotes.init();
 
-    chart.scrollspeed = j_song["speed"].asFloat();
+    chart.scrollspeed = j_song["speed"].asFloat() * PIXELS_PER_MS;
     chart.bpm = j_song["bpm"].asInt();
     chart.hasvoices = j_song["needsVoices"].asBool();
     chart.crochet = (60 / chart.bpm) * 1000;
@@ -106,8 +104,8 @@ const Rating& PlayStateSCN::judgeNote(float diff) const {
         }
     }
 
-    static const Rating fake{"null", -1, -1};
-    return fake;
+    static const Rating miss{"null", -1, -1};
+    return miss;
 }
 
 void PlayStateSCN::update(void) {
@@ -122,80 +120,73 @@ void PlayStateSCN::update(void) {
         }
         songtime = track->getChannel().getTime()*1000;
 
-        //set up controls
-        bool inputs[NUM_NOTES] = {g_app.input.isPressed(INPUT::GAME_LEFT),
-                                 g_app.input.isPressed(INPUT::GAME_DOWN), 
-                                 g_app.input.isPressed(INPUT::GAME_UP), 
-                                 g_app.input.isPressed(INPUT::GAME_RIGHT)};
-        bool inputsheld[NUM_NOTES] = {g_app.input.isHeld(INPUT::GAME_LEFT),
-                                     g_app.input.isHeld(INPUT::GAME_DOWN), 
-                                     g_app.input.isHeld(INPUT::GAME_UP), 
-                                     g_app.input.isHeld(INPUT::GAME_RIGHT)};
-    
         //player input
-        auto &playercontainer = chart.playernotes;
 
-        int processctrdebug = 0;
+        //set up controls
+        INPUT::Button gameInputs[NUM_NOTES] = {
+            INPUT::GAME_LEFT,
+            INPUT::GAME_DOWN,
+            INPUT::GAME_UP,
+            INPUT::GAME_RIGHT
+        };
+
+        bool inputs[NUM_NOTES];
+        bool inputsHeld[NUM_NOTES];
+        //update inputs
+        for (int i = 0; i < NUM_NOTES; i++) {
+            inputs[i] = g_app.input.isPressed(gameInputs[i]);
+            inputsHeld[i] = g_app.input.isHeld(gameInputs[i]);
+        }
+
+        auto &playercontainer = chart.playernotes;
         for (int i = playercontainer.cullingindex; i < playercontainer.notes.size(); i++) {
             auto &note = playercontainer.notes[i];
-
-            if (note.getNoteY(chart.scrollspeed, songtime) > GFX::SCREEN_HEIGHT) //offscreen
-                break; //can break here cuz the notes are sorted
-
-            float diff = note.pos - songtime; 
-            processctrdebug ++;
-            //hold note hits
             bool issus = (note.flag & FLAG_SUSTAIN);
-            float fullsustain = note.sus_start+note.sus;
-            if (songtime >= note.sus_start && songtime <= fullsustain) {
-                float remainingsustain = fullsustain - songtime; //remaining amount of sustain in ms
-    
-                if (inputsheld[note.type]) {
-                    note.sus_start = songtime;
-                    note.sus = remainingsustain;
-                    printf("hit sustain here!remaining%f\n", remainingsustain);
-                }
-                else 
-                    printf("missed sustain here!remaining%f\n", remainingsustain);
-            }   
+            float position = note.pos-songtime; //milliseconds
 
-            if (note.flag & (FLAG_HIT | FLAG_MISSED) || diff > ratings.back().hitwindow) //no point in processing note if its hit or cant be hit
+            //sustain hits happen no matter if the note is hit or missed
+            if (issus) {
+                if (songtime >= note.pos && songtime <= note.pos+note.sus) {
+                    if (inputsHeld[note.type]) {//hitting sustain
+                        printf("hi this is a sustain\n");
+                    }
+                    else //missing sustain
+                        printf("hi u suck\n");
+                }
+            }
+
+            if (note.flag & (FLAG_HIT | FLAG_MISSED)) //no point in processing note if its hit or missed
                 continue;
-                
-            if (diff < -ratings.back().hitwindow) { // u suck ass and missed a note, went offscreen
+            
+            const auto& worstwindow = ratings.back().hitwindow; //worst rating possible, has largest hitwindow, in this case "shit"
+  
+            //cull notes that cant be hit yet
+            if (position > worstwindow) {
+//                printf("culling note %d\n", i);
+                break;
+            }
+            //note flew by, missed a note
+            if (position < -worstwindow){
+                printf("missed note %d\n", i);
                 note.flag |= FLAG_MISSED;
-                printf("you missed\n");
-                health -= HEALTH_INC_AMOUNT;
                 continue;
             }
+
+            //pseudo botplay
+//            if (position <= 0)
+  //              inputs[note.type] = true;
+
+            //hit a note
+            if (inputs[note.type]) {
+                const auto &hitrating = judgeNote(fabs(position));
                 
-            //check if any button pressed
-            bool anyinput = false;
-            for (int j = 0; j < NUM_NOTES; j++) {
-                if (inputs[j]) {
-                    anyinput = true;
-                    break;
-                }
-            }
-            //normal note hits
-            if (anyinput) {
-                diff = fabs(diff); 
-                //hit a note
-                if (inputs[note.type]) {
-                    auto rating = judgeNote(diff);
-
-                    note.flag |= FLAG_HIT;
-                    printf("diff %f\n", diff);
-                    printf("hit note%s\n", rating.name.c_str());
-                    inputs[note.type] = false;
-
-                    health += HEALTH_INC_AMOUNT;
-                    continue;
-                }
+                note.flag |= FLAG_HIT;
+                //position is how early or late you hit
+                printf("hit a note %f\n", position);
+                continue;
             }
         }
-//        printf("processed %d notes this frame\n", processctrdebug);
-        
+
         //opponent input (basically botplay)
         auto &oppcontainer = chart.opponentnotes;
         for (int i = oppcontainer.cullingindex; i < oppcontainer.notes.size(); i++) {
@@ -218,10 +209,6 @@ void PlayStateSCN::update(void) {
         if (songstep <= 0)
         {
             if (songtime >= 0 && !playing) {            
-//                gamecam.update(opponent->camx, opponent->camy, opponent->camzoom,
-  //                             player->camx, player->camy, player->camzoom);
-    //            hudcam.zoom.setValue(1.1, 1.0, 0.2); 
-      //          gamecam.zoom.setValue(gamecam.basezoom+0.05, gamecam.basezoom, 0.2); 
                 
                 inst->play();
                 if (chart.hasvoices)
@@ -239,39 +226,39 @@ void PlayStateSCN::update(void) {
 }
 
 void PlayStateSCN::drawNotes(NoteContainer &container) {
-    int tempsusend = 24; //pixels 
     for (int i = container.cullingindex; i < container.notes.size(); i++) {
         auto &note = container.notes[i];
         bool issus = (note.flag & FLAG_SUSTAIN);
-        if (note.flag & FLAG_HIT && !issus) //no point in processing note if its hit
-            continue;
-        const GFX::XY<int32_t> &pos = container.positions[note.type];
 
-        //cull notes off screen
-        int y = note.getNoteY(chart.scrollspeed, songtime);
-        int sustainh = issus ? note.getSustainH(chart.scrollspeed) : 0;
-
-        if (y < -notesizePX-pos.y-note.getInitialSustainH(chart.scrollspeed)) {
-            container.cullingindex = i+1; //+1, render the next note
-            continue;
+        const GFX::XY<int32_t> &offset = container.positions[note.type];
+        float y = NotePosPX(note);
+        GFX::RECT<int32_t> notepos = {offset.x, offset.y+static_cast<int>(y), notesizePX, notesizePX};
+        
+        //always render sustain
+        if (issus) {
+            float sush = SustainPX(note);
+            GFX::RECT<int32_t> suspos = {notepos.x+10, notepos.y+notepos.h, 20, static_cast<int>(sush)};
+            g_app.renderer->drawRect(suspos, 0, 0xFF0000FF);
         }
-        if (y > GFX::SCREEN_HEIGHT) {
+
+        if (note.flag & FLAG_HIT) //no point in processing note if its hit
+            continue;
+
+
+        //cull notes that went offscreen
+//        if (y < 0) { //incomplete, has to use sustain too
+  //          container.cullingindex = i+1;
+    //        continue;
+      //  }
+        //cull notes that cant be seen yet
+        if (y > GFX::SCREEN_HEIGHT) 
             break;
-        }
 
         //note
-        GFX::RECT<int32_t> notepos = {pos.x, pos.y+y, notesizePX, notesizePX};
-        if (!(note.flag & FLAG_HIT)) //only gets run on sustain notes so if you hit a note it doesnt mean you hit the whole sustain
+        if (note.flag & FLAG_MISSED)
+            g_app.renderer->drawRect(notepos, 0, 0x808080FF); // for testing draw grey note for a missed note
+        else
             g_app.renderer->drawRect(notepos, 0, 0xFFFFFFFF);
-
-        if (issus) {
-            //sustain body
-            GFX::RECT<int32_t> sustainpos = {pos.x+10, pos.y+note.getSusY(chart.scrollspeed, songtime)+notepos.h, 20, sustainh};
-            g_app.renderer->drawRect(sustainpos, 0, 0xFF0000FF);
-//            //sustain end
-  //          GFX::RECT<int32_t> sustainend = {sustainpos.x, sustainpos.y+sustainpos.h, sustainpos.w, tempsusend};
-    //        g_app.renderer->drawRect(sustainend, 0, 0xFFFF00FF);
-        }
     }
 }
 
@@ -292,6 +279,7 @@ void PlayStateSCN::draw(void) {
     drawDummyNotes(chart.playernotes);
     drawNotes(chart.playernotes);
 
+    //todo rewrite
     //draw health bar 
     int hb_width = GFX::SCREEN_WIDTH - 226;
     int hb_height = 8; 
