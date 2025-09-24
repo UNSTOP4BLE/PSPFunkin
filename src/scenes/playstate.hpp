@@ -12,16 +12,16 @@ constexpr float HEALTH_INC_AMOUNT = 0.05;
 
 //note stuff
 enum NoteFlags {
-    FLAG_NONE   = 0,
-    FLAG_HIT    = 1 << 0,
-    FLAG_MISSED = 1 << 1,
+    FLAG_NONE    = 0,
+    FLAG_HIT     = 1 << 0,
+    FLAG_MISSED  = 1 << 1,
     FLAG_SUSTAIN = 1 << 2
 };
 
 struct NoteData {
-    float pos;
+    double pos;
     int type;
-    float sus;    
+    double sus;      
     uint32_t flag;
 };
 
@@ -73,16 +73,16 @@ public:
     void draw(void);
     ~PlayStateSCN(void); 
 private:
-    float SustainPX(const NoteData &note) {return note.sus * chart.scrollspeed;};
-    float NotePosPX(const NoteData &note) {return (note.pos - songtime) * chart.scrollspeed;};
+    double SustainPX(const NoteData &note) {return note.sus * chart.scrollspeed;};
+    double NotePosPX(const NoteData &note) {return (note.pos - songtime) * chart.scrollspeed;};
 
-    const Rating& judgeNote(float diff) const;
+    const Rating& judgeNote(double diff) const;
     void drawNotes(NoteContainer &container);
     void drawDummyNotes(NoteContainer &container);
     AUDIO::StreamedFile *inst, *voices; 
     ChartData chart;
     std::vector<Rating> ratings;
-    float songtime;
+    double songtime;
     int songstep;
     float step_per_sec;
     int notesizePX;

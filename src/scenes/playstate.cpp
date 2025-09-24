@@ -30,9 +30,9 @@ PlayStateSCN::PlayStateSCN(void) {
             NoteData curnote;
             curnote.flag = FLAG_NONE;
 
-            curnote.pos = j_curnote[0].asFloat();
+            curnote.pos = j_curnote[0].asDouble();
             curnote.type = j_curnote[1].asInt();
-            curnote.sus = j_curnote[2].asFloat();
+            curnote.sus = j_curnote[2].asDouble();
             if (curnote.sus > 0)
                 curnote.flag |= FLAG_SUSTAIN;
             //determine target container, decides if note is player or opponent
@@ -97,7 +97,7 @@ PlayStateSCN::PlayStateSCN(void) {
     health = 0.5; //middle of health bar
 }
 
-const Rating& PlayStateSCN::judgeNote(float diff) const {
+const Rating& PlayStateSCN::judgeNote(double diff) const {
     for (const auto& rating : ratings) {
         if (diff <= rating.hitwindow) {
             return rating;
@@ -142,16 +142,20 @@ void PlayStateSCN::update(void) {
         for (int i = playercontainer.cullingindex; i < playercontainer.notes.size(); i++) {
             auto &note = playercontainer.notes[i];
             bool issus = (note.flag & FLAG_SUSTAIN);
-            float position = note.pos-songtime; //milliseconds
+            double position = note.pos-songtime; //milliseconds
 
             //sustain hits happen no matter if the note is hit or missed
             if (issus) {
-                if (songtime >= note.pos && songtime <= note.pos+note.sus) {
+                double fullsus = note.pos+note.sus;
+                double remainsus = fullsus - songtime; 
+
+                if (songtime >= note.pos && songtime <= fullsus) {
                     if (inputsHeld[note.type]) {//hitting sustain
-                        printf("hi this is a sustain\n");
+                        note.sus = remainsus;
+//                        printf("hi this is a sustain\n");
                     }
-                    else //missing sustain
-                        printf("hi u suck\n");
+    //                else //missing sustain
+  //                      printf("hi u suck\n");
                 }
             }
 
@@ -173,8 +177,8 @@ void PlayStateSCN::update(void) {
             }
 
             //pseudo botplay
-//            if (position <= 0)
-  //              inputs[note.type] = true;
+            if (position <= 0)
+                inputs[note.type] = true;
 
             //hit a note
             if (inputs[note.type]) {
@@ -194,7 +198,7 @@ void PlayStateSCN::update(void) {
             if (note.flag & FLAG_HIT) //no point in processing note if its hit
                 continue;
             
-            float diff = note.pos - songtime; //no absolute value here 
+            double diff = note.pos - songtime; //no absolute value here 
             if (diff > 0) //dont process note if opponent cant hit it
                 break; //can break here because i sorted the notes
 
@@ -231,12 +235,12 @@ void PlayStateSCN::drawNotes(NoteContainer &container) {
         bool issus = (note.flag & FLAG_SUSTAIN);
 
         const GFX::XY<int32_t> &offset = container.positions[note.type];
-        float y = NotePosPX(note);
+        double y = NotePosPX(note);
         GFX::RECT<int32_t> notepos = {offset.x, offset.y+static_cast<int>(y), notesizePX, notesizePX};
         
         //always render sustain
         if (issus) {
-            float sush = SustainPX(note);
+            double sush = SustainPX(note); //sustain height
             GFX::RECT<int32_t> suspos = {notepos.x+10, notepos.y+notepos.h, 20, static_cast<int>(sush)};
             g_app.renderer->drawRect(suspos, 0, 0xFF0000FF);
         }

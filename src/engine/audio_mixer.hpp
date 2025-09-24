@@ -47,7 +47,7 @@ public:
 
     void setVolume(float left, float right);
     int64_t getSampleOffset(void);
-    float getTime(void);
+    double getTime(void);
     void setSampleOffset(int64_t value);
 
     bool isBusy(void);

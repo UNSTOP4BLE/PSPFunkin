@@ -119,16 +119,16 @@ int64_t MixerChannel::getSampleOffset(void) {
     return offset + static_cast<int64_t>(delta.count() * static_cast<float>(_sampleRate));
 }
 
-float MixerChannel::getTime(void) {
+double MixerChannel::getTime(void) {
     _mixer->_lockSampleOffset();
 
-    float offset = static_cast<float>(_sampleOffset) / static_cast<float>(_mixer->_sampleRate);
+    double offset = static_cast<double>(_sampleOffset) / static_cast<double>(_mixer->_sampleRate);
     auto delta = std::chrono::duration_cast<_seconds>(
         std::chrono::high_resolution_clock::now() - _mixer->_sampleOffsetTimestamp
     );
 
     _mixer->_unlockSampleOffset();
-    return offset + static_cast<float>(delta.count());
+    return offset + static_cast<double>(delta.count());
 }
 
 void MixerChannel::setSampleOffset(int64_t value) {
