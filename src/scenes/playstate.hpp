@@ -9,6 +9,7 @@ constexpr int NUM_NOTES = 4;
 //cursed unit fnf uses, no idea why they did it like this, this depends on the fucking resolution
 constexpr float PIXELS_PER_MS = 0.45 * GFX::SCREEN_HEIGHT / 720;
 constexpr float HEALTH_INC_AMOUNT = 0.05;
+constexpr float MAX_HEALTH = 2;
 
 //note stuff
 enum NoteFlags {

@@ -28,7 +28,7 @@
  *  channel's sample rate first.
  */
 
-#define _seconds std::chrono::duration<float, std::ratio<1>>
+#define _seconds std::chrono::duration<double, std::ratio<1>>
 
 namespace AUDIO {
 
@@ -116,7 +116,7 @@ int64_t MixerChannel::getSampleOffset(void) {
     );
 
     _mixer->_unlockSampleOffset();
-    return offset + static_cast<int64_t>(delta.count() * static_cast<float>(_sampleRate));
+    return offset + static_cast<int64_t>(delta.count() * static_cast<double>(_sampleRate));
 }
 
 double MixerChannel::getTime(void) {
@@ -302,7 +302,7 @@ int64_t Mixer::getSampleOffset(void) {
     );
 
     _unlockSampleOffset();
-    return offset + static_cast<int64_t>(delta.count() * static_cast<float>(_sampleRate));
+    return offset + static_cast<int64_t>(delta.count() * static_cast<double>(_sampleRate));
 }
 
 } //namespace AUDIO

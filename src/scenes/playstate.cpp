@@ -94,7 +94,7 @@ PlayStateSCN::PlayStateSCN(void) {
     
     g_app.assets.release(posjson->assetpath);
 
-    health = 0.5; //middle of health bar
+    health = MAX_HEALTH/2; //middle of health bar
 }
 
 const Rating& PlayStateSCN::judgeNote(double diff) const {
@@ -146,17 +146,6 @@ void PlayStateSCN::update(void) {
 
             //sustain hits happen no matter if the note is hit or missed
             if (issus) {
-                double fullsus = note.pos+note.sus;
-                double remainsus = fullsus - songtime; 
-
-                if (songtime >= note.pos && songtime <= fullsus) {
-                    if (inputsHeld[note.type]) {//hitting sustain
-                        note.sus = remainsus;
-//                        printf("hi this is a sustain\n");
-                    }
-    //                else //missing sustain
-  //                      printf("hi u suck\n");
-                }
             }
 
             if (note.flag & (FLAG_HIT | FLAG_MISSED)) //no point in processing note if its hit or missed
@@ -173,18 +162,20 @@ void PlayStateSCN::update(void) {
             if (position < -worstwindow){
                 printf("missed note %d\n", i);
                 note.flag |= FLAG_MISSED;
+                health -= HEALTH_INC_AMOUNT;
                 continue;
             }
 
             //pseudo botplay
-            if (position <= 0)
-                inputs[note.type] = true;
+  //          if (position <= 0)
+//                inputs[note.type] = true;
 
             //hit a note
             if (inputs[note.type]) {
                 const auto &hitrating = judgeNote(fabs(position));
                 
                 note.flag |= FLAG_HIT;
+                health += HEALTH_INC_AMOUNT;
                 //position is how early or late you hit
                 printf("hit a note %f\n", position);
                 continue;
@@ -226,7 +217,7 @@ void PlayStateSCN::update(void) {
             return;
         }
     }
-
+    health = std::clamp(health, 0.f, MAX_HEALTH);
 }
 
 void PlayStateSCN::drawNotes(NoteContainer &container) {
@@ -282,21 +273,6 @@ void PlayStateSCN::draw(void) {
     //player
     drawDummyNotes(chart.playernotes);
     drawNotes(chart.playernotes);
-
-    //todo rewrite
-    //draw health bar 
-    int hb_width = GFX::SCREEN_WIDTH - 226;
-    int hb_height = 8; 
-    int spacing = 1; //black border for health bar
-
-    int hb_x = (GFX::SCREEN_WIDTH - hb_width) / 2;
-    int hb_y = GFX::SCREEN_HEIGHT - 20 - hb_height;         
-
-    GFX::RECT<int32_t> hb = {hb_x, hb_y, hb_width, hb_height};
-    g_app.renderer->drawRect(hb, 0, 0x000000FF); //black base
-
-    GFX::RECT<int32_t> hb_opp = {hb.x+spacing, hb.y+spacing, hb.w-spacing*2, hb.h-spacing*2};
-    g_app.renderer->drawRect(hb_opp, 0, 0xFF0000FF); //red
 }
 
 PlayStateSCN::~PlayStateSCN(void) {
