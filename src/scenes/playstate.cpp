@@ -8,9 +8,9 @@
 #include "../engine/file.hpp"
 
 PlayStateSCN::PlayStateSCN(void) {
-    std::string songname = "assets/songs/bopeebo/";
+    std::string songname = "assets/songs/no-more-woah/";
     //todo diffictuly
-    const ASSETS::JsonAsset *songchart = g_app.assets.get<ASSETS::JsonAsset>(FS::getFilePath(songname + "bopeebo.json"));
+    const ASSETS::JsonAsset *songchart = g_app.assets.get<ASSETS::JsonAsset>(FS::getFilePath(songname + "no-more-woah.json"));
     const Json::Value &j_chart = songchart->value;
 
     //parse file
@@ -31,8 +31,10 @@ PlayStateSCN::PlayStateSCN(void) {
             curnote.flag = FLAG_NONE;
 
             curnote.pos = j_curnote[0].asDouble();
+            curnote.suspos = curnote.pos;
             curnote.type = j_curnote[1].asInt();
             curnote.sus = j_curnote[2].asDouble();
+            curnote.initialsus = curnote.sus;
             if (curnote.sus > 0)
                 curnote.flag |= FLAG_SUSTAIN;
             //determine target container, decides if note is player or opponent
@@ -49,7 +51,7 @@ PlayStateSCN::PlayStateSCN(void) {
     chart.opponentnotes.init();
     chart.playernotes.init();
 
-    chart.scrollspeed = j_song["speed"].asFloat() * PIXELS_PER_MS;
+    chart.scrollspeed = j_song["speed"].asDouble() * PIXELS_PER_MS;
     chart.bpm = j_song["bpm"].asInt();
     chart.hasvoices = j_song["needsVoices"].asBool();
     chart.crochet = (60 / chart.bpm) * 1000;
@@ -104,9 +106,45 @@ const Rating& PlayStateSCN::judgeNote(double diff) const {
         }
     }
 
-    static const Rating miss{"null", -1, -1};
-    return miss;
+    static const Rating unknown{"null", -1, -1};
+    return unknown;
 }
+
+void PlayStateSCN::hitSustain(void) {
+    health += HEALTH_HOLD_BONUS * (g_app.deltatime / 1000.0f);
+}
+
+void PlayStateSCN::missSustain(void) {
+    health += HEALTH_HOLD_DROP_PENALTY * (g_app.deltatime / 1000.0f);
+}
+
+void PlayStateSCN::hitNote(NoteData &note, double diff) {
+    diff = fabs(diff);
+    const auto &rating = judgeNote(diff).name;
+    float incr = 0;
+    //not great but yeah
+    if (rating == "sick")
+        incr = HEALTH_SICK_BONUS;
+    else if (rating == "good")
+        incr = HEALTH_GOOD_BONUS;
+    else if (rating == "bad")
+        incr = HEALTH_BAD_BONUS;
+    else if (rating == "shit")
+        incr = HEALTH_SHIT_BONUS;
+    
+    health += incr;
+    note.flag |= FLAG_HIT;
+}
+
+void PlayStateSCN::missNote(NoteData &note) {
+    health += HEALTH_MISS_PENALTY;
+    note.flag |= FLAG_MISSED;
+}
+
+void PlayStateSCN::ghostPenalty(void) {
+    health += HEALTH_MISS_PENALTY;
+}
+
 
 void PlayStateSCN::update(void) {
     bool playing = inst->isPlaying() || (chart.hasvoices && voices->isPlaying());
@@ -146,6 +184,19 @@ void PlayStateSCN::update(void) {
 
             //sustain hits happen no matter if the note is hit or missed
             if (issus) {
+                double fullsustain = note.suspos+note.sus;
+                double remainingsustain = fullsustain - songtime; //remaining amount of sustain in ms
+                if (songtime >= note.suspos && songtime <= fullsustain) {
+                    //hit a sustain
+                    if (inputsHeld[note.type]) {
+                        hitSustain();
+                        note.suspos = songtime;
+                        note.sus = remainingsustain;
+                    }
+                    else { //missed a sustain
+                        missSustain();
+                    }
+                }
             }
 
             if (note.flag & (FLAG_HIT | FLAG_MISSED)) //no point in processing note if its hit or missed
@@ -160,9 +211,7 @@ void PlayStateSCN::update(void) {
             }
             //note flew by, missed a note
             if (position < -worstwindow){
-                printf("missed note %d\n", i);
-                note.flag |= FLAG_MISSED;
-                health -= HEALTH_INC_AMOUNT;
+                missNote(note);
                 continue;
             }
 
@@ -172,12 +221,7 @@ void PlayStateSCN::update(void) {
 
             //hit a note
             if (inputs[note.type]) {
-                const auto &hitrating = judgeNote(fabs(position));
-                
-                note.flag |= FLAG_HIT;
-                health += HEALTH_INC_AMOUNT;
-                //position is how early or late you hit
-                printf("hit a note %f\n", position);
+                hitNote(note, position);
                 continue;
             }
         }
@@ -186,17 +230,28 @@ void PlayStateSCN::update(void) {
         auto &oppcontainer = chart.opponentnotes;
         for (int i = oppcontainer.cullingindex; i < oppcontainer.notes.size(); i++) {
             auto &note = oppcontainer.notes[i];
+            double position = note.pos - songtime;
+            bool issus = (note.flag & FLAG_SUSTAIN);
+
+            if (issus) {
+                double fullsustain = note.suspos+note.sus;
+                double remainingsustain = fullsustain - songtime; //remaining amount of sustain in ms
+                if (songtime >= note.suspos && songtime <= fullsustain) {
+                    note.suspos = songtime;
+                    note.sus = remainingsustain;
+                }
+            }
+            
             if (note.flag & FLAG_HIT) //no point in processing note if its hit
                 continue;
-            
-            double diff = note.pos - songtime; //no absolute value here 
-            if (diff > 0) //dont process note if opponent cant hit it
+             
+            if (position > 0) //dont process note if opponent cant hit it
                 break; //can break here because i sorted the notes
 
-            if (diff <= 0)
+            if (position <= 0)
                 note.flag |= FLAG_HIT;
         }
-
+        printf("hp %f\n", health);
     }
     else { //song didnt start yet
         songtime += g_app.deltatime;
@@ -226,13 +281,13 @@ void PlayStateSCN::drawNotes(NoteContainer &container) {
         bool issus = (note.flag & FLAG_SUSTAIN);
 
         const GFX::XY<int32_t> &offset = container.positions[note.type];
-        double y = NotePosPX(note);
+        double y = NotePosPX(note.pos);
         GFX::RECT<int32_t> notepos = {offset.x, offset.y+static_cast<int>(y), notesizePX, notesizePX};
         
         //always render sustain
         if (issus) {
-            double sush = SustainPX(note); //sustain height
-            GFX::RECT<int32_t> suspos = {notepos.x+10, notepos.y+notepos.h, 20, static_cast<int>(sush)};
+            double sush = SustainPX(note.sus); //sustain height
+            GFX::RECT<int32_t> suspos = {notepos.x+10, offset.y+notepos.h+static_cast<int>(NotePosPX(note.suspos)), 20, static_cast<int>(sush)};
             g_app.renderer->drawRect(suspos, 0, 0xFF0000FF);
         }
 
@@ -241,10 +296,11 @@ void PlayStateSCN::drawNotes(NoteContainer &container) {
 
 
         //cull notes that went offscreen
-//        if (y < 0) { //incomplete, has to use sustain too
-  //          container.cullingindex = i+1;
-    //        continue;
-      //  }
+        if (y+SustainPX(note.initialsus)+notepos.h < 0) { //incomplete, has to use sustain too
+            if (note.flag & (FLAG_HIT || FLAG_MISSED)) //only get rid of note if we processed it
+                container.cullingindex = i+1; //next note
+            continue;
+        }
         //cull notes that cant be seen yet
         if (y > GFX::SCREEN_HEIGHT) 
             break;
