@@ -145,6 +145,19 @@ void PlayStateSCN::update(void) {
   //              printf("hit a sustain %d\n", note);
 
 //            }
+            float fullsustain = note.pos+note.sustain;
+            if (songtime >= note.pos && songtime <= fullsustain) {
+                float remainingsustain = fullsustain - songtime; //remaining amount of sustain in ms
+    
+                if (inputsheld[note.type]) {
+//                    note.pos = songtime;
+                    note.sustain = remainingsustain;
+                    printf("hit sustain here!remaining%f\n", fullsustain - songtime);
+                }
+                else 
+                    printf("missed sustain here!remaining%f\n", fullsustain - songtime);
+            }   
+
             if (note.flag & (FLAG_HIT | FLAG_MISSED) || diff > ratings.back().hitwindow) //no point in processing note if its hit or cant be hit
                 continue;
                 
@@ -245,17 +258,17 @@ void PlayStateSCN::drawNotes(NoteContainer &container) {
         }
 
         //note
-        GFX::RECT<int32_t> notepos = {pos.x, pos.y+y, 40, 40};
+        GFX::RECT<int32_t> notepos = {pos.x, pos.y+y, notesizePX, notesizePX};
         if (!(note.flag & FLAG_HIT)) //only gets run on sustain notes so if you hit a note it doesnt mean you hit the whole sustain
             g_app.renderer->drawRect(notepos, 0, 0xFFFFFFFF);
 
         if (issus) {
             //sustain body
-            GFX::RECT<int32_t> sustainpos = {pos.x+10, notepos.y+notepos.w/2, 20, sustainh-tempsusend};
+            GFX::RECT<int32_t> sustainpos = {pos.x+10, notepos.y+notepos.h, 20, sustainh};
             g_app.renderer->drawRect(sustainpos, 0, 0xFF0000FF);
-            //sustain end
-            GFX::RECT<int32_t> sustainend = {sustainpos.x, sustainpos.y+sustainpos.h, sustainpos.w, tempsusend};
-            g_app.renderer->drawRect(sustainend, 0, 0xFFFF00FF);
+//            //sustain end
+  //          GFX::RECT<int32_t> sustainend = {sustainpos.x, sustainpos.y+sustainpos.h, sustainpos.w, tempsusend};
+    //        g_app.renderer->drawRect(sustainend, 0, 0xFFFF00FF);
         }
     }
 }
