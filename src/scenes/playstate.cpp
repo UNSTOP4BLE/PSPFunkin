@@ -28,11 +28,15 @@ PlayStateSCN::PlayStateSCN(void) {
         for (int cn = 0; cn < j_cursec["sectionNotes"].size(); cn++) {
             auto &j_curnote = j_cursec["sectionNotes"][cn];
             NoteData curnote;
-            curnote.pos = j_curnote[0].asFloat();
-            curnote.type = j_curnote[1].asInt();
-            curnote.sustain = j_curnote[2].asFloat();
             curnote.flag = FLAG_NONE;
-      
+
+            curnote.pos = j_curnote[0].asFloat();
+            curnote.sus_start = curnote.pos;
+            curnote.type = j_curnote[1].asInt();
+            curnote.sus = j_curnote[2].asFloat();
+            curnote.initialsus = curnote.sus;
+            if (curnote.sus > 0)
+                curnote.flag |= FLAG_SUSTAIN;
             //determine target container, decides if note is player or opponent
             auto &target = (cursec.musthit ^ (curnote.type >= NUM_NOTES)) ? chart.playernotes.notes : chart.opponentnotes.notes;
             //normalize
@@ -141,18 +145,18 @@ void PlayStateSCN::update(void) {
             float diff = note.pos - songtime; 
             processctrdebug ++;
             //hold note hits
-            bool issus = (note.sustain > 0);
-            float fullsustain = note.pos+note.sustain;
-            if (songtime >= note.pos && songtime <= fullsustain) {
+            bool issus = (note.flag & FLAG_SUSTAIN);
+            float fullsustain = note.sus_start+note.sus;
+            if (songtime >= note.sus_start && songtime <= fullsustain) {
                 float remainingsustain = fullsustain - songtime; //remaining amount of sustain in ms
     
                 if (inputsheld[note.type]) {
-                    note.pos = songtime;
-                    note.sustain = remainingsustain;
-                    printf("hit sustain here!remaining%f\n", fullsustain - songtime);
+                    note.sus_start = songtime;
+                    note.sus = remainingsustain;
+                    printf("hit sustain here!remaining%f\n", remainingsustain);
                 }
                 else 
-                    printf("missed sustain here!remaining%f\n", fullsustain - songtime);
+                    printf("missed sustain here!remaining%f\n", remainingsustain);
             }   
 
             if (note.flag & (FLAG_HIT | FLAG_MISSED) || diff > ratings.back().hitwindow) //no point in processing note if its hit or cant be hit
@@ -238,7 +242,7 @@ void PlayStateSCN::drawNotes(NoteContainer &container) {
     int tempsusend = 24; //pixels 
     for (int i = container.cullingindex; i < container.notes.size(); i++) {
         auto &note = container.notes[i];
-        bool issus = (note.sustain > 0); //note is sustain
+        bool issus = (note.flag & FLAG_SUSTAIN);
         if (note.flag & FLAG_HIT && !issus) //no point in processing note if its hit
             continue;
         const GFX::XY<int32_t> &pos = container.positions[note.type];
@@ -247,7 +251,7 @@ void PlayStateSCN::drawNotes(NoteContainer &container) {
         int y = note.getNoteY(chart.scrollspeed, songtime);
         int sustainh = issus ? note.getSustainH(chart.scrollspeed) : 0;
 
-        if (y < -notesizePX-pos.y-sustainh) {
+        if (y < -notesizePX-pos.y-note.getInitialSustainH(chart.scrollspeed)) {
             container.cullingindex = i+1; //+1, render the next note
             continue;
         }
@@ -262,7 +266,7 @@ void PlayStateSCN::drawNotes(NoteContainer &container) {
 
         if (issus) {
             //sustain body
-            GFX::RECT<int32_t> sustainpos = {pos.x+10, notepos.y+notepos.h, 20, sustainh};
+            GFX::RECT<int32_t> sustainpos = {pos.x+10, pos.y+note.getSusY(chart.scrollspeed, songtime)+notepos.h, 20, sustainh};
             g_app.renderer->drawRect(sustainpos, 0, 0xFF0000FF);
 //            //sustain end
   //          GFX::RECT<int32_t> sustainend = {sustainpos.x, sustainpos.y+sustainpos.h, sustainpos.w, tempsusend};

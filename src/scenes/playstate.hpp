@@ -13,15 +13,20 @@ constexpr float HEALTH_INC_AMOUNT = 0.05;
 enum NoteFlags {
     FLAG_NONE   = 0,
     FLAG_HIT    = 1 << 0,
-    FLAG_MISSED = 1 << 1
+    FLAG_MISSED = 1 << 1,
+    FLAG_SUSTAIN = 1 << 2
 };
 
 struct NoteData {
-    int getSustainH(float speed) {return static_cast<int>(PIXELS_PER_MS * (sustain * speed));};
+    int getSustainH(float speed) {return static_cast<int>(PIXELS_PER_MS * (sus * speed));};
+    int getInitialSustainH(float speed) {return static_cast<int>(PIXELS_PER_MS * (initialsus * speed));};
     int getNoteY(float speed, float songtime) {return static_cast<int>(PIXELS_PER_MS * (pos - songtime) * speed);};
+    int getSusY(float speed, float songtime) {return static_cast<int>(PIXELS_PER_MS * (sus_start - songtime) * speed);};
     float pos;
+    float sus_start;    
     int type;
-    float sustain;    
+    float sus;    
+    float initialsus;    
     uint32_t flag;
 };
 
