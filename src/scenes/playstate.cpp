@@ -92,6 +92,7 @@ PlayStateSCN::PlayStateSCN(void) {
     
     g_app.assets.release(posjson->assetpath);
 
+    health = 0.5; //middle of health bar
 }
 
 const Rating& PlayStateSCN::judgeNote(float diff) const {
@@ -141,16 +142,12 @@ void PlayStateSCN::update(void) {
             processctrdebug ++;
             //hold note hits
             bool issus = (note.sustain > 0);
-//            if (inputsheld[note.type] && issus) {
-  //              printf("hit a sustain %d\n", note);
-
-//            }
             float fullsustain = note.pos+note.sustain;
             if (songtime >= note.pos && songtime <= fullsustain) {
                 float remainingsustain = fullsustain - songtime; //remaining amount of sustain in ms
     
                 if (inputsheld[note.type]) {
-//                    note.pos = songtime;
+                    note.pos = songtime;
                     note.sustain = remainingsustain;
                     printf("hit sustain here!remaining%f\n", fullsustain - songtime);
                 }
@@ -164,10 +161,9 @@ void PlayStateSCN::update(void) {
             if (diff < -ratings.back().hitwindow) { // u suck ass and missed a note, went offscreen
                 note.flag |= FLAG_MISSED;
                 printf("you missed\n");
+                health -= HEALTH_INC_AMOUNT;
+                continue;
             }
-
-            if (diff <= 0) //botplay
-                inputs[note.type] = true;
                 
             //check if any button pressed
             bool anyinput = false;
@@ -188,6 +184,8 @@ void PlayStateSCN::update(void) {
                     printf("diff %f\n", diff);
                     printf("hit note%s\n", rating.name.c_str());
                     inputs[note.type] = false;
+
+                    health += HEALTH_INC_AMOUNT;
                     continue;
                 }
             }
@@ -202,7 +200,7 @@ void PlayStateSCN::update(void) {
                 continue;
             
             float diff = note.pos - songtime; //no absolute value here 
-            if (diff > 0) //dont process note if you cant hit it
+            if (diff > 0) //dont process note if opponent cant hit it
                 break; //can break here because i sorted the notes
 
             if (diff <= 0)
@@ -289,6 +287,20 @@ void PlayStateSCN::draw(void) {
     //player
     drawDummyNotes(chart.playernotes);
     drawNotes(chart.playernotes);
+
+    //draw health bar 
+    int hb_width = GFX::SCREEN_WIDTH - 226;
+    int hb_height = 8; 
+    int spacing = 1; //black border for health bar
+
+    int hb_x = (GFX::SCREEN_WIDTH - hb_width) / 2;
+    int hb_y = GFX::SCREEN_HEIGHT - 20 - hb_height;         
+
+    GFX::RECT<int32_t> hb = {hb_x, hb_y, hb_width, hb_height};
+    g_app.renderer->drawRect(hb, 0, 0x000000FF); //black base
+
+    GFX::RECT<int32_t> hb_opp = {hb.x+spacing, hb.y+spacing, hb.w-spacing*2, hb.h-spacing*2};
+    g_app.renderer->drawRect(hb_opp, 0, 0xFF0000FF); //red
 }
 
 PlayStateSCN::~PlayStateSCN(void) {

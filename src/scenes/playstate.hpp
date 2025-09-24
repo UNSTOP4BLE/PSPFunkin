@@ -8,7 +8,7 @@ constexpr int TICKS_PER_BEAT = 4;
 constexpr int NUM_NOTES = 4;
 //cursed unit fnf uses, no idea why they did it like this, this depends on the fucking resolution
 constexpr float PIXELS_PER_MS = 0.45 * GFX::SCREEN_HEIGHT / 720;
-
+constexpr float HEALTH_INC_AMOUNT = 0.05;
 //note stuff
 enum NoteFlags {
     FLAG_NONE   = 0,
@@ -83,4 +83,5 @@ private:
     int songstep;
     float step_per_sec;
     int notesizePX;
+    float health;
 };
