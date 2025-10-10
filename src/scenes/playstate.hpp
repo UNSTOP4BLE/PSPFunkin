@@ -10,29 +10,14 @@ constexpr int NUM_NOTES = 4;
 constexpr double PIXELS_PER_MS = 0.45 * GFX::SCREEN_HEIGHT / 720;
 constexpr float MAX_HEALTH = 2;
 
-// The amount of health the player gains when hitting a note with the SICK rating.
 constexpr float HEALTH_SICK_BONUS = 1.5 / 100.0 * MAX_HEALTH; // +1.0%
-
-// The amount of health the player gains when hitting a note with the GOOD rating
 constexpr float HEALTH_GOOD_BONUS = 0.75 / 100.0 * MAX_HEALTH; // +0.75%
-
-// The amount of health the player gains when hitting a note with the BAD rating
 constexpr float HEALTH_BAD_BONUS = 0.0 / 100.0 * MAX_HEALTH; // +0.0%
-
-// The amount of health the player gains (or loses) when hitting a note with the SHIT rating
 constexpr float HEALTH_SHIT_BONUS = -1.0 / 100.0 * MAX_HEALTH; // -1.0%
-
-// The amount of health the player gains, while holding a hold note, per second
 constexpr float HEALTH_HOLD_BONUS = 6.0 / 100.0 * MAX_HEALTH; // +6.0% / second
-
-// The amount of health the player loses upon letting go of a hold note, per second remaining
 constexpr float HEALTH_HOLD_DROP_PENALTY = -4.5 / 100.0 * MAX_HEALTH; // -4.5% / second
-
-// The amount of health the player loses upon missing a note
 constexpr float HEALTH_MISS_PENALTY = -2.0 / 100.0 * MAX_HEALTH; // -2.0%
-
-// The amount of health the player loses upon pressing a key when no note is there
-constexpr float HEALTH_GHOST_PENALTY = -2.0 / 100.0 * MAX_HEALTH; // -2.0%
+constexpr float HEALTH_GHOST_PENALTY = -2.0 / 100.0 * MAX_HEALTH; // -2.0% ghost tapping
 
 //note stuff
 enum NoteFlags {
@@ -120,4 +105,6 @@ private:
     float step_per_sec;
     int notesizePX;
     float health;
+    int score;
+    int combo;
 };

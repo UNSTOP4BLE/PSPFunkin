@@ -120,19 +120,20 @@ void PlayStateSCN::missSustain(void) {
 
 void PlayStateSCN::hitNote(NoteData &note, double diff) {
     diff = fabs(diff);
-    const auto &rating = judgeNote(diff).name;
+    const auto &rating = judgeNote(diff);
     float incr = 0;
     //not great but yeah
-    if (rating == "sick")
+    if (rating.name == "sick")
         incr = HEALTH_SICK_BONUS;
-    else if (rating == "good")
+    else if (rating.name == "good")
         incr = HEALTH_GOOD_BONUS;
-    else if (rating == "bad")
+    else if (rating.name == "bad")
         incr = HEALTH_BAD_BONUS;
-    else if (rating == "shit")
+    else if (rating.name == "shit")
         incr = HEALTH_SHIT_BONUS;
     
     health += incr;
+    score += rating.score;
     note.flag |= FLAG_HIT;
 }
 
@@ -296,7 +297,7 @@ void PlayStateSCN::drawNotes(NoteContainer &container) {
 
 
         //cull notes that went offscreen
-        if (y+SustainPX(note.initialsus)+notepos.h < 0) { //incomplete, has to use sustain too
+        if (y+SustainPX(note.initialsus)+notepos.h < 0) {
             if (note.flag & (FLAG_HIT || FLAG_MISSED)) //only get rid of note if we processed it
                 container.cullingindex = i+1; //next note
             continue;
